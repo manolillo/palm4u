@@ -5,5 +5,5 @@ Contributors to the Chemistry Module
 
 Renate Forkel,  
 Sabine Banzhaf,  
-Emmanuele Russo, 
-and Basit Khan.
+Emmanuele Russo,  
+Basit Khan.
