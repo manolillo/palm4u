@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta content="text/html; charset=windows-1252" http-equiv="CONTENT-TYPE"><title>PALM chapter 4.5.2</title> <meta content="StarOffice 7 (Win32)" name="GENERATOR"> <meta content="Siegfried Raasch" name="AUTHOR"> <meta content="20041022;12155949" name="CREATED"> <meta content="20041117;11232134" name="CHANGED"> <meta content="parallel LES model" name="KEYWORDS"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+
+<body style="direction: ltr;" lang="en-US"><h4 style="line-height: 100%;"><font size="4">4.5.2
+Plots of vertical
+profiles with profil</font></h4>
+<p style="line-height: 100%;">Output of vertical
+profile data is enabled by providing values for the run parameters <a href="chapter_4.2.html#dt_dopr"><u>dt_dopr</u></a><span style="text-decoration: none;">
+and </span><a href="chapter_4.2.html#data_output_pr">data_output_pr</a>
+<span style="text-decoration: none;">which specify the
+temporal
+interval of the output times (in s) and the quantities for which output
+is to be made.</span> Output times cannot be defined
+directly but only via the output time interval, starting from the
+beginning of the initial 3d run (t=0, but no profiles are
+written at the time t=0; exceptions see <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>).
+By default, vertical profiles represent an instantaneous horizontal
+average of the
+total model domain at the respective output time. Temporal averaging
+can be initiated with
+the run parameter <a href="chapter_4.2.html#averaging_interval_pr">averaging_interval_pr</a>.
+Beyond that, an output of profiles for user-defined subdomains is
+possible via the
+initialization parameter <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>.</p>
+<p style="line-height: 100%;">Output of desired profiles
+(temperature,
+velocity, etc.) is steered with the run parameter <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>.
+If this parameter is not set by the user, then, independently of the
+value of <b>dt_dopr</b>, there will be no output! PALM
+creates the local file <a href="chapter_3.4.html#PLOT1D_DATA">PLOT1D_DATA</a>,
+which must be linked with a permanent file (see e.g. <a href="chapter_3.2.html">chapter
+3.2</a>) via a file connection statement in the <b>mrun</b>
+configuration file. At the end of the run the local file is copied
+to this file. Such a statement can look like this: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">PLOT1D_DATA out:loc:tr pr ~/PLOT/$fname _pr_in.</font></pre></ul>
+<p style="line-height: 100%;">If the respective <b>mrun</b>
+call is
+like<br>
+</p><ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun -d test -r &ldquo;pr&rdquo; &hellip;</font></pre>
+</ul><p style="line-height: 100%;">then the local f<span style="text-decoration: none;">ile
+</span><tt><span style="text-decoration: none;"><font style="font-size: 10pt;" size="2">PLOT1D_DATA</font></span></tt><span style="text-decoration: none;"><font style="font-size: 10pt;" size="2">
+</font>is copied to the permanent file </span><tt><span style="text-decoration: none;"><font style="font-size: 10pt;" size="2">~/PLOT/test/test_pr_in</font></span></tt><span style="text-decoration: none;">.
+However, the character string <font style="font-size: 10pt;" size="2">&ldquo;</font></span><tt><span style="text-decoration: none;"><font style="font-size: 10pt;" size="2">pr</font></span></tt><span style="text-decoration: none;"><font style="font-size: 10pt;" size="2">&rdquo;</font>
+activating the file connection statement </span><span style="text-decoration: none;">(see third column of the
+statement) </span><span style="text-decoration: none;">must
+be given in the <b>mrun</b>
+call as argument of the
+option -r (and/or -o)<b>.</b> If t</span>his is
+forgotten by mistake, the model outputs the data to the local file, but
+this is
+not copied to the permanent file and thus the data are not available
+for the user after the run has finished. </p>
+<p style="line-height: 100%;">The created data file can be
+directly used as input file for the plot software <b>profil</b>.
+<b>profil</b> needs another file, the so-called parameter
+file, which
+specifies the plot layout. This file is created by PALM under the local
+name <a href="chapter_3.4.html#PLOT1D_PAR">PLOT1D_PAR</a>
+and also needs a file connection statement, e.g.: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">PLOT1D_PAR out:loc:tr pr ~/PLOT/$fname _pr_par.</font></pre></ul>
+<p style="line-height: 100%;">If you are in the directory
+<tt><font style="font-size: 10pt;" size="2">~/PLOT/test</font>,</tt>the
+data can be plotted by entering </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">profil -d test_pr_in -p test_pr_par</font></pre></ul>
+<p style="line-height: 100%;">The default plot layout as
+specified in the parameter file is as follows: the profiles of the
+different quantities are plottet into
+one or more coordinate systems (panels). Every profile is plotted only
+once,
+however several profiles of different quantities can be plottet into
+the same panel. If case of this, the different quantities are
+marked by different styles of lines. Which variables
+are drawn into which coordinate system is specified by the user via
+the run parameter <a href="chapter_4.2.html#cross_profiles">cross_profiles</a>.
+It is very important to note that only profiles are plottet, which are
+assigned to
+a coordinate system via <b>cross_profiles</b>. If a
+certain
+variable is selected by <b>data_output_pr</b> but not
+assigned to a coordinate
+system via <b>cross_profiles</b>, then the appropriate
+profile data
+are written to the file PLOT1D_DATA but they are not plotted! All
+panels for which data
+exist are plotted. For example, if only the profiles of the potential
+temperature are
+to be plottet in a panel but output of potential temperature is not set
+via
+<b>data_output_pr</b>, then the respective panel is not
+drawn
+(thus no 'empty' panels appear in the plot). The
+parameters <a href="chapter_4.2.html#profile_columns">profile_columns</a>
+and <a href="chapter_4.2.html#profile_rows">profile_rows</a>
+determine how the panels are arranged in columns and rows. The panels
+are plotted in the order given by <span style="font-weight: bold;">data_output_pr</span>
+starting in the top row from left to right.
+If the number of panels to be plotted is larger than the
+product <b>profile_columns</b> * <b>profile_rows</b>,
+then the plot
+is continued on a second page. </p>
+<p style="line-height: 100%;">During a model run output of
+profiles to
+file PLOT1D_DATA is usually carried out for several times (as
+determined by <span style="font-weight: bold;">dt_dopr</span>)<font style="font-size: 10pt;" size="2">.</font>
+All of these profiles belonging to the same quantity are plotted in the
+same panel. The different output times are marked by different line
+colors. All profiles of a certain output time have the
+same color, even if they are plotted into different panels. Beyond
+that, a legend entry is made for each, containing the name of the
+respective quantity and the output time.
+This legend string is taken from file PLOT1D_DATA
+in which a comment line is placed ahead of each profile data. </p>
+<p style="line-height: 100%;">For identification, each
+plot is
+provided with a title, which contains the model version number, the
+run identifier (base file name + number of the restart run), the name
+of the host where the run was executed, the date and time of the
+beginning
+of the run as well as the averaging domain (by default: <span style="font-style: italic;">'total
+domain'</span>). If the profiles are additionally temporally
+averaged,
+each panel gets an appropriate sub-label (<span style="font-style: italic;">'time
+averaged over&hellip; s'</span>). The axes labels of the x
+axes of the
+individual panels are specified with the run parameter
+<a href="chapter_4.2.html#cross_xtext">cross_xtext</a>,
+the y axes always have the label <span style="font-style: italic;">'height
+in m'</span>. For better
+comparison, the profiles can be normalized with respect to different
+quantities
+(see <a href="chapter_4.2.html#cross_normalized_x">cross_normalized_x</a>
+and <a href="chapter_4.2.html#cross_normalized_y">cross_normalized_y</a>).
+The respective normalization is noted in the axes label. </p>
+<p style="line-height: 100%;"><font color="#000000">As
+already
+mentioned, the profiles of a quantity
+for all output times are plotted into the same panel. This is not
+possible if a simulation needs restart runs, since the restart runs
+write the
+profile data to separate files (with appropriate cycle numbers) and
+create own parameter files. Thus by default profiles can only be drawn
+separately for each respective run. However there is a possibility to
+plot
+all profiles of a quantity in one plot, regardless of the number of
+restart runs. For this
+purpose the configuration file must be changed such that for restart
+runs the profile data are appended to already existing<font color="#000000">
+data</font> (thus all data are output into one file). Then the
+configuration file has two entries for </font><tt><font color="#000000">PLOT1D_DATA</font></tt><font color="#000000">:
+</font></p><ul> <pre style="line-height: 100%;"><font style="font-size: 10pt;" size="2">PLOT1D_DATA out:loc:tr pr# ~/PLOT/$fname _pr_in</font><br><font style="font-size: 10pt;" size="2">PLOT1D_DATA out:loc:tra prf ~/PLOT/$fname _pr_in.</font></pre>
+</ul><p style="line-height: 100%;">The first run of
+the job chain is now </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun - D test - r &ldquo;pr#&hellip;</font></pre></ul>
+<p style="line-height: 100%;">For the restart runs, the
+"#" in the <span style="font-weight: bold;">mrun</span>
+call is automatically replaced by an "f". At the end of the job chain
+there will only be one data file containing the complete profile data.
+The file connection statement for the parameter file
+<font size="3">PLOT1D_PAR</font> has not changed,
+thus a new cycle of
+the respective permanent file is created for each run. To plot
+the combined data with the parameter file created by the last run of
+the job chain, the run parameter
+<a href="chapter_4.2.html#use_prior_plot1d_parameters">use_prior_plot1d_parameters</a>
+= <i>.TRUE.</i> must be additionally set for the restart
+runs. If this
+is
+forgotten, the parameter file is useless and the data cannot
+be plotted. </p>
+<p style="line-height: 100%;">The default layout of the
+plots of
+vertical profiles can be changed by editing the
+parameter file. For a detailed description of the <span style="font-weight: bold;">profil</span> parameters
+see the
+<a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>
+manual (only in German). <br>
+</p><hr>
+<p style="line-height: 100%;"><br><font color="#000080"><font color="#000080"><a href="chapter_4.5.html"><font color="#000080"><img name="Grafik1" src="left.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img name="Grafik2" src="up.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.3.html"><font color="#000080"><img name="Grafik3" src="right.gif" align="bottom" border="2" height="32" width="32"></font></a></font></font></p>
+<p style="line-height: 100%;"><span style="font-style: italic;">Last
+change:</span> $Id$&nbsp;</p>
+</body></html>

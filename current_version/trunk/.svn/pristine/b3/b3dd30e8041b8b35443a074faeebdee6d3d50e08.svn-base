@@ -1,0 +1,443 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.5.4</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20040802;14050943"> <meta name="CHANGED" content="20041117;12180008"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head><body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;"><font size="4">3.5.4
+User-defined output quantities<br>
+</font></h3>A very typical request of users is the
+calculation and
+output of
+quantities which are not part of PALM's standard output. The basic user
+interface includes a number of subroutines which allow the calculation
+of user-defined quantities and output of these quantities as 1.
+(horizontally averaged) <a href="#vertical_profiles">vertical
+profiles</a>, 2.&nbsp;<a href="#time_series">time
+series</a>, 3. <a href="#2D_and_3D">2d cross
+section</a> or <a href="#2D_and_3D">3d volume data</a>,
+4. <a href="#dvrp">dvrp</a> objects, and 5. <a href="#spectra">spectra</a>. The respective
+subroutines
+contain sample code lines (written as comment lines) for defining,
+calculating and
+output of such quantities.<br><br>Output times, averaging
+intervals, etc. are steered by the same variables as used for the
+standard PALM output quantities, e.g. <a href="chapter_4.2.html#dt_data_output">dt_data_output</a>.<br><br>The
+following five parts of&nbsp;this chapter explains step-by-step how
+to modify/extend the
+respective default user interface subroutines in order to generate the respective
+output:<br><ol><li>(horizontally averaged) <a href="chapter_3.5.4.html#vertical_profiles">vertical profiles</a>,&nbsp;</li><li><a href="chapter_3.5.4.html#time_series">time series</a>,&nbsp;</li><li><a href="chapter_3.5.4.html#2D_and_3D">2d cross
+section</a> or <a href="chapter_3.5.4.html#2D_and_3D">3d
+volume data</a>,&nbsp;</li><li><a href="chapter_3.5.4.html#dvrp">dvrp</a> objects,
+and&nbsp;</li><li><a href="chapter_3.5.4.html#spectra">spectra</a>.</li></ol><br><h4><a name="vertical_profiles"></a>1. Output of user-defined
+vertical profiles</h4>This example shows the output of the
+quantity "turbulent resolved-scale horizontal momentum flux" (u*v*). If
+more than one user-defined
+quantity shall be output, the following steps have to be carried out in
+the
+same way for each of the quantities.<br><br><ol><li>The
+quantity has to be given a unique string identifier, e.g. <span style="font-style: italic;">'u*v*'</span>.
+This identifier must be different from the identifiers used for the
+PALM standard output (see list in description of parameter <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>).
+To switch on output of this quantity, the user has to assign the string
+identifier to the parameter <a href="chapter_4.3.html#data_output_pr_user">data_output_pr_user</a>,
+eg.:<br><br><span style="font-family: monospace;">&nbsp;
+&nbsp; data_output_pr_user</span> = <span style="font-style: italic;">'u*v*'</span>,<span style="font-style: italic;"></span><span style="font-style: italic;"></span><span style="font-style: italic;"></span><span style="font-style: italic;"></span><span style="font-style: italic;"></span><span style="font-style: italic;"></span><br><br></li><li>For
+the
+quantity, an identification number, a physical unit, and the vertical
+grid on which it is defined (u- or w-grid), has to be assigned
+(subroutine <a href="chapter_3.5.1.html#user_check_data_output_pr"><span style="font-family: monospace;">user_check_data_output_pr</span></a>):<span style="font-family: monospace;"><br><br>&nbsp;
+&nbsp; CASE (
+'u*v*' )<br></span><span style="font-family: monospace;">&nbsp;
+&nbsp; &nbsp; &nbsp;index = pr_palm + <span style="color: rgb(255, 0, 0);">1<span style="color: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; ! identification number</span></span><br>&nbsp;
+&nbsp; &nbsp; &nbsp;dopr_index(var_count) = index<br>&nbsp;
+&nbsp; &nbsp;&nbsp; dopr_unit(var_count) &nbsp;= '<span style="color: rgb(255, 0, 0);">m2/s2</span>'
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; !
+physical unit<br>&nbsp; &nbsp; &nbsp;
+&nbsp;hom(:,2,index,:) &nbsp; &nbsp; &nbsp;= SPREAD( <span style="color: rgb(255, 0, 0);">zu</span>, 2,
+statistic_regions+1 ) &nbsp; &nbsp;! vertical grid<br></span><br>Here
+only the those parts in <span style="color: rgb(255, 0, 0);">red</span>
+color have to be given by the user appropriately.<br>The
+identification number (<span style="font-family: Courier New,Courier,monospace;">index</span>)
+must be within the range [<span style="font-family: Courier New,Courier,monospace;">
+pr_palm+1 , pr_palm+max_pr_user</span> ], where <span style="font-family: Courier New,Courier,monospace;">max_pr_user</span>
+is the number of&nbsp;user-defined profiles as given by parameter <a href="chapter_4.3.html#data_output_pr_user">data_output_pr_user</a>
+in the respective PALM run.&nbsp;The physical unit has to be given
+with respect to the NetCDF conventions. If no unit is given,
+PALM will abort. The vertical grid has to be either <span style="font-family: Courier New,Courier,monospace;">zu</span>
+(u-grid) or <span style="font-family: Courier New,Courier,monospace;">zw</span>
+(w-grid).<br><br></li><li>The quantity has to
+be calculated for all gridpoints (subroutine <a href="chapter_3.5.1.html#user_statistics">user_statistics</a>):<br><br><span style="font-family: monospace;">&nbsp; &nbsp; !$OMP
+DO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl, nxr</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys, nyn</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb_s_inner(j,i)+1, nzt</span><br style="font-family: monospace;"><span style="font-family: monospace;"></span><span style="font-family: monospace;"></span><span style="font-family: monospace;"></span><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+sums_l(k,pr_palm+<span style="color: rgb(255, 0, 0);">1</span>,tn)
+= sums_l(k,pr_palm+<span style="color: rgb(255, 0, 0);">1</span>,tn)
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&amp;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="color: rgb(255, 0, 0);">( 0.5 * ( u(k,j,i) +
+u(k,j,i+1) ) - hom(k,1,1,sr) ) * &amp;</span></span><br style="font-family: monospace; color: rgb(255, 0, 0);"><span style="font-family: monospace; color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( 0.5 * ( v(k,j,i) + v(k,j+1,i) ) - hom(k,1,2,sr) ) &nbsp; &amp;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+* rmask(j,i,sr)<br>&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; ENDDO<br>&nbsp; &nbsp; &nbsp;
+&nbsp;ENDDO<br>&nbsp; &nbsp; ENDDO<br></span><br style="font-family: monospace;">Once again, only those parts
+in <span style="color: rgb(255, 0, 0);">red</span>
+have to be adjusted by the user.<br>The
+turbulent resolved-scale momentum flux u*v* is defined as the product
+of the deviations of the horizontal velocities from their respective
+horizontally averaged mean values. These mean values are stored in
+array <span style="font-family: Courier New,Courier,monospace;">hom(..,1,1,sr)</span>
+and <span style="font-family: Courier New,Courier,monospace;">hom(..,1,2,sr)</span>
+for the u- and v-component, respectively. Since due to the staggered
+grid, <span style="font-family: Courier New,Courier,monospace;">u</span>
+and <span style="font-family: Courier New,Courier,monospace;">v</span>
+are not defined at the same gridpoints, they have to be interpolated
+appropriately (here to the center of the gridbox). The result of the
+calculation is stored in array <span style="font-family: Courier New,Courier,monospace;">sums_l</span>.
+The second index of this array is the identification number of the
+profile which must match the one given in the previous step 2.</li></ol><br><h4><a name="time_series"></a>2. Output of user-defined
+timeseries</h4>This example shows the output of two time series
+for the absolut extremal values of the horizontal velocities <span style="font-style: italic;">u</span> and <span style="font-style: italic;">v</span>. If more than one
+user-defined
+quantity shall be output, the following steps have to be carried out in
+the
+same way for each of the quantities.<br><br><ol><li>For
+each time series quantity you have to give a label and a unit
+(subroutine <a href="chapter_3.5.1.html#user_init">user_init</a>),
+which will be used for the NetCDF file. They must not contain more than
+seven characters. The value of <code>dots_num</code> has
+to be increased by the number of new time series quantities. Its old
+value has to be stored in <code>dots_num_palm</code>.<br><br><code>&nbsp;&nbsp;&nbsp;
+dots_label(dots_num<span style="color: rgb(255, 0, 0);">+1</span>)
+= '<span style="color: rgb(255, 0, 0);">abs_umx</span>'<br>&nbsp;&nbsp;&nbsp;
+dots_unit(dots_num<span style="color: rgb(255, 0, 0);">+1</span>)&nbsp;
+= '<span style="color: rgb(255, 0, 0);">m/s</span>'<br>&nbsp;&nbsp;&nbsp;
+dots_label(dots_num<span style="color: rgb(255, 0, 0);">+2</span>)
+= '<span style="color: rgb(255, 0, 0);">abs_vmx</span>'<br>&nbsp;&nbsp;&nbsp;
+dots_unit(dots_num<span style="color: rgb(255, 0, 0);">+2</span>)&nbsp;
+= '<span style="color: rgb(255, 0, 0);">m/s</span>'<br><br>&nbsp;&nbsp;&nbsp;
+dots_num_palm = dots_num<br>&nbsp;&nbsp;&nbsp;
+dots_num = dots_num <span style="color: rgb(255, 0, 0);">+
+2</span><br><br></code>Only those parts in <span style="color: rgb(255, 0, 0);">red</span> have to be
+adjusted by the user.<br><br></li><li>These
+quantities are&nbsp;calculated and output in subroutine <a href="chapter_3.5.1.html#user_statistics">user_statistics</a>
+for every statistic region <code>sr</code> defined by the
+user,&nbsp;but at least for the region <span style="font-style: italic;">"total domain"</span>:<br>&nbsp;<br><code>&nbsp;&nbsp;&nbsp;
+ts_value(dots_num_palm+1,sr) = ABS( u_max )<br>&nbsp;&nbsp;&nbsp;
+ts_value(dots_num_palm+2,sr) = ABS( v_max )<br></code></li></ol>&nbsp;<br><h4><span style="font-weight: bold;"><a name="2D_and_3D"></a>3.
+Output of user-defined 2d cross sections or 3d volume data</span></h4><br>This
+example shows the output of the
+quantity "square of the u-component" (<span style="font-weight: bold;">Note:</span> this quantity
+could of course easily be calculated from the u-component by
+postprocessing the PALM output so that calculation within PALM is not
+necessarily required). If more than one user-defined
+quantity shall be output, the following steps have to be carried out in
+the
+same way for each of the quantities.<br><br><ol><li>The
+quantity has to be given a unique string identifier, e.g. <span style="font-style: italic;">'u2'</span>.
+This identifier must be different from the identifiers used for the
+PALM standard output (see list in description of parameter <a href="chapter_4.2.html#data_output">data_output</a>).
+To switch on output of this quantity, the user has to assign the string
+identifier to the parameter <a href="chapter_4.3.html#data_output_user">data_output_user</a>,
+eg.:<br><br><span style="font-family: monospace;">&nbsp;
+&nbsp; data_output_user</span> = <span style="font-style: italic;">'u2'</span>, <span style="font-style: italic;">&nbsp;'u2_xy_av'</span><br><br>The
+pure string <span style="font-style: italic;">'u2'</span>
+switches on the output of instantaneous 3d volume data. Output of cross
+section data and time averaged data is switched on by additionally
+appending the strings <span style="font-style: italic;">'_xy'</span>,
+<span style="font-style: italic;">'_xz'</span>, <span style="font-style: italic;">'_yz'</span>, and/or <span style="font-style: italic;">'_av'</span> (for a
+detailed explanation see parameter <a href="chapter_4.2.html#data_output">data_output</a>).<br><br></li><li>In
+order to store the quantities' grid point data within PALM, a 3d data
+array has to be declared in module <a href="chapter_3.5.1.html#user"><span style="font-family: monospace;">user</span></a>:<br><br><span style="font-family: monospace;">&nbsp; &nbsp; REAL,
+DIMENSION(:,:,:), ALLOCATABLE ::&nbsp; u2, u2_av</span><br><br>The
+second array <span style="font-family: monospace;">u2_av</span>
+is needed in case that output of time averaged data is requested. It is
+used to store the sum of the data of the respective time levels over
+which the average has to be carried out.<br><br><br></li><li>The
+data array has to be allocated in subroutine <a href="chapter_3.5.1.html#user_init"><span style="font-family: monospace;">user_init</span></a>:<br><br><span style="font-family: monospace;">&nbsp; &nbsp;
+ALLOCATE( u2(nzb:nzt+1,nys-1:nyn+1,nxl-1:nxr+1) )</span><br><br>In
+case that output of time averaged data is requested, the array
+containing the sum has possibly to be read from the restart file (local
+filename <a href="chapter_3.4.html#BININ">BININ</a>)
+by executing the following code in <span style="font-family: monospace;">user_init</span>:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;
+&nbsp;IF ( initializing_actions == 'read_restart_data' )&nbsp;
+THEN</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; READ ( 13 )&nbsp; field_char</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp;DO&nbsp; WHILE ( TRIM( field_char ) /= '*** end
+user ***' )</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp; SELECT CASE ( TRIM( field_char ) )</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp; CASE ( 'u2_av' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; ALLOCATE(
+u2_av(nzb:nzt+1,nys-1:nyn+1,nxl-1:nxr+1) )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; READ ( 13 )&nbsp; u2_av</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; CASE DEFAULT</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; PRINT*,
+'+++ user_init: unknown
+variable named "', &amp;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TRIM( field_char ), '" found in'</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; PRINT*,
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+data from prior run on PE ', myid</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; CALL local_stop</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp; END SELECT<br>&nbsp;
+&nbsp; &nbsp;&nbsp; ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;
+&nbsp;ENDIF</span><br style="font-family: monospace;"><br><br></li><li>The
+quantity has to be given a unit (subroutine <a href="chapter_3.5.1.html#user_check_data_output"><span style="font-family: monospace;">user_check_data_output</span></a>):<br><br><span style="font-family: monospace;">&nbsp; &nbsp; CASE (
+'u2' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; unit = 'm2/s2'</span><br>&nbsp;<br>Otherwise,
+PALM will abort.<br><br><br></li><li>The
+vertical grid on which the quantity is defined (given by the levels
+'zu' or 'zw', on which the u- or w-component of the velocity are
+defined) has to be specified for the NetCDF output files in subroutine <a href="chapter_3.5.1.html#user_define_netcdf_grid"><span style="font-family: monospace;">user_define_netcdf_grid</span></a>:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;
+&nbsp;CASE ( 'u2', 'u2_xy', 'u2_xz', 'u2_yz' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;
+&nbsp; &nbsp; grid = 'zu'</span><br>&nbsp;<br>As
+the example shows, this grid has to be defined for the 3d volume data
+as well as for all of the three cross sections.<br><span style="font-family: monospace;"><br><br></span></li><li>After
+each timestep, the quantity has to be calculated at all gridpoints and
+to be stored. This has to be done in subroutine <a href="chapter_3.5.1#user_actions"><span style="font-family: monospace;">user_actions</span></a>
+at location 'after_integration':<br><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;CASE
+( 'after_integration' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">!</span><br style="font-family: monospace;"><span style="font-family: monospace;">!--&nbsp;&nbsp;&nbsp;
+Enter actions to be done after every time integration (before</span><br style="font-family: monospace;"><span style="font-family: monospace;">!--&nbsp;&nbsp;&nbsp;
+data output)</span><br style="font-family: monospace;"><span style="font-family: monospace;">!--&nbsp;&nbsp;&nbsp;
+Sample for user-defined output:</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nzt+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+u2(k,j,i) = u(k,j,i)**2</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br><br>&nbsp;<br></li><li>In
+case that output of time-averaged data is requested, the sum- and
+average-operations as well as the allocation of the sum-array have to
+be carried out in subroutine <a href="chapter_3.5.1.html#user_3d_data_averaging"><span style="font-family: monospace;">user_3d_data_averaging</span></a>:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+IF ( mode == 'allocate' )&nbsp; THEN<br>&nbsp; &nbsp;
+...</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE ( 'u2' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IF ( .NOT. ALLOCATED( u2_av ) )&nbsp; THEN</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ALLOCATE( u2_av(nzb:nzt+1,nys-1:nyn+1,nxl-1:nxr+1) )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDIF</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+u2_av = 0.0<br>&nbsp; &nbsp; ...</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+ELSEIF ( mode == 'sum' )&nbsp; THEN<br>&nbsp; &nbsp;
+...</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE
+( 'u2' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nzt+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+u2_av(k,j,i) = u2_av(k,j,i) + u2(k,j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO<br>&nbsp; &nbsp; ...</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+ELSEIF ( mode == 'average' )&nbsp; THEN<br>&nbsp;
+&nbsp; ...</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE
+( 'u2' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nzt+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+u2_av(k,j,i) = u2_av(k,j,i) / REAL( average_count_3d )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br><br>&nbsp;</li><li>For
+output of 2d cross sections, the gridpoint data of the quantity has to
+be resorted to array <span style="font-family: monospace;">local_pf</span>
+in subroutine <a href="chapter_3.5.1.html#user_data_output_2d"><span style="font-family: monospace;">user_data_output_2d</span></a>.
+Also the vertical grid, on which the quantity is defined, has to be set
+again:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;CASE
+( 'u2_xy', 'u2_xz', 'u2_yz' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IF ( av == 0 )&nbsp; THEN</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nzt+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,k) = u2(k,j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ELSE</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nzt+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,k) = u2_av(k,j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDIF</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grid = 'zu'</span><br>&nbsp;<br>The <span style="font-family: monospace;">ELSE</span> case is
+only needed in case that output of time-averaged data is requested.<br><br>
+As a special case, xy cross section output can also be defined at one single level at height <span style="font-family: monospace;">k=nzb+1</span>
+on the u-grid. This features is useful for output of surface data (e.g.
+heat fluxes). In this case, the corresponding 2d data has to be
+resorted to the array <span style="font-family: monospace;">local_pf(i,j,nzb+1).</span> In addition to this, the grid in <a href="chapter_3.5.1.html#user_define_netcdf_grid"><span style="font-family: monospace;">user_define_netcdf_grid</span></a> as well as in <a href="chapter_3.5.1.html#user_data_output_2d"><span style="font-family: monospace;">user_data_output_2d</span></a> must be set to <span style="font-family: monospace;">grid = 'zu1'</span>.<br><br>
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;CASE
+( 'u2_xy' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IF ( av == 0 )&nbsp; THEN</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,nzb+1) = u2(j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ELSE</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,nzb+1) = u2_av(j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDIF</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grid = 'zu1'</span><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+two_d = .TRUE.</span><br><br>
+Note that <span style="font-family: monospace;">two_d = .TRUE.</span> is necessary for output of a 2d data slice.<br><br>
+<br></li><li>For
+output of 3d volume data, the gridpoint data of the quantity has to be
+resorted to array <span style="font-family: monospace;">local_pf</span>
+in subroutine <a href="chapter_3.5.1.html#user_data_output_3d"><span style="font-family: monospace;">user_data_output_3d</span></a>.:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;CASE
+( 'u2' )</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IF ( av == 0 )&nbsp; THEN</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nz_do</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,k) = u2(k,j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ELSE</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl-1, nxr+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nz_do</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,k) = u2_av(k,j,i)</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDIF</span><br><br>The <span style="font-family: monospace;">ELSE</span> case is
+only needed in case that output of time-averaged data is requested.<br><br><br></li><li>In
+case of job chains, the sum array has to be written to the (binary)
+restart file (local filename <a href="chapter_3.4.html#BINOUT">BINOUT</a>)
+in subroutine <a href="chapter_3.5.1.html#user_last_actions"><span style="font-family: monospace;">user_last_actions</span></a>:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+IF ( ALLOCATED( u2_av ) )&nbsp; THEN</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WRITE ( 14 )&nbsp;
+'u2_av&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+';&nbsp; WRITE ( 14 )&nbsp; u2_av</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+ENDIF</span><br><br>Otherwise,
+the calculated
+time-average may be wrong. In the restart run, this quantity has to be
+read from the restart file by including the following code in
+subroutine <a href="chapter_3.5.1.html#user_read_restart_data"><span style="font-family: monospace;">user_read_restart_data</span></a>:<br><br><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; IF ( initializing_actions == 'read_restart_data' )&nbsp; THEN<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ ( 13 )&nbsp; field_char<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO&nbsp; WHILE ( TRIM( field_char ) /= '*** end user ***' )<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SELECT CASE ( TRIM( field_char ) )<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CASE ( 'u2_av' )<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IF ( .NOT. ALLOCATED( u2_av ) ) THEN<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ALLOCATE( u2_av(nzb:nzt+1,nys-1:nyn+1,nxl-1:nxr+1) )<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ENDIF<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ ( 13 )&nbsp; tmp_3d<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+u2_av(:,nysc-1:nync+1,nxlc-1:nxrc+1) = &amp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+tmp_3d(:,nysf-1:nynf+1,nxlf-1:nxrf+1)<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CASE DEFAULT<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+PRINT*, '+++ user_init: unknown variable named "', &amp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TRIM( field_char ), '" found in'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+PRINT*,
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+data from prior run on PE ', myid<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CALL local_stop<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; END SELECT<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READ ( 13 )&nbsp; field_char<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ENDDO<br>&nbsp;&nbsp;&nbsp; ENDIF<br></span></li></ol><h4><a name="dvrp"></a>4. Output of user-defined DVRP objects</h4>This
+example shows the output of the
+quantity "square of the u-component", <span style="font-style: italic;">u<sup>2</sup></span>.
+If more than one user-defined
+quantity shall be output, the following steps have to be carried out in
+the
+same way for each of the quantities. First,&nbsp;steps 1 - 6
+of&nbsp;<a href="chapter_3.5.4.html#2D_and_3D"><span style="font-weight: bold;">part 3.</span> </a> <a href="chapter_3.5.4.html#2D_and_3D">(2d cross
+section or </a><a href="chapter_3.5.4.html#2D_and_3D">3d
+volume data)</a> are required. Second,&nbsp;the gridpoint
+data
+of the quantity has to
+be resorted to array <span style="font-family: monospace;">local_pf</span>
+in subroutine <a href="chapter_3.5.1.html#user_data_output_dvrp"><span style="font-family: monospace;">user_data_output_dvrp</span></a>
+as follows:<br><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE ( '<span style="color: rgb(255, 0, 0);">u2</span>',
+'<span style="color: rgb(255, 0, 0);">u2</span>_xy',
+'<span style="color: rgb(255, 0, 0);">u2</span>_xz',
+'<span style="color: rgb(255, 0, 0);">u2</span>_yz'&nbsp;
+)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; i = nxl, nxr+1<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; j = nys, nyn+1<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DO&nbsp; k = nzb, nz_do3d<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+local_pf(i,j,k) = <span style="color: rgb(255, 0, 0);">u2</span>(k,j,i)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDDO</code><br><br>Only those parts in <span style="color: rgb(255, 0, 0);">red</span> have to be
+adjusted by the user.<br><br>After performing these steps,
+the user-defined quantity <code>'u2'</code> can be
+selected like standard model quantities by the <a href="chapter_4.2.html#dvrp_graphics">dvrp_graphics</a>
+package parameter <a href="chapter_4.2.html#mode_dvrp">mode_dvrp</a>.<br><br><h4><a name="spectra"></a>5. Output of user-defined spectra</h4>This
+example shows the output of the
+quantity "turbulent resolved-scale horizontal momentum flux" (u*v*). If
+more than one user-defined
+quantity shall be output, the following steps have to be carried out in
+the
+same way for each of the quantities.<br><br><ol><li>The
+calculation of user-defined spectra is closely linked with the
+calculation of <a href="chapter_3.5.4.html#vertical_profiles"><span style="font-weight: bold;">part 1.</span>
+(user-defined
+</a><a href="chapter_3.5.4.html#vertical_profiles">vertical
+profiles</a><a href="chapter_3.5.4.html#vertical_profiles">)</a><span style="font-weight: bold;"></span> and <a href="chapter_3.5.4.html#2D_and_3D"><span style="font-weight: bold;">part 3.</span> (user-defined</a><a href="chapter_3.5.4.html#2D_and_3D"> </a><a href="chapter_3.5.4.html#2D_and_3D">3d volume data</a><a href="chapter_3.5.4.html#2D_and_3D">)</a><span style="font-weight: bold;"></span>. Therefore, the
+following prerequisites apply
+for each user-defined
+spectra quantity:</li></ol><ol style="list-style-type: upper-alpha;"><ol style="list-style-type: upper-alpha;"><li>From <a href="chapter_3.5.4.html#vertical_profiles"><span style="font-weight: bold;">part 1.</span>
+(user-defined
+</a><a href="chapter_3.5.4.html#vertical_profiles">vertical
+profiles</a><a href="chapter_3.5.4.html#vertical_profiles">)</a>
+steps 2 and 3. <br>See the sample code (as comment lines) for <span style="font-style: italic;">'u*v*'</span> and <code>ustvst</code>,
+respectively. (Actual output of vertical profiles - step 1 - is not
+required.)</li><li>From <a href="chapter_3.5.4.html#2D_and_3D"><span style="font-weight: bold;">part 3.</span> (user-defined</a><a href="chapter_3.5.4.html#2D_and_3D"> </a><a href="chapter_3.5.4.html#2D_and_3D">3d volume data</a><a href="chapter_3.5.4.html#2D_and_3D">)</a> steps 2, 3,
+4, 5, and 6. <br>See the sample code (as comment lines) for <span style="font-style: italic;">'u*v*'</span> and <code>ustvst</code>,
+respectively. (Actual output of 3d volume data - step 1 - is not
+required.)</li><li>The quantity has to be given a unique
+string identifier, e.g. <span style="font-style: italic;">'u*v*'</span>.
+This identifier must be different from the identifiers used for the
+PALM standard output (see list in description of package parameter <a href="chapter_4.2.html#data_output_sp">data_output_sp</a>).
+To switch on output of this quantity, the user has to assign the string
+identifier to the package parameter <a href="chapter_4.2.html#data_output_sp">data_output_sp</a>,
+eg.:<br><br><span style="font-family: monospace;">&nbsp;
+&nbsp; data_output_sp</span> =&nbsp; <span style="font-style: italic;">'u*v*'</span><br><br></li></ol>A.
+and B. as prerequisites for C. require a naming convention of identical
+identifiers, e.g. data_output_pr_user = 'u*v*', data_output_user =
+'u*v*' and data_output_sp = 'u*v*'. This naming convention applies only
+in case of user-defined spectra.</ol><ol start="2"><li>Edit
+the subroutine <a href="chapter_3.5.1.html#user_spectra">user_spectra</a>
+(only those parts in <span style="color: rgb(255, 0, 0);">red</span>)
+as follows:<br><br><code>&nbsp;&nbsp;&nbsp;
+IF ( mode == 'preprocess' )&nbsp; THEN<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+SELECT CASE ( TRIM( data_output_sp(m) ) )<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE ( 'u', 'v', 'w', 'pt', 'q' )<br>!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Not allowed here since these are the standard quantities used in <br>!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+preprocess_spectra.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><span style="color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE ( 'u*v*' )</span><br style="color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);"><span style="color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pr = pr_palm+1</span><br style="color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);"><span style="color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+d(nzb+1:nzt,nys:nyn,nxl:nxr) = ustvst(nzb+1:nzt,nys:nyn,nxl:nxr)</span><br style="color: rgb(255, 0, 0); background-color: rgb(255, 255, 255);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE DEFAULT<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+PRINT*, '+++ user_spectra/preprocess: Spectra of ', &amp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TRIM( data_output_sp(m) ), ' can not be calculated'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+END SELECT<br><br>&nbsp;&nbsp;&nbsp; ELSEIF (
+mode == 'data_output' )&nbsp; THEN<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+SELECT CASE ( TRIM( data_output_sp(m) ) )<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE ( 'u', 'v', 'w', 'pt', 'q' )<br>!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Not allowed here since these are the standard quantities used in <br>!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+data_output_spectra.<br><br><span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE ( 'u*v*' )</span><br style="color: rgb(255, 0, 0);"><span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pr = 6</span><br style="color: rgb(255, 0, 0);"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CASE DEFAULT<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+PRINT*, '+++ user_spectra/data_output: Spectra of ', &amp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TRIM( data_output_sp(m) ), ' are not defined'<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+END SELECT<br><br>&nbsp;&nbsp;&nbsp; ENDIF</code><br></li></ol>Note
+that spectra output is an <a href="chapter_3.7.html">optional
+software package</a> (see <a href="chapter_3.7.html">chapter
+3.7</a>). Therefore user-defined spectra also require the package
+activation via <code>mrun -p spectra</code>.<hr>
+<p style="line-height: 100%;"><br><font color="#000080"><font color="#000080"><a href="chapter_3.5.3.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.5.5.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" src="right.gif" name="Grafik3"></font></a></font></font></p><p style="line-height: 100%;"><i>Last
+change:&nbsp;</i> $Id: chapter_3.5.4.html 136 2007-11-26
+02:47:32Z letzel $</p>
+</body></html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.5.3</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20040802;14001660"> <meta name="CHANGED" content="20041112;14483720"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head><body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">3.5.3 Definition of user-defined
+subdomains</h3>
+<p style="line-height: 100%;">By default, the values of
+the timeseries quantities and the horizontally averaged vertical
+profiles (saved in local files
+<a href="chapter_3.4.html#PLOT1D_DATA">PLOT1D_DATA</a>
+and <a href="chapter_3.4.html#LIST_PROFIL">LIST_PROFIL</a>)
+always refer to the total model domain. Independently, up to 9 time
+series or profiles for different user-defined subdomains can be
+computed and plotted additionally. Steering in principle is done
+via the initialization parameter <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>.
+</p>
+<p style="line-height: 100%;">The exact definition of
+these subdomains
+has to be made by the user within the user-defined subroutine <tt><font style="font-size: 10pt;" size="2">user_init</font></tt>.
+The
+subdomains are defined with a mask array named <tt><font style="font-size: 10pt;" size="2">rmask</font></tt>,
+which has to be given the value 1.0 for all horizontal grid points
+belonging to
+the user-defined subdomain and the value 0.0, where grid points do not
+belong
+to the user-defined subdomain. In the model <tt><font size="2">rmask</font></tt>
+is
+declared as: </p>
+<ul> <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">REAL :: rmask
+(nys-1:nyn+1,nxl-1:nxr+1,0:9) .</font></tt></p>
+</ul><p style="line-height: 100%;">The first two
+indices are the grid point
+indices in y and x-direction. With parallel model runs <tt><font style="font-size: 10pt;" size="2">nxl</font></tt><font style="font-size: 10pt;" size="2">,
+</font><tt><font style="font-size: 10pt;" size="2">nxr</font></tt><font style="font-size: 10pt;" size="2">,
+</font><tt><font style="font-size: 10pt;" size="2">nys</font></tt><font style="font-size: 10pt;" size="2">
+<font size="3">and</font> </font><tt><font style="font-size: 10pt;" size="2">nyn</font></tt>
+are the array bounds of the respective subdomain (don't confuse this
+with the user-defined subdomain!) on the
+respective processor. With runs on one processor <tt><font style="font-size: 10pt;" size="2">nys</font></tt><font style="font-size: 10pt;" size="2">
+= </font><tt><font style="font-size: 10pt;" size="2">nxl</font></tt><font style="font-size: 10pt;" size="2">
+= 0</font> and <font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">nxr
+=</font> </font><a href="chapter_4.1.html#nx">nx</a>
+and <font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">nyn
+=</font></font> <a href="chapter_4.1.html#ny">ny</a>.
+The third index determines the user-defined subdomain. The total model
+domain
+carries the index 0, the user-defined subdomains have the values 1 to
+9. </p>
+<p style="line-height: 100%;">The following example should
+illustrate
+this. Two subdomains are defined by the user. The first is determined
+by all grid
+points which lie within a circle whose center is equal to the
+(horizontal) center of the model domain and whose diameter is equal
+to half of the total horizontal domain size (square total domain
+assumed).
+The second subdomain should be defined by all points outside of this
+domain. This may be obtained by the following lines of code in <tt><font style="font-size: 10pt;" size="2">user_init</font></tt>:
+</p>
+<ul> <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">USE
+grid_variables</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">USE indices</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">USE statistics</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">.</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">.</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">.</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">disc_center_x = dx * (nx + 1)/2</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">disc_center_y = dy * (ny + 1)/2</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">disc_radius = 0.5 *
+disc_center_x</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">DO&nbsp; i = nxl-1, nxr+1</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp; x = i * dx</font></font></tt><br>
+<tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;
+DO&nbsp; j = nys-1, nyn+1</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+y = j * dy</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+radial_distance = SQRT( ( x - disc_center_x )**2 + &amp;</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( y - disc_center_y )**2 )</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp; &nbsp;
+&nbsp; IF ( radial_distance
+&gt; disc_radius )&nbsp; THEN</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rmask(j,i,1) = 0.0</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rmask(j,i,2) = 1.0</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ELSE</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rmask(j,i,1) = 1.0</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rmask(j,i,2) = 0.0</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENDIF</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&nbsp;&nbsp; ENDDO</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">ENDDO</font></font></tt></p>
+</ul><p style="line-height: 100%;">The module <span style="font-family: monospace;">statistics</span> must
+be used,
+because it contains <span style="font-family: monospace;">rmask</span>
+and the modules <span style="font-family: monospace;">grid_variables</span>
+and <span style="font-family: monospace;">indices</span>
+are
+necessary in this example, because grid spacing and indices are used.
+All array elements of <span style="font-family: monospace;">rmask</span>
+(<span style="font-family: monospace;">rmask(:,:,:)</span>)
+are preset
+by the model with 1.0. In no case this assignment must be
+changed for the total domain (<span style="font-family: monospace;">rmask(:,:,0)</span>)!
+Computations and output for the user-defined subdomains only take place
+if
+the user sets <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>
+&#8805; <i>1</i>. Beyond that, names for the user-defined
+subdomains can be
+assigned
+via the initialization parameter <a href="chapter_4.3.html#region">region</a>.
+Output of the names of the selected user-defined subdomains happens in
+the local files <a href="chapter_3.4.html#HEADER">HEADER</a>
+and <a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a>
+within the user-defined subroutine <tt><font style="font-size: 10pt;" size="2">user_header</font></tt>.
+<br>
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.5.2.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.5.4.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;</i>
+$Id: chapter_3.5.3.html 555 2010-09-07 07:32:53Z raasch $</p>
+</body></html>

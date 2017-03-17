@@ -1,0 +1,479 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+<meta content="text/html; charset=windows-1252" http-equiv="CONTENT-TYPE"><title>PALM chapter 4.5.1</title>
+<meta content="StarOffice 7 (Win32)" name="GENERATOR">
+<meta content="Siegfried Raasch" name="AUTHOR"> <meta content="20041022;12155949" name="CREATED"> <meta content="20041117;11232134" name="CHANGED"> <meta content="parallel LES model" name="KEYWORDS"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head><body style="direction: ltr;" lang="en-US"><h4 style="line-height: 100%;"><font size="4">4.5.1
+NetCDF data output&nbsp;<span style="color: rgb(255, 0, 0);"></span></font></h4>
+<p style="line-height: 100%;">The standard data output of
+PALM is NetCDF (<span style="font-weight: bold;">Net</span>work
+<span style="font-weight: bold;">C</span>ommon <span style="font-weight: bold;">D</span>ata <span style="font-weight: bold;">F</span>orm) in 64-bit offset format. NetCDF is an
+interface to a library of data access functions for
+storing and retrieving data in the form of arrays. NetCDF is an
+abstraction that supports a view of data as a collection of
+self-describing, <span style="font-weight: bold;">portable</span>
+objects that can be accessed through a simple interface (protable means
+that NetCDF data files can be read on any machine regardless of where
+they
+have been created). Array values may be accessed directly, without
+knowing details of how the data are stored. Auxiliary information about
+the data, such as what units are used, may be stored with the data.
+Generic utilities and application programs can access NetCDF datasets
+(files) and transform, combine, analyze, or display specified fields of
+the data, e.g. the contents of a NetCDF dataset can be viewed using the
+command <span style="font-family: monospace;">ncdump</span>
+(see <a href="#ncdump">further below</a>).
+Many (public domain) graphic software has built in interfaces to read
+NetCDF datasets (e.g. <span style="font-weight: bold;">ferret</span>
+or <span style="font-weight: bold;">NCL</span>).
+The complete NetCDF documentation
+is available from the <a href="http://www.unidata.ucar.edu/packages/netcdf/docs.html">NetCDF
+homepage</a>. The NetCDF tutorial for FORTRAN90 can also be found
+on <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/manual/netcdf/netcdf-3_f90_tutorial.pdf">our
+web server</a>.</p><p style="line-height: 100%;">The
+general output format of PALM data is determined by the runtime-parameter <a href="chapter_4.2.html#data_output_format">data_output_format</a>
+(<span style="font-weight: bold;">data_output_format</span>
+= <span style="font-style: italic;">'netcdf'</span>,
+by default). For historical reasons, some alternative formats can be
+selected (see <a href="chapter_4.2.html#data_output_format">data_output_format</a>).
+The accuracy of the NetCDF output data can be set with parameter <a href="chapter_4.1.html#netcdf_precision">netcdf_precision</a>.
+By default, data have single (4 byte) precision. Runtime-parameter <a href="chapter_4.2.html#netcdf_data_format">netcdf_data_format</a>
+can be used to choose between the different NetCDF file formats
+(classic, 64-bit offset, NetCDF4/HDF5). The 64-bit offset format allows
+creating large files (file size only limited by the underlying file
+system), but each output variable (array) is still limited to 2GB. In
+NetCDF4 format, there is no limit for the size of variables, and it
+also allows parallel I/O into one output file. However, some (graphic)
+software still does not support NetCDF4 format.<br></p>PALM allows the output of
+various
+data (e.g. cross sections, vertical profiles, timeseries, etc.) into
+different files. The following table gives an overview about the
+different kind of NetCDF output data offered by PALM. Beside the local
+names of the files, the table also lists the minimum parameter settings
+which
+are necessary to switch on the output, as well as the parameters to be
+used to control the output.<br><br><table style="text-align: left; width: 750px; height: 226px;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td align="left" valign="top"><span style="font-weight: bold;">kind of data</span></td><td align="left" valign="top"><span style="font-weight: bold;">local filename</span></td><td align="left" valign="top"><span style="font-weight: bold;">parameter settings necessary to
+switch on output</span></td><td align="left" valign="top"><span style="font-weight: bold;">further
+parameters for output control</span></td></tr><tr><td align="left" valign="top">vertical profiles</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_1D_PR_NETCDF">DATA_1D_PR_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output_pr">data_output_pr</a>,
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_dopr">dt_dopr</a>)</td><td align="left" valign="top"><a href="chapter_4.2.html#averaging_interval">averaging_interval</a>,
+(or <a href="chapter_4.2.html#averaging_interval_pr">averaging_interval_pr</a>),
+<a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#dt_averaging_input">dt_averaging_input</a>,
+<a href="chapter_4.2.html#dt_averaging_input_pr">dt_averaging_input_pr</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_dopr">skip_time_dopr</a>),
+<a href="chapter_4.1.html#statistic_regions">statistic_regions</a></td></tr><tr><td align="left" valign="top">timeseries</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_1D_TS_NETCDF">DATA_1D_TS_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#dt_dots">dt_dots</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.1.html#statistic_regions">statistic_regions</a></td></tr><tr><td align="left" valign="top">spectra</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_1D_SP_NETCDF">DATA_1D_SP_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#comp_spectra_level">comp_spectra_level</a>,
+<a href="chapter_4.2.html#data_output_sp">data_output_sp</a>,
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_dosp">dt_dosp</a>),
+<a href="chapter_4.2.html#spectra_direction">spectra_direction</a></td><td align="left" valign="top"><a href="chapter_4.2.html#averaging_interval">averaging_interval</a>&nbsp;(or
+<a href="chapter_4.2.html#averaging_interval_sp">averaging_interval_sp</a>),
+<a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#dt_averaging_input_pr">dt_averaging_input_pr</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_dosp">skip_time_dosp)</a></td></tr><tr><td align="left" valign="top">2d cross section (xy)</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_2D_XY_NETCDF">DATA_2D_XY_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_do2d_xy">dt_do2d_xy</a>),
+<a href="chapter_4.2.html#section_xy">section_xy</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>,
+<a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_do2d_xy">skip_time_do2d_xy</a>)</td></tr><tr><td align="left" valign="top">2d cross section (xy),
+time-averaged</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_2D_XY_AV_NETCDF">DATA_2D_XY_AV_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_data_output_av">dt_data_output_av</a>&nbsp;or
+<a href="chapter_4.2.html#dt_do2d_xy">dt_do2d_xy</a>),
+<a href="chapter_4.2.html#section_xy">section_xy</a></td><td align="left" valign="top"><a href="chapter_4.2.html#averaging_interval">averaging_interval</a>,
+<a href="chapter_4.2.html#dt_averaging_input">dt_averaging_input</a>,
+<a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>,
+<a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_data_output_av">skip_time_data_output_av</a>,
+or <a href="chapter_4.2.html#skip_time_do2d_xy">skip_time_do2d_xy</a>)</td></tr><tr><td align="left" valign="top">2d cross section (xz)</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_2D_XZ_NETCDF">DATA_2D_XZ_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_do2d_xz">dt_do2d_xz</a>),
+<a href="chapter_4.2.html#section_xz">section_xz</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>,
+<a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_do2d_xz">skip_time_do2d_xz</a>)</td></tr><tr><td align="left" valign="top">2d cross section (xz),
+time-averaged</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_2D_XZ_AV_NETCDF">DATA_2D_XZ_AV_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_data_output_av">dt_data_output_av</a>&nbsp;or
+<a href="chapter_4.2.html#dt_do2d_xz">dt_do2d_xz</a>),
+<a href="chapter_4.2.html#section_xz">section_xz</a></td><td align="left" valign="top"><a href="chapter_4.2.html#averaging_interval">averaging_interval</a>,
+<a href="chapter_4.2.html#dt_averaging_input">dt_averaging_input</a>,
+<a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>,
+<a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_data_output_av">skip_time_data_output_av</a>,
+or <a href="chapter_4.2.html#skip_time_do2d_xz">skip_time_do2d_xz</a>)</td></tr><tr><td align="left" valign="top">2d cross section (yz)</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_2D_YZ_NETCDF">DATA_2D_YZ_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_do2d_yz">dt_do2d_yz</a>),
+<a href="chapter_4.2.html#section_yz">section_yz</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>,
+<a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_do2d_yz">skip_time_do2d_yz</a>)</td></tr><tr><td align="left" valign="top">2d cross section (yz),
+time-averaged</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_2D_YZ_AV_NETCDF">DATA_2D_YZ_AV_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_data_output_av">dt_data_output_av</a>&nbsp;or
+<a href="chapter_4.2.html#dt_do2d_yz">dt_do2d_yz</a>),
+<a href="chapter_4.2.html#section_yz">section_yz</a></td><td align="left" valign="top"><a href="chapter_4.2.html#averaging_interval">averaging_interval</a>,
+<a href="chapter_4.2.html#dt_averaging_input">dt_averaging_input</a>,
+<a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>,
+<a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>,
+<a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_data_output_av">skip_time_data_output_av</a>,
+or <a href="chapter_4.2.html#skip_time_do2d_yz">skip_time_do2d_yz</a>)</td></tr><tr><td align="left" valign="top">3d volume</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_3D_NETCDF">DATA_3D_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_do3d">dt_do3d</a>)</td><td align="left" valign="top"><a href="chapter_4.2.html#data_output_format">data_output_format</a>,
+<a href="chapter_4.2.html#do3d_at_begin">do3d_at_begin</a>,
+<a href="chapter_4.2.html#nz_do3d">nz_do3d</a>, <a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_do3d">skip_time_do3d</a>)</td></tr><tr><td align="left" valign="top">3d volume, time-averaged</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_3D_AV_NETCDF">DATA_3D_AV_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#data_output">data_output</a>
+(or <a href="chapter_4.3.html#data_output_user">data_output_user</a>),
+<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_data_output_av">dt_data_output_av</a>&nbsp;or
+<a href="chapter_4.2.html#dt_do3d">dt_do3d</a>)</td><td align="left" valign="top"><a href="chapter_4.2.html#averaging_interval">averaging_interval</a>,
+<a href="chapter_4.2.html#dt_averaging_input">dt_averaging_input</a>,
+<a href="chapter_4.2.html#data_output_format">data_output_format</a>,&nbsp;<a href="chapter_4.2.html#do3d_at_begin">do3d_at_begin</a>,
+<a href="chapter_4.2.html#nz_do3d">nz_do3d</a>, <a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_data_output_av">skip_time_data_output_av</a>,
+or <a href="chapter_4.2.html#skip_time_do3d">skip_time_do3d</a>)</td></tr><tr><td align="undefined" valign="undefined">particle
+timeseries</td><td style="vertical-align: top;"><a href="chapter_3.4.html#DATA_1D_PTS_NETCDF">DATA_1D_PTS_NETCDF</a></td><td style="vertical-align: top;"><a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+(or <a href="chapter_4.2.html#dt_dopts">dt_dopts</a>)</td><td align="undefined" valign="undefined"><br>
+</td></tr><tr><td align="left" valign="top">particle attributes</td><td align="left" valign="top"><a href="chapter_3.4.html#DATA_PRT_NETCDF">DATA_PRT_NETCDF</a></td><td align="left" valign="top"><a href="chapter_4.2.html#dt_write_particle_data">dt_write_particle_data</a></td><td align="left" valign="top"><br>
+</td></tr></tbody></table><br><br><span style="font-weight: bold;">Creating, contents and
+post-processing of a PALM NetCDF file</span><br><br>This
+section describes, step-by-step, the creation, storage, and
+post-processing of PALM NetCDF datasets considering the output of 2d
+horizontal (xy) cross sections as example. The parameter settings
+described below are those of the <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/example_p3d">example
+parameter file</a> (see <a href="chapter_4.4.1.html">chapter
+4.4.1</a>) so this parameter file can be used to retrace the
+following explanations.<br><br><ol><li>Output
+of xy cross
+sections requires to set at least three parameters: first, the temporal
+interval of the output time (run parameter <a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+or <a href="chapter_4.2.html#dt_do2d_xy"><u>dt_do2d_xy)</u></a><span style="text-decoration: none;">, second<span style="text-decoration: none;"></span>,
+the names of the quantities for which cross section output is wanted</span><span style="text-decoration: none;"><span style="text-decoration: none;"> (<a href="chapter_4.2.html#data_output">data_output</a></span></span>),
+and third, the position (height level given as gridpoint index) of the
+cross sections (<a href="chapter_4.2.html#section_xy">section_xy</a>).
+The string <span style="font-style: italic;">'_xy'</span>
+must be appended to the name strings assigned to <span style="font-weight: bold;">data_output</span> in
+either case. Output times
+cannot be defined
+directly but only via the output time interval, starting from the
+beginning of the initial 3d run (t=0, but no cross sections are
+written at the time t=0; exceptions see <a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>).
+As an exception, the first output time can be set independently with
+parameter <a href="chapter_4.2.html#skip_time_data_output">skip_time_data_output</a>
+(or <a href="chapter_4.2.html#skip_time_do2d_xy">skip_time_do2d_xy</a>).<br><br><span style="font-weight: bold;">Very important:</span><br>If
+no values have been assigned to <b>data_output</b> , <span style="font-weight: bold;">dt_data_output</span> (or <span style="font-weight: bold;">dt_do2d_xy</span>), and <b>section_xy</b>,
+or
+if the values given for <span style="font-weight: bold;">dt_data_output</span>
+(or <b>dt_do2d_xy</b>) or <span style="font-weight: bold;">skip_time_data_output</span>
+(or <span style="font-weight: bold;">skip_time_do2d_xy</span>)
+are
+larger than the simulated time (see <a href="chapter_4.1.html#end_time">end_time</a>),
+<b>then there will be no output!<br><br></b>For
+output of time-averaged data, the string <span style="font-style: italic;">'_av'</span> has to be
+additionally appended to the respective name string (see <a href="chapter_4.2.html#data_output">data_output</a>).<br><br><br></li><li>
+<p style="line-height: 100%;">Instantaneous data are
+output in NetCDF
+format
+into the
+local file&nbsp;<a href="chapter_3.4.html#DATA_2D_XY_NETCDF">DATA_2D_XY_NETCDF</a>.
+This file must be linked with a permanent file by
+using a file connection statement in the <b>mrun</b>
+configuration
+file (see e.g. <a href="chapter_3.2.html">chapter
+3.2</a>). At the end of the run the local file is copied to this
+file. Such a statement can look like this:<br><br><span style="font-family: monospace;">&nbsp;
+&nbsp;DATA_2D_XY_NETCDF out:loc:tr&nbsp;&nbsp;xy#&nbsp;
+~/$fname/OUTPUT/$fname&nbsp; _xy nc &nbsp; .</span><br><br>If
+the respective <b>mrun</b> call is
+like<br><br><span style="font-family: monospace;">&nbsp;
+&nbsp;mrun -d&nbsp; test -r “xy#” ... </span><br style="font-family: monospace;"><br>then the local
+file <tt><font style="font-size: 10pt;" size="2">DATA_2D_XY_NETCDF</font></tt>
+is copied to the permanent file <tt><font style="font-size: 10pt;" size="2">~/test/OUTPUT/test/test_xy.nc</font>
+</tt>. However, the character string <span style="font-family: mon; font-style: italic;">'</span><tt style="font-style: italic;"><font style="font-size: 10pt;" size="2">xy#</font></tt><span style="font-style: italic;">'</span> activating the
+file connection statement (see third column of the
+statement) must be given in the <b>mrun</b> call as
+argument of the
+option -r (and/or -o)<b>.</b> <span style="text-decoration: none;">If
+t</span>his is forgotten by mistake, the model outputs the data
+to
+the local file, but this is not copied to the permanent file and thus
+the data are not available for the user after the run has finished.<br><br>The
+last (6th) column of the file connection statement, which defines the
+additional file suffix, should be the string <span style="font-style: italic;">'nc'</span>, because many
+application programs expect NetCDF files to have the file extension <span style="font-style: italic;">'.nc'</span>. (This
+additional suffix given in the 6th column is always put at the very end
+of the filename, even
+in case of cycle numbers.)<br><br>Time averaged data are
+output into local file&nbsp;<a href="chapter_3.4.html#DATA_2D_XY_AV_NETCDF">DATA_2D_XY_AV_NETCDF</a>
+which requires an additional file connection statement<br><br><span style="font-family: monospace;">&nbsp;&nbsp;
+DATA_2D_XY_AV_NETCDF out:loc:tr&nbsp; xy#&nbsp;
+~/$fname/OUTPUT/$fname&nbsp; _xy_av nc&nbsp;&nbsp; .</span><br></p></li><li>Using <a href="chapter_4.2.html#netcdf_data_format">netcdf_data_format</a> &gt; <span style="font-style: italic;">2</span> or <a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a> = <span style="font-style: italic;">.F.</span> generates a single NetCDF file containing data from all propcessors. However, with
+parallel runs and choice of <a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>
+= <i>.T.</i>
+each PE outputs the data of its subdomain
+not directly to the NetCDF file but to a separate file with the name
+PLOT2D_XY_&lt;processor-Id&gt;,
+where &lt;processor-Id&gt; is a four digit number (e.g.
+PLOT2D_XY_0000). These files have FORTRAN binary format. After PALM has
+finished, their content is merged into the final local destination file
+DATA_2D_XY_NETCDF by the program <span style="font-family: monospace;">combine_plot_fields</span>.&nbsp;<span style="font-weight: bold;"></span>This is done by
+adding the following output command to the configuration file:<br><br><span style="font-family: monospace;">&nbsp; &nbsp;OC:[[$
+( echo $localhost | cut -c1-3 ) = imbh ]] &amp;&amp;
+combine_plot_fields.x &nbsp; &nbsp; .</span><br><br>Using
+this call, possibly existing
+files of the other cross sections (xz, yz) and of 3d volume data are
+also merged to their respective NetCDF files.&nbsp;The tool writes
+informative messages about the actions accomplished into the job
+protocol, even if no files were found (i.e. the output command
+may remain in the configuration file, even if no appropriate files
+are created during the simulation).&nbsp;<br><br><br></li><li><a name="ncdump"></a>The contents of a NetCDF dataset can
+be simply analyzed with the tool <span style="font-family: monospace;">ncdump</span>
+(which is part of the NetCDF software). It can be used to display the
+dimension (coordinate) names and lengths; variable names, types, and
+shapes; attribute names and values; and optionally,<br>the values
+of
+data for all variables or selected variables in a netCDF dataset. The
+file content (without displaying the gridpoint data of the quantities)
+can be displayed with the command<br><br><span style="font-family: monospace;">&nbsp; &nbsp;ncdump
+-c &lt;filename&gt; &nbsp; &nbsp; .</span><br><br>Usage
+of the <span style="font-family: monospace;">ncdump</span>
+command requires that the path to the NetCDF software is appropriately
+set. On the IMUK-Linux-cluster this path is set by default, on the
+HLRN-IBM-Regatta, the user has to execute the command<br><br><span style="font-family: monospace;">&nbsp; &nbsp;module
+load netcdf &nbsp; &nbsp; .</span><br><br>Please
+refer to the&nbsp;system documentation or system administrator on
+how
+to setup the correct NetCDF path on the respective host.<br><br>An
+example how to interpret the <span style="font-family: monospace;">ncdump</span>-output
+will be given <a href="#NetCDF_example">further below</a>.<br><br></li><li>There
+are several application programs which can be used for graphical
+display of NetCDF datasets. One of the easiest ways to display the PALM
+data is the <a style="font-family: monospace;" href="http://ferret.wrc.noaa.gov/Ferret/">ferret</a>
+graphical user interface (GUI). On the IMUK-Linux-cluster, this can be
+called by
+executing the command<br><br><span style="font-family: monospace;">&nbsp; &nbsp;ferret
+-gui &nbsp; &nbsp; .</span><br><br><span style="font-family: monospace;">ferret</span> is also
+available at <a href="http://www.hlrn.de/doc/ferret/index.html">HLRN</a>.
+Another possible tool is <span style="font-family: monospace;">ncview</span>,
+which is also available at HLRN (see the <a href="http://www.hlrn.de/doc/ncview/index.html">HLRN
+documentation</a>). Beside these general tools, the PALM group
+will develop a&nbsp;graphical interface based on <a href="http://www.ncl.ucar.edu/">NCL</a>
+(NCAR Command Language). This interface will be&nbsp;specially
+designed
+to display the PALM Data. A detailed documentation will be linked here
+as soon as available.<br><br><br></li><li><a name="netcdf_example_program"></a>One
+of the most flexible general ways for postprocessing NetCDF data
+is&nbsp;reading these data into a FORTRAN program. The&nbsp;<a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/read_palm_netcdf_data.f90"><font color="#000080">example program</font></a> shows
+how to read 2d or 3d NetCDF datasets created by PALM. Compiling this
+program requires that the
+NetCDF library is installed (if neccessary, please ask your system
+administrator). Some compilation instructions are given in the header
+of the
+example program.<br><br><br></li><li>By
+default, each PALM job creates its own NetCDF files. If permanent files
+with respective filenames are already existing, then new files with
+higher cycle numbers will be created. However, in case of a job chain,
+it is possible to extend the NetCDF datasets created by the initial
+run&nbsp;with data from the restart run(s). As a result, data of
+all
+output times of the complete job chain are contained in one file and
+the number of data files to be handled by the user may be reduced
+significantly.<br>To extend a NetCDF dataset (created by a
+previous run
+of a job chain) with data from the current run requires that this
+dataset must be provided as an INPUT file. This may be difficult in
+case that PALM is running on a remote host because typically the output
+data files from the previous run have been already transferred by <span style="font-weight: bold;">mrun</span> to the local
+workstation with a file connection statement like<br><br><span style="font-family: monospace;">&nbsp;
+&nbsp;DATA_2D_XY_NETCDF
+&nbsp;out:loc:tr&nbsp;&nbsp;xy#:xyf
+&nbsp;~/palm/current_version/JOBS/$fname/OUTPUT
+&nbsp;_xy&nbsp; nc</span><br><br>and thus
+they are not available on the remote host any more. <br>A
+workaround for solving this problem is to create an additional copy of
+the output file on the remote machine by adding the file connection
+statement<br><br><span style="font-family: monospace;">&nbsp;&nbsp;
+DATA_2D_XY_NETCDF&nbsp; out:loc&nbsp; xy#:xyf&nbsp;
+~/palm/current_version/JOBS/$fname/OUTPUT&nbsp; _xy&nbsp; nc</span><br><br>This
+additional copy can then be accessed from a restart job as an input
+file using the file connection statement<br><br><span style="font-family: monospace;">&nbsp;&nbsp;
+DATA_2D_XY_NETCDF&nbsp; in:locopt&nbsp;&nbsp;xyf&nbsp;
+~/palm/current_version/JOBS/$fname/OUTPUT&nbsp; _xy&nbsp; nc</span><br><br>Here
+the file attribut <span style="font-family: monospace;">locopt</span>
+(2nd column) guarantees that the job continues if a permanent file does
+not exist (e.g. in case of an initial run). Otherwise, the job would be
+aborted.<br>Although the dataset created by the last run of a job
+chain
+will contain data from all selected time levels of the complete job
+chain, the main disadvantage of this workaround is that the datasets
+created by the remaining jobs (with lower cycle numbers) still exist
+and may consume large disc space. They have to be deleted "by hand" by
+the user on the local machine as well as on the remote
+machine&nbsp;because they only contain redundant data from the
+earlier
+time levels which are already contained&nbsp;in the dataset created
+by
+the last job of the job chain.<br><br><span style="font-weight: bold;">Note:</span><br>Extension
+of PALM NetCDF datasets of 2d horizontal cross sections requires that
+parameters <a href="chapter_4.2.html#data-output">data_output</a>
+and <a href="chapter_4.2.html#section_xy">section_xy</a>&nbsp;
+for the restart runs are set identical to the initial run. In case of a
+value mismatch between initial and restart runs, a warning is issued in
+the job protocol file and the dataset will contain only data from those
+timelevels calculated within the restart run.<br>Similar
+restrictions apply for all other PALM NetCDF datasets (i.e. profiles,
+vertical cross sections, volume data, etc.).</li></ol><br>&nbsp;<br><span style="font-weight: bold;"><a name="NetCDF_example"></a>Example
+of a PALM NetCDF dataset</span><br><br>The
+NetCDF dataset described here contains data of instantaneous horizontal
+cross sections and has been created using the settings of the <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/example_p3d">example
+parameter file</a> (see <a href="chapter_4.4.1.html">chapter
+4.4.1</a>),
+i.e. it contains section data of the w-velocity-component and of the
+potential temperature for vertical grid levels with index <span style="font-family: monospace;">k = 2</span> and <span style="font-family: monospace;">k = 10</span>,
+selected by the respective parameter settings <a href="chapter_4.2.html#data_output">data_output</a> = <span style="font-style: italic;">'w_xy'</span>, <span style="font-style: italic;">'pt_xy'</span>, and <a href="chapter_4.2.html#section_xy">section_xy</a> = <span style="font-style: italic;">2</span>, <span style="font-style: italic;">10</span>. Output has been
+created after every 900 s (<a href="chapter_4.2.html#dt_data_output">dt_data_output</a>
+= <span style="font-style: italic;">900.0</span>).
+Because of <a href="chapter_4.2.html#end_time">end_time</a>
+= <span style="font-style: italic;">3600.0</span>,
+the file contains data of 4 time levels (t = 900, 1800, 2700, 3600 s).<br>Supposed
+that the name of the NetCDF dataset is <span style="font-family: monospace;">example_xy.nc</span>,
+an analysis of the file contents using the command<br><br><span style="font-family: monospace;">&nbsp; &nbsp;ncdump
+-c example_xy.nc</span><br><br>will create the
+following output. The original ncdump output is displayed using <span style="font-family: monospace;">fixed spacing</span>,
+additional explanations are given in <span style="font-style: italic; font-family: monospace;">italian</span>.<br><br><div style="margin-left: 40px;"><span style="font-family: monospace;">netcdf&nbsp;example_xy {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="font-style: italic;">! filename</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">dimensions: &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;<span style="font-style: italic;">!
+41 gridpoints along x and y, 4 timelevels</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+time = UNLIMITED ; // (4 currently) &nbsp; &nbsp;<span style="font-style: italic;">! unlimited means
+that&nbsp;additional time levels can be added (e.g. by</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;<span style="font-style: italic;">! restart jobs)</span><br>&nbsp;&nbsp;&nbsp;
+zu_xy = 2 ; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;<span style="font-style: italic;">!
+vertical dimension (2, because two cross sections are selected);</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+zw_xy = 2 ; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;<span style="font-style: italic;">!
+there are two different vertical dimensions zu and zw because due</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+zu1_xy = 1 ; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; <span style="font-style: italic;">!
+to the staggered grid the z-levels of variables are those of the</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+x = 41 ; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="font-style: italic;">! u- or the w-component of the
+velocity</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+y = 41 ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">variables: &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; <span style="font-style: italic;">!
+precision, dimensions, and units of the variables</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double time(time) ; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="font-style: italic;">! the variables containing the
+time levels and grid point coordinates</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; time:units = "seconds" ; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-style: italic;">! have the same names as the
+respective dimensions</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double zu_xy(zu_xy) ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; zu_xy:units = "meters" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double zw_xy(zw_xy) ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; zw_xy:units = "meters" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double zu1_xy(zu1_xy) ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; zu1_xy:units = "meters" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double ind_z_xy(zu_xy) ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; ind_z_xy:units = "gridpoints" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double x(x) ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; x:units = "meters" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+double y(y) ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; y:units = "meters" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+float w_xy(time, zw_xy, y, x) ; &nbsp; &nbsp; &nbsp;
+&nbsp;<span style="font-style: italic;">! array of the
+vertical velocity; it has 4 dimensions: x and y,</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; w_xy:long_name = "w_xy" ; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;<span style="font-style: italic;">! because it is a horizontal
+cross section, zw_xy, which defines</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; w_xy:units = "m/s" ; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="font-style: italic;">! the vertical levels of the
+sections, and time, for the time levels</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+float pt_xy(time, zu_xy, y, x) ; &nbsp; &nbsp; &nbsp; <span style="font-style: italic;">! array of the potential
+temperature, which is defined on the u-grid</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; pt_xy:long_name = "pt_xy" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; pt_xy:units = "K" ;</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">// global attributes:</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; :Conventions = "COARDS" ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; :title = "PALM&nbsp;&nbsp;
+3.0&nbsp; run:
+example.00&nbsp; host: ibmh&nbsp; 13-04-06 15:12:43" ;
+&nbsp;<span style="font-style: italic;">! PALM
+run-identifier</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; :VAR_LIST = ";w_xy;pt_xy;" ; &nbsp;
+&nbsp; &nbsp; <span style="font-style: italic;">!
+the list of output quantities contained in this dataset;</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;<span style="font-style: italic;">! this global
+attribute can be used by FORTRAN programs to identify</span><br>&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;<span style="font-style: italic;">! and read the
+quantities contained in the file</span><br>data:</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;time = 905.3,
+1808.98, 2711.98, 3603.59 ; <span style="font-style: italic;">!
+values of the four time levels</span></span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;zu_xy = 75, 475 ;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="font-style: italic;">! heights of the two selected
+cross sections (u-grid)</span></span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;zw_xy = 100, 500 ;</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;zu1_xy = 25 ;</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;x = 0, 50, 100,
+150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, &nbsp; <span style="font-style: italic;">! x-coordinates of the gridpoints</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300,
+1350, </span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950,
+</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+2000 ;</span><br style="font-family: monospace;"><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;y = 0, 50, 100,
+150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, </span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300,
+1350, </span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950,
+</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+2000 ;</span><br style="font-family: monospace;"><span style="font-family: monospace;">}</span><br></div><br>If
+the option <span style="font-family: monospace;">-c</span>
+is omitted in the <span style="font-family: monospace;">ncdump</span>
+call, then also the complete grid point data of all quantities are
+output to the terminal.<br><br>The &nbsp;<a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/read_palm_netcdf_data.f90"><font color="#000080">example program</font></a><span style="font-weight: bold;"></span> shows how to read
+this 2d
+horizontal cross section dataset from a FORTRAN program (<a href="#netcdf_example_program">see above</a>).<br><hr>
+<p style="line-height: 100%;"><br><font color="#000080"><font color="#000080"><a href="chapter_4.5.html"><font color="#000080"><img name="Grafik1" src="left.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img name="Grafik2" src="up.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.2.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" name="Grafik3" src="right.gif"></font></a></font></font></p><p style="line-height: 100%;"><span style="font-style: italic;">Last
+change:</span> $Id$&nbsp;</p>
+</body></html>

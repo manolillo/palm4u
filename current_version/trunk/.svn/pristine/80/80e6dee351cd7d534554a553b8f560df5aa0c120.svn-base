@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.5.2</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20040802;13321506"> <meta name="CHANGED" content="20041112;14455666"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">&nbsp;3.5.2 Definition of
+user-defined
+parameters</h3>
+<p style="line-height: 100%;">As for the model in general,
+also the
+user-defined code will have to be steered by parameters. For each
+run the model should to be able to read in current values of these
+parameters. The declaration of user-defined parameters takes place in
+the user-defined module <tt><font style="font-size: 10pt;" size="2">user</font></tt>
+(file <tt><font style="font-size: 10pt;" size="2">user_module.f90</font></tt>).
+This module must be declared in all relevant user-defined routines via
+a USE statement, in order to make the parameters available. </p>
+<p style="line-height: 100%;">The user can assign values
+to the
+user-defined parameters within the NAMELIST group <tt><font style="font-size: 11pt;" size="2">&amp;userpar
+<font size="3"><font face="Thorndale, serif">in
+the local file</font></font>
+<a href="chapter_3.4.html#PARIN">PARIN</a></font></tt>.
+This NAMELIST group must be located after the initialization
+parameters and run parameters (<tt><font style="font-size: 10pt;" size="2">&amp;inipar</font></tt><font style="font-size: 10pt;" size="2">,
+</font><tt><font style="font-size: 10pt;" size="2">&amp;d3par</font></tt>)
+(see <a href="chapter_4.0.html">chapter
+4.0</a>). Before values of the user-defined parameters can be
+assigned,
+the parameters must be declared within the appropriate NAMELIST
+statement in the user-defined subroutine <tt><font style="font-size: 10pt;" size="2">user_parin</font></tt>.
+</p>
+<p style="line-height: 100%;">The following example
+illustrates the
+procedure. The example assumes that the user declares a
+LOGICAL variable named <tt><font style="font-size: 10pt;" size="2">abcd</font></tt>
+for steering the user-defined code. This variable
+must be declared in the module <tt>user</tt>: </p>
+<ul> <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">LOGICAL:: abcd =
+.FALSE.</font></tt></p>
+</ul><p style="line-height: 100%;">Pay attention
+that in this example a
+default value (.FALSE.) is assigned to the variable and it will keep
+this value if nothing else is assigned within the file <tt>PARIN</tt>.
+In <tt><font style="font-size: 10pt;" size="2">user_parin</font>
+<font face="Thorndale, serif">the</font></tt>
+NAMELIST must be extended by the name of the new variable: </p>
+<ul> <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">NAMELIST /userpar/
+&nbsp;abcd, data_output_user, region.</font></tt></p>
+</ul><p style="line-height: 100%;">In the parameter
+file PARIN a value can
+be assigned: </p>
+<ul> <p style="line-height: 100%;">. <br>
+. <br> <tt><font style="font-size: 10pt;" size="2">&amp;userpar abcd = .T.,</font></tt><font style="font-size: 10pt;" size="2"> ...</font></p>
+</ul><p style="line-height: 100%;">User defined
+parameters in the file PARIN
+are
+considered as run parameters, i.e. they must be specified again for
+each restart run.</p>
+<p style="line-height: 100%;">In each case the user should
+carry out
+a control output of the parameter values, so
+that their values during the respective model run are really known. For
+this
+purpose the user-defined subroutine <tt><font style="font-size: 10pt;" size="2">user_header</font></tt>
+which writes into the files <a href="chapter_3.4.html#HEADER">HEADER</a>
+and <a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a>
+is available. <br>
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+&nbsp;<font color="#000080"><font color="#000080"><a href="chapter_3.5.1.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.5.3.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a><br>
+</font></font></p><p style="line-height: 100%;"><span style="font-style: italic;">Last
+change:</span> $Id$<font color="#000080"><font color="#000080"><br>
+</font></font></p></body></html>

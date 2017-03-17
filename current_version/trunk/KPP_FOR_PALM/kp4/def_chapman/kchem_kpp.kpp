@@ -1,0 +1,7 @@
+#include      chapman.spc
+#include      chapman.eqn
+#INTEGRATOR rosenbrock
+#LANGUAGE   Fortran90
+//#DRIVER     general
+#HESSIAN    on
+#STOICMAT   on

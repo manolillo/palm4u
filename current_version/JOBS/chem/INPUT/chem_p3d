@@ -1,0 +1,47 @@
+&inipar  nx = 23, ny = 23, nz = 10,
+         dx = 1.0, dy = 1.0, dz =1.0,
+
+         fft_method = 'fftw',
+         loop_optimization = 'cache',
+ 
+         initializing_actions = 'set_constant_profiles',
+         ug_surface = 0.0, vg_surface = 0.0,
+
+         surface_heatflux = 0.1, bc_pt_b = 'neumann',
+
+/
+
+&d3par   end_time = 600.0,
+
+         create_disturbances = .T.,
+         dt_disturb = 150.0, disturbance_energy_limit = 0.01,
+
+         dt_run_control = 0.0,
+
+         data_output = 'pt','u','v','w','kc_O3','kc_NO2','kc_NO','kc_RCHO','kc_H2O','kc_O2',  !chem bk
+
+         dt_data_output = 60.0,
+         do3d_at_begin = .T.,
+         dt_data_output_av = 60.0,
+         averaging_interval = 60.0,
+         dt_averaging_input = 0.0,
+
+         section_xy = 2, 10, section_xz = 20,
+
+         dt_dopr = 60.0,
+         averaging_interval_pr = 60.0, dt_averaging_input_pr = 0.0,
+         data_output_pr = '#pt', 'w"pt"', 'w*pt*', 'wpt', 'w*2', 'pt*2',
+
+/
+!
+&kpp_chem
+! icntrl(3) = solver-specific method:
+! values for rosenbrock:
+!icntrl(3) = 1 ! ros2: L-stable method, 2 stages, order 2
+icntrl(3) = 2 ! ros3: L-stable method, 3 stages, order 3 (recommended)
+!icntrl(3) = 3 ! ros4: L-stable method, 4 stages, order 4
+!icntrl(3) = 4 ! rodas3: stiffly-stable method, 4 stages, order 3
+!icntrl(3) = 5 ! rodas4: stiffly-stable method, 6 stages, order 4
+!
+icntrl(4) = 1000, ! max. number of kpp-substeps
+ /

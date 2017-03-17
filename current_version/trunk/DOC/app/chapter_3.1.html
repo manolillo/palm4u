@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.1</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Marcus Oliver Letzel"> <meta name="CREATED" content="20040806;13565279"> <meta name="CHANGED" content="20040806;13575492"> <meta name="KEYWORDS" content="parallel LES model"></head><body style="direction: ltr;" lang="de-DE"><h3 style="line-height: 100%;">3.1 Job control with mrun</h3>
+<p style="line-height: 100%;">The start of model runs in
+principle
+takes place via executing the shell script <a href="http://www.muk.uni-hannover.de/%7Eraasch/Software/mrun_beschreibung.html">mrun.</a>
+With this script it is possible to operate the model both
+interactively and in batch mode. Batch operation is possible on the
+local computer as well as on a remote computer (supposed that a batch
+queuing system is available). Here only the batch operation on a remote
+computer is
+described, because this represents the usual mode of operation due to
+the large computing time requirements of the model. The interactive
+execution differs only in some points and is described in <a href="chapter_3.6.html">chapter
+3.6</a>. </p>
+<p style="line-height: 100%;">By the call of <b>mrun
+</b>a complete
+batch job is produced, transferred to the user determined remote
+computer
+and submitted to its queuing system (LoadLeveler, PBS, etc.).
+After processing of the job, the so-called job protocol is sent back
+to the local computer of the user (the local computer is the
+computer, on which the user calls <b>mrun</b>). The
+following actions
+are implemented by the job, amongst other: </p>
+<ul> <li> <p style="margin-bottom: 0cm; line-height: 100%;">Change to a
+temporary working directory. </p> </li> <li> <p style="margin-bottom: 0cm; line-height: 100%;">The input
+files
+needed by the model are copied into this directory. These files are
+transferred from the local computer. </p> </li> <li>
+<p style="margin-bottom: 0cm; line-height: 100%;">Execute
+the
+model. </p> </li> <li> <p style="margin-bottom: 0cm; line-height: 100%;">Copy the
+output
+files produced by the model into the directories determined by the user
+(these are also allowed to lie on the local computer). Depending on the
+choice of the user, the files may also be saved on an archiving system
+(if existing). </p> </li> <li> <p style="margin-bottom: 0cm; line-height: 100%;">Delete the
+temporary working direction. </p> </li> <li> <p style="line-height: 100%;">Transfer the job protocol to the
+local computer. </p> </li>
+</ul><p style="line-height: 100%;">From this list it
+becomes clear that two
+of the substantial functions of <b>mrun</b> are the supply
+of input
+files for the model and the storage of output files produced by the
+model. The model exclusively works with so-called local files, which
+lie in the temporary working directory created by <b>mrun.</b>
+The
+“local” names of these files are determined by the
+model
+(in the appropriate OPEN instructions). In <a href="chapter_3.4.html">chapter
+3.4</a> all possible input and output filenames are specified. In
+contrast to this, the input files, made available by the user,
+usually lie in permanent directories (e.g. in the /home directory) and
+the output data, produced by the model, may also be
+stored there. The directory names are arbitrary. The actual file name
+(without path) of these input and output files is specified by an
+option of <b>mrun</b>. All input and output files of the
+model
+receive this file name (e.g. <i>abcde</i>), but each
+individual file
+is still provided with an extension (e.g. <i>abcde_par</i>,
+etc.
+<i>abcde_dat</i>) - otherwise the files would not be
+distinguishable.
+The linkage of local file names with the names of the permanent
+directories and the file name extensions takes place in a
+configuration file, which <b>mrun</b> expects to find in
+the
+respective current working directory of the user. A detailed
+description of this configuration file - which still offers a variety
+of further functions – is found in the
+documentation of the shell script <a href="http://www.muk.uni-hannover.de/-raasch/Software/mrun_beschreibung.html">mrun</a>
+(sorry: this is only available in German, so far. If you think that you
+would profit from an English version, please give a message to the PALM
+group).
+In the next chapter a simple example of a minimum configuration file
+is described. </p>
+<p style="line-height: 100%;">A simple call of <b>mrun</b>
+could read
+as follows: </p>
+<ul> <p style="line-height: 100%;"><tt>mrun -
+h <i>ibmh</i> -d <i>abcde</i></tt></p>
+</ul><p style="line-height: 100%;">The model is
+started by option -<tt>h
+<i>ibmh</i></tt> on the IBM Regatta hanni at the
+HLRN, i.e. on the
+local computer a batch job is generated, transferred to the remote
+computer (IBM) and submitted to a suitable queue of the queuing system.
+With the
+option <tt>-d</tt> the so-called basis file name (<i>abcde</i>)
+is
+specified, from which, together with the path names and file name
+extensions, the complete file names (including the path) of the
+permanent input and output files are <font color="#000000">formed.</font><font color="#800000">
+</font>Usually the specification of a set of further options is
+necessary, e.g. the CPU time needed by the model and the memory size
+needed as well as, on parallel computers, the number of processing
+elements which are to be used (options <tt>-t</tt>, <tt>-m</tt>
+and
+<tt>-X</tt>). A precondition for the call of <b>mrun</b>
+of course is
+that the installation of the model on the local computer and the
+remote machine is complete (see <a href="chapter_5.0.html">chapter
+5.0</a>). </p>
+<p>Beyond these options a variety of further options for model
+steering can be used in the call of <b>mrun</b>. These are
+fully
+described in the <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html">mrun</a>
+documentation (in German). <br>
+&nbsp; </p>
+<hr><p><a href="chapter_3.0.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.2.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></p>
+<p><i>Last change:&nbsp;</i>$Id: chapter_3.1.html 431 2010-01-29 14:21:06Z raasch $</p>
+</body></html>

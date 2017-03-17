@@ -1,0 +1,528 @@
+#!/bin/ksh
+
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2014  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# -----------------
+#
+#
+# Former revisions:
+# -----------------
+# $Id: img2video 1310 2014-03-14 08:01:56Z raasch $
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9)
+#
+# 981 2012-08-09 14:57:44Z maronga
+# Added new codecs xvid, ffv1 and two-pass encoding
+#
+# 795 2011-12-12 15:21:03Z maronga
+# Added Id tag, initial Revision
+#
+# Description:
+# ------------
+# img2video converts image files (e.g. from NCL, DVRP, VAPOR) and creates
+# video files with several codecs. Required packages on the local host are:
+# Imagemagick, MEncoder (MPlayer) and gifsicle
+#------------------------------------------------------------------------------!
+
+#PRESET OF VARIABLES
+ input_folder="."
+ output_folder=""
+ output_file=""
+ name=""
+ codec="mpeg4"
+ colors=256
+ errors=false
+ fps=25
+ hq=false
+ img_fmt="png"
+ keep=true
+ pass=1
+ preview_string="preview"
+ restart=false
+ rotate=0
+ scaling=1024
+ speedup=1
+ file_type="tiff"
+ watermark=""
+
+#DEFINE STRING LENGTHS
+ typeset  -L20 col1
+ typeset  -L40 col2
+ typeset  -L30 version="img2video  Rev$Rev: 1 $"
+ typeset  -R30 calltime
+ typeset  -L60 text1
+
+#GET COMMAND LINE PARAMETERS
+ while  getopts  :a:C:c:f:hi:I:kn:o:rR:S:s:t:Xw: option
+ do
+   case  $option  in
+       (a)   fps=$OPTARG;;
+       (c)   codec=$OPTARG;;
+       (C)   colors=$OPTARG;;
+       (f)   output_file=$OPTARG;;
+       (h)   hq=true;;
+       (i)   input_folder=$OPTARG;;
+       (k)   keep=false;;
+       (n)   name=$OPTARG;;
+       (o)   output_folder=$OPTARG;;
+       (r)   restart=true;;
+       (R)   rotate=$OPTARG;;
+       (s)   scaling=$OPTARG;;
+       (S)   speedup=$OPTARG;;
+       (t)   file_type=$OPTARG;;
+       (w)   watermark=$OPTARG;;
+       (X)   errors=true;;
+       (\?)  printf "\n  +++ unknown option $OPTARG \n"
+             printf "\n  --> type \"$0 ?\" for available options \n"
+             locat=parameter;exit;;
+   esac
+ done
+
+ shift OPTIND-1
+
+#PRINT HELP
+ if [[ "$1" = "?" ]]
+ then
+   (printf "\n  *** img2video can be called as follows:\n"
+    printf "\n      img2video  -c.. -C.. -h -i.. -k -n.. -o.. -r -R.. -s.. -S.. -t.. -X -w\n"
+    printf "\n      Description of available options:\n"
+    printf "\n      Option      Description                                 Default-Value"
+    printf "\n        -a        fps (frames per second)                                25"
+    printf "\n        -c        Video format                                        flash"
+    printf "\n                  Available formats are: flash, mpeg, mpeg4,               "
+    printf "\n                  mjpeg, gif, wmv2, xvid, ffv1                             "
+    printf "\n        -C        Number of colors (only for gif output)                256"
+    printf "\n        -f        Output file name                                     auto"
+    printf "\n        -h        enable high quality                                  \"\""
+    printf "\n        -i        Input path                                              ."
+    printf "\n        -k        Delete image files at the end                            "
+    printf "\n        -n        Jobname                                                \"\""
+    printf "\n        -o        Output folder                              see Input path"
+    printf "\n        -r        Restart with existing image files                        "
+    printf "\n        -R        Rotate by angle                                         0"
+    printf "\n        -s        Rescaling to a width of #px                          1024"
+    printf "\n        -S        Video speed-up                                          1"
+    printf "\n        -t        Input file type (tiff/eps)                           tiff"
+    printf "\n        -X        enable output of additional error messages               "
+    printf "\n        -w        Watermark file                                         \"\""
+    printf "\n         ?        this outline \n\n") | more
+    exit
+ elif [[ "$1" != "" ]]
+ then
+    printf "\n  +++ Positional parameter $1 unknown \n"
+    locat=parameter; exit
+ fi
+
+ if  [[ $name == "" ]]
+ then
+     printf "\n  +++ Parameter -n needed. Type 'img2video ?' for a full list of parameters. \n"
+    locat=parameter; exit
+ fi
+
+ if  [[ $input_folder == "." ]]
+ then
+     printf "\n  +++ Parameter -i needed. Type 'img2video ?' for a full list of parameters. \n"
+    locat=parameter; exit
+ fi
+
+ if  [[ $output_folder == "" ]]
+ then
+    output_folder="$input_folder/$name"
+ fi
+
+#PRINT HEADER TO INFORM ABOUT THE CURRENT SETTINGS
+ calltime=$(date)
+
+ printf "\n#--------------------------------------------------------------#"
+ printf "\n| $version$calltime |"
+
+ col1=""
+ col2=""
+ printf "\n| $col1$col2 |"
+ 
+ text1="Initialization parameters"
+ printf "\n| $text1 |"
+ 
+ col1="Jobname:"
+ col2=$name
+ printf "\n| $col1$col2 |"
+
+ col1="Input path:"
+ col2=$input_folder
+ printf "\n| $col1$col2 |"
+ row=$(echo "$input_folder" | cut -c41-)
+ while [[ "$row" != "" ]]
+ do
+    col1=""
+    col2=$row
+    printf "\n| $col1$col2 |"
+    row=$(echo "$row" | cut -c41-)
+ done
+
+
+
+
+
+ col1="Output path:"
+ col2=$output_folder
+ printf "\n| $col1$col2 |"
+ row=$(echo "$output_folder" | cut -c41-)
+ while [[ "$row" != "" ]]
+ do
+    col1=""
+    col2=$row
+    printf "\n| $col1$col2 |"
+    row=$(echo "$row" | cut -c41-)
+ done
+
+
+ if [[ "$codec" = "flash" ]]
+ then
+    suffix=".flv"
+    real_codec="flv"
+
+ elif [[ "$codec" = "mpeg" ]]
+ then
+    suffix=".avi"
+    real_codec="msmpeg4v2"
+    pass=2
+ elif [[ "$codec" = "mpeg4" ]]
+ then
+    suffix=".avi"
+    real_codec="mpeg4"
+    pass=2
+ elif [[ "$codec" = "mjpeg" ]]
+ then
+    suffix=".avi"
+    real_codec="mjpeg"
+
+ elif [[ "$codec" = "wmv2" ]]
+ then
+    suffix=".wmv"
+    real_codec="wmv2"
+ elif [[ "$codec" = "xvid" ]]
+ then
+    suffix=".avi"
+    real_codec="xvid"
+    pass=2
+ elif [[ "$codec" = "ffv1" ]]
+ then
+    suffix=".avi"
+    real_codec="ffv1"
+    pass=1
+ elif [[ "$codec" = "gif" ]]
+ then
+    suffix=".gif"
+    real_codec="gif"
+    img_fmt="gif"
+ else
+    printf "\n +++ Video codec unknown. Aborting..."
+    exit
+ fi
+
+ col1="Video codec:"
+ col2="$codec ($real_codec)"
+ printf "\n| $col1$col2 |"
+
+ if [[ $codec = "gif" ]]
+ then
+    col1="Colors (gif):"
+    col2=$colors
+    printf "\n| $col1$col2 |"
+ fi
+
+ col1="Input file type:"
+ col2=$file_type
+ printf "\n| $col1$col2 |"
+
+ col1="Video speed-up:"
+ col2=$speedup
+ printf "\n| $col1$col2 |"
+
+ col1="fps:"
+ col2=$fps
+ printf "\n| $col1$col2 |"
+
+ if [[ $rotate != 0 ]]
+ then
+    col1="Rotate video by"
+    col2="${rotate}°"
+    printf "\n| $col1$col2 |"
+ fi
+
+ col1="Scaling video to"
+ col2="${scaling}px width"
+ printf "\n| $col1$col2 |"
+
+ if [[ $watermark != "" ]]
+ then
+    col1="Watermark:"
+    col2=$watermark
+ else
+    col1="Watermark "
+    col2="disabled"
+ fi
+ printf "\n| $col1$col2 |"
+
+ col1="HQ-options:"
+ if [[ $hq = true ]]
+ then
+    if [[ $codec == mjpeg ]]
+    then
+       hq_text=":mbd=2"
+    fi
+    if [[ $codec == mpeg4 ]]
+    then
+       hq_text=":mbd=2:trell:vbitrate=2160000:keyint=132"
+    fi
+    col2=$hq_text
+ else
+    hq_text=""
+    col2="disabled"
+ fi
+ printf "\n| $col1$col2 |"
+
+ col1=""
+ col2=""
+ printf "\n| $col1$col2 |"
+
+ col1="Additional settings"
+ col2=""
+ printf "\n| $col1$col2 |"
+
+ if [[ $keep == false ]]
+ then
+    text1="- Image files will be deleted at the end."
+ else
+    text1="- Image files will be stored at the end."
+ fi
+ printf "\n| $text1 |"
+
+ if [[ $restart == true ]]
+ then
+    text1="- img2video will restart with existing images."
+ else
+    text1="- img2video will generate new images."
+ fi
+ printf "\n| $text1 |"
+
+ col1=""
+ col2=""
+ printf "\n| $col1$col2 |"
+
+ if [[ $output_file = "" ]]
+ then
+    output_file="${name}_${speedup}acc_${codec}"
+ fi
+
+#CHECK CYCLE NUMBER
+ looping=true
+ output_file_new=$output_file
+ while [[ $looping = true ]]
+ do
+    if [ -f "$output_folder/$output_file_new$suffix" ]
+    then
+       ((run_string += 1))
+       output_file_new="${output_file}_$run_string"
+    else
+       looping=false
+       if (( run_string >= 1 ))
+       then
+          output_file="${output_file}_$run_string"
+          preview_string="preview_$run_string"
+       fi
+       break;
+    fi
+ done
+
+
+
+ text1="Video will be saved as $output_file$suffix"
+ printf "\n| $text1 |"
+
+ printf "\n|                                                              |"
+ printf "\n#--------------------------------------------------------------#\n"
+
+ if [[ $errors = false ]]
+ then
+    error_opt="-really-quiet"
+    error_opt2="-quiet"
+ else
+    error_opt=""
+    error_opt2=""
+ fi
+
+
+#STARTING CONVERSION
+ printf "\n *** Creating directory: $output_folder/images_${img_fmt}... "
+ mkdir -p $output_folder/images_${img_fmt}
+ printf "done."
+
+
+ if [[ $restart = false ]] 
+ then
+    printf "\n *** Outdated images will be deleted in $output_folder/images_${img_fmt}... "
+    rm -rf $output_folder/images_${img_fmt}/*
+    printf "done."
+
+    printf "\n *** Converting images... "
+    if [[ $file_type = "eps" ]]
+    then
+
+#      CONVERTING IMAGES FROM EPS TO JPG OR GIF
+       img_counter=0
+       for i in $input_folder/$name*;
+       do
+          (( img_counter+=1 ))
+          filename=`basename ${i%}`
+          if [[ $img_fmt = "gif" ]]
+          then
+             gs -sDEVICE=jpeg -dJPEGQ=100 -q -dNOPAUSE -dBATCH -dSAFER -r175 -sOutputFile="$output_folder/images_${img_fmt}/${filename}.jpg" "$i"
+             convert $error_opt2 -resize "$scaling" "$output_folder/images_${img_fmt}/${filename}.jpg" "$output_folder/images_${img_fmt}/${filename}.${img_fmt}"
+             rm "$output_folder/images_${img_fmt}/${filename}.jpg"
+          else
+             gs -sDEVICE=jpeg -dJPEGQ=100 -q -dNOPAUSE -dBATCH -dSAFER -r175 -sOutputFile="$output_folder/images_${img_fmt}/${filename}.${img_fmt}" "$i"
+          fi
+       done 
+
+    else
+
+       for i in $input_folder/$name*;
+       do
+          (( img_counter+=1 ))
+          filename=`basename ${i%}`
+          convert $error_opt2 "$i" "$output_folder/images_${img_fmt}/${filename}.${img_fmt}"
+       done 
+    fi
+    printf "done."
+    printf "\n --> Converted $img_counter images."
+
+
+#   ROTATE IMAGE IF NECESSARY
+    if (( $rotate != 0 ))
+    then
+       printf "\n *** Rotating images... "
+       for i in $output_folder/images_${img_fmt}/$name*;
+       do
+          convert $error_opt2 -rotate $rotate $i $i
+       done
+       printf "done."
+    fi
+
+#   ADD WATERMARK IF NECESSARY (GIF ONLY)
+    if [[ $watermark != "" && $img_fmt = "gif" ]]
+    then
+       printf "\n *** Adding Watermark (only necessary for gif)... "
+       for i in $output_folder/images_${img_fmt}/$name*;
+       do
+          composite $watermark "$i" "$i"
+       done
+       printf "done."
+    fi
+
+#   GENERATE A PREVIEW IMAGE
+    cp $output_folder/images_${img_fmt}/${filename}.$img_fmt $output_folder/${name}_${preview_string}.${img_fmt}
+ else
+    printf "\n *** Restarting with images in ${name}*.$img_fmt in $output_folder/images_${img_fmt}/."
+ fi
+
+#ENABLE WATERMARK (not for gif)
+ if [[ $watermark != "" && $codec != "gif" ]]
+ then
+    printf "\n *** Watermark enabled."
+    mkfifo watermark.fifo
+    convert $watermark watermark.rgba
+    echo "RGBA32 400 43 0 0 0 1" > watermark.fifo &
+    cat watermark.rgba > watermark.fifo &
+    wm_text=",bmovl=0:0:watermark.fifo"
+ else
+    wm_text=""
+ fi
+
+#START ENCODING OF THE VIDEO
+ printf "\n *** Encoding video... "
+
+ if [[ $codec = "gif" ]]
+ then
+#   Animated GIF
+    j=1
+    if (( speedup != 1 ))
+    then
+       cp -r $output_folder/images_${img_fmt} $output_folder/images_${img_fmt}_tmp
+    fi
+
+    for i in $output_folder/images_${img_fmt}/$name*;
+    do 
+       if (( $j == $speedup ))
+       then
+          j=1
+       else
+          rm $i
+          (( j += 1 ))
+       fi
+    done
+
+    (( speedup = ( 1.0 / $fps ) * 100.0 ))
+    gifsicle --delay=$speedup --colors $colors --loop $output_folder/images_${img_fmt}/*.${img_fmt} > $output_folder/${output_file}$suffix
+
+    if (( speedup != 1 ))
+    then
+       cp $output_folder/images_${img_fmt}_tmp/* $output_folder/images_${img_fmt}/
+       rm -r $output_folder/images_${img_fmt}_tmp
+    fi
+ else
+    if [[ $real_codec = "xvid" ]]
+    then
+       mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc xvid -xvidencopts "pass=1:autoaspect" -nosound -o $output_folder/${output_file}$suffix $error_opt
+       mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc xvid -xvidencopts "pass=2:autoaspect:bitrate=1800" -nosound -o $output_folder/${output_file}$suffix $error_opt
+    elif [[ $pass = 2 ]]
+    then
+        mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc lavc -lavcopts "vpass=1:vcodec=$real_codec$hq_text" -nosound -o $output_folder/${output_file}$suffix $error_opt
+        mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc lavc -lavcopts "vpass=2:vcodec=$real_codec$hq_text" -nosound -o $output_folder/${output_file}$suffix $error_opt      
+    else
+       mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc lavc -lavcopts "vcodec=$real_codec$hq_text" -nosound -o $output_folder/${output_file}$suffix $error_opt
+    fi
+
+# 
+
+
+# mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc lavc -lavcopts "vcodec=$real_codec:vpass=2:mbd=2:mv0:trell:vbitrate=infinity" -nosound -o $output_folder/${output_file}$suffix $error_opt
+# mencoder mf://$output_folder/images_${img_fmt}/*$img_fmt -vf "scale=$scaling:-2$wm_text,filmdint=io=$speedup:1" -of lavf -mf "fps=$fps" -ovc lavc -lavcopts "vcodec=$real_codec:vpass=3:mbd=2:mv0:trell:vbitrate=infinity" -nosound -o $output_folder/${output_file}$suffix $error_opt
+ fi
+
+ printf "done."
+
+#CLEANING UP
+
+#REMOVE IMAGES
+ if [[ $keep = false ]]
+ then
+    rm -rf $output_folder/images_${img_fmt}
+ fi
+
+#REMOVE WATERMARK FILES
+ if [[ $watermark != "" && $codec != "gif" ]]
+ then
+    rm watermark.fifo
+    rm watermark.rgba
+ fi
+
+ printf "\n --> All actions finished. Video saved as $output_folder/${output_file}$suffix.\n"
+ exit

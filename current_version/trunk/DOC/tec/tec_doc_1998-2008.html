@@ -1,0 +1,4749 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
+
+  
+  <meta content="Mozilla/4.73 [en] (X11; U; HP-UX B.10.20 9000/782) [Netscape]" name="GENERATOR">
+
+  
+  <meta content="Siegfried Raasch" name="Author">
+
+  
+  <meta content="parallel LES model" name="Keywords"><title>PALM technical/numerical documentation</title></head><body>
+<font size="+4">PALM&nbsp;&nbsp;
+</font>a
+<b>pa</b>rallelized
+<b>L</b>ES <b>m</b>odel
+<br>
+
+<hr width="100%"><br>
+
+<font size="+2">technical/numerical documentation 1998-2008</font><br>
+
+<table nosave="" cellpadding="0" cellspacing="0">
+
+  <caption>&nbsp; <br>
+  </caption><tbody>
+  </tbody><tbody>
+  </tbody> <tbody>
+    <tr nosave="">
+      
+      <td nosave=""><b>This document has been frozen in February 2010<br>
+Links may not work properly!<br>
+</b></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr width="100%">
+<p><font size="+2">Table of contents</font>
+<br>
+&nbsp;
+<br>
+&nbsp;
+</p>
+
+<ul>
+
+  <a href="#Kapitel1.0">1.0</a>&nbsp;
+History of changes
+  <p><a href="#Kapitel2.0">2.0</a>&nbsp;
+How to change the model source
+code </p>
+  <p><a href="#Kapitel3.0">3.0</a>&nbsp;
+Description of selected parts
+of
+the model source code <br>
+&nbsp;</p>
+</ul>
+
+<br>
+
+<h2><a name="Kapitel1.0"></a>1.0&nbsp;
+History of changes</h2>
+
+The following table documents all changes to the model since July, 7th
+1998. Entries in the fourth column specify the type of the change:
+change&nbsp;
+of existing code (C), new code (N) or bugfix (B). More detailed
+information
+about the changes may be found in the header comment lines of the
+respective
+routines.
+<br>
+
+&nbsp;
+<br>
+
+<table nosave="" style="width: 100%;" border="1">
+
+  <caption>&nbsp; <br>
+  </caption><tbody>
+  </tbody><tbody>
+  </tbody> <tbody>
+    <tr>
+      <td><b>date</b></td>
+      <td><b>author</b></td>
+      <td><b>model</b>
+      <br>
+      <b>version</b></td>
+      <td><b>type</b></td>
+      <td><b>description</b></td>
+      <td><b>affected
+routines</b></td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>06/07/98</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>C</td>
+      <td nosave="">�&#8222;nderung
+von Default-Werten
+(initializing_actions, end_time,
+fcl_factor, use_prior_plot1d_parameters), zusätzliche
+�&#339;berprüfung
+von Parametern auf Zulässigkeit (prandtl_layer, psolver, nx,
+ny,
+nz,
+fcl_factor), Höhe der Schnittebenen der Horizontalschnitte
+wird
+auf
+Plots exakt ausgegeben (uv- bzw. w-Gitter).</td>
+      <td>modules,
+check_parameters, plot_2d</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>N</td>
+      <td>Neues Modul
+test_variables wird in (fast) allen
+Programmteilen benutzt
+(USE). <b>Wichtig</b>: dieses Modul steht in der Datei <tt>module_test.f90.
+D</tt>iese Datei mu�&#376; in der mrun- und add_library -
+Konfigurationsdatei
+bei der Variablen <tt>module_files</tt>
+aufgeführt werden.</td>
+      <td nosave="">(fast)
+alle&nbsp; <br>
+Neu: module_test</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>16/07/98</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>N</td>
+      <td nosave="">Anpassung
+an die T3E-Rechner in Juelich (cpp -
+Direktiven)</td>
+      <td>advec_s_bc, check_open,
+check_parameters, cpu_zeitmessung,
+init_pegrid,
+local_getenv, local_system, local_tremain, local_tremain_ini, poisfft</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>24/07/98</td>
+      <td>MS</td>
+      <td>1.0</td>
+      <td>C</td>
+      <td nosave="">Anpassung des Druckloesealgorithmusses an
+Vorgehensweise von
+Schmidt, Schumann und Volkert (DFVLR-Mitteilung 84-15, S.
+20-26)&nbsp;</td>
+      <td>poisfft</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>27/07/98</td>
+      <td>MS</td>
+      <td>1.0</td>
+      <td>C</td>
+      <td nosave="">Berechnung von l in maketri geschieht nun
+ausserhalb der k-Schleife,
+da unabhaengig von k, dadurch Rechenzeitersparnis&nbsp;</td>
+      <td>poisfft</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>05/08/98</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>C</td>
+      <td>Entfernung der Sonderbehandlung der Advektionsterme
+(Piascek-Williams)
+bei k=1. Terme werden nun überall gleich berechnet. Evtl.
+leichte
+Erhöhung der Varianzen in Oberflächennähe.</td>
+      <td nosave="">advec_u_pw, advec_v_pw, advec_w_pw</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>C</td>
+      <td>Mischungsweganpassung (s.
+adjust_mixing_length) erfolgt nur
+noch bei
+k=1. Unrealistische sekundäre Maxima in den Km-Profilen
+oberhalb
+der
+Prandtl-Schicht werden damit vermieden. Leichte �&#8222;nderungen in
+den
+oberflächennahen Turbulenzgrö�&#376;en sind die
+Folge.</td>
+      <td>diffusivities</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>B</td>
+      <td>Falsche
+Berechnung der benötigten CPU-Zeit pro Sekunde
+simulierter
+Zeit bei Fortsetzungsläufen korrigiert.&nbsp;
+      <p>Berechnung
+von cross_uxmin(1) und cross_uxmax(1) aus den
+Werten von
+ug und vg entfernt. Lieferte falsche Wertebereiche für Plots
+von
+Vertikalprofilen,
+wenn im ersten Koordinatenkreuz nicht die Windgeschwindigkeiten
+gezeichnet
+wurden.</p>
+      </td>
+      <td nosave="">header,
+check_parameters</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>N</td>
+      <td>Das
+erlaubte Maximum und Minimum der Rif-Zahl ist nun mittels
+der Initialparameter
+rif_max und rif_min einstellbar (Werte waren bisher fest auf -2.0, +1.0
+eingestellt).</td>
+      <td>check_parameters, header,
+init_1d_model, modules, parin,
+prandtl_fluxes,
+read_var_list, write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">23/09/98</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>B</td>
+      <td>Initialisierung von Feldern im Fall von initializing_action =
+"<i>set_constant_profiles</i>"
+und "<i>set_1d-model_profiles</i>" korrigiert.&nbsp;
+      <p>2D-Plotausgabe
+von u* und theta* korrigiert. Hier wurden
+bisher falsche
+Felder herausgeschrieben.&nbsp; </p>
+      <p>Bei
+SOR-Aufrufen war bisher dp nicht initialisiert.
+Entsprechend geändert.</p>
+      </td>
+      <td>init_3d_model,
+plot_2d, pres</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>C</td>
+      <td nosave="">Ausgabeformate
+für Statistik-Ausgaben auf
+Datei RUN_CONTROL
+um einige Kommastellen erweitert.&nbsp;
+      <p>Lieferung von
+ausführlicheren Informationen bei
+Programmabbruch
+durch Unterschreitung des minimal erlaubten Zeitschritts.</p>
+      </td>
+      <td>run_control, timestep</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>N</td>
+      <td>Rechnungen mit geneigter Ebene zur Simulation von
+Kaltluftabflüssen
+sind erlaubt. Gestartet und gesteuert werden sie mit dem
+Intialisierungsparameter <tt>alpha_surface</tt>.
+Realisiert wird die geneigte Ebene durch entsprechende
+Schrägstellung
+des Schwerkraftvektors. Dadurch erhält auch die u-Komponente
+der
+Windgeschwindigkeit
+einen Anteil der Auftriebskraft.&nbsp;
+      <p>Diese
+Implementierung ist noch nicht abgeschlossen. Die
+Simulation von
+Kaltluftabflüssen erfordert bisher noch Eingriffe "von Hand".</p>
+      </td>
+      <td>buoyancy, check_parameters, header, leap_frog,
+modules,
+parin, prandtl_fluxes,
+read_var_list, write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>15/12/98</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>N</td>
+      <td>Vereinbarung
+einer Cache-Layer zur schnelleren binären
+I/O auf
+T3E-Rechnern.&nbsp;
+      <p>Ermittelung wahrer I/O-Zeiten
+für binäre
+Ein-/Ausgabe auf
+T3E-Rechnern mit TIMEF.</p>
+      </td>
+      <td nosave="">check_open,&nbsp;
+      <br>
+cpu_zeitmessung, init_3d_model, write_3d_model</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">"</td>
+      <td>SR</td>
+      <td>1.0</td>
+      <td>B</td>
+      <td>Bekanntgabe von run_description_header an alle
+PE's.&nbsp;
+      <p>Diese Programmänderung erfordert auf
+T3E-Rechnern
+zwingend den
+Einsatz der MPI-Version mpt.1.2.0.1. In dieser neuen Version tritt auch
+der alte Fehler in MPI_ALLREDUCE nicht mehr auf, so da�&#376; ab
+jetzt
+mpt.1.1.0.1 nicht mehr verwendet werden mu�&#376;.</p>
+      </td>
+      <td>parles</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">05/02/99</td>
+      <td>SR</td>
+      <td>1.1</td>
+      <td>C/N</td>
+      <td>Implementierung des Upstream-Spline- Verfahrens zur Advektion
+von Impuls
+und skalaren Grö�&#376;en (neue UP's, s. rechts).
+Berechnung von
+Variablen
+für spezielle Advektionsverfahren in eigenständiges
+UP
+ausgelagert
+(<tt>init_advec</tt> + eigenes Modul <tt>advection</tt>).
+Reines
+Euler-/Upstream-Verfahren
+kann gerechnet werden.&nbsp;
+      <p>Schnelle binäre I/O
+(s. 15/12/98) wieder abgeschaltet, da
+Dateien
+nicht wieder einlesbar sind. Druckstörung (p) wird zu Beginn
+auf 0
+gesetzt, damit sie keine Tendenzen im ersten Zeitschritt hervorruft.</p>
+      </td>
+      <td>advec_s_bc, check_open, check_parameters,
+flow_statistics,
+header,
+init_3d_model, init_grid, leap_frog, modules, parin, plot_2d, plot_ts,
+read_var_list, timestep, write_3d_binary, write_var_list&nbsp;
+      <p><b>Neu:</b>
+      <br>
+advec_s_ups, advec_u_ups, advec_v_ups, advec_w_ups, init_advec,
+long_filter,
+spline_x, spline_y, spline_z</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">24/02/99</td>
+      <td>SR</td>
+      <td>1.1a</td>
+      <td>C/N</td>
+      <td>Kleinere Ergänzungen / �&#8222;nderungen
+für Upstream
+- Spline,&nbsp; <br>
+Diverse Verbesserungen bei Berechnung der Diffusionskoeffizienten
+(exaktere
+Formulierung von Scherungen, Dissipation gemaess Original - Deardorff -
+Ansatz, Mischungswegreduktion nur, wenn Schichtung sowohl oberhalb als
+auch unterhalb des entsprechenden Gitterpunktes stabil ist),
+Wertebegrenzung
+bei Spline - Berechnung zur Verhinderung von "�&#339;berschwingern"</td>
+      <td>check_parameters, diffusion_e, diffusion_pt, diffusivities,
+header,
+init_advec, long_filter, modules, production_e, spline_x, spline_y,
+spline_z</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>"</td>
+      <td nosave="">SR</td>
+      <td>1.1a</td>
+      <td>N/B</td>
+      <td>Erweiterung des des Bott - Chlond -
+Schemas auf Advektion der
+TKE,
+Korrektur der Dichteberechnung (war falsch bei Galilei-Transformation)</td>
+      <td>advec_s_bc, leap_frog</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">01/03/99</td>
+      <td>MS</td>
+      <td>1.1b</td>
+      <td>N</td>
+      <td>Kleinere Ergänzungen für Upstream -
+Spline:&nbsp;
+      <ul>
+        <li>Gradientenkontrolle
+für den nicht-parallelen Teil</li>
+        <li>statistische
+Auswertung über den prozentualen Anteil
+des
+Upstream-Verfahrens
+an der Gesamtadvektion fuer nicht-parallelen Teil</li>
+      </ul>
+      </td>
+      <td>modules, spline_x, spline_y, spline_z</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>"</td>
+      <td>SR</td>
+      <td>1.1b</td>
+      <td>N</td>
+      <td>Datenkompression für 3D-Plotausgaben</td>
+      <td nosave="">check_open, check_parameters, close_files, header,
+modules,
+parin, plot_3d&nbsp;
+      <p><b>Neu:</b> <br>
+write_compressed</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">03/03/99</td>
+      <td>SR</td>
+      <td>1.1c</td>
+      <td>B/C</td>
+      <td>Schnelle binäre I/O auf T3E-Rechnern funktioniert
+jetzt.
+Beim
+binären Einlesen dürfen Records nicht mit dem Trick "<tt>READ
+(..) idum</tt>" überlesen werden. Zeitmessungen auf T3E
+erfolgen
+jetzt
+grundsätzlich mit <tt>TIMEF.</tt></td>
+      <td>check_open,
+cpu_zeitmessung, init_3d_model, modules,
+write_3d_binary</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">25/03/99</td>
+      <td>SR</td>
+      <td>1.1d</td>
+      <td>N</td>
+      <td>Einbau einer Rayleigh-Dämpfungsschicht sowie
+flexiblere
+Wahl der
+numerischen Begrenzer für das Upstream - Spline - Verfahren.</td>
+      <td>check_parameters, header, init_3d_model, leap_frog, modules,
+parin,
+read_var_list, spline_x, spline_y, spline_z, write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">"</td>
+      <td>SR</td>
+      <td>1.1d</td>
+      <td>B</td>
+      <td>Korrektur des Zeitschrittkriteriums bei z=zp im 1D-Modell</td>
+      <td>init_1d_model</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>25/11/99</td>
+      <td>SR</td>
+      <td>1.1e</td>
+      <td>N</td>
+      <td nosave="">Partikelplots
+mit vtk-Graphiksoftware sind auf t3eh
+möglich.
+Ausgabe erfolgt im dvr-Format. Bisher noch nicht nutzbar, da noch
+Einstellmöglichkeiten
+für die Partikelquelle(n) fehlen. <b>Wichtig:</b>
+Die Benutzung
+der
+vtk-Software erfordert die zusätzliche mrun-Option <tt>-g</tt>.
+Das
+Hauptprogramm <tt>parles</tt> wird in diesem Fall zum
+Unterprogramm
+und
+von einem c++-Programm aus aufgerufen.</td>
+      <td>header,
+init_3d_model, init_pegrid, leap_frog, modules,
+parin, parles,
+read_var_list, write_var_list&nbsp;
+      <p><b>Neu:</b>
+      <br>
+advec_particles, init_particles, plot_particles</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>"</td>
+      <td>SR</td>
+      <td>1.1e</td>
+      <td nosave="">B/C</td>
+      <td>TIMEF-Zeitmessungen von Subroutine- auf Function-Aufruf
+umgestellt.
+Laufindexkorrektur in <tt>spline_y</tt>. Fehler trat bei
+nx /= ny auf.</td>
+      <td>cpu_zeitmessung, spline_y</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">28/12/99</td>
+      <td>SR</td>
+      <td>1.1f</td>
+      <td>N</td>
+      <td>Plot von Isooberflächen mit
+vtk-Graphiksoftware sind auf
+t3eh
+möglich. Ausgabe erfolgt im dvr-Format. Bisher noch nicht
+allgemein
+nutzbar, da noch diverse manuelle Eingriffe nötig sind.</td>
+      <td>header, leap_frog, modules, parin, plot_particles,
+read_var_list, write_var_list&nbsp;
+      <p><b>Neu:</b>
+      <br>
+plot_isosurface</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">10/01/00</td>
+      <td>SR</td>
+      <td>1.2</td>
+      <td>C</td>
+      <td>Randbedingungen für w (=0) werden explizit gesetzt,
+und
+zwar nicht
+nur bei&nbsp; <tt>k = nzb, nzt+1</tt> sondern auch
+bei&nbsp; <tt>k =
+nzt</tt>,
+wo bislang der vom vorigen Zeitschritt durch den Drucklöser
+ermittelte
+Wert stand. Auch jetzt wird der Wert bei k = nzt anschlie�&#376;end
+durch
+den Drucklöser modifiziert. Soweit bis jetzt abzusehen, hat
+diese
+�&#8222;nderung nur minimale Auswirkungen auf den Prognoseverlauf.
+Evtl.
+gibt es stärkere Auswirkungen bei exzessivem Auftreten von
+Schwerewellen
+am oberen Rand (die dort aber eigentlich sowieso nicht
+hingehören).&nbsp; <br>
+Variablenübergabe an <tt>boundary_conds</tt>
+erfolgt&nbsp; <br>
+über Modul und nicht mehr per Parameterliste.&nbsp;
+      <p>Bei
+Galilei-Transformation wird jetzt defaultmä�&#376;ig
+der geostrophische
+Wind als Translationsgeschwindigkeit verwendet (neuer
+Initialisierungsparameter <tt>use_ug_for_galilei_tr</tt>).
+Dadurch wird das verstärkte Auftreten von Schwerewellen bei
+höheren
+geostrophischen Windgeschwindigkeiten unterdrückt.&nbsp; </p>
+      <p>3D-Feldvariablen (u, v, w, pt, e, km, kh) sowie einige
+2D-Variablen
+(usws, vsws, rif, shf) sind nun als Pointer deklariert, denen nach
+jedem
+Zeitschritt neue Targets zugeordnet werden (für die
+benötigten&nbsp;
+3 Zeitebenen existieren die Targets ..._1 (z.B. u_1), ..._2, ..._3).
+Durch
+die jeweilige Neuzuordnung der Targets entfällt das
+Umspeichern
+der
+Zeitebenen komplett (Zeitersparung: ca. 5% der
+Gesamtrechenzeit).&nbsp; <br>
+Die Umordnung der Zeitebenen wurde ins neue UP <tt>swap_timelevel</tt>
+ausgelagert.&nbsp; <br>
+      <b>Wichtig:</b> Die
+�&#339;bersetzungszeiten haben durch die
+Einführung
+der Pointer t.w. sehr deutlich zugenommen (<tt>leap_frog</tt>
+benötigt
+jetzt z.B. ca. 60 Sekunden). Au�&#376;erdem benötigt der
+Compiler
+jetzt wesentlich mehr Speicher. Der "memory"-Parameter in den
+Konfigurationsdateien
+(.mrun.config, .al.config) muss nun mindestens den Wert 60 (MB) (t3eh,
+t3ej2) bzw. 45 (t3eb) und 96 (vpp) haben.&nbsp; <br>
+      <b>Achtung:</b>
+bislang wurde diese �&#8222;nderung nur für
+das
+reine Leapfrog-Verfahren getestet!&nbsp; </p>
+      <p>Neue
+Laderoption "<tt>-D preset=nan</tt>" empfohlen (s.
+Beispiel-Konfigurationsdatei).
+Ebenso empfehlenswert für Debug-Läufe: Compileroption
+"<tt>-ei</tt>".
+Diese bewirkt einen Programmabbruch, falls mit nicht initialisierten
+Variablen
+gearbeitet wird (ist aber zeitaufwendig in der Ausführung!).</p>
+      </td>
+      <td>boundary_conds, check_parameters, header,
+init_3d_model,
+leap_frog,
+modules, parin, read_var_list, timestep, write_var_list&nbsp;
+      <p><b>Neu:</b>
+      <br>
+swap_timelevel</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">10/01/00</td>
+      <td>SR</td>
+      <td>1.2</td>
+      <td>B</td>
+      <td>Der Asselin-Filter wird vor Umordnung der Zeitebenen
+aufgerufen. Dies
+geschah bisher fälschlicherweise erst danach, sodass der
+Zeitfilter
+asymmetrisch arbeitete.&nbsp; <br>
+      <b>Achtung:</b>
+diese �&#8222;nderung hat Auswirkungen auf den
+Prognoseverlauf.
+Die Testergebnis-Datei wurde entsprechend geändert.</td>
+      <td>leap_frog</td>
+    </tr>
+    <tr nosave="">
+      <td nosave="" valign="top">14/02/00</td>
+      <td nosave="" valign="top">MS</td>
+      <td nosave="" valign="top">1.2</td>
+      <td nosave="" valign="top">B/C</td>
+      <td><b>1D-Modell:</b>
+      <br>
+Der Asselin-Filter im 1D-Modell wird nun auch vor der Umordnung der
+Zeitebenen aufgerufen (s.o.).&nbsp;
+      <p><b>3D-Modell:</b>
+      <br>
+TKE wurde bisher bei <tt>scalar_advec=bc-scheme</tt> einer
+zeitlichen
+Filterung unterzogen. Dies wird nun unterbunden.&nbsp; </p>
+      <p>Die
+Divergenz der Impulsflüsse an der Prandtl - Schicht -
+Obergrenze
+wird nun über eine ganze Gitterweite gebildet. Die bisherige
+Methode
+lieferte im Vergleich mit Ergebnissen anderer LES-Modelle&nbsp; zu
+gro�&#376;e
+Impulsflüsse.&nbsp; </p>
+      <p>Bei der
+Berechnung der Diffusion der Temperatur werden die
+Diffusionskoeffizienten
+nun wieder durch Mittelung für die entsprechenden&nbsp;
+Gitterpunkte
+bereitgestllt. Das Maximumkriterium, das im Zuge der Implementierung
+des
+Upstream-Spline Advektionsverfahrens eingebaut wurde, bewirkte ein zu
+rasches
+Anwachsen der Grenzschicht mit der Zeit.&nbsp; </p>
+      <p><b>Achtung:</b>
+diese �&#8222;nderungen haben Auswirkungen auf
+den Prognoseverlauf.
+Die Testergebnis-Datei wurde entsprechend geändert.</p>
+      </td>
+      <td nosave="" valign="top">init_1d_model,
+asselin_filter,
+diffusion_u, diffusion_v,&nbsp; <br>
+diffusion_pt</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">17/02/00</td>
+      <td>MS</td>
+      <td>2.0</td>
+      <td>N</td>
+      <td><b>Allgemeine Beschreibung der �&#8222;nderungen:</b>
+      <br>
+vollständige Implementierung des wolkenphysikalischen
+Moduls&nbsp;
+      <p>Zur Implementierung der Wolkenphysik waren
+umfangreiche
+�&#8222;nderungen
+in zahlreichen Programmteilen notwendig (Beschreibung <a href="#Cloud_physics">siehe
+unten</a> ). Im einzelnen wurden folgende Unprogramme
+geändert:&nbsp; <br>
+      <b>modules</b>:&nbsp;
+      <br>
+1) Bereitstellung neuer 3D-, 2D- und 1D-Felder für
+die Prognose
+des Gesamtwassergehaltes&nbsp; <br>
+2) "cloud_parameters" als neues Modul mit wolkenphysikalischen
+Variablen&nbsp; <br>
+      <b>parin: </b>Initialisierungsparameterliste
+wurde erweitert
+(s.u.)&nbsp; <br>
+      <font color="#000000"><b>read_var_list,
+write_var_list,
+write_3d_binary: </b>In/Output
+der neuen Initialisierungsparamter und Felder für
+Fortsetzungsläufe&nbsp;</font> <br>
+      <font color="#000000"><b>check_parameters:</b>
+Initialisierung
+des
+Feuchteprofils und Ausgabe von neuen Vertikalprofilen:&nbsp;</font>
+      <br>
+      <font color="#ff0000">vpt</font><font color="#000000">: virtuelle
+poteniellen
+Temperatur,</font> <br>
+      <font color="#ff0000">lpt</font><font color="#000000">:
+potentielle
+Flüssigwassertemperatur,</font> <br>
+      <font color="#ff0000">q</font><font color="#000000">:
+Gesamtwassergehalt,</font> <br>
+      <font color="#ff0000">qv</font><font color="#000000">:
+spezifische
+Feuchte,</font> <br>
+      <font color="#ff0000">ql</font><font color="#000000">:
+Flüssigwassergehalt,</font> <br>
+      <font color="#ff0000">w"vpt", w*vpt*, wvpt</font><font color="#000000">:
+Auftriebsfluss (subskalig, aufgelöst, gesamt),</font> <br>
+      <font color="#ff0000">w"q", w*q*, wq</font><font color="#000000">:
+Wasserfluss (subs., aufg., ges.),</font> <br>
+      <font color="#ff0000">w"qv", w*qv*, wqv</font><font color="#000000">:
+Feuchtefluss (subs, aufg., ges.)</font> <br>
+      <b>init_3d_model</b>:
+Initialisierung aller
+Feuchte/Wasserfelder&nbsp; <br>
+      <b>init_1d_model</b>:
+Anpassung an Rechnungen mit Feuchte&nbsp; <br>
+      <b>header</b>:
+Headerausgaben für Feuchtebehandlung und
+Wolkenphysik
+eingefügt, au�&#376;erdem Formatnummern erweitert um Platz
+für
+weitere Ausgaben zu schaffen&nbsp; <br>
+      <b>leap_frog:</b>
+      <br>
+1) alle prognostischen Gleichungen wurden in prognostic_equations
+ausgelagert&nbsp; <br>
+2) Aufrufe der neuen Unterprogramme (UP) compute_vpt,
+calc_liquid_water_content&nbsp; <br>
+3) veraenderter Aufruf von diffusivities&nbsp; <br>
+      <b><tt>b</tt>oundary_conds,
+asselin_filter, swap_timelevel,
+flow_statistics: </b>Anpassung
+an Feuchtebehandlung&nbsp; <br>
+      <b>plot2d, plot3d</b>:
+Ausgabemöglichkeiten von q und ql <br>
+      <b>buoyancy</b>:
+Anpassung des Autriebstermes an
+Feuchtebehandlung
+durch neue �&#339;bergabeparameter: Temperatur + Nummer des
+entsprechenden
+mittleren Temperaturprofils&nbsp; <br>
+      <b>diffusion_e</b>:
+Anpassung der Mischungswegberechnung an
+Feuchtebehandlung
+durch Variation der �&#339;bergabeparameter&nbsp; <br>
+      <b>production_e</b>:
+TKE-Produktion durch Auftriebskräfte an
+Feuchtebehandlung
+angepasst&nbsp; <br>
+      <b>diffusivities</b>:
+siehe diffusion_e&nbsp; <br>
+      <b>prandtl-fluxes</b>:
+Prandtl-Schicht fuer den
+Gesamtwassergehalt
+eingefügt&nbsp; </p>
+      <p>Zusätzlich
+wurden folgende Unterprogramme NEU
+eingeführt:&nbsp; <br>
+      <b>inti_cloud_physics</b>:
+Initialisierung wolkenphysikalischer
+Parameter&nbsp; <br>
+      <b>prognostic_equations</b>:
+Auslagerung der prognostischen
+Gleichungen
+aus leap_frog, zusätzliche porgnostische Gleichung
+für den
+Gesamtwassergehalt&nbsp; <br>
+      <b>diffusion_s</b>:
+Berechnung der Diffusion skalarer
+Grö�&#376;en
+(Temperatur und Gesamtwassergehalt), ersetzt diffusion_pt&nbsp; <br>
+      <b>calc_liquid_water_content</b>: Berechnung des
+Flüssigwassergehalts&nbsp; <br>
+      <b>calc_radiation</b>:
+Parametrisierung langwelliger
+Strahlungsprozesse
+über des Schema der effektiven Emissivität&nbsp; <br>
+      <b>calc_precipitation</b>:Parametrisierung von
+Niederschlagsprozessen
+mit Hilfe eines vereinfachten Kesslerschemas&nbsp; <br>
+      <b>impact_of_latent_heat</b>:
+Berücksichtigung der durch
+Niederschlagsprozesse
+zurückbleibenden latenten Waerme innerhalb eines
+Gittervolumens&nbsp; <br>
+      <b>compute_vpt</b>:
+Berechnung der virtuellen potentiellen
+Temperatur&nbsp; </p>
+      <p><b>Liste der neuen
+Initialisierungsparameter:</b> <br>
+      <table nosave="" border="1">
+        <caption>&nbsp; <br>
+        </caption><tbody>
+        </tbody><tbody>
+        </tbody> <tbody>
+          <tr nosave="">
+            <td nosave=""><b>Parameter</b></td>
+            <td nosave=""><b>Typ</b></td>
+            <td nosave="" width="4%"><b>Default</b></td>
+            <td nosave=""><b>Beschreibung</b></td>
+          </tr>
+          <tr nosave="">
+            <td nosave=""><tt>moisture</tt></td>
+            <td>L</td>
+            <td>FALSE</td>
+            <td>Ab-/Zuschalten
+des Gesamtwassergerhaltes als neue
+progn. Variable</td>
+          </tr>
+          <tr>
+            <td><tt>cloud_physics</tt></td>
+            <td>L</td>
+            <td>FALSE</td>
+            <td>Ab-/Zuschalten
+des Kondensationsschemas</td>
+          </tr>
+          <tr nosave="">
+            <td><tt>radiation</tt></td>
+            <td>L</td>
+            <td nosave="">FALSE</td>
+            <td>Ab-/Zuschalten
+des Strahlungsschemas</td>
+          </tr>
+          <tr>
+            <td><tt>precipitation</tt></td>
+            <td>L</td>
+            <td>FALSE</td>
+            <td>Ab-/Zuschalten
+der Niderschlagsparametrisierung</td>
+          </tr>
+          <tr>
+            <td><tt>bc_q_b</tt></td>
+            <td>C</td>
+            <td>'dirichlet'</td>
+            <td>untere
+Randbedingung für q (siehe auch bc_pt_b)</td>
+          </tr>
+          <tr>
+            <td><tt>bc_q_t</tt></td>
+            <td>C</td>
+            <td>'neumann'</td>
+            <td>obere RB für q
+(siehe auch bc_pt_t)</td>
+          </tr>
+          <tr>
+            <td><tt>q_surface</tt></td>
+            <td>R</td>
+            <td>0.0</td>
+            <td>Feuchtewert
+an der Erdoberfläche</td>
+          </tr>
+          <tr>
+            <td><tt>q_surface_initial_change</tt></td>
+            <td>R</td>
+            <td>0.0</td>
+            <td>vgl.
+pt_surface_initial_change</td>
+          </tr>
+          <tr>
+            <td><tt>q_vertical_gradient</tt></td>
+            <td>R(10)</td>
+            <td>0.0</td>
+            <td>vgl.
+pt_vertical_gradient</td>
+          </tr>
+          <tr nosave="">
+            <td nosave=""><tt>q_vertical_gradient_level</tt></td>
+            <td>R(10)</td>
+            <td>10000.0</td>
+            <td>vgl.
+pt_vertical_gradient_level</td>
+          </tr>
+          <tr>
+            <td><tt>surface_pressure</tt></td>
+            <td>R</td>
+            <td>1013.25</td>
+            <td>Luftdruck
+an der Erdoberfläche</td>
+          </tr>
+          <tr>
+            <td><tt>surface_waterflux</tt></td>
+            <td>R</td>
+            <td>0.0</td>
+            <td>oberflächennaher
+Wasser/Feuchtefluss</td>
+          </tr>
+        </tbody>
+      </table>
+Fortsetzungsläufe mit Daten, die mit Modellversionen kleiner
+2.0
+erzeugt
+wurden, sind aufgrund der erweiterten Initialisierungsparameterliste
+INKOMPATIBEL
+zu den Einleseroutinen der Version 2.0. Ein Update auf Version 2.0
+sollte
+deshalb nach Abschluss eines kompletten Modelllaufs erfolgen.&nbsp;
+      </p>
+      <p><b>Achtung:</b> diese
+�&#8222;nderungen haben Auswirkungen auf
+den Prognoseverlauf.
+Die Testergebnis-Datei wurde entsprechend geändert.</p>
+      </td>
+      <td nosave="" valign="top">modules, parin,
+read_var_list,
+check_parameters,
+init_3d_model, init_1d_model, header, leap_frog. buoyancy, diffusion_e,
+production_e, diffusivities, prandtl_fluxes, boundary_conds,
+asselin_filter,
+swap_timelevels, flow_statistics, plot_2d, plot_3d, write_var_list,
+write_3d_binary&nbsp;
+      <p><b>Neu:</b> <br>
+init_cloud_physics, prognostic_equations, diffusion_s,
+calc_liquid_water_content,
+calc_radiation, calc_precipitation, impact_of_latent_heat, comute_vpt</p>
+      </td>
+    </tr>
+    <tr nosave="">
+      <td nosave="" valign="top">18/02/00</td>
+      <td nosave="" valign="top">MS</td>
+      <td nosave="" valign="top">2.0</td>
+      <td nosave="" valign="top">B/N</td>
+      <td>Im Zuge der
+Umstellung auf Modellversion 2.0&nbsp; wurden
+noch kleine
+�&#8222;nderungen an den Unterprogrammen diffusion_e, production_e
+und
+diffusivities
+vorgenommen. In allen genannten&nbsp; <br>
+Unterprogrammen wurde bisher ein strengeres Kriterium zur Bestimmung
+der Schichtungsverhältnisse verwendet. Ein Modellvergleich
+zeigte
+jedoch, dass dadurch die Diffusion im Bereich der Inversion zu gross
+wird.&nbsp;
+      <p>Eine weitere Ergänzung betrifft die
+Advektionsverfahren:&nbsp; <br>
+Das Bott-Chlond Advektionsverfahren ist nun auch für
+Rechnungen
+mit Feuchte/Wolkenphysik verfügbar.&nbsp; </p>
+      <p><b>Achtung:</b>
+diese �&#8222;nderungen haben Auswirkungen auf
+den Prognoseverlauf.
+Die Testergebnis-Datei wurde entsprechend geändert.</p>
+      </td>
+      <td nosave="" valign="top">diffusion_e,
+production_e,
+diffusivities, check_parameters</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">26/04/00</td>
+      <td>SR</td>
+      <td>2.0a</td>
+      <td>C</td>
+      <td>Vollständige Umstellung von vtk-Grafik-Software auf
+dvrp-Software.
+Grafik-Ausgaben im dvr-Format sind mittlerweile begrenzt nutzbar
+(Isooberflächen
+sind darstellbar, siehe neue Laufparameter&nbsp; <tt>dt_dvrp,
+threshold</tt>),
+es wird aber in der Anwendung in naher Zukunft noch diverse
+�&#8222;nderungen
+geben. Partikelausgabe vorerst nicht mehr möglich (Verlagerung
+schon).</td>
+      <td>header, init_particles, init_3d_model,
+leap_frog, modules,
+parin, parles,
+read_var_list, write_var_list&nbsp; <br>
+      <b>Gestrichen:</b>
+      <br>
+plot_isosurface, plot_particles&nbsp;
+      <p><b>Neu:</b>
+      <br>
+init_dvrp, plot_dvrp</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">26/04/00</td>
+      <td>SR</td>
+      <td>2.0a</td>
+      <td>C</td>
+      <td>Durch zusätzlichen zyklischen Rand im
+Bott-Chlond-Schema
+sehr
+viele SENDRECV-Aufrufe eingespart.&nbsp; <br>
+�&#8222;nderung des Namens einer eingelesenen Environment-Variablen
+in <tt>check_open</tt>
+von <tt>remote_addres</tt> nach <tt>return_addres</tt>.&nbsp;
+      <br>
+Prozessor-Topologie kann durch Benutzer vorgegeben werden.
+Dazu neue
+Initialisierungsparameter <tt>npex</tt> und <tt>npey</tt>.
+Durch
+�&#8222;nderungen
+am Header-Format wurde Testergebnis-Datei geändert.</td>
+      <td>advec_s_bc, check_open, header, init_pegrid, modules, parin,
+read_var_list,
+write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">26/04/00</td>
+      <td>SR</td>
+      <td>2.0a</td>
+      <td>N</td>
+      <td>Rechnungen mit geneigter Oberfläche erlauben jetzt
+die
+Vorgabe
+eines stabil geschichteten Temperaturprofils mit konstantem Gradienten.
+Hinzuschalten von Feuchte funktioniert für Hangrechnungen noch
+nicht.</td>
+      <td>advec_s_bc, buoyancy, init_3d_model,
+modules,
+prognostic_equations&nbsp;
+      <p><b>Neu:</b> <br>
+init_slope</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>13/06/00</td>
+      <td>MS</td>
+      <td>2.0a</td>
+      <td nosave="">B</td>
+      <td>Es
+werden nun auch die seitlichen Ränder für ql
+gesetzt.
+Ein Nichtsetzen der Randbedingungen führte zu Fehlern bei der
+Ausgabe
+von pt</td>
+      <td nosave="">calc_liquid_water_content</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">03/07/00</td>
+      <td>SR</td>
+      <td>2.0b</td>
+      <td>C</td>
+      <td>Für eine Reihe von&nbsp;
+Unterprogrammen, die innerhalb
+von <tt>prognostic_equation</tt>
+aufgerufen werden und an die Pointer-Variablen übergeben
+werden,
+sind
+jetzt explizite Interfaces vereinbart (neues Modul <tt>pointer_interfaces</tt>).
+Auch im Vereinbarungsteil der entsprechenden Unterprogramme sind diese
+�&#339;bergabeparameter jetzt aus Konsistenzgründen (und
+weil es
+sonst
+Laufzeitfehler gibt) als Pointer-Variablen deklariert. Mit dieser
+�&#8222;nderung
+ist der gro�&#376;e Speicher- und CPU-Zeit-Bedarf beim
+�&#339;bersetzen
+von prognostic_equations wieder auf ein erträgliches
+Ma�&#376;
+reduziert.&nbsp; <br>
+Im Rahmen dieser �&#8222;nderungen wurde auch an diffusion_e ein
+Hilfsfeld
+weniger übergeben.&nbsp; <br>
+Aus nicht vollständig gekärten Gründen haben
+sich die
+Zahlen in der Testergebnis-Datei minimal geändert (und zwar
+die
+Spalte
+mit der Gesamtdivergenz nach Aufruf des Drucklösers).</td>
+      <td>advec_s_bc, buoyancy, diffusion_e, diffusion_s, diffusion_u,
+diffusion_v,
+diffusion_w, disturb_field, modules, production_e, prognostic_equations</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">04/07/00</td>
+      <td>SR</td>
+      <td>2.0b</td>
+      <td>B</td>
+      <td>Diriclet-Randbedingungen für
+Temperatur und
+Flüssigwassergehalt
+werden gesetzt. Dies wäre bereits nach Einführung der
+Pointer
+zwingend notwendig gewesen. Rechnungen mit vorgegebener
+Oberflächentemperatur
+schlugen deshalb bislang fehl.</td>
+      <td>boundary_conds</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">07/09/00</td>
+      <td>MS</td>
+      <td>2.0b</td>
+      <td>B</td>
+      <td>Die virtuelle potenielle Temperatur
+wird nun auch für
+k=nzb und
+k=nzt+1 berechnet, um die Randwerte auch für Ausgabezwecke
+bereichtzustellen.&nbsp;</td>
+      <td>compute_vpt</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">28/12/00</td>
+      <td>SR</td>
+      <td>2.1</td>
+      <td>C/N</td>
+      <td>PALM erlaubt jetzt den Einsatz
+optionaler Software-Pakete,
+die zwar
+zum Modell gehören, standardmä�&#376;ig aber
+nicht mit
+übersetzt
+werden, um so unter anderem Kompilationszeit einzusparen. Siehe neues
+Kapitel
+3.7 in der Modelldokumentation.&nbsp;
+      <p>Einsatz der
+dvrp-Software wurde vollständig
+überarbeitet.
+Sie ist nun als Software-Paket optional im Modell einsetzbar. Siehe
+überarbeitetes
+Kapitel 4.5.6 in der Modelldokumentation.&nbsp; </p>
+      <p>Die
+Prognose der Partikelverlagerung ist ebenfalls in ein
+optionales
+Software-Paket ausgelagert.</p>
+      </td>
+      <td>advec_particles,
+header, init_3d_model, init_dvrp,
+init_particles,
+init_pegrid, modules, parin, parles, plot_dvrp, prognostic_equations,
+read_var_list,
+write_var_list&nbsp;
+      <p><b>Neu:</b> <br>
+package_parin</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">28/12/00</td>
+      <td>SR</td>
+      <td>2.1</td>
+      <td>B</td>
+      <td>MPI_FINALIZE ans Ende des Hauptprogramms geschoben (stand
+vorher vor
+cpu_auswertung, wo noch ein Barrier-Aufruf steht). comm2d war zu Beginn
+undefiniert und wird nun erst einmal gleich MPI_COMM_WORLD gesetzt.</td>
+      <td>parles</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">02/01/01</td>
+      <td>SR</td>
+      <td>2.1a</td>
+      <td>C</td>
+      <td>Offene Dateien werden sobald möglich geschlossen.
+Wiedereröffnung
+bestimmter Dateien mit POSITION='APPEND' möglich. In diesem
+Zusammenhang
+wurde das Unterprogramm close_files in close_file umbenannt und hat nun
+1 Argument.&nbsp; <br>
+Anpassung der Diffusionsparametrisierung im 1D-Modell an das 3D-Modell.</td>
+      <td>advec_particles, check_cpu_time, check_open, cpu_auswertung,
+init_1d_model,
+init_3d_model, init_particles, modules.f90, parin, parles, plot_2d,
+write_3d_binary&nbsp;
+      <p><b>Neu:</b> <br>
+close_file&nbsp; </p>
+      <p><b>Eliminiert:</b>
+      <br>
+close_files</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">02/01/01</td>
+      <td>SR</td>
+      <td>2.1a</td>
+      <td>B</td>
+      <td>Beseitigung kleiner Fehler.</td>
+      <td>check_cpu_time,
+diffusion_e, diffusivities, long_filter,
+production_e</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>05/01/01</td>
+      <td>SR</td>
+      <td>2.1b</td>
+      <td>N</td>
+      <td nosave="">Neues
+Software-Paket zur Berechnung von Spektren im
+Ortsraum</td>
+      <td>check_open, header, init_3d_model,
+leap_frog, modules,
+package_parin,
+parles, read_var_list, write_3d_binary, write_var_list&nbsp;
+      <p><b>Neu:</b>
+      <br>
+calc_spectra, plot_spectra</p>
+      </td>
+    </tr>
+    <tr valign="top">
+      <td>25/01/01</td>
+      <td>SR</td>
+      <td>2.1c</td>
+      <td>C/N</td>
+      <td>Drucklöser
+kann jetzt die Singleton-FFT benutzen. Modul <tt>singleton</tt>
+wurde deshalb von <tt>calc_spectra.f90</tt> nach <tt>modules.f90</tt>
+geschoben
+(neuer Initialisierungsparameter <tt>fft_method</tt>).&nbsp;
+      <br>
+Flüsse können jetzt bei k=1
+unabhängig von der
+Verwendung
+einer Prandtl-Schicht vorgegeben werden (neuer
+Initialisierungsparameter <tt>use_surface_fluxes</tt>).&nbsp;
+      <br>
+Modul <tt>test_variables</tt> wurde aus allen
+Programmteilen entfernt.
+Hauptprogramm wurde von parles nach <tt>palm</tt>
+umbenannt.&nbsp; <br>
+Modell kann auf DEC-Workstations eingesetzt werden (-D <tt>dec</tt>).&nbsp;
+      <br>
+Zusätzliche Zeitmessungen mit dvrp-Software.
+Schreiben von
+Partikel-Informationen
+ist optional (neuer Parameter <tt>write_particle_informations</tt>).</td>
+      <td>advec_particles, calc_spectra, check_parameters,
+cpu_zeitmessung, diffusion_s,
+header, init_3d_model, init_dvrp, init_particles, leap_frog, modules,
+package_parin,
+parin, poisfft, read_var_list, swap_timelevel, write_var_list&nbsp;
+      <p><b>Neu:</b> <br>
+palm&nbsp; </p>
+      <p><b>Eliminiert:</b> <br>
+parles, module_test</p>
+      </td>
+    </tr>
+    <tr valign="top">
+      <td>25/01/01</td>
+      <td>SR</td>
+      <td>2.1c</td>
+      <td>B</td>
+      <td>Fehler
+beim öffnen von Unit 23 beseitigt. Modul <tt>interface</tt>
+fehlte in disturb_field.&nbsp; <br>
+Wertebereich von theta* in Prandtl-Fluxes eingeschränkt, weil
+sonst auf einigen Rechnern overflow droht, wenn u*=0.</td>
+      <td>check_open,
+disturb_field, prandtl_fluxes</td>
+    </tr>
+    <tr valign="top">
+      <td>30/01/01</td>
+      <td>SR</td>
+      <td>2.1d</td>
+      <td>N/C</td>
+      <td>Prognose
+eines passiven Skalars ist möglich (anstatt
+Feuchte),
+dazu neuer Initialisierungsparameter <tt>passive_scalar</tt>.&nbsp;
+      <p>Falls kein Pfad für ftpcopy existiert, werden in <tt>check_open</tt>
+die Dateinamen für AVS-Koordinaten- und Datendatei auf
+"unknown"
+gesetzt.</p>
+      </td>
+      <td>asselin_filter,
+boundary_conds, check_open, check_parameters,
+flow_statistics,
+header, init_1d_model, init_3d_model, modules, parin, plot_2d,
+plot_dvrp,
+prandtl_fluxes, prognostic_equations, read_var_list, swap_timelevel,
+write_3d_binary,
+write_var_list</td>
+    </tr>
+    <tr valign="top">
+      <td>30/01/01</td>
+      <td>SR</td>
+      <td>2.1d</td>
+      <td>B</td>
+      <td>String-Ausgabe für use_surface_fluxes korrigiert.
+Version vom
+25/01/01 brach deswegen bei Fortsetzungsläufen ab.&nbsp; <br>
+xy-Plotausgabe von q und ql korrigiert.</td>
+      <td>plot_2d,
+write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">30/03/01</td>
+      <td>SR</td>
+      <td>2.2</td>
+      <td>N/C</td>
+      <td>Sämtliche 3D-Felder der Zeitebene t+dt wurden
+entfernt.
+Ebenso
+die Arbeitsfelder work und work1. Hilfsfelder wurden soweit
+möglich
+eingespart und werden grundsätzlich lokal allokiert. Dadurch
+konnten
+eine Reihe von �&#339;bergabeparametern gestrichen werden (z.B. beim
+Aufruf
+von <tt>pres, advec_s_bc, poisfft, production_e, sor </tt>sowie
+den
+Spline-Unterprogrammen).
+Der Long-Filter wurde in das Upstream-Spline-Verfahren integriert. Da
+der
+Zeitfilter jetzt direkt in der prognostischen Gleichung angewendet wird
+(bisher geschah dies erst nach Aufruf des Drucklösers), haben
+sich
+die Zahlen in der Testergebnis-Datei geändert. Die mittleren
+Profile
+sind aber unbeeinflusst.&nbsp;
+      <p>Eine weitere kleinere
+�&#8222;nderung der Testergebnis-Daten
+wird dadurch
+verursacht, dass jetzt der Parameter <tt>adjust_mixing_length</tt>
+defaultmä�&#376;ig <tt>.FALSE.</tt>
+ist und der Mischungsweg grundsätzlich zusätzlich
+auf&nbsp; <tt>0.7
+* zu</tt>&nbsp;&nbsp; begrenzt wird. Falls <tt>adjust_mixing_length=T</tt>,
+wird jetzt der Mischungsweg in <tt>diffusivities</tt>
+analog zu <tt>diffusion_e</tt>
+an allen Gitterpunkten modifiziert. <b>Achtung: </b>Diese
+�&#8222;nderungen
+können bei anderen Simulationen t.w. erhebliche Auswirkungen
+auf
+die
+oberflächennahen Ergebnisse haben.&nbsp; </p>
+      <p><b>Kleinere
+�&#8222;nderungen:</b> In <tt>init_cloud_physics</tt>
+wird
+der Wert der Variablen <tt>surface_pressure</tt> in hPa
+belassen
+(bisher
+Umwandlung in Pa).&nbsp; <br>
+Die Namelist-Namen der Software-Pakete sind&nbsp; t.w.
+geändert.&nbsp; <br>
+Unit 14 (binäre Ausgabe für
+Fortsetzungsläufe) wird
+jetzt im Hauptprogramm geschlossen, damit auf diese Datei noch
+benutzergesteuerte
+Ausgaben erfolgen können.&nbsp; <br>
+Laufparameter werden in keinem Fall mehr auf Unit 14 ausgegeben bzw.
+von Unit 13 gelesen, d.h. sie gelten jetzt tatsächlich nur
+für
+den jeweils aktuellen Lauf.&nbsp; <br>
+Partikeladvektion funktioniert jetzt auch zusammen mit der
+Galilei-Transformation.&nbsp; </p>
+      <p>Restliche
+deutsche Variablen-, Unterprogramm- und Modulnamen
+wurden
+ins Englische übersetzt. Davon sind fast alle Programmteile
+betroffen
+(nicht in rechter Spalte aufgeführt).</p>
+      </td>
+      <td>advec_particles,
+advec_s_bc, advec_s_ups, advec_u_ups,
+advec_v_ups,
+advec_w_ups, boundary_conds, calc_spectra, check_parameters,
+diffusion_e,
+init_3d_model, init_cloud_physics, init_pegrid, init_rankine,
+leap_frog,
+modules, package_parin, palm, parin, poisfft, pres, production_e,
+prognostic_equations,
+read_var_list, sor, swap_timelevel, transpose_*, write_3d_binary,
+write_var_list&nbsp;
+      <p><b>Neu:</b> <br>
+cpu_log, cpu_statistics&nbsp; </p>
+      <p><b>Eliminiert:</b>
+      <br>
+asselin_filter, cpu_auswertung, cpu_zeitmessung, long_filter</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">12/07/01</td>
+      <td>SR</td>
+      <td>2.2a</td>
+      <td>N/C</td>
+      <td>Defaultwert der unteren
+Randbedingung für die TKE ist ab
+sofort <tt>bc_e_b
+= 'neumann'</tt>.&nbsp; <br>
+Partikelquelle ist über Paketparameter steuerbar.
+Partikeleigenschaften
+sind mittels benutzereigener Software steuerbar. Der dvrp-Ausgabeweg
+ist
+jetzt ebenfalls über Paketparameter steuerbar.&nbsp; <br>
+Allen Modulen (bis auf singleton) wurde eine SAVE-Anweisung
+hinzugefügt,
+damit die durch sie vereinbarten Variablen während der
+Rechnung in
+keinem Fall undefiniert werden können (diese Gefahr besteht
+z.B.
+auf
+SGI-Origin-Maschinen).</td>
+      <td>advec_particles, header,
+init_dvrp, init_particles,
+modules.f90, package_parin,
+plot_dvrp, user_interface</td>
+    </tr>
+    <tr>
+      <td>12/07/01</td>
+      <td>SR</td>
+      <td>2.2a</td>
+      <td>B</td>
+      <td>Verschiebung der OPEN-Anweisung für Unit 33
+(AVS-FLD-Datei).</td>
+      <td>check_open</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">20/07/01</td>
+      <td>SR</td>
+      <td>2.3</td>
+      <td>N</td>
+      <td>Einbau des Mehrgitterverfahrens zur Lösung der
+Poisson-Gleichung.</td>
+      <td>check_parameters,
+exchange_horiz, header, init_grid,
+init_pegrid, modules,
+parin, pres, run_control&nbsp;
+      <p><b>Neu:</b> <br>
+poismg</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">21/08/01</td>
+      <td>SR</td>
+      <td>2.3a</td>
+      <td>N/C</td>
+      <td>Ergänzung der dvrp-Software: Partikel
+können mit
+Schwänzen
+versehen werden. Die Ausgabe der dvrp-Plotdaten durch einen separaten
+PE
+ist möglich (mrun-Option "<tt>-p dvrp_graphics+1PE</tt>").
+Der
+Kommunikator <tt>MPI_COMM_WORLD</tt>&nbsp;
+wurde deshalb durch&nbsp; <tt>comm_palm</tt>&nbsp;
+ersetzt.&nbsp;
+      <p>Reduzierung des Mischungsweges im
+Wandbereich kann wahlweise
+abgeschaltet
+werden. Für km und kh wird jetzt eine Neumann-Randbedingung am
+unteren
+Rand verwendet. Die TKE-Energieproduktionsberechnung durch Scherung des
+Grundstroms am unteren Rand wurde verbessert.&nbsp; </p>
+      <p>Generelle
+Verwendung der bodennahen vertikalen
+Impulsflüsse in
+den Diffusionstermen von u und v, immer wenn diese als Randbedingung
+vorgegeben
+sind (gemä�&#376; <tt>use_surface_fluxes</tt>,
+- bisher wurde
+dies
+nur bei eingeschalteter Prandtl-Schicht gemacht). Schubspannungen
+können
+jetzt als Randbedingungen vorgegeben werden (allerdings unter
+zuhilfenahme
+benutzereigener Software).&nbsp; </p>
+      <p>Zusätzliche
+Schnittstellen für benutzereigene
+Software in
+allen Tendenztermen, in <tt>flow_statistics,</tt> und
+für
+Partikel-
+bzw. dvrp-Programmteile (Bestimmung von Partikeleigenschaften,
+Festlegung
+von Farbtabellen).&nbsp; </p>
+      <p><b>Achtung: </b>Diese
+�&#8222;nderungen können bei
+Simulationen mit
+mittlerem Wind durch die �&#8222;nderungen im bereich des unteren
+Randes
+t.w. erhebliche Auswirkungen auf die oberflächennahen
+Ergebnisse
+haben.</p>
+      </td>
+      <td>advec_particles, diffusion_e,
+diffusion_u, diffusion_v,
+diffusivities,
+flow_statistics, header, init_dvrp, init_particles, init_pegrid,
+leap_frog,
+modules, package_parin, palm, parin, plot_dvrp, production_e,
+prognostic_equations,
+read_var_list, swap_timelevel, user_interface, write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">21/08/01</td>
+      <td>SR</td>
+      <td>2.3a</td>
+      <td>B</td>
+      <td>Falsche Positionierung von
+MPI_ALLREDUCE in check_cpu_time
+korrigiert.</td>
+      <td>check_cpu_time</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">04/09/01</td>
+      <td>SR</td>
+      <td>2.3b</td>
+      <td>N</td>
+      <td>Zusätzliche Profilausgaben für
+Energieproduktionsterme möglich.
+Stördruck wird bei der FFT-Methode nicht mehr durch
+Aufsummieren
+der
+Werte zu den einzelnen Zeitschritten ermittelt.</td>
+      <td>check_parameters,
+flow_statistics, modules, pres</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">04/09/01</td>
+      <td>SR</td>
+      <td>2.3b</td>
+      <td>B</td>
+      <td>Austausch der Geisterränder für die
+zeitgefilterten
+Felder
+direkt nach Durchführung der Filterung (war fehlerhaft seit
+Entfernen
+der Zeitebene t+dt (Version 2.2) und führte zu sehr kleinen
+Störungen
+an den seitlichen Rändern der Teilgebiete).&nbsp;
+      <p><b>Achtung:</b>
+Der Inhalt der Testergebnis-Datei ändert
+sich durch
+diese Fehlerkorrektur.</p>
+      </td>
+      <td>prognostic_equations</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">09/11/01</td>
+      <td>SR</td>
+      <td>2.3c</td>
+      <td>N</td>
+      <td>Farbe entlang der
+Partikelschwänze kann sich
+ändern. Einschalten
+der Partikeladvektion bei Fortsetzungsläufen möglich.</td>
+      <td>advec_particles, init_particles, modules, package_parin,
+plot_dvrp</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">16/04/02</td>
+      <td>SR</td>
+      <td>2.3d</td>
+      <td>N</td>
+      <td>Vorgabe
+von Randbedingungen für Partikeladvektion
+möglich.
+Partikeldaten können für spätere Analysen
+auf Datei
+geschrieben
+werden (Unit 85). <tt>PARTICLE</tt>-Datentyp
+enthält
+Informationen
+über Partikelgeschwindigkeitskomponenten und
+Startposition.&nbsp;
+      <p>Skalartransport sowie entsprechende
+Datenausgaben können
+durch
+eigene Parameter gesteuert werden (nicht mehr über die
+Feuchteparameter).&nbsp; </p>
+      <p>Im Fall von
+pdims(1)=1 (eindimensionales virtuelles
+Prozessornetz in
+y-Richtung) werden die zyklischen Randbedingungen in x-Richtung durch
+direktes
+Umspeichern anstatt durch&nbsp; <tt>sendrecv </tt>realisiert.
+Ebenso
+werden
+die Transponierungen xz, yz, zx&nbsp; und zy eingespart (es wird
+aber
+weiter
+umsortiert).&nbsp; </p>
+      <p>Im Fall von
+3D-Plotausgaben Aufruf von ftpcopy-Script durch
+batch_scp-Script
+ersetzt (dient der Ermittelung von Dateizyklusnummern als Information
+für
+die AVS-fld-Datei).&nbsp; </p>
+      <p>Bei fehlerhafter
+Eröffnung einer CPU_MEASURES-Datei
+werden erneute
+Eröffnungsversuche durchgeführt.</p>
+      </td>
+      <td>advec_particles, check_open, check_parameters,
+exchange_horiz, flow_statistics,
+header, init_particles, modules, package_parin, parin, plot_2d,
+plot_3d,
+prognostic_equations, read_var_list, transpose_xz, transpose_yz,
+transpose_zx,
+transpose_zy, write_var_list</td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">02/05/02</td>
+      <td>SR</td>
+      <td>2.3e</td>
+      <td>B</td>
+      <td>Wiedereinführung der 3D-Felder für die
+Zeitebene
+t+dt, die
+notwendig ist, damit in den Diffusionstermen bei Leapfrog-Zeitschritten
+mit der korrekten Zeitebene t-dt gearbeitet wird. Seit Version 2.2
+wurde
+fälschlicherweise die Zeitebene t+dt verwendet. Asselin-Filter
+ist
+jetzt wieder eigenständiges Unterprogramm. <br>
+Die Wiedereinführung dieser dritten Zeitebene ist auch
+Voraussetzung
+für die in der nächsten Version geplante skalare
+Optimierung.&nbsp;
+      <p>Fehler bei Berechnung von
+Ausgabezeitpunkten eliminiert (trat
+auf, wenn
+bei Fortsetzungsläufen von Ausgabeabständen 0.0 auf
+von Null
+verschiedene Werte gewechselt werden sollte).&nbsp; </p>
+      <p><b>Achtung:</b>
+Der Inhalt der Testergebnis-Datei ändert
+sich durch
+diese Fehlerkorrektur.</p>
+      </td>
+      <td>init_3d_model,
+leap_frog, modules, prognostic_equations,
+swap_timelevel&nbsp;
+      <p><b>Neu:</b> <br>
+asselin_filter</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td>02/05/02</td>
+      <td>SR</td>
+      <td>2.3e</td>
+      <td>N/C</td>
+      <td>Kleinere
+Anpassungen an IBM-Regatta-Systeme in
+check_parameters, cpu_log.&nbsp;
+      <p>Modul singleton in
+eigenständige Datei
+überführt.&nbsp; </p>
+      <p>Global_min_max
+arbeitet mit REAL*4, um Komplikationen auf
+32-bit-Rechnern
+zu vermeiden (Datentyp MPI_2REAL müsste dort sonst auf
+MPI_2DOUBLE_PRECISION
+geändert werden). <br>
+Horizontale Geschwindigkeitskomponenten für Partikeladvektion
+werden exakt zwischen den jeweils benachbarten horizontalen
+Gitterflächen
+interpoliert.</p>
+      </td>
+      <td nosave="">advec_particles,
+check_parameters, cpu_log,
+global_min_max,
+modules&nbsp;
+      <p><b>Neu:</b> <br>
+singleton</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">11/06/02</td>
+      <td>SR</td>
+      <td>2.4</td>
+      <td>N/C</td>
+      <td>Optimierung und Anpassungen für einzelne Knoten der
+IBM-Regatta-Systeme.
+      <p><b>Skalare (Cache) Optimierung:</b>
+Tendenzterme werden
+innerhalb einer
+gro�&#376;en (i,j)-Schleife berechnet, die nun jeweils die gesamte
+prognostische
+Gleichung umfasst. Schleifenindices i und j werden an die
+Tendenzunterprogramme
+als Argumente übergeben. Die Tendenzunterprogramme sind als
+Module
+geschrieben, die mittels Technik der überladenen Funktionen
+auch
+ohne
+diese Indices i und j aufgerufen werden können, und dann wie
+in
+früheren
+Versionen funktionieren (d.h. in ihnen laufen die Schleifen
+über
+alle
+3 Dimensionen). Solche Teile der prognostischen Gleichungen, die
+globale
+Kommunikation beinhalten, sind vor die (i,j)-Schleife gezogen. Falls
+ausschlie�&#376;lich
+mit Piascek-Williams-Advektion gearbeitet wird, werden alle
+prognostischen
+Gleichungen in einer einzigen (i,j)-Schleife gerechnet. </p>
+      <p><b>Kommunikationsoptimierung:</b>
+Zusätzliche
+Implementierung einer
+1D-Gebietszerlegung in x-Richtung. Mit dem neuen direkten
+Drucklöser
+(poisfft_hybrid) werden dadurch 4 von 6 notwendigen Transpositionen
+eingespart.
+Die 1D-Zerlegung wird automatisch bei Verwendung dieses neuen
+Lösers
+aktiviert. Austausch von Geisterrändern in y-Richtung wird bei
+dieser
+1D-Zerlegung durch einfache zyklische Randbedingungen ersetzt. </p>
+      <p><b>Kleinere Anpassungen:</b> String-Vergleiche
+erfordern beim
+IBM-Compiler
+in der Regel den Einsatz der TRIM-Funktion, um
+überschüssige
+Blanks am Ende des Strings abzuschneiden (sonst liefert der Vergleich
+.F.). <br>
+Lokal allokierte Felder t.w. in sogenannte automatische Felder
+umgewandelt
+(günstiger, um Gefahr von eventuellen Speicherlecks zu
+vermeiden).
+Einige Feldoperationen wurden wegen schlechter Performance auf der IBM
+entfernt (s. pres). </p>
+      <p><b>Achtung: </b>Die
+�&#339;bersetzung des Modells erfordert
+aufgrund
+der Vielzahl nunmehr eingesetzter Module die Verwendung des
+make-Mechanismus,
+um die korrekte Reihenfolge bei der �&#339;bersetzung der
+Programmteile
+zu gewährleisten. Die Beschreibung dieser
+Abhängigkeiten
+erfolgt
+in der Datei<tt> Makefile</tt>, die zusammen mit den
+Programmdateien
+abgelegt
+ist und ebenfalls unter RCS-Verwaltung steht. </p>
+      <p>Im
+User-Interface ist das Unterprogramm<tt> user_actions </tt>nun
+ebenfalls
+als Modul geschrieben und bedient sich der Methode der
+überladenen
+Funktionen. Existierende benutzereigene Software muss entsprechend
+angepasst
+werden.</p>
+      </td>
+      <td>advec_s_pw, advec_s_up,
+advec_u_pw, advec_u_up, advec_v_pw,
+advec_v_up,
+advec_w_pw, advec_w_up, buoyancy, calc_precipitation, calc_radiation,
+calc_spectra,
+check_parameters, coriolis, diffusion_e, diffusion_s, diffusion_u,
+diffusion_v,
+diffusion_w, diffusivities, exchange_horiz, exchange_horiz_2d,
+global_min_max,
+header, impact_of_latent_heat, init_pegrid, leap_frog, modules,
+plot_2d,
+plot_3d, plot_spectra, poisfft, pres, production_e,
+prognostic_equations,
+user_interface,
+      <p><b>Neu:</b> <br>
+fft_for_1d_decomp, Makefile, poisfft_hybrid,&nbsp;</p>
+      </td>
+    </tr>
+    <tr nosave="" valign="top">
+      <td nosave="">11/06/02</td>
+      <td>SR</td>
+      <td>2.4</td>
+      <td>B</td>
+      <td>Fehlende Variablenvereinbarung in <tt>advec_particles</tt>
+ergänzt.</td>
+      <td>advec_particles</td>
+    </tr>
+    <tr>
+      <td valign="top">12/09/02</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.4a</td>
+      <td valign="top">N</td>
+      <td valign="top">Partikel
+können mit Trägheit versehen
+werden und
+einen Dichteunterschied zum umgebenden Fluid haben. Zur Steuerung dient
+der neue Paketparameter <tt>density_ratio</tt>.</td>
+      <td valign="top">advec_particles, header, init_particles,
+modules, package_parin</td>
+    </tr>
+    <tr>
+      <td valign="top">12/09/02</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.4a</td>
+      <td valign="top">B</td>
+      <td valign="top">Fehler in Berechnung der Anfangsprofile
+von pt
+und q entfernt
+(obere Feldgrenze von 10 konnte in <tt>pt_vertical_gradient_level_ind</tt>
+überschritten werden). Fehler führte unter
+Umständen zu
+"segmentation fault" bei Verwendung sehr gro�&#376;er
+Gitterpunktzahlen
+in z-Richtung.
+      <p>Fehler in Berechnung der v-Komponente am
+unteren Rand
+entfernt, die
+für den Scherungsproduktionsterm der TKE verwendet wird
+(Variable
+v_0). Fälschlicherweise wurde zur Berechnung u(k=1) statt
+v(k=1)
+verwendet.</p>
+      </td>
+      <td valign="top">check_parameters,
+modules, production_e</td>
+    </tr>
+    <tr>
+      <td valign="top">19/12/02</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.5</td>
+      <td valign="top">N</td>
+      <td valign="top">Restart times can be set by user with new
+runtime (d3par)
+parameters <tt>restart_time</tt> and <tt>dt_restart</tt>.
+Run
+description
+header is written on file CONTINUE_RUN. Output of cpu statistics
+changed
+(PE results are now collected on PE0 in order to calculate mean cpu
+statistics).
+Output of warnings in the job protocol in case of negative measured
+cpu-times.
+Remaining cpu-time is also evaluated on IBM-Regatta.</td>
+      <td valign="top">cpu_log, cpu_statistics,
+check_parameters,header, leap_frog,
+local_tremain, local_tremain_ini, modules,&nbsp; palm,&nbsp;
+      <p><b>new:</b>
+      <br>
+check_for_restart </p>
+      <p><b>deleted:</b> <br>
+check_cpu_time</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">&nbsp;<br>
+      </td>
+      <td valign="top">&nbsp;<br>
+      </td>
+      <td valign="top">&nbsp;<br>
+      </td>
+      <td valign="top">C</td>
+      <td valign="top">Unit
+14 (BINOUT) must be opened using a special
+process
+id string, because on IBM, the PE rank differs between communicators
+MPI_COMM_WORLD
+and comm_2d. This leads to a mismatch between filename-PE-number and
+PE-number
+written on file. As the consequence, these files could not be read by
+restart-jobs.
+Reading of array <tt>hom</tt> moved from <tt>init_3d_model
+      </tt>to <tt>read_var_list</tt>
+(binary version number incremented to 2.2).
+      <p><b>Further
+optimization for IBM-Regatta-systems:</b> <br>
+Additional optimization of the hybrid-solver for multinode usage
+(overlapping
+of communication and computation). </p>
+      <p>Further cache
+optimization by using strides and joining loops (<tt>hybrid_solver,
+pres</tt> and <tt>timestep</tt>). Joining of
+MPI_ALLREDUCE calls in
+timestep. </p>
+      <p>In case of 1d-decomposition along x
+only a part of the
+integral divisor
+conditions is checked, on IBM hosts a 1d-decomposition along x is the
+default,
+a switch from Poisson-FFT-solver to the hybrid-solver is made in case
+of
+1d-decomposition along x, the hybrid-solver does not force a
+1d-decomposition
+any more. </p>
+      <p>Array notation changed to do-loop
+constructs due to better
+performance. </p>
+      <p>Cyclic boundary conditions along <tt>y</tt>
+used instead of
+sendrecv
+in case of a 1d-decomposition along <tt>x</tt>. SENDRECV
+replaced by
+nonblocking
+routines ISEND and IRECV in <tt>exchange_horiz.f90</tt>. </p>
+      <p>Speed optimization by removing MINVAL/MAXVAL calls and by
+handling <br>
+the "abs" case in a different way than the min/max cases (routine <tt>global_min_max</tt>).</p>
+      </td>
+      <td valign="top">asselin_filter, check_open,
+exchange_horiz,
+global_min_max,
+init_3d_model, init_pegrid, parin, poisfft_hybrid, read_var_list,
+timestep,
+write_3d_binary, write_var_list</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">B</td>
+      <td valign="top">Correction
+of mixing length term (l(k)/ll(k)).
+The condition
+kh=3*km in the unstable case is now also exactly met in the wall
+adjustment
+region. Factor 0.7 in wall adjustment part replaced by variable <tt>wall_adjustment_factor</tt>,
+which is set to 1.8 in <tt>modules.f90</tt>. The factor
+0.7 was the
+possible
+reason for 2-delta-x-waves, which were observed since version 2.1d.
+      <p>Calculation
+of deformation tensor re-designed (<tt>production_e</tt>). </p>
+      <p>STOP statements replaced by call of new subroutine <tt>local_stop,
+      </tt>where
+MPI_FINALIZE is called before STOP in case of a parallel environment. </p>
+      <p>ISO2D parameter dp set to true for ibm hosts. </p>
+      <p>tend=p
+added in <tt>pres</tt> after calling sor method.</p>
+      </td>
+      <td valign="top">advec_s_bc, buoyancy,
+check_open,
+check_parameters, close_file,
+coriolis, diffusion_e, diffusivities, fft_for_1d_decomp,
+flow_statistics,
+init_3d_model, init_dvrp, init_grid, init_particles, init_pegrid,
+parin,
+plot_2d, poisfft, pres, read_var_list, user_interface,&nbsp;
+      <p><b>new:</b>
+      <br>
+local_stop, production_e</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">03/03/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.5a</td>
+      <td valign="top">N</td>
+      <td valign="top">Particle velocities are also stored in
+array
+particles in
+case of zero density ratio. Steering of variables by dvrp browser
+included.</td>
+      <td valign="top">advec_particles,
+init_dvrp, modules,</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">C</td>
+      <td valign="top">AVS
+data format changed from float to xdr_float
+(needed
+on linux machines <br>
+due to the little/big endian problem). Updates for new version of dvrp
+software (e.g. using module dvrp is now mandatory).</td>
+      <td valign="top">close_file, init_dvrp, leap_frog, plot_dvrp</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">B</td>
+      <td valign="top">Error in particle inertia part removed
+(exp_arg
+must not
+contain the timestep). <br>
+Error in calculation of the vertical flux of resolved scale energy
+(profile 57) removed. Displacement for integers in mpi_particle_type
+reduced
+from 16 to 8 on ibm.</td>
+      <td valign="top">advec_particles,
+flow_statistics, init_particles</td>
+    </tr>
+    <tr>
+      <td valign="top">12/03/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.6</td>
+      <td valign="top">N</td>
+      <td valign="top"><b>Version optimized for NEC-SX6
+parallel-vector
+machines.&nbsp;</b>
+      <p>There are two main changes. A
+new vectorizable routine <tt>prognostic_equations_vec</tt>
+is added, where cache optimizations are undone. The tendency
+subroutines
+called by <tt>prognostic_equations_vec</tt> contain the
+full 3d-loops
+(compared
+with the cache-optimized versions where only loops over k are carried
+out).
+Additionally, a new pressure solver <tt>poisfft_hybrid_vec</tt>
+is
+added,
+which requires a 1d-domain-decomposition (like poisfft_hybrid). In this
+solver, a very fast FFT from Clive Temperton (ECMWF) is&nbsp;
+optionally
+available by choosing <tt>fft_method </tt>= <i>'temperton-algorithm'</i>.&nbsp;
+      </p>
+      <p>Additional changes in <tt>flow_statistics</tt>
+to allow
+better vectorization. </p>
+      <p>Small changes in routines <tt>diffusivities</tt>
+and <tt>pres</tt>
+which
+caused run time errors on IBM and NEC due to compiler problems. </p>
+      <p>Reading of environment variable <tt>tasks_per_node</tt>
+moved
+from routine <tt>poisfft_hybrid</tt>
+to routine <tt>parin</tt>. </p>
+      <p><b>Changes
+in makefile:</b> modules and user_interface now
+depend on
+the f90 files, dependency of singleton added, LDFLAGS moved to the end
+of PROG rule, temperton_fft added.</p>
+      </td>
+      <td valign="top">advec_s_pw, advec_s_up, advec_u_pw, advec_u_up,
+advec_v_pw,
+advec_v_up, advec_w_pw, advec_w_up, buoyancy, calc_precipitation,
+calc_radiation,
+check_parameters, coriolis, cpu_log, diffusion_e, diffusion_s,
+diffusion_u,
+diffusion_v, diffusion_w, diffusivities, fft_for_1d_decomp, header,
+impact_of_latent_heat,
+init_pegrid, leap_frog, local_tremain, modules, parin, poisfft,
+poisfft_hybrid,
+pres, production_e, prognostic_equations, user_interface
+      <p><b>new:</b>
+      <br>
+temperton_fft</p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">B</td>
+      <td valign="top">tend=p
+added in routine <tt>pres</tt> after
+calling sor
+method.</td>
+      <td valign="top">pres</td>
+    </tr>
+    <tr>
+      <td valign="top">14/03/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.6a</td>
+      <td valign="top">N</td>
+      <td valign="top">Additional
+vector optimization for NEC-SX6.
+      <p>Optional system-specific
+random number generator available
+(for equal
+distributed numbers). </p>
+      <p>Define strings in all
+relevant subroutines changed from&nbsp; </p>
+      <p><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+#if defined( define_string )</tt> </p>
+      <p>to </p>
+      <p><tt>&nbsp;&nbsp;&nbsp;&nbsp; #if
+defined( __define_string )</tt> </p>
+      <p><b>Caution:
+      </b>The relevant subroutines are NOT listed in
+the right
+column!</p>
+      </td>
+      <td valign="top">asselin_filter,
+check_parameters, diffusion_e,
+diffusivities,
+disturb_field, global_min_max, header, local_tremain, modules, parin,
+poisfft_hybrid,
+pres, read_var_list, write_var_list</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">B</td>
+      <td valign="top">Error in particle boundary condition removed
+(velocity must
+be inverted in case of reflection)</td>
+      <td valign="top">advec_particles</td>
+    </tr>
+    <tr>
+      <td valign="top">16/04/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.6b</td>
+      <td valign="top">N</td>
+      <td valign="top">Time
+series output of Monin Obukhov length.
+      <p>Temperton fft can now
+be used for all hosts and every domain
+decomposition.
+Abort in case of Temperton fft, if number of gridpoints along x and/or
+y contain illegal factors.&nbsp; </p>
+      <p>Index values
+for the extrema found in global_min_max are
+limited to
+the range 0..nx, 0..ny (on IBM machines -1 and nx+1/ny+1 occured which
+produced different RUN_CONTROL output compared to other machines). </p>
+      <p>Output format of iteration count in routine run_control
+enlarged.</p>
+      </td>
+      <td valign="top">check_parameters,
+fft_for_1d_decomp,
+global_min_max, init_pegrid,
+modules, plot_ts, poisfft, run_control, temperton_fft</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">B</td>
+      <td valign="top">Additional checks of variables <tt>hybrid_solver</tt>
+and <tt>host</tt>
+(<tt>hybrid_solver</tt> must not be used for a
+2d-domain-decomposition, <tt>host</tt>
+should be set by setting environment variable <tt>localhost</tt>).
+      <p>Header output for mixing length limitations revised.</p>
+      </td>
+      <td valign="top">check_parameters, header</td>
+    </tr>
+    <tr>
+      <td valign="top">09/05/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.7</td>
+      <td valign="top">N</td>
+      <td valign="top"><b>Version
+running on Linux Clusters using MPICH
+and Intel
+FORTRAN compiler (ifc)</b>
+      <p>So far, only absolutely
+neccessary changes have been done
+(possible
+optimizations will follow in a later version): </p>
+      <p>New
+time measurements for Linux (ifc) environment added. </p>
+      <p>Some
+parameters in MPI calls had to be modified (arrays had to
+be replaced
+by the first element of the regarding array) in order to fulfill f90
+type
+and rank requirements, since on the MUK-cluster a FORTRAN90-version of
+MPI is used. This also required to replace "mpif.h" by using a special
+module (named <tt>mpi</tt>).&nbsp; I did not find out
+how character
+strings
+can be send with MPI. Therefore, these strings are transformed to
+integers,
+before they are send, and transformed back to characters on the
+receiving
+PE. </p>
+      <p>On the MUK-cluster, only PE0 is able to read
+the values of
+environment
+variables. Therefore, these values are communicated via broadcast to
+the
+other PEs. </p>
+      <p>1d-decomposition is set as the default
+on Linux Clusters.
+Character
+strings have to be transformed to integer </p>
+      <p>Smaller
+changes: </p>
+      <p>Batch_scp paths for IBM, NEC and Linux
+added</p>
+      </td>
+      <td valign="top">check_open,
+cpu_log, flow_statistics,
+init_pegrid, local_getenv,
+modules, palm, poisfft_hybrid</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">B</td>
+      <td valign="top">Measurements
+on IBM are now using function <tt>irtc</tt>,
+which allows correct measurements for jobs running over the 24:00
+timeline.</td>
+      <td valign="top">cpu_log,
+local_tremain, local_tremain_ini</td>
+    </tr>
+    <tr>
+      <td valign="top">01/08/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.7a</td>
+      <td valign="top">B</td>
+      <td valign="top">Check that the number processors is also
+an
+integral divisor
+of the number&nbsp; of gridpoints along y in case of a
+1d-decomposition
+along x.
+      <p>Error concerning the multinode-version of
+poisfft_hybrid
+removed. It
+was caused by the Linux changes of version 2.7 and led to program abort
+due to MPI errors in <tt>MPI_ALLTOALL</tt>. </p>
+      <p>No
+abort on t3e-systems if system specific routines are used. </p>
+      <p>Array<tt>
+sums </tt>is initialized in<tt> init_3d_model </tt>before
+the first call of<tt> pres</tt>. Call of<tt>
+init_cloud_physics </tt>moved
+before<tt> init_particles</tt>.</p>
+      </td>
+      <td valign="top">fft_1dd_init, init_3d_model, init_pegrid,
+poisfft_hybrid</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">N</td>
+      <td valign="top">Interactive steering of dvrp-graphic
+features by
+dvrp-browser
+plugin extended (position of slicers, threshold values of isosurfaces)
+. New dvrp_graphics package parameter<tt> slicer_range_limits_dvrp</tt>.</td>
+      <td valign="top">init_dvrp, modules, package_parin,
+plot_dvrp</td>
+    </tr>
+    <tr>
+      <td valign="top">29/10/03</td>
+      <td valign="top">SR</td>
+      <td valign="top">2.7b</td>
+      <td valign="top">N</td>
+      <td valign="top">In
+the multigrid method, on a defined level,
+data are gathered
+on PE0 and further calculations are carried out only on this PE. New<tt>
+d3par </tt>parameter <tt>mg_switch_to_pe0_level</tt>.
+      <p>Particle groups implemented. New data type<tt>
+particle_groups_type </tt>and data type<tt> particle_type </tt>modified.
+Version
+numbers are
+output on the particle files. New<tt> particles_par </tt>parameter<tt>
+diameter</tt>. Parameter name<tt> uniform_psize</tt>
+changed to<tt>
+dvrp_psize</tt>.
+Parameters<tt> density_ratio </tt>is now an array.</p>
+      </td>
+      <td valign="top">advec_particles, check_open,
+exchange_horiz,
+header, init_particles,
+init_pegrid, modules, package_parin, parin, poismg</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">C</td>
+      <td valign="top">Random number generator from numerical recipes
+is now rewritten
+as a module. In restart runs the seed of this generator is set to the
+last
+values of the previous run in order to keep the sequence of the random
+numbers. New binary version 2.2.
+      <p>Buffer is flushed for file
+RUN_CONTROL immediately after every
+output
+on IBM and Linux cluster.</p>
+      </td>
+      <td valign="top">advec_particles,
+disturb_field, init_3d_model,
+init_particles,
+random_function, random_gauss, run_control, write_3d_binary</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+      <td valign="top">E</td>
+      <td valign="top">In routine buoyance, horizontal mean
+temperature
+is now
+taken from array hom instead of array sums (otherwise inconsistence in
+case of using more than one statistical region).
+      <p>Information
+about the time of the last timestep change added
+to the
+restart file. </p>
+      <p>System call of<tt> batch_scp </tt>on
+IBM corrected.</p>
+      </td>
+      <td valign="top">buoyancy,
+check_open, read_var_list,
+write_var_list</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">28/01/04</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">2.8</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">Runge-Kutta schemes (2nd and
+3rd
+order)
+for time integration implemented. The third order scheme is the new
+default.
+It allows the timestep to be 0.9*CFL, which is much larger than for the
+former default leapfrog scheme.&nbsp; The intermediate steps, which
+are
+part of these schemes, are realized by an additional loop within routine<span style="font-family: monospace;">
+time_integration&nbsp;</span>(currently<span style="font-family: monospace;">
+leap_frog</span>, but this routine will be renamed soon).
+Steering
+variables<span style="font-family: monospace;">
+at&nbsp;</span>and<span style="font-family: monospace;">
+bt&nbsp;</span>have
+been replaced by array<span style="font-family: monospace;">
+sct</span>.
+, which is particularly used in the prognostic equations. Values of
+this
+steering array are calculated within the new routine<span style="font-family: monospace;">
+timestep_scheme_steering</span>.
+      <p>When using Runge-Kutta
+schemes,&nbsp; the timestep increment
+is freely
+allowed to adjust after each timestep (the older schemes are using some
+restrictions, see routine<span style="font-family: monospace;">
+timestep</span>).
+Also, routine<span style="font-family: monospace;">
+run_control&nbsp;</span>is
+not automatically called in case of timestep changes, when Runge-Kutta
+schemes are switched on. </p>
+      <p>The old leapfrog scheme
+is still implemented and should
+produce the
+same results as in the previous version(s)! </p>
+      <p>Depending
+on the user experience, further adjustments to the
+Runge-Kutta
+schemes may be necessary within the next minor versions.&nbsp; </p>
+      <p><span style="font-weight: bold;">Attention:</span>
+      <br>
+The content of the testresult-file (run control output) has
+significantly
+changed due to the new default timestep scheme!</p>
+      </td>
+      <td style="vertical-align: top;">check_parameters, header,
+init_3d_model,
+init_rankine, leap_frog, modules, prognostic_equations, read_var_list,
+swap_timelevel, timestep, write_var_list
+      <p><span style="font-weight: bold;">new:</span> <br>
+timestep_scheme_steering</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Output of particle infos in
+subroutine<span style="font-family: monospace;">
+allocate_prt_memory&nbsp;</span>on demand only.
+      <p>Type<span style="font-family: monospace;"> log&nbsp;</span>(used
+for
+cpu time measurements) changed to<span style="font-family: monospace;">
+logpoint&nbsp;</span>due to name conflict with FORTRAN
+intrinsic<span style="font-family: monospace;">
+log.</span></p>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+cpu_log,&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">In case of opening unit 80, a
+barrier
+is set only for the first call of<span style="font-family: monospace;">
+check_open&nbsp;</span>(from routine<span style="font-family: monospace;">
+init_particles</span>), in order to avoid the possibility of
+hanging
+jobs,
+which may occur if unit 80 is opened within routine<span style="font-family: monospace;">
+allocate_prt_memory</span>.</td>
+      <td style="vertical-align: top;">check_open</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">30/01/04</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">2.8a</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">In order to prepare the code
+for
+the simulation
+of flow around buildings (to be realized in one of the next major
+versions),
+the lower<span style="font-family: monospace;"> k&nbsp;</span>index<span style="font-family: monospace;">
+nzb&nbsp;</span>has been replaced by a two-dimensional array<span style="font-family: monospace;">
+nzb_2d&nbsp;</span>in many of the three-dimensional loops. So
+far, all
+elements of this array are set to<span style="font-family: monospace;">
+nzb</span>.
+      <p>This change should not effect simulation
+results and cpu time
+in any
+way.</p>
+      </td>
+      <td style="vertical-align: top;">advec_s_pw,
+advec_s_up,
+advec_u_pw, advec_u_up,
+advec_v_pw, advec_v_up, advec_w_pw, advec_w_up, asselin_filter,
+buoyancy,
+calc_liquid_water_content, calc_precipitation, calc_radiation,
+coriolis,
+diffusion_e, diffusion_s, diffusion_u, diffusion_v, diffusion_w,
+diffusivities,
+impact_of_latent_heat, init_3d_model, modules, production_e,
+prognostic_equations,&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Euler step informations are
+removed in
+the run control output in case of Runge-Kutta schemes. Also, the
+timestep
+increment limitation is removed for the Runge-Kutta schemes.
+      <p><span style="font-weight: bold;">Attention:</span> <br>
+The content of the testresult-file (run control output) has changed
+due to this modification.</p>
+      </td>
+      <td style="vertical-align: top;">run_control, timestep</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Velocity gradients at the
+surface calculated
+in routine production_e are now limited. In case of inhomogeneous
+surface
+heating small diffusivities (<span style="font-family: monospace;">km</span>)
+sometimes caused very small timesteps due to this problem.</td>
+      <td style="vertical-align: top;">production_e</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">30/04/04<br>
+      </td>
+      <td style="vertical-align: top;">SR<br>
+      </td>
+      <td style="vertical-align: top;">2.8b<br>
+      </td>
+      <td style="vertical-align: top;">N<br>
+      </td>
+      <td style="vertical-align: top;">The number of processors
+along
+the respective directions of the virtual processor grid must not be
+integral divisors of the number of gridpoints along x, y or z any more.
+In case that they are not integral divisors, the subdomains on the
+processors at the upper borders of the virtual grid will contain less
+gridpoints than the other subdomains (which are all of equal size).
+Although this causes a load imbalance, only runs with very small
+numbers of processors will feel a significant decrease of performance.
+In order to be able to carry out the transpositions, array<span style="font-family: monospace;"> d </span>(and also
+working array<span style="font-family: monospace;"> tend</span>)
+have the same size on
+all processors. This new feature is switched on by setting the
+inipar-parameter<span style="font-family: monospace;">
+grid_matching </span>= <span style="font-style: italic;">'match'</span>,
+which is the
+default now.<br>
+      <br>
+Routine<span style="font-family: monospace;"> poisfft </span>is
+now
+the
+default for solving the Poisson-equation for the case of 2d- as well as
+1d-domain-decompositions and has been changed from a subroutine to a
+module. This routine now includes most of the optimization from the
+(Ketelsen) routine<span style="font-family: monospace;">
+poisfft_hybrid </span>and additionally allows 1d-decompositions
+along y.<br>
+      <span style="font-weight: bold;">ATTENTION:</span>
+Routine<span style="font-family: monospace;">
+poisfft_hybrid </span>might still be
+faster when running PALM on more than one node of the IBM-Regatta,
+although the difference is not very big. The <span style="font-family: monospace;">poisfft</span>-code
+for a
+decomposition along y has still a poor performance and needs further
+optimization.<br>
+      <br>
+The spectra-package is now able to use all the available FFT-methods
+(selected by inipar-parameter<span style="font-family: monospace;">
+fft_method </span>).
+Performance of the transpositions needed for calculating the spectra
+has been improved by using new direct transpositions from z to y and
+from y to x instead of two subsequent transpositions.<br>
+      <br>
+Runge-Kutta scheme implemented in the 1d-version (<span style="font-family: monospace;">init_1d_model</span>).
+Diffusion
+quantity arrays are allocated for previous timelevels only in case of
+leapfrog scheme.<br>
+      <br>
+This version is adapted for use on COMPAQ-DECALPHA systems (main
+changes: calling of SHAPE function within subroutine arguments (e.g.<span style="font-family: monospace;"> singleton</span>)
+causes compiler errors, particle data type modified for better
+alignment, DATA statements from modules removed because they caused
+internal compiler errors).<br>
+      </td>
+      <td style="vertical-align: top;">advec_s_ups, advec_u_ups,
+advec_v_ups, advec_w_ups, calc_spectra, check_parameters, fft_xy,
+header, init_1d_model, init_3d_model, init_particles, init_pegrid,
+modules, parin, plot_2d, poisfft, prandtl_fluxes, pres, read_var_list,
+singleton, spline_x, spline_y, spline_z, time_integration, transpose,
+write_3d_binary, write_var_list<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">C<br>
+      </td>
+      <td style="vertical-align: top;">FFT routines renamed. Module<span style="font-family: monospace;"> fft_for_1d_decomp </span>renamed<span style="font-family: monospace;"> fft_xy</span>.
+Subroutine<span style="font-family: monospace;"> leap_frog
+      </span>renamed<span style="font-family: monospace;">
+time_integration</span>.<br>
+      <br>
+For all transpositions, MPI_ALLTOALL is used instead of MPI_ALLTOALLV.
+The names of many transposition indices have been changed.<br>
+      <br>
+Inipar-parameter<span style="font-family: monospace;">
+impulse_advec </span>renamed<span style="font-family: monospace;">
+momentum_advec</span>.<br>
+      <br>
+Reading of restart data is moved from<span style="font-family: monospace;"> init_3d_model </span>to
+new routine <span style="font-family: monospace;">read_3d_binary</span>.<br>
+      <br>
+All former transpose routines collected into one file.<br>
+      </td>
+      <td style="vertical-align: top;">check_parameters,
+flow_statistics, header, init_1d_model, init_3d_model, init_advec,
+init_pegrid, palm, parin, poisfft, poisfft_hybrid, production_e,
+prognostic_equations, read_var_list, sline_x, spline_y, write_var_list<span style="font-weight: bold;"><br>
+      <br>
+new:</span><br>
+fft_xy, read_3d_binary, time_integration, transpose<br>
+      <br>
+      <span style="font-weight: bold;">deleted:</span><br>
+fft_for_1d_decomp, leap_frog, transpose_xy, transpose_xz, transpose_yx,
+transpose_yz, transpose_zx, transpose_zy<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E<br>
+      </td>
+      <td style="vertical-align: top;">Small errors in the
+particle-package removed, which sometimes caused aborts of restart runs
+on IBM.<br>
+      <br>
+Small error in calculating the time series profiles removed (array
+bounds of some arrays needed for profil-output had to be increased).<br>
+      <br>
+Function fft (singleton method) replaced by subroutine fftn due to
+problems with 64-bit mode on IBM<br>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+check_parameters, <br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">26/03/05<br>
+      </td>
+      <td style="vertical-align: top;">SR<br>
+      </td>
+      <td style="vertical-align: top;">2.9<br>
+      </td>
+      <td style="vertical-align: top;">N<br>
+      </td>
+      <td style="vertical-align: top;">Non-cyclic lateral boundary
+conditions implemented.<br>
+Dirichlet/Neumann conditions at the inflow/outflow can be used either
+along x or along y. Cyclic conditions have to be used along the
+remaining direction. In case of non-cyclic conditions along x (y), the
+upper bound nxl (nyn) of array u (v) is enlarged by one gridpoint on
+the rightmost (northest) processor. These array index informations are
+passed to routine<span style="font-family: monospace;">
+exchange_horiz </span>and<span style="font-family: monospace;">
+disturb_field </span>by two
+additional arguments. Boundary conditions are set with new
+inipar-parameters<span style="font-family: monospace;">
+bc_lr </span>and<span style="font-family: monospace;">
+bc_ns</span>. A damping layer is
+needed at the outflow in order to damp reflections (see new parameters<span style="font-family: monospace;"> km_damp_max </span>and<span style="font-family: monospace;"> outflow_damping_width</span>)
+and an
+additional disturbance is imposed near the inflow (see new parameters<span style="font-family: monospace;">&nbsp;
+inflow_disturbance_begin </span>and<span style="font-family: monospace;"> inflow_disturbance_end</span>).
+Non-cyclic conditions require the use of the multigrid-method for
+solving the Poisson equation. Argument<span style="font-family: monospace;"> range </span>added
+to routine<span style="font-family: monospace;">
+boundary_conds </span>(where the
+non-cyclic conditions are set). <br>
+      <br>
+Minor changes:<br>
+Output of parameter<span style="font-family: monospace;">
+datform </span>on
+&amp;GLOBAL-Namelist (iso2d). This is set to <span style="font-style: italic;">'big_endian'</span> on
+IBM- and
+NEC-machines.<br>
+      <br>
+Number of particle groups are additionally calculated in<span style="font-family: monospace;"> header </span>(formerly
+unknown).<br>
+      </td>
+      <td style="vertical-align: top;">advec_u_pw,
+advec_u_up, advec_v_pw, advec_v_up, boundary_conds,
+calc_liquid_water_content, check_parameters, close_file, coriolis,
+diffusion_u, diffusion_v, diffusion_w, diffusivities, disturb_field,
+exchange_horiz, header, init_3d_model, init_pegrid, init_pt_anomaly,
+init_rankine, modules, parin, poismg, pres, prognostic_equations,
+read_var_list, sor, time_integration, timestep, write_var_list<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">C<br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-family: monospace;">pres </span>is called
+by default only
+at the last Runge-Kutta-substep, which spares a big amount of CPU-time
+(see also new parameter<span style="font-family: monospace;">
+call_psolver_at_all_substeps</span>). No pressure term in the
+momentum
+equations in case of Runge-Kutta-schemes.<br>
+      <span style="font-weight: bold;">Attention:</span> <br>
+The content of the testresult-file (run control output) has changed
+due to this modification.<br>
+      <br>
+Program speedup by removing the exchange of ghost points in routines <span style="font-family: monospace;">calc_liquid_water_content</span>,
+      <span style="font-family: monospace;">diffusivities</span>,
+.<br>
+      <br>
+Default value for residual limit increased from 1E-6 to 1E-4. Routine<span style="font-family: monospace;"> prolong </span>in<span style="font-family: monospace;"> poismg </span>simplified
+(one call of<span style="font-family: monospace;">
+exchange_horiz </span>spared).<br>
+      </td>
+      <td style="vertical-align: top;">calc_liquid_water_content,
+diffusivities, modules, poismg, pres, time_integration,
+timestep_scheme_steering<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E<br>
+      </td>
+      <td style="vertical-align: top;">Calculation of vertical
+particle
+velocity (with inertia) corrected, exp_arg had a wrong sign.<br>
+      <br>
+(e)**1.5 replaced by e*SQRT(e) in init_1d_model because of wrong
+results on NEC machines (as a side effect, the new calculation is much
+faster).<br>
+      <br>
+Two errors concerning switch to PE0 (multigrid method) removed from<span style="font-family: monospace;"> init_pegrid</span>.<br>
+      <br>
+Two errors in<span style="font-family: monospace;">
+plot_2d </span>removed:
+local_2d is allocated with upper bound<span style="font-family: monospace;"> nzt</span> (former<span style="font-family: monospace;"> nzt+1 </span>was
+wrong), additional barrier in case that PE0 gathers data from the other
+PEs, this barrier had to be set at the end of the gathering because
+otherwise PE0 sometimes received wrong data on tag 0.<br>
+      <br>
+Use of module indices removed from routine<span style="font-family: monospace;"> split_1dd </span>in<span style="font-family: monospace;"> poisfft </span>since
+it caused
+errors in case of<span style="font-family: monospace;"> nx
+/= ny </span>and
+a 1D-decomposition along y.<br>
+      <br>
+Wrong re-definition of dx2 and dy2 in<span style="font-family: monospace;"> sor </span>removed.<br>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+init_1d_model,
+init_pegrid, plot_2d, poisfft, sor<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">23/04/05<br>
+      </td>
+      <td style="vertical-align: top;">SR<br>
+      </td>
+      <td style="vertical-align: top;">2.9a<br>
+      </td>
+      <td style="vertical-align: top;">C<br>
+      </td>
+      <td style="vertical-align: top;">Additional check for
+incompatibilities between non-cyclic lateral boundary conditions and
+other schemes.<br>
+      <br>
+fcl_factor renamed cfl_factor.<br>
+      <br>
+New local array sums_ll declared in flow_statistics instead of
+temporarily using sums_l.<br>
+      <br>
+crmax (maximum number of crosses allowed in a plot of vertical
+profiles) increased from 20 to 100.<br>
+      </td>
+      <td style="vertical-align: top;">calc_spectra, check_parameters,
+flow_statistics, header, modules, parin, timestep<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E<br>
+      </td>
+      <td style="vertical-align: top;">Revised calculation of output
+time counters regarding a possible decrease of the output time interval
+in case of restart runs.<br>
+      <br>
+Error removed in Dirichlet bottom boundary conditions for pt and q in
+case of Runge-Kutta schemes.<br>
+      <br>
+      <span style="font-weight: bold;">batch_scp</span> calls
+(needed
+for determining correct filenames for AVS-fld-files) is given the
+remote username as an additional argument.<br>
+      <br>
+Default setting of outflow_damping_width corrected.<br>
+      <br>
+Initial horizontal velocities at the lowest grid levels in the 1d-model
+are set to a very small value in order to avoid wrong results and the
+resulting too small timesteps.<br>
+      <br>
+Implicit counters i renamed i9 in modules due to declaration conflicts
+with i in other subroutines (reported by Portland compiler).<br>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+boundary_conds,
+check_open, check_parameters, init_1d_model, modules, time_integration<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">18/05/05<br>
+      </td>
+      <td style="vertical-align: top;">SR<br>
+      </td>
+      <td style="vertical-align: top;">2.10<br>
+      </td>
+      <td style="vertical-align: top;">N<br>
+      </td>
+      <td style="vertical-align: top;">NetCDF support implemented.<br>
+Profiles, time series, spectra, cross-sections, 3d-volume-data and
+particle data can now be output in NetCDF format (file handles
+101-108). This output can be switched on with the new d3par-parameter <span style="font-family: monospace;">data_output_format</span>.
+So far, this support is available on IBM systems at HLRN and on the NEC
+system at DKRZ. Output in format suitable for graphic software <span style="font-weight: bold;">profil</span>, <span style="font-weight: bold;">iso2d</span> and <span style="font-weight: bold;">avs</span> is still
+possible.<br>
+      <br>
+Output of cross sections for qv, vpt and lwp (liquid water path).<br>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+check_open,
+check_parameters, close_file, header, modules, parin, plot_1d, plot_2d,
+plot_3d, plot_spectra, plot_ts, read_var_list, write_var_list<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+netcdf<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">C<br>
+      </td>
+      <td style="vertical-align: top;">In <span style="font-family: monospace;">calc_spectra</span>, n
+is assigned the
+number of spectra (formerly, the number of spectra was given by n-1)<br>
+      <br>
+Abort if <span style="font-family: monospace;">poisfft_hybrid</span>
+is called in a non-parallel environment.<br>
+      <br>
+Default values of spectra package parameters <span style="font-family: monospace;">pl_spectra</span> and <span style="font-family: monospace;">spectra_direction</span>
+changed.<br>
+      </td>
+      <td style="vertical-align: top;">calc_spectra,
+check_parameters,
+modules, pres, read_3d_binary, write_3d_binary<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E<br>
+      </td>
+      <td style="vertical-align: top;">Missing argument in ffty
+(non-parallel case) added.<br>
+      <br>
+Error in output of particle inertia information removed.<br>
+      </td>
+      <td style="vertical-align: top;">poisfft, header<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">05/07/05<br>
+      </td>
+      <td style="vertical-align: top;">SR<br>
+      </td>
+      <td style="vertical-align: top;">2.11<br>
+      </td>
+      <td style="vertical-align: top;">N/C<br>
+      </td>
+      <td style="vertical-align: top;">New cloud physics code
+implemented, which explicitly simulates single cloud droplets,
+including droplet growth by condensation and collision. Using this code
+requires to set the new inipar-parameter <span style="font-family: monospace;">cloud_droplets</span>
+= .TRUE. and to use the particle package (by using the <span style="font-weight: bold;">mrun</span>-option <span style="font-family: monospace;">-p particles</span>).
+Coupling between droplets and the thermodynamic quantities (potential
+temperature and specific humidity) is regarded in the new subroutine <span style="font-family: monospace;">interaction_droplets_ptq</span>.
+The real number of droplets in a grid cell can steered by the new
+inipar-parameter <span style="font-family: monospace;">initial_weighting_factor</span>.<br>
+      <br>
+      <span style="font-weight: bold;">This code
+will be further extended and probably changed in the near future, so
+the current status is that of a test version!</span><br>
+      <br>
+In connection with this new code implementation, several changes has
+been made to the existing code:<br>
+      <br>
+The particle (droplet) size is now given as radius (previously
+diameter). E.g., the name of the respective package parameter <span style="font-family: monospace;">diameter</span> has
+changed to <span style="font-family: monospace;">radius</span>.<br>
+      <br>
+The current weighting_factor and radius are stored as additional
+particle attributes in the type structure <span style="font-family: monospace;">particle_type</span>.
+The MPI data type <span style="font-family: monospace;">mpi_particle_type</span>,
+needed for exchanging particles between subdomains, has been changed
+correspondingly.<br>
+      <br>
+      <span style="font-family: monospace;">gas_constant</span> is
+renamed <span style="font-family: monospace;">r_d</span>,
+      <span style="font-family: monospace;">latent_heat</span>
+is renamed <span style="font-family: monospace;">r_v</span>,
+the allowed string length of <span style="font-family: monospace;">pl2d</span>
+and <span style="font-family: monospace;">pl3d</span>
+is increased from 6 to 10.<br>
+      <br>
+New 3d arrays <span style="font-family: monospace;">ql_1</span>,
+      <span style="font-family: monospace;">ql_2</span>, <span style="font-family: monospace;">ql_v</span> and <span style="font-family: monospace;">ql_vp</span>, <span style="font-family: monospace;">ql</span> is now a
+pointer, new pointer <span style="font-family: monospace;">ql_c</span>.<br>
+      <br>
+Data format for unit 85 (particle data output) is changed.</td>
+      <td style="vertical-align: top;">advec_particles.f90
+check_open.f90, header.f90, init_3d_model.f90, init_cloud_physics.f90,
+init_particles.f90, modules.f90, package_parin.f90, parin.f90,
+plot_2d.f90, plot_3d.f90, read_var_list.f90, time_integration.f90,
+write_var_list.f90<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+interaction_droplets_ptq.f90</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">C<br>
+      </td>
+      <td style="vertical-align: top;">Default value of <span style="font-family: monospace;">call_psolver_at_all_substeps</span>
+is <span style="font-style: italic;">.TRUE.</span>,
+because small scale waves occured with <span style="font-style: italic;">.FALSE.</span></td>
+      <td style="vertical-align: top;">modules.f90</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E<br>
+      </td>
+      <td style="vertical-align: top;">2d- and 3d-NetCDF-files are not
+opened if there is no output for them (<span style="font-family: monospace;">pl2d</span> = <span style="font-family: monospace;">pl3d</span> = <span style="font-style: italic;">' '</span>).<br>
+      <br>
+No opening of units 101 - 108 in case of missing NetCDF support.</td>
+      <td style="vertical-align: top;">check_open.f90, netcdf.f90<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">30/06/05<br>
+      </td>
+      <td style="vertical-align: top;">GS<br>
+      </td>
+      <td style="vertical-align: top;">2.11a<br>
+      </td>
+      <td style="vertical-align: top;">C<br>
+      </td>
+      <td style="vertical-align: top;">Scalars ug and vg have been
+changed into
+arrays in order to allow the specification of a geostrophic wind that
+depends on height (baroclinicity). The initial profiles of the the
+u- and v-component of the geostrophic wind are initialized by
+specifying the new initialization parameters <span style="font-family: monospace;">ug_surface</span>, <span style="font-family: monospace;">ug_vertical_gradient</span>,
+      <span style="font-family: monospace;">ug_vertical_gradient_level</span>
+and <span style="font-family: monospace;">vg_surface</span>,
+      <span style="font-family: monospace;">vg_vertical_gradient</span>,
+      <span style="font-family: monospace;">vg_vertical_gradient_level</span>,
+respectively. <br>
+      <br>
+The former initialization parameters <span style="font-family: monospace;">ug</span> and <span style="font-family: monospace;">vg</span> have been
+removed. <br>
+      </td>
+      <td style="vertical-align: top;">boundary_conds,
+check_parameters, coriolis, header, init_1d_model, modules, parin,
+prognostic_equations, read_var_list, spline_z, write_var_list<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">E<br>
+      </td>
+      <td style="vertical-align: top;">Error in the calculation of u_0
+and
+v_0 in production_e.f90 removed.<br>
+      <br>
+      <span style="font-weight: bold;">Attention:</span> <br>
+The content of the testresult-file (run control output) has changed
+due to this modification.<br>
+      </td>
+      <td style="vertical-align: top;">production_e<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: left; vertical-align: top;">20/10/05</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">2.11b</td>
+      <td style="vertical-align: top;">N/C</td>
+      <td style="vertical-align: top;">Collision process for droplet
+growth completed.<br>
+      <br>
+      <span style="font-weight: bold;">The droplet code is still under
+development and requires further speed optimization!<br>
+      <br>
+      </span>Number of particles really used is additionally output on
+the netcdf particle data file.<span style="font-weight: bold;"></span></td>
+      <td style="vertical-align: top;">advec_particles, modules,
+netcdf</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">The
+last PE in a row is not allowed to have more grid points than the other
+PES (only less). Jobs crashed in these cases that the last PE has more
+grid points. Therefore, the number of gridpoints along x (and y) must
+now meet a special condition which is checked in case that <span style="font-family: monospace;">grid_matching</span> =
+      <span style="font-style: italic;">'match'</span> is
+used.<br>
+      <br>
+Error removed in calculating y axis data for yz cross sections. Error
+in output of netcdf yz-cross-sections removed.<br>
+      <br>
+2*r replaced by r in the exponential term of the particle momentum
+equation.<br>
+Error in output of yz-slice information removed.</td>
+      <td style="vertical-align: top;">advec_particles, header,
+init_pegrid, netcdf, plot_2d</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">06/12/05</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">2.11c</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">Output of ql profile is allowed
+in case of using cloud droplets.</td>
+      <td style="vertical-align: top;">check_parameters,
+flow_statistics, modules</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">The horizontally averaged pt
+profile is calculated within<span style="font-family: monospace;">
+buoyancy </span>only
+in case of the first respective intermediate timestep. This is done in
+order to spare communication time and to produce identical model
+results with jobs which are calling<span style="font-family: monospace;">
+flow_statistics </span>at
+different time intervals.<br>
+      <br>
+Error in netcdf variable declaration for<span style="font-family: monospace;"> statistic_regions </span>/=
+      <span style="font-style: italic;">0</span> removed.</td>
+      <td style="vertical-align: top;">buoyancy, netcdf</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">23/02/06</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.0</td>
+      <td style="vertical-align: top;">N</td>
+      <td><span style="font-weight: bold;">Version for simulating flows
+over
+topography (buildings, mountains, etc.)</span><br style="font-weight: bold;">
+      <br>
+Besides
+the implementation of topography, this version contains several other
+improvements. The most important ones are listed here:<br>
+      <ul>
+        <li>The
+cloud droplet code has been optimized (it now runs about 100 times
+faster than before).</li>
+        <li>Output of time-averaged 2d/3d
+data (sections / volume data) is possible.</li>
+        <li>Output
+of 2d-section data averaged along the direction normal to this section
+can be done.</li>
+        <li>The user-interface has been extended
+in order to allow 2d-/3d-output of user-defined quantities.</li>
+      </ul>
+The
+kind of topography to be used is controlled by the new initialization
+parameter <span style="font-family: monospace;">topography</span>.
+Allowed values are <span style="font-style: italic;">'flat'</span>,
+      <span style="font-style: italic;">'single_building'</span>,
+and <span style="font-style: italic;">'read_from_file'</span>.
+The user can define his own special topography setting within the new
+user-interface routine <span style="font-family: monospace;">user_init_grid</span>.
+For the single building case, the&nbsp;building (rectangular) size
+and position can be controlled with parameters <span style="font-family: monospace;">building_height</span>,
+      <span style="font-family: monospace;">building_length_x</span>,
+      <span style="font-family: monospace;">building_length_y</span>,
+      <span style="font-family: monospace;">building_wall_left</span>,
+and <span style="font-family: monospace;">building_wall_south</span>.<br>
+      <br>
+The topography code is already optimized (vectorized) for use on the
+NEC-SX6.<br>
+      <br>
+Output of time-averaged 2d-/3d-data can be
+enabled by appending the string <span style="font-style: italic;">'_av'</span>
+to the respective output quantities given with the new
+runtime-parameter <span style="font-family: monospace;">data_output</span>
+(see further below for the (name)changes in the parameters for data
+output). Example: if a time-average of the vertical cross-section of
+potential temperature is required, the user has to set <span style="font-family: monospace;">data_output</span> = <span style="font-style: italic;">'pt_xy_av'</span>.
+In case of NetCDF-output, the time-averaged data is output to
+additional files (seperate from the non-averaged output). The length of
+the averaging interval and the temporal distance of the single
+instantaneous sections (volumes) entering into this averaging is
+controlled by the new runtime-parameters <span style="font-family: monospace;">averaging_interval</span>and
+      <span style="font-family: monospace;">dt_averaging_input</span>.
+      <br>
+      <br>
+An average normal to the direction of a
+cross-section can be output by setting the respective cross section
+index to <span style="font-style: italic;">-1</span>
+(example: <span style="font-family: monospace;">section_xz</span>
+= <span style="font-style: italic;">-1</span>).<br>
+      <br>
+New
+user-interface routines allowing the output of user-defined quantities
+are <span style="font-family: monospace;">user_check_data_output</span>,
+      <span style="font-family: monospace;">user_define_netcdf_grid</span>,
+      <span style="font-family: monospace;">user_data_output_2d</span>,
+      <span style="font-family: monospace;">user_data_output_3d</span>,
+and <span style="font-family: monospace;">user_3d_data_averaging</span>.
+These quantities can be calculated using the new <span style="font-family: monospace;">CASE</span>-Entry <span style="font-style: italic;">'after integration'</span>
+in the user-interface routine <span style="font-family: monospace;">user_actions</span>.<br>
+      <br>
+Optimization
+of the cloud droplet code is mainly done by re-sorting all particles
+after every timestep in a way that now all particles which belong to
+the same grid-box (k,j,i) are stored consecutively (wthout any strides)
+in memory.<br>
+      <br>
+Code adaptation for the IBM at the department of atmospheric sciences,
+Yonsei university (ibmy). Affected subroutines: <span style="font-family: monospace;">fft_xy</span>, <span style="font-family: monospace;">netcdf</span>, <br>
+      <br>
+      <span style="font-weight: bold;">Further new features:</span><br>
+      <ul>
+        <li>Use
+of particle tails now requires setting of the new package-parameter <span style="font-family: monospace;">use_particle_tails</span>.
+The new parameter skip_particles_for_tail allows only every <span style="font-family: monospace;">skip_particle_for_tail</span>'th
+parameter having a tail.</li>
+        <li>Initialization-parameter <span style="font-family: monospace;">e_min</span> can be
+used to set a lower limit for the subgrid-scale TKE (i.e. to guarantee
+a lower limit for the flow's Reynolds-number).</li>
+        <li>A
+conservation of the volume flow (through the complete xz- and
+yz-sections &nbsp;of the total domain) can be enforced by the new
+initialization-parameter <span style="font-family: monospace;">conserve_volume_flow</span>.</li>
+        <li>Data
+output can be skipped for a given time interval from simulation start
+(t=0) using new runtime-parameters <span style="font-family: monospace;">skip_time_dopr</span>,
+          <span style="font-family: monospace;">skip_time_dosp</span>,
+          <span style="font-family: monospace;">skip_time_do2d_xy</span>,
+          <span style="font-family: monospace;">skip_time_do2d_xz</span>,
+          <span style="font-family: monospace;">skip_time_do2d_yz</span>,
+and <span style="font-family: monospace;">skip_time_do3d</span>.<br>
+        </li>
+        <li>By default, NetCDF output is now using 64-bit
+offset format
+(large file support) on most machines. The user can switch to the
+32-bit offset format with the new runtime-parameter <span style="font-family: monospace;">netcdf_64bit</span>.
+Units 111:113&nbsp; and 116 are opened for NetCDF output of
+time-averaged 2d-3d data.<br>
+        </li>
+        <li>Data
+logging routines are added (see file data_log.f90), which can be used
+for debugging purposes. Output is done on unit 20 (local file
+name/directory name DATA_LOG).</li>
+        <li>New routine <span style="font-family: monospace;">exchange_horiz_2d_int</span>
+for&nbsp; ghostpoint exchange of 2d-integer arrays. Routine <span style="font-family: monospace;">exchange_horiz_2d</span>
+is extended for non-cyclic boundary conditions in the non-parallel case.</li>
+        <li>Two different methods for calculating the mixing length and
+the dissipation can be used in the 1d-model. These are steered by the
+new initializing-parameters <span style="font-family: monospace;">dissipation_1d</span>
+and <span style="font-family: monospace;">mixing_length_1d</span>.<br>
+        </li>
+      </ul>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+advec_s_pw,
+advec_s_up, advec_u_pw, advec_u_up, advec_v_pw, advec_v_up, advec_w_pw,
+advec_w_up, boundary_conds, buoyancy, check_open, check_parameters,
+close_file, coriolis, diffusion_e, diffusion_s, diffusion_u,
+diffusion_v, diffusion_w, diffusivities, disturb_field,
+disturb_heatflux, exchange_horiz_2d, exchange_horiz, flow_statistics,
+header, init_1d_model, init_3d_model, init_grid, init_particles,
+init_pegrid, modules, netcdf, package_parin, parin, poisfft,
+prandtl_fluxes, pres, production_e, prognostic_equations,
+read_3d_binary, read_var_list, run_control, time_integration,
+user_interface, write_3d_binary, write_var_list<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+average_3d_data, data_log, sum_up_3d_data<br>
+      <br>
+      <span style="font-weight: bold;">renamed:<br>
+      </span>plot_dvrp
+-&gt; data_output_dvrp<br>
+plot_spectra -&gt; data_output_spectra<br>
+plot_ts -&gt; data_output_tseries<br>
+plot_1d -&gt; data_output_profiles<br>
+      <span style="font-weight: bold;"></span>plot_2d -&gt;
+data_output_2d<br>
+plot_3d -&gt; data_output_3d<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td>In
+parallel mode, all PEs are opening the same copy of the
+NAMELIST-parameter file <span style="font-family: monospace;">PARIN</span>,
+i.e. from now on, the file attribute "<span style="font-family: monospace;">npe</span>" must be
+removed from the corresponding file connection statements in the <span style="font-weight: bold;">mrun</span> configuration
+file (.mrun.config).<br>
+      <br>
+A
+large number of parameter names and local filenames have been changed
+(see&nbsp;list below). Most of them are parameters concerning data
+output (do). The former denotations "plot" and "pl" have been changed
+to "data_output" and "do", respectively. In addition to these changes,
+the names of many internal PALM parameters and variables have also
+changed.<br>
+      <br>
+Restart runs now require setting of the
+initialization-parameter <span style="font-family: monospace;">initializing_actions</span>
+= <span style="font-style: italic;">'read_restart_data'</span>.<br>
+      <br>
+Concerning particles, the parameters <span style="font-family: monospace;">psl</span>, <span style="font-family: monospace;">psr</span>, <span style="font-family: monospace;">pdx</span>,
+etc., which are controlling the position of the particle source and the
+number of particles within this source, are now 1d-arrays. This allows
+to define different particle sources for different particle groups.<br>
+      <br>
+The number of particle groups has to be set by the user (no automatic
+calculation from the value of parameter <span style="font-family: monospace;">density_ratio</span>
+any more)<span style="font-style: italic;"></span>.
+Variable <span style="font-family: monospace;">idum</span>
+in type <span style="font-family: monospace;">particle_type</span>
+has been renamed <span style="font-family: monospace;">tail_id</span>.<br>
+      <br>
+Output
+for units 15 and 17 flushed in <span style="font-family: monospace;">init_1d_model</span>.<br>
+      <br>
+List
+of changed parameter names:<br>
+      <table style="text-align: left; width: 559px; height: 831px;" border="1" cellpadding="2" cellspacing="2">
+        <tbody>
+          <tr>
+            <td style="font-weight: bold;" align="undefined" valign="undefined">Old name</td>
+            <td align="undefined" valign="undefined"><span style="font-weight: bold;">New name</span></td>
+            <td align="undefined" valign="undefined"><span style="font-weight: bold;">Comments</span></td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">average_period_pl1d</td>
+            <td align="undefined" valign="undefined">averaging_interval_pr</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">average_period_pr1d</td>
+            <td style="vertical-align: top;">---</td>
+            <td style="vertical-align: top;">averaging of printed
+profiles
+is not possible any more</td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">average_period_sp</td>
+            <td align="undefined" valign="undefined">averaging_interval_sp</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_average</td>
+            <td align="undefined" valign="undefined">dt_averaging_input_pr</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_pl1d</td>
+            <td align="undefined" valign="undefined">dt_dopr</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_plsp</td>
+            <td align="undefined" valign="undefined">dt_dosp</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td>dt_plts</td>
+            <td>dt_dots</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_pr1d</td>
+            <td align="undefined" valign="undefined">dt_dopr_listing</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_pl2d_xy</td>
+            <td align="undefined" valign="undefined">dt_do2d_xy</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_pl2d_xz</td>
+            <td align="undefined" valign="undefined">dt_do2d_xz</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">dt_pl2d_yz</td>
+            <td align="undefined" valign="undefined">dt_do2d_yz</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">ebene_xy</td>
+            <td align="undefined" valign="undefined">section_xy</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">ebene_xz</td>
+            <td align="undefined" valign="undefined">section_xz</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">ebene_yz</td>
+            <td align="undefined" valign="undefined">section_yz</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">nz_plot3d</td>
+            <td align="undefined" valign="undefined">nz_do3d</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">plts</td>
+            <td align="undefined" valign="undefined">data_output_ts</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">pl1d</td>
+            <td align="undefined" valign="undefined">data_output_pr</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">pl2d</td>
+            <td style="vertical-align: top;">data_output</td>
+            <td style="vertical-align: top;">old parameters pl2d and
+pl3d
+are joined to new parameter data_output</td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">pl3d</td>
+            <td align="undefined" valign="undefined">data_output</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">pl2d_at_begin</td>
+            <td align="undefined" valign="undefined">do2d_at_begin</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">pl3d_at_begin</td>
+            <td align="undefined" valign="undefined">do3d_at_begin</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">pl3d_compress</td>
+            <td align="undefined" valign="undefined">do3d_compress</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">pl3d_precision</td>
+            <td align="undefined" valign="undefined">do3d_comp_prec</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td>pl_spectra</td>
+            <td>data_output_sp</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">read_fields_from_prior_run</td>
+            <td align="undefined" valign="undefined">read_restart_data</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">write_plot2d_on_each_pe</td>
+            <td align="undefined" valign="undefined">data_output_2d_on_each_pe</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">z_max_pl1d</td>
+            <td align="undefined" valign="undefined">z_max_do1d</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+          <tr>
+            <td align="undefined" valign="undefined">z_max_pl2d</td>
+            <td align="undefined" valign="undefined">z_max_do2d</td>
+            <td align="undefined" valign="undefined"><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+advec_s_bc, check_parameters, check_open, close_file,
+data_output_dvrp,&nbsp; data_output_profiles, data_output_tseries,
+data_output_2d, data_output_3d, flow_statistics, header, init_1d_model,
+init_3d_model, init_dvrp, init_particles, init_pegrid, init_slope,
+modules, netcdf, package_parin, palm, parin, print_1d, read_var_list,
+run_control, time_integration, timestep, write_compressed,
+write_var_list<br>
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td>Error in
+the particle release (defaults of <span style="font-family: monospace;">psl</span>,
+      <span style="font-family: monospace;">psr</span>, <span style="font-family: monospace;">psn</span>, <span style="font-family: monospace;">pss</span>) at the PE
+boundary has been fixed.<br>
+      <br>
+Error removed getting the variable ids for <span style="font-family: monospace;">_ext</span> for
+profiles and time series.<br>
+      <br>
+NetCDF calls in <span style="font-family: monospace;">data_output_tseries</span>
+only if NetCDF output is switched on.<br>
+      <br>
+Output of the
+initial geostrophic wind profile corrected.<br>
+      <br>
+Maximum
+possibel timestep for Runge-Kutta-schemes reduced, error concerning
+initialization of&nbsp; <span style="font-family: monospace;">l_black</span>
+removed (both in <span style="font-family: monospace;">init_1d_model</span>).<br>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+data_output_tseries, header, init_particles, init_1d_model, netcdf<br>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">26/04/06</td>
+      <td align="left" valign="top">SR</td>
+      <td align="left" valign="top">3.0a</td>
+      <td align="left" valign="top">N</td>
+      <td align="left" valign="top">OpenMP parallelization for
+the cache-optimized PALM code.<br>
+      <br>
+OpenMP
+directives have been added where necessary. Still further tuning will
+be necessary to get optimum performance. Other parts of the code than
+the cache-optimized code still need to be (OpenMP-) parallelized. <br>
+      <br>
+So
+far, threads are activated by setting the <span style="font-weight: bold;">mrun</span>-options <span style="font-family: monospace;">-T</span> <span style="font-style: italic;">&lt;number_of_threads&gt;</span>
+and <span style="font-family: monospace;">-O</span>,
+i.e. when the Option <span style="font-family: monospace;">-O</span>
+is given, the <span style="font-family: monospace;">-T</span>
+argument is interpreted as the number of threads to be used. When <span style="font-family: monospace;">-O</span> is given,
+the number of MPI tasks per node is automatically set to <span style="font-style: italic;">1</span>.<br>
+      <br>
+Beside
+the additional compiler directives, the main code change required by
+the OpenMP parallelization is that global sums are now calculated by
+first calculating local sums on each thread. As the next step, local
+sums are calculated from these thread sums for each MPI task before the
+global sum is computed via MPI_ALLREDUCE.&nbsp; For storing the
+thread
+sums, arrays sums_l and sums_l_l now have three dimensions where the
+number of elements of the third dimension is equal to the number of
+OpenMP threads.</td>
+      <td align="left" valign="top">buoyancy,
+cpu_statistics, diffusivities, flow_statistics, header, init_pegrid,
+init_3d_model, modules, prandtl_fluxes, pres, production_e</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">ML</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">C</td>
+      <td align="left" valign="top">Provisional
+correction for Piacsek &amp; Williams advection scheme: keep u and
+v
+zero one layer below the topography (in case of set_1d-model_profiles).</td>
+      <td align="left" valign="top">init_3d_model</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">SR/ML</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">E</td>
+      <td align="left" valign="top">In <span style="font-family: monospace;">flow_statistics.f90</span>
+nzb_s_inner(j,i) replaced by nzb in determination of z_i.<br>
+      <br>
+Errors
+removed in the computation of the diabatic mixing length (<span style="font-family: monospace;">init_1d_model.f90</span>).<br>
+      <br>
+Error
+removed in extend mode when checking whether the selected cross
+sections match those in the already existing NetCDF file (<span style="font-family: monospace;">netcdf.f90</span>).</td>
+      <td align="left" valign="top">flow_statistics,
+init_1d_model, netcdf</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">02/06/06</td>
+      <td align="left" valign="top">SR</td>
+      <td align="left" valign="top">3.0b</td>
+      <td align="left" valign="top">N</td>
+      <td align="left" valign="top">This version is adapted to the Sun
+Fire X4600
+system at TIT (to be used by setting the <span style="font-weight: bold;">mrun</span> option <span style="font-family: monospace;">-h lctit</span>).</td>
+      <td align="left" valign="top">cpu_log, init_1d_model,
+local_tremain, locaö_tremain_ini, run_control</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">C</td>
+      <td align="left" valign="top">NetCDF&nbsp;2d-
+and 3d-datasets now contain the exact coordinates of the variables
+along x and y with respect to the positions where they are defined on
+the staggered grid.<br>
+      <br>
+NetCDF datasets of cross
+sections (e.g. <span style="font-family: monospace;">DATA_2D_XY_NETCDF</span>)
+are only opened if the respective cross sections are really requested
+by the settings of parameter <span style="font-family: monospace;">data_output</span>.</td>
+      <td align="left" valign="top">check_parameters,
+data_output_2d, data_output_3d, modules, netcdf, user_interface</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">E</td>
+      <td align="left" valign="top">p is assigned to <span style="font-family: monospace;">to_be_resorted</span>
+instead of w</td>
+      <td align="left" valign="top">data_output_2d</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">04/08/06</td>
+      <td align="left" valign="top">SR</td>
+      <td align="left" valign="top">3.1</td>
+      <td align="left" valign="top">N</td>
+      <td align="left" valign="top">Subgrid
+scale velocities can (optionally) be included for calculating the
+particle advection, using the method of Weil et al. (2004, JAS, 61,
+2877-2887). This method is switched on by the new particle package
+parameter <span style="font-family: monospace;">use_sgs_for_particles</span>.
+This also forces the Euler/upstream method to be used for time
+advancement of the TKE (see new parameter <span style="font-family: monospace;">use_upstream_for_tke</span>).
+The minimum timestep during the sub-timesteps is controlled by
+parameter <span style="font-family: monospace;">dt_min_part</span>.
+The data type <span style="font-family: monospace;">particle_type</span>
+has additional new attributes <span style="font-family: monospace;">e_m</span>,
+      <span style="font-family: monospace;">dt_sum</span>,
+and <span style="font-family: monospace;">speed_x/y/z_sgs</span>.<br>
+      <br>
+Other
+new particle features: output of particle quantities as timeseries in
+NetCDF format (on local file <span style="font-family: monospace;">DATA_1D_PTS_NETCDF</span>).
+The output time interval is controlled by parameter <span style="font-family: monospace;">dt_dopts</span>.
+Particle advection can be switched off after some time using parameter <span style="font-family: monospace;">end_time_prel</span>.
+More than one particle per point can be started with parameter <span style="font-family: monospace;">particles_per_point</span>.<br>
+      <br>
+Additional
+parameter in function <span style="font-family: monospace;">random_gauss</span>
+which limits the range of the created random numbers to five times the
+standard deviation (=1). Seeds <span style="font-family: monospace;">iran</span>
+and <span style="font-family: monospace;">iran_part</span>
+are stored for restart runs.</td>
+      <td align="left" valign="top">advec_particles,
+check_open, check_parameters, close_file, diffusion_e,
+disturb_heatflux, header, init_3d_model, init_particles, modules,
+netcdf, package_parin, parin, prognostic_equations, random_gauss,
+read_3d_binary, read_var_list, time_integration, write_3d_binary,
+write_var_list<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+data_output_ptseries</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">C</td>
+      <td align="left" valign="top">Call of subroutine <span style="font-family: monospace;">header</span> is moved
+after call of subroutine <span style="font-family: monospace;">init_3d_model</span>.
+Generation of <span style="font-family: monospace;">run_description_header</span>
+is moved from routines <span style="font-family: monospace;">palm</span>
+and <span style="font-family: monospace;">header</span>
+to <span style="font-family: monospace;">check_parameters</span>.
+Determination of the number of particle groups is moved from <span style="font-family: monospace;">header</span> to <span style="font-family: monospace;">init_particles</span>.<br>
+      <br>
+      <span style="font-family: monospace;">izuf</span> renamed <span style="font-family: monospace;">iran</span>.</td>
+      <td align="left" valign="top">check_parameters,
+disturb_field, disturb_heatflux, header, init_particles, modules, palm</td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">&nbsp;</td>
+      <td align="left" valign="top">E</td>
+      <td align="left" valign="top">Variables
+do2d_unit and do3d_unit now defined as 2d-arrays. Before, in some
+cases, the units of variables in the 2d- and 3d-NetCDF-files have been
+wrong.<br>
+      <br>
+In routine <span style="font-family: monospace;">poisfft</span>
+default
+setting of the thread number tn in case of not using OpenMP.<br>
+      <br>
+Error
+removed in the non-parallel part of routine <span style="font-family: monospace;">flow_statistics</span>
+(number of arguments of array <span style="font-family: monospace;">sums_l</span>).<br>
+      <br>
+Error
+removed which appeared if the user had decreased the value of <span style="font-family: monospace;">dt_dopr</span> within
+a job chain and if simulataneous time averaging of profiles was
+switched on.</td>
+      <td align="left" valign="top">check_parameters,
+data_output_profiles, flow_statistics, modules, netcdf, poisfft</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">22/08/06</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.1a</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">In case of more than one
+particle group, seperate output of timeseries for each of the groups.<br>
+      <br>
+New
+initial parameter <span style="font-family: monospace;">dz_max</span>,
+which limits the vertical gridspacing in case of a vertically stretched
+grid.</td>
+      <td style="vertical-align: top;">data_output_ptseries,
+header, init_grid, modules, netcdf, parin, read_var_list, write_var_list</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Disturbances are imposed only
+for the last Runge-Kutta-substep. <br>
+      <span style="font-weight: bold;">Attention:</span> <br>
+The content of the testresult-file (run control output) has changed
+due to this modification.<br>
+      <br>
+Output of xz and yz cross
+sections now up to gridpoint nzt+1.<br>
+      <br>
+Default settings
+of particle start positions changed.</td>
+      <td style="vertical-align: top;">check_open, close_file,
+data_output_2d, init_particles, netcdf, time_integration</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Initialisation of all tendency
+arrays (t.._m) needed for the Runge-Kutta schemes.<br>
+      <br>
+Bugfix
+in index array initialization for line- or point-like topography
+structures.<br>
+      <br>
+Bugfix: yv coordinates are now used for
+yz cross sections, where neccessary.</td>
+      <td style="vertical-align: top;">init_3d_model, init_grid, netcdf</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">12/02/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.1b</td>
+      <td style="vertical-align: top;">&nbsp;N</td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Attention:</span><br>
+This
+is the last revision before switching to the subversion revison control
+system!<br>
+      <br>
+Informative output to the job protocoll in
+case of restarts.</td>
+      <td style="vertical-align: top;">check_for_restart</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;</td>
+      <td>&nbsp;&nbsp;</td>
+      <td>&nbsp;&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Values of environment variables
+are now read from local file <span style="font-family: monospace;">ENVPAR</span>
+instead of getting them by a system call.<br>
+      <br>
+For
+interpolation in <span style="font-family: monospace;">advec_particles</span>,
+allways level k is used.</td>
+      <td style="vertical-align: top;">advec_particles,
+local_tremain_ini, parin</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Several bugfixes in <span style="font-family: monospace;">advec_particles</span>:
+new particles are released only if <span style="font-family: monospace;">end_time_prel</span>
+&gt; <span style="font-family: monospace;">simulated_time</span>,&nbsp;transfer
+of particles when x &lt; -0.5*dx (0.0 before), etc., index i,j used
+instead of cartesian (x,y) coordinate to check for transfer because
+this failed under very rare conditions, calculation of number of
+particles with same radius as the current particle (cloud droplet code).<br>
+      <br>
+Allocation
+of <span style="font-family: monospace;">tail_mask</span>
+and <span style="font-family: monospace;">new_tail_id</span>
+in case of restart-runs. "__" added in a cpp-directive. (both <span style="font-family: monospace;">init_particles</span>)</td>
+      <td style="vertical-align: top;">advec_particles, init_particles</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">02/03/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.1c</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">A heatflux can be prescribed at
+the top with new inipar parameters <span style="font-family: monospace;">top_heatflux</span>
+and <span style="font-family: monospace;">use_top_fluxes</span>.
+New 2d-arrays <span style="font-family: monospace;">qswst</span>,
+      <span style="font-family: monospace;">qswst_m</span>,
+      <span style="font-family: monospace;">tswst</span>
+and <span style="font-family: monospace;">tswst_m</span>
+are used to store this flux. Use of fluxes are controlled with new
+index variable <span style="font-family: monospace;">nzt_diff</span>.
+A Neumann boundary condition for temperature can be applied under these
+conditions.<br>
+      <br>
+Additionally, a Dirichlet condition for
+temperature can be used at the top.<br>
+      <br>
+      <span style="font-weight: bold;">Attention:</span> <br>
+The content of the testresult-file (run control output) has changed
+due to this modification.</td>
+      <td style="vertical-align: top;">check_parameters,
+diffusion_s, flow_statistics, header, init_grid, init_3d_model,
+modules, parin, production_e, prognostic_equations, read_var_list,
+read_3d_binary, swap_timelevel, write_var_list, write_3d_binary</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Prognostic equations for all
+scalars are now solved up to gridpoint nzt (formerly nzt-1).
+Boundary conditions for scalars at top adjusted respectively (now
+applied only at nzt+1).<br>
+      <br>
+The
+default top boundary condition for temperature has been renamed to <span style="font-style: italic;">'initial_gradient'</span>.<br>
+      <br>
+Calls
+of dvrp_output_local,
+which were commented out for a long time, are now activated for all
+streams.</td>
+      <td style="vertical-align: top;">advec_s_pw,
+boundary_conds, calc_precipitation, check_parameters, diffusion_e,
+diffusion_s, impact_of_latent_heat, init_dvrp, init_pt_anomaly,
+modules, production_e, prognostic_equations, spline_z</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugfix: 3d-array p is not a
+pointer any more.<br>
+      <br>
+Bugfix in init_particles:
+MPI_REAL
+argument in MPI_ALLREDUCE
+replaced by<br>
+MPI_INTEGER
+(caused error on NEC only).<br>
+      <br>
+Bugfix:&nbsp; ddzw now
+dimensioned 1:nzt"+1".</td>
+      <td style="vertical-align: top;">diffusion_e, diffusion_s,
+diffusion_u, diffusion_v, diffusion_w, init_particles, modules</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">29/03/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.2</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">The code, including scripts,
+utility programs and documentation is now under full control of <span style="font-family: Courier New,Courier,monospace;">subversion</span>.
+This revision includes a quite large number of new features, changes
+and bugfixes.<br>
+&nbsp;<br>
+Particle reflection from vertical walls implemented. The particle SGS
+model is also adjusted to these vertical walls.<br>
+      <br>
+Wall functions for vertical walls now include diabatic conditions. New
+subroutines <span style="font-family: Courier New,Courier,monospace;">wall_fluxes</span>,
+      <span style="font-family: Courier New,Courier,monospace;">wall_fluxes_e</span>.
+New 4D-array <span style="font-family: Courier New,Courier,monospace;">rif_wall</span>.<br>
+      <br>
+Calculation/output of precipitation amount, precipitation rate and z0
+(by setting "<span style="font-style: italic;">pra*</span>", "<span style="font-style: italic;">prr*</span>", "<span style="font-style: italic;">z0*</span>" with <span style="font-family: Courier New,Courier,monospace;">data_output</span>).
+The time interval on which the precipitation amount is defined is set
+by new d3par-parameter <span style="font-family: Courier New,Courier,monospace;">precipitation_amount_interval</span>.<br>
+      <br>
+New inipar-parameter <span style="font-family: Courier New,Courier,monospace;">loop_optimization</span>
+to control the loop optimization method.<br>
+      <br>
+New
+inipar-parameter <span style="font-family: Courier New,Courier,monospace;">pt_reference</span>.
+If given, this value is used as the
+reference that is used in the buoyancy terms (otherwise, the
+instantaneous
+horizontally averaged temperature is used).<br>
+      <br>
+New d3par-parameter <span style="font-family: Courier New,Courier,monospace;">netcdf_64bit_3d</span>
+to switch on and especially to switch off 64bit offset&nbsp;for 3D
+files only (because still some pd-software is unable to handle 64bit
+offset).<br>
+      <br>
+New d3par-parameter <span style="font-family: Courier New,Courier,monospace;">dt_max</span> to
+set the maximum&nbsp;value allowed for the&nbsp;timestep. <br>
+      <br>
+New user interfaces <span style="font-family: Courier New,Courier,monospace;">user_advec_particles</span>
+and <span style="font-family: Courier New,Courier,monospace;">user_init_3d_model</span>.
+The new initializing action "<span style="font-style: italic;">by_user</span>"
+calls <span style="font-family: Courier New,Courier,monospace;">user_init_3d_model</span>
+and allows the initial setting of all 3d arrays under complete user
+control.<br>
+      <br>
+Samples added to the user interface which show how to add user-define
+time series quantities.<br>
+      <br>
+Topography height informations are stored on arrays <span style="font-family: Courier New,Courier,monospace;">zu_s_inner</span>
+and <span style="font-family: Courier New,Courier,monospace;">zw_w_inner</span>
+and output to the 2d/3d NetCDF files.<br>
+      <br>
+Unit 9 is generally opened for output of debug informations (file <span style="font-family: Courier New,Courier,monospace;">DEBUG_&lt;pe#&gt;</span>).</td>
+      <td style="vertical-align: top;">Makefile<br>
+      <br>
+advec_particles,
+average_3d_data, buoyancy, calc_precipitation, check_open,
+check_parameters, data_output_2d, diffusion_e, diffusion_u,
+diffusion_v, diffusion_w, diffusivities, header, impact_of_latent_heat,
+init_particles, init_3d_model, modules, netcdf, parin, production_e,
+read_var_list, read_3d_binary, sum_up_3d_data, user_interface,
+write_var_list, write_3d_binary<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+wall_fluxes<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">General revision of non-cyclic
+horizontal boundary conditions:<br>
+Radiation boundary conditions are now used instead of Neumann
+conditions at the outflow (calculation needs velocity values for <span style="font-family: Courier New,Courier,monospace;">t-dt</span>, which
+are stored on new arrays <span style="font-family: Courier New,Courier,monospace;">u_m_l</span>, <span style="font-family: Courier New,Courier,monospace;">u_m_r</span>,
+etc.). The calculation of a mean outflow is not needed any more. Volume
+flow control is added for the outflow boundary (<span style="font-weight: bold;">currently only for the north boundary!!</span>).
+Additional gridpoints along x and y (<span style="font-family: Courier New,Courier,monospace;">uxrp</span>, <span style="font-family: Courier New,Courier,monospace;">vynp</span>) are
+not needed any more and removed from the code. Routine "<span style="font-family: Courier New,Courier,monospace;">boundary_conds</span>"
+now operates on timelevel <span style="font-family: Courier New,Courier,monospace;">t+dt</span> and is
+not split in two parts (<span style="font-style: italic;">main</span>, <span style="font-style: italic;">uvw_outflow</span>) any more. Neumann
+boundary conditions are used at inflow/outflow in case of non-cyclic
+boundary conditions <span style="font-weight: bold;">for all 2d-arrays</span>
+that are handled by <span style="font-family: Courier New,Courier,monospace;">exchange_horiz_2d</span>.<br>
+      <span style="font-weight: bold;">Attention:&nbsp;the
+non-cyclic boundary conditions of this revision still contain some bugs
+which will be removed within the next revisions!</span><br>
+      <br>
+The Bott-Chlond-scheme can now be used in the vectorization-optimized
+part (NEC, etc.). Equations are solved up to gridpoint <span style="font-family: Courier New,Courier,monospace;">nzt</span>.<br>
+      <br>
+The
+FFT-method for solving the Poisson-equation is now working with Neumann
+boundary conditions both at the bottom and the top. This requires
+adjustments of the tridiagonal coefficients and subtracting the
+horizontally averaged mean from the vertical velocity field.<br>
+      <br>
+Particles-package is now part of the default code ("<span style="font-family: Courier New,Courier,monospace;">-p particles</span>"
+is not needed as an <span style="font-weight: bold;">mrun</span>-option
+any more). New attribute <span style="font-family: Courier New,Courier,monospace;">age_m</span> in <span style="font-family: Courier New,Courier,monospace;">particle_type</span>.<br>
+      <br>
+Move call of <span style="font-family: Courier New,Courier,monospace;">user_actions</span>(
+'<span style="font-style: italic;">after_integration</span>' ) below
+the increments of times<br>
+and counters. <span style="font-family: Courier New,Courier,monospace;">user_actions</span>
+is now called for each statistic region and has as an argument the
+number of the respective region (<span style="font-family: Courier New,Courier,monospace;">sr</span>).<br>
+      <br>
+d3par-parameter <span style="font-family: Courier New,Courier,monospace;">data_output_ts</span>
+is removed. Timeseries output for <span style="font-weight: bold;">profil</span>-software
+removed. Timeseries are now switched on by setting <span style="font-family: Courier New,Courier,monospace;">dt_dots</span>.
+Timeseries data is collected in <span style="font-family: Courier New,Courier,monospace;">flow_statistics</span>.<br>
+      <br>
+Initial velocities at <span style="font-family: Courier New,Courier,monospace;">nzb+1</span>
+are regarded for volume flow control in case they have been set zero
+before (to avoid small timesteps); see new internal parameters <span style="font-family: Courier New,Courier,monospace;">u/v_nzb_p1_for_vfc</span>.<br>
+      <br>
+      <span style="font-family: Courier New,Courier,monospace;">q</span>
+is not allowed any more to become negative (<span style="font-family: Courier New,Courier,monospace;">prognostic_equations</span>).<br>
+      <br>
+      <span style="font-family: Courier New,Courier,monospace;">poisfft_init</span>
+is only called if the fft-solver is switched on (<span style="font-family: Courier New,Courier,monospace;">init_pegrid</span>).<br>
+      <br>
+d3par-parameter <span style="font-family: Courier New,Courier,monospace;">moisture</span>
+renamed to <span style="font-family: Courier New,Courier,monospace;">humidity</span>.<br>
+      <br>
+Subversion global revision number is read from <span style="font-weight: bold;">mrun</span> and added to the run
+description header and to the run control (<span style="font-family: Courier New,Courier,monospace;">_rc</span>) file.<br>
+      <br>
+      <span style="font-family: Courier New,Courier,monospace;">__vtk</span>
+directives removed from main program.<br>
+      <br>
+The uitility routine&nbsp;<span style="font-family: Courier New,Courier,monospace;">interpret_config</span>
+now reads PALM environment variables from <span style="font-family: Courier New,Courier,monospace;">NAMELIST</span>
+instead using the system call <span style="font-family: Courier New,Courier,monospace;">GETENV</span>.</td>
+      <td style="vertical-align: top;">advec_s_bc, advec_u_pw,
+advec_u_up, advec_v_pw, advec_v_up, asselin_filter, boundary_conds,
+check_parameters,
+coriolis, data_output_dvrp, data_output_ptseries, data_output_ts,
+data_output_2d, data_output_3d, diffusion_u, diffusion_v,
+disturb_field, exchange_horiz, exchange_horiz_2d, flow_statistics,
+header, init_grid,
+init_particles, init_pegrid, init_rankine, init_pt_anomaly,
+init_1d_model, init_3d_model, modules, palm, package_parin, parin,
+poisfft, poismg, prandtl_fluxes, pres, production_e,
+prognostic_equations, read_var_list, read_3d_binary, sor,
+swap_timelevel, time_integration, write_var_list, write_3d_binary</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugfix: preset of tendencies <span style="font-family: Courier New,Courier,monospace;">te_em</span>, <span style="font-family: Courier New,Courier,monospace;">te_um</span>, and <span style="font-family: Courier New,Courier,monospace;">te_vm</span> (<span style="font-family: Courier New,Courier,monospace;">init_1d_model</span>).<br>
+      <br>
+Bugfix in sample for reading user defined data from restart file (<span style="font-family: Courier New,Courier,monospace;">user_init</span>).<br>
+      <br>
+Bugfix in setting diffusivities for cases with the outflow damping
+layer extending over more than one subdomain (<span style="font-family: Courier New,Courier,monospace;">init_3d_model</span>).<br>
+      <br>
+Check for possible negative humidities in the initial humidity profile.<br>
+      <br>
+In <span style="font-family: Courier New,Courier,monospace;">Makefile</span>,
+default suffixes are removed from the suffix list to avoid calling of <span style="font-family: Courier New,Courier,monospace;">m2c</span> in
+cases of existing <span style="font-family: Courier New,Courier,monospace;">.mod</span> files
+(problem on Linux systems).</td>
+      <td style="vertical-align: top;">Makefile<br>
+      <br>
+check_parameters, init_1d_model, init_3d_model, user_interface</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">19/04/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.2a</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">All system relevant compile and
+link options (e.g. cpp-directives,
+library paths, etc.) as well as the host identifier (local_host) are
+now specified in the configuration file. This generally allows to
+install
+PALM on any&nbsp;kind of Linux-, IBM-AIX-, or NEC-SX-system by adding
+appropriate
+settings to the configuration file. A description is added to chapter
+5.0 of the online documentation.<br>
+      <br>
+Scripts are also running under the public domain ksh.<br>
+      <br>
+Filetransfer by ftp removed (options<span style="font-family: Courier New,Courier,monospace;"> -f </span>removed
+from <span style="font-weight: bold;">mrun</span> and <span style="font-weight: bold;">mbuild</span>).<br>
+      <br>
+Call of (system-)FLUSH routine moved to new routine<span style="font-family: Courier New,Courier,monospace;"> local_flush</span>.<br>
+      <br>
+      <span style="font-family: Courier New,Courier,monospace;">return_addres
+      </span>and<span style="font-family: Courier New,Courier,monospace;"> return_username </span>are
+read from ENVPAR-NAMELIST-file instead of using<span style="font-family: Courier New,Courier,monospace;"> local_getenv</span>.<br>
+      <br>
+Preprocessor strings for different linux clusters changed to "<span style="font-family: Courier New,Courier,monospace;">lc</span>", some
+preprocessor directives renamed (new:<span style="font-family: Courier New,Courier,monospace;"> __intel_openmp_bug</span>
+which is used for the bug in<span style="font-family: Courier New,Courier,monospace;"> tridia_1dd </span>and
+the OpenMP directives). Preprocessor directives for old systems have
+been removed.<br>
+      <br>
+      </td>
+      <td style="vertical-align: top;">advec_particles,
+check_open, cpu_log, cpu_statistics, data_output_dvrp, flow_statistics,
+header, init_dvrp, init_particles, init_1d_model, init_dvrp,
+init_pegrid, local_getenv, local_system, local_tremain,
+local_tremain_ini, modules, palm, parin, run_control<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+local_flush<br>
+      <br>
+      <span style="font-weight: bold;">changed scripts:</span><br>
+mbuild, mrun, .mrun.config.default<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">30/05/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.2b</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">Calculation and output of
+user-defined profiles: New&nbsp;userpar-parameter <span style="font-family: Courier New,Courier,monospace;">data_output_pr_user</span>.
+In the user-interface, routine <span style="font-family: Courier New,Courier,monospace;">user_check_data_output_pr</span>
+has been added and <span style="font-family: Courier New,Courier,monospace;">user_statistics</span>
+has been extended.<br>
+      </td>
+      <td style="vertical-align: top;">check_parameters,
+flow_statistics, modules, parin, read_var_list, user_interface,
+write_var_list</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">In <span style="font-family: Courier New,Courier,monospace;">pres.f90</span>,
+division through <span style="font-family: Courier New,Courier,monospace;">dt_3d</span>
+replaced by multiplication of the inverse. For performance
+optimisation, this is done in the loop calculating the divergence
+instead of using a seperate loop.<br>
+      <br>
+Variables <span style="font-family: Courier New,Courier,monospace;">var_hom</span>
+and <span style="font-family: Courier New,Courier,monospace;">var_sum</span>
+are both renamed <span style="font-family: Courier New,Courier,monospace;">pr_palm</span>.</td>
+      <td style="vertical-align: top;">data_output_profiles,
+flow_statistics, init_3d_model, modules, parin, pres, read_var_list,
+run_control, time_integration</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugfix: <span style="font-family: Courier New,Courier,monospace;">work_fft*_vec</span>
+removed from some PRIVATE-declarations (<span style="font-family: Courier New,Courier,monospace;">poisfft</span>).<br>
+      <br>
+Bugfix: <span style="font-family: Courier New,Courier,monospace;">field_chr</span>
+renamed <span style="font-family: Courier New,Courier,monospace;">field_char</span>
+(<span style="font-family: Courier New,Courier,monospace;">user_interface</span>).<br>
+      <br>
+Bugfix: output of <span style="font-family: Courier New,Courier,monospace;">use_upstream_for_tke</span>
+(<span style="font-family: Courier New,Courier,monospace;">header</span>).</td>
+      <td style="vertical-align: top;">header, poisfft, user_interface</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">21/06/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.3</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">This version allows runs for the
+ocean. These runs can be switched on with the new inipar-parameter <span style="font-family: Courier New,Courier,monospace;">ocean</span>.<br>
+      <br>
+Setting this switch has several effects:<br>
+      <ul>
+        <li>An additional prognostic equation for salinity is solved.</li>
+        <li>Potential temperature in buoyancy and stability-related
+terms is replaced by potential density.</li>
+        <li>Potential
+density is calculated from the equation of state for seawater after
+each timestep, using the algorithm proposed by Jackett et al. (2006, J.
+Atmos. Oceanic Technol., <span style="font-weight: bold;">23</span>,
+1709-1728).<br>
+So far, only the initial hydrostatic pressure is entered into this
+equation.</li>
+        <li>z=0 (sea surface) is assumed at the model top (vertical
+grid index <span style="font-family: Courier New,Courier,monospace;">k=nzt</span>
+on the w-grid), with negative values of z indicating the depth.</li>
+        <li>Initial profiles are constructed (e.g. from <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#pt_vertical_gradient">pt_vertical_gradient</a>
+/ <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#pt_vertical_gradient_level">pt_vertical_gradient_level</a>)
+starting from the sea surface, using surface values&nbsp;given by <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#pt_surface">pt_surface</a>,
+          <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#sa_surface">sa_surface</a>,
+          <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#ug_surface">ug_surface</a>,
+and <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#vg_surface">vg_surface</a>.</li>
+        <li>Zero salinity flux is used as default boundary condition at
+the bottom of the sea.</li>
+        <li>If switched on, random perturbations are by default imposed
+to the upper model domain from zu(nzt*2/3) to zu(nzt-3).</li>
+      </ul>
+Relevant new inipar-parameters to be exclusively used for steering
+ocean runs are <span style="font-family: Courier New,Courier,monospace;">bc_sa_t</span>, <span style="font-family: Courier New,Courier,monospace;">bottom_salinityflux</span>,
+      <span style="font-family: Courier New,Courier,monospace;">sa_surface</span>,
+      <span style="font-family: Courier New,Courier,monospace;">sa_vertical_gradient</span>,
+      <span style="font-family: Courier New,Courier,monospace;">sa_vertical_gradient_level</span>,
+and <span style="font-family: Courier New,Courier,monospace;">top_salinityflux</span>.<br>
+      <br>
+Salinity (<span style="font-family: Courier New,Courier,monospace;">sa</span>)
+and potential density (<span style="font-family: Courier New,Courier,monospace;">rho</span>) are
+included as new 2d/3d output quantities. Vertical profiles of salinity (<span style="font-family: Courier New,Courier,monospace;">sa</span>),
+salinity fluxes (<span style="font-family: Courier New,Courier,monospace;">w"sa"</span>, <span style="font-family: Courier New,Courier,monospace;">w*sa*</span>, <span style="font-family: Courier New,Courier,monospace;">wsa</span>), and
+potential density (<span style="font-family: Courier New,Courier,monospace;">rho</span>) can
+also be output.<span style="font-family: Courier New,Courier,monospace;"></span></td>
+      <td style="vertical-align: top;">advec_s_bc, average_3d_data,<br>
+boundary_conds, buoyancy,<br>
+check_parameters,&nbsp;data_output_2d,<br>
+data_output_3d,&nbsp;diffusion_e,<br>
+diffusivities,&nbsp;flow_statistics,&nbsp;header,<br>
+init_grid,&nbsp;init_3d_model,&nbsp;modules,<br>
+netcdf,&nbsp;parin,&nbsp;production_e,<br>
+prognostic_equations,<br>
+read_3d_binary,&nbsp;&nbsp;read_var_list,<br>
+sum_up_3d_data,&nbsp;swap_timelevel,<br>
+time_integration,&nbsp;user_interface,<br>
+write_var_list,&nbsp;write_3d_binary<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+eqn_state_seawater,&nbsp;init_ocean</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Inipar-parameter <span style="font-family: Courier New,Courier,monospace;">use_pt_reference</span>
+renamed <span style="font-family: Courier New,Courier,monospace;">use_reference.</span><br>
+Internal variable <span style="font-family: Courier New,Courier,monospace;">hydro_press</span>
+renamed <span style="font-family: Courier New,Courier,monospace;">hyp</span>,
+routine <span style="font-family: Courier New,Courier,monospace;">calc_mean_pt_profile</span>
+renamed <span style="font-family: Courier New,Courier,monospace;">calc_mean_profile</span>.<br>
+      <br>
+The format of the <span style="font-family: Courier New,Courier,monospace;">RUN_CONTROL</span>
+file has been adjusted for ocean runs.<br>
+      <br>
+Defaults of <span style="font-family: Courier New,Courier,monospace;">.._vertical_gradient_levels</span>
+changed from <span style="font-style: italic;">-1.0</span> to <span style="font-style: italic;">-9999999.9</span>.</td>
+      <td style="vertical-align: top;">advec_particles,&nbsp;buoyancy,&nbsp;<br>
+calc_liquid_water_content, <br>
+check_parameters,&nbsp;diffusion_e,<br>
+diffusivities,&nbsp;header,<br>
+init_cloud_physics,&nbsp;modules,<br>
+production_e,&nbsp;prognostic_equations,<br>
+run_control</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugfix: height above topography
+instead of height above level k=0 is used for calculating the mixing
+length (<span style="font-family: Courier New,Courier,monospace;">diffusion_e</span>
+and <span style="font-family: Courier New,Courier,monospace;">diffusivities</span>).<br>
+      <br>
+Bugfix: error in boundary condition for TKE removed (<span style="font-family: Courier New,Courier,monospace;">advec_s_bc</span>).</td>
+      <td style="vertical-align: top;">advec_s_bc,&nbsp;diffusion_e,&nbsp;diffusivities</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">05/10/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.4</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">This version allows runs for a
+coupled atmosphere-ocean LES.<br>
+      <br>
+Coupling frequency is controlled by new d3par-parameter <span style="font-family: Courier New,Courier,monospace;">dt_coupling</span>,
+the coupling mode ('<span style="font-style: italic;">atmosphere_to_ocean</span>'
+or '<span style="font-style: italic;">ocean_to_atmosphere</span>') for
+the respective processes is read from environment variable <span style="font-family: Courier New,Courier,monospace;">coupling_mode</span>,
+which is set by the mpiexec-command in <span style="font-weight: bold;">mrun</span>.
+Communication between the two models is handled by the
+intercommunicator <span style="font-family: Courier New,Courier,monospace;">comm_inter</span>.
+Local files opened by the ocean model get the additional suffic "<span style="font-family: Courier New,Courier,monospace;">_O</span>".
+Saturation at k=nzb is assumed for the atmosphere coupled to ocean.
+Usage of the coupled model is described in the new section 3.8.<br>
+      <br>
+A momentum flux can be set as top boundary condition using the new
+inipar parameters <span style="font-family: Courier New,Courier,monospace;">top_momentumflux_u|v</span>.<br>
+      <br>
+Non-cyclic boundary conditions can be used along all horizontal
+directions.<br>
+      <br>
+Quantities w*p* and w"e can be output as vertical profiles.<br>
+      <br>
+Initial profiles are reset to constant profiles in case that <span style="font-family: Courier New,Courier,monospace;">initializing_actions</span>
+/= '<span style="font-style: italic;">set_constant_profiles</span>'.
+(init_rankine)<br>
+      <br>
+Optionally calculate km and kh from initial TKE e_init.<br>
+      </td>
+      <td style="vertical-align: top;">boundary_conds,
+check_open, check_parameters, diffusion_u, diffusion_v,
+flow_statistics, header, init_pegrid, init_rankine, init_3d_model,
+local_stop, modules, palm, parin, prandtl_fluxes, pres,
+prognostic_equations, read_var_list, read_3d_binary, swap_timelevel,
+timestep, time_integration, write_var_list, write_3d_binary<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+surface_coupler</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Remaining variables <span style="font-family: Courier New,Courier,monospace;">iran</span>
+changed to <span style="font-family: Courier New,Courier,monospace;">iran_part</span>
+(advec_particles, init_particles).<br>
+      <br>
+In case that the presure solver is not called for every Runge-Kutta
+substep (<span style="font-family: Courier New,Courier,monospace;">call_psolver_at_all_substeps</span>
+= <span style="font-style: italic;">.F.</span>),
+it is called after the first substep instead of the last. In that case,
+random perturbations are also added to the velocity field after the
+first substep.<br>
+      <br>
+Initialization of <span style="font-family: Courier New,Courier,monospace;">km</span>, <span style="font-family: Courier New,Courier,monospace;">kh</span> =
+0.00001 for <span style="font-family: Courier New,Courier,monospace;">ocean</span>
+= <span style="font-style: italic;">.T.</span> (for <span style="font-family: Courier New,Courier,monospace;">ocean</span> = <span style="font-style: italic;">.F.</span> it remains 0.01).<br>
+      <br>
+Allow <span style="font-family: Courier New,Courier,monospace;">data_output_pr</span>
+= '<span style="font-style: italic;">q</span>', '<span style="font-style: italic;">wq</span>', '<span style="font-style: italic;">w"q"</span>', '<span style="font-style: italic;">w*q*</span>' for <span style="font-family: Courier New,Courier,monospace;">humidity</span> = <span style="font-style: italic;">.T.</span> (instead of <span style="font-family: Courier New,Courier,monospace;">cloud_physics</span>
+= <span style="font-style: italic;">.T.</span>).</td>
+      <td style="vertical-align: top;">advec_particles,
+check_for_restart, check_parameters, init_particles, init_3d_model,
+time_integration<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugs from code parts for
+non-cyclic boundary conditions are removed:<br>
+loops for u and v are starting from index <span style="font-family: Courier New,Courier,monospace;">nxlu</span>, <span style="font-family: Courier New,Courier,monospace;">nysv</span>,
+respectively. The radiation boundary condition is used for every
+Runge-Kutta substep. Velocity phase speeds for the radiation boundary
+conditions are calculated for the first Runge-Kutta substep only and
+reused for the further substeps. New arrays <span style="font-family: Courier New,Courier,monospace;">c_u</span>, <span style="font-family: Courier New,Courier,monospace;">c_v</span>, and <span style="font-family: Courier New,Courier,monospace;">c_w</span>
+are defined for this purpose. Several index errors are removed from the
+radiation boundary condition code parts. Upper bounds for calculating <span style="font-family: Courier New,Courier,monospace;">u_0</span> and <span style="font-family: Courier New,Courier,monospace;">v_0</span> (in
+production_e) are <span style="font-style: italic;">nxr+1</span> and <span style="font-style: italic;">nyn+1</span> because otherwise these
+values are not available in case of non-cyclic boundary conditions.<br>
+      <br>
++<span style="font-family: Courier New,Courier,monospace;">dots_num_palm</span>
+in module user, +module netcdf_control in user_init (both in
+user_interface)<br>
+      <br>
+Bugfix: wrong sign removed from the buoyancy production term in the
+case <span style="font-family: Courier New,Courier,monospace;">use_reference</span>
+= <span style="font-style: italic;">.T.</span> (production_e)<br>
+      <br>
+Bugfix: Error message concerning output of particle concentration (pc)
+modified (check_parameters).<br>
+      <br>
+Bugfix: Rayleigh damping for ocean fixed.</td>
+      <td style="vertical-align: top;">advec_u_pw,
+advec_u_up, advec_v_pw, advec_v_up, boundary_conds, buoyancy,
+check_parameters, coriolis, diffusion_u, diffusion_v, header,
+init_pegrid, init_3d_model, modules, poismg, production_e,
+prognostic_equations, user_interface<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">29/11/07</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.4a</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">Pressure boundary conditions for
+vertical walls added to the multigrid solver. They are applied using
+new wall flag arrays (<span style="font-family: Courier New,Courier,monospace;">wall_flags_..</span>)
+which are defined for each grid level. New argument<span style="font-family: Courier New,Courier,monospace;"> gls </span>added
+to routine<span style="font-family: Courier New,Courier,monospace;">
+user_init_grid </span>(<span style="font-family: Courier New,Courier,monospace;">user_interface</span>).<br>
+      <br>
+Plant canopy model of Watanabe (2004,BLM 112,307-341) added. &nbsp;It
+can be switched on by the new inipar parameter <span style="font-family: Courier New,Courier,monospace;">plant_canopy</span>.
+The inipar parameter<span style="font-family: Courier New,Courier,monospace;"> canopy_mode </span>can
+be used to prescribe a plant canopy type. The default case is a
+homogeneous plant canopy. Heterogeneous distributions of the leaf area
+density and the canopy drag coefficient can be defined in the new
+routine<span style="font-family: Courier New,Courier,monospace;">
+user_init_plant_canopy </span>(<span style="font-family: Courier New,Courier,monospace;">user_interface</span>).
+The inipar parameters <span style="font-family: Courier New,Courier,monospace;">lad_surface</span>,<span style="font-family: Courier New,Courier,monospace;">
+lad_vertical_gradient </span>and<span style="font-family: Courier New,Courier,monospace;">
+lad_vertical_gradient_level </span>can be used to prescribe the
+vertical profile of leaf area density. The inipar parameter<span style="font-family: Courier New,Courier,monospace;"> drag_coefficient </span>determines
+the canopy drag coefficient. Finally, the inipar parameter<span style="font-family: Courier New,Courier,monospace;"> pch_index </span>determines
+the index of the upper boundary of the plant canopy.&nbsp; <br>
+      <br>
+Allow new case<span style="font-family: Courier New,Courier,monospace;">
+bc_uv_t </span>= <span style="font-style: italic;">'dirichlet_0'</span>
+for channel flow.<br>
+      <br>
+For unknown variables (CASE DEFAULT) call new subroutine<span style="font-family: Courier New,Courier,monospace;">
+user_data_output_dvrp</span>.<br>
+      <br>
+Frequence of sorting particles can be controlled with new particles_par
+parameter<span style="font-family: Courier New,Courier,monospace;">
+dt_sort_particles</span>. Sorting is moved from the SGS timestep loop in<span style="font-family: Courier New,Courier,monospace;"> advec_particles </span>after
+the end of this loop.</td>
+      <td style="vertical-align: top;">advec_particles,
+check_parameters, data_output_dvrp, header, init_3d_model, init_grid,
+init_particles, init_pegrid, modules, package_parin,
+parin,&nbsp;read_var_list,&nbsp;user_interface, write_var_list<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+plant_canopy_model</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Redefine initial<span style="font-family: Courier New,Courier,monospace;"> nzb_local </span>as
+the actual total size of topography (later the extent of topography in<span style="font-family: Courier New,Courier,monospace;"> nzb_local </span>is
+reduced by 1dx at the E topography walls and by 1dy at the N topography
+walls to form the basis for<span style="font-family: Courier New,Courier,monospace;"> nzb_s_inner</span>);
+for consistency redefine 'single_building' case.<br>
+      <br>
+Vertical profiles now based on<span style="font-family: Courier New,Courier,monospace;"> nzb_s_inner</span>;
+they are divided by<span style="font-family: Courier New,Courier,monospace;"> ngp_2dh_s_inner </span>(scalars,
+procucts of scalars) and<span style="font-family: Courier New,Courier,monospace;"> ngp_2dh </span>(staggered
+velocity components and their products, procucts of scalars and
+velocity components), respectively.<br>
+      <br>
+Allow two instead of one digit to specify isosurface and slicer
+variables.<br>
+      <br>
+Status of 3D-volume NetCDF data file only depends on switch<span style="font-family: Courier New,Courier,monospace;"> netcdf_64bit_3d </span>(check_open).<br>
+      <br>
+      <span style="font-family: Courier New,Courier,monospace;">prognostic_equations
+      </span>include the respective<span style="font-family: Courier New,Courier,monospace;"> wall_*flux </span>in
+the parameter list of calls of<span style="font-family: Courier New,Courier,monospace;"> diffusion_s</span>.
+Same as before, only the values<span style="font-family: Courier New,Courier,monospace;"> of
+wall_heatflux(0:4) </span>can be assigned. At present,<span style="font-family: Courier New,Courier,monospace;">&nbsp;
+wall_humidityflux</span>,<span style="font-family: Courier New,Courier,monospace;"> wall_qflux</span>,<span style="font-family: Courier New,Courier,monospace;"> wall_salinityflux</span>,
+and<span style="font-family: Courier New,Courier,monospace;">
+wall_scalarflux </span>are kept zero.<span style="font-family: Courier New,Courier,monospace;"> diffusion_s </span>uses
+the respective<span style="font-family: Courier New,Courier,monospace;">
+wall_*flux </span>instead of<span style="font-family: Courier New,Courier,monospace;"> wall_heatflux</span>.
+This update serves two purposes: - it avoids errors in calculations
+with humidity/scalar/salinity and prescribed non-zero wall heatflux, -
+it prepares PALM for a possible assignment of wall fluxes of
+humidity/scalar/salinity in a future releases.</td>
+      <td style="vertical-align: top;">buoyancy,
+check_open, data_output_dvrp, diffusion_s, diffusivities,
+flow_statistics, header, init_3d_model, init_dvrp, init_grid, modules,
+prognostic_equations</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugfix: summation of<span style="font-family: Courier New,Courier,monospace;"> sums_l_l </span>(<span style="font-family: Courier New,Courier,monospace;">diffusivities</span>).<br>
+      <br>
+Several bugfixes in the ocean part: Initial density<span style="font-family: Courier New,Courier,monospace;"> rho </span>is
+calculated (<span style="font-family: Courier New,Courier,monospace;">init_ocean</span>).
+Error in initializing<span style="font-family: Courier New,Courier,monospace;"> u_init </span>and<span style="font-family: Courier New,Courier,monospace;"> v_init </span>removed
+(<span style="font-family: Courier New,Courier,monospace;">check_parameters</span>).
+Calculation of density flux now starts from<span style="font-family: Courier New,Courier,monospace;"> nzb+1 </span>(<span style="font-family: Courier New,Courier,monospace;">production_e</span>).<br>
+      <br>
+Bugfix: <span style="font-family: Courier New,Courier,monospace;">pleft</span>/<span style="font-family: Courier New,Courier,monospace;">pright</span>
+changed to <span style="font-family: Courier New,Courier,monospace;">pnorth</span>/<span style="font-family: Courier New,Courier,monospace;">psouth</span> in
+sendrecv of particle tail numbers along y, small bugfixes in the SGS
+part (<span style="font-family: Courier New,Courier,monospace;">advec_particles</span>).<br>
+      <br>
+Bugfix:<span style="font-family: Courier New,Courier,monospace;">
+model_string </span>needed a default value (<span style="font-family: Courier New,Courier,monospace;">combine_plot_fields</span>).<br>
+      <br>
+Bugfix: wavenumber calculation for even<span style="font-family: Courier New,Courier,monospace;"> nx </span>in
+routines<span style="font-family: Courier New,Courier,monospace;">
+maketri </span>(<span style="font-family: Courier New,Courier,monospace;">poisfft</span>).<br>
+      <br>
+Bugfix: assignment of fluxes at walls.<br>
+      <br>
+Bugfix: absolute value of<span style="font-family: Courier New,Courier,monospace;"> f </span>must be
+used when calculating the Blackadar mixing length (<span style="font-family: Courier New,Courier,monospace;">init_1d_model</span>).</td>
+      <td style="vertical-align: top;">advec_particles,
+check_parameters, combine_plot_fields, diffusion_s, diffusivities,
+init_ocean, init_1d_model, poisfft, production_e</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">16/09/08</td>
+      <td style="vertical-align: top;">SR</td>
+      <td style="vertical-align: top;">3.5</td>
+      <td style="vertical-align: top;">N</td>
+      <td style="vertical-align: top;">The
+turbulence recycling method of Kataoka and Mizuno (2002) has been
+implemented. A precursor run must be used to initialize the main run
+with a quasi-stationary turbulence state (see <span style="font-family: monospace;">initializing_actions</span> = <span style="font-style: italic;">'read_data_for_recycling'</span>).
+The precursor run may have a smaller domain than the main run, which
+helps to spare CPU time. New parameters for steering the recycling
+method are <span style="font-family: monospace;">turbulent_inflow</span>,
+      <span style="font-family: monospace;">recycling_width</span>, <span style="font-family: monospace;">inflow_damping_height</span>, and <span style="font-family: monospace;">inflow_damping_width</span>.<br>
+      <br>
+One
+new feature related with the recycling method is that within a job
+chain, the number of processors or the virtual processor grid is now
+allowed to&nbsp;change. Such a change modifies the domain decomposition
+and requires that the PEs within a restart job have to know from which
+file(s) they have to read their restart data (up to now there has been
+a one to one relation between the restart files and the PEs, i.e.
+processor 4 only reads data from file "_0004"). Informations about the
+subdomain index limits of all restart files are now written by PE0 (to
+file "_0000"). Also, all variables containing global values which do
+not depend on the subdomain are written to file "_0000" only. In a
+restart run, this file is opened by all PEs to read these global values
+and the informations about the subdomain index limits. Depending on
+these index limit information it is decided which restart file(s)
+has/have to be opened in order to read the complete data necessary for
+the current subdomain.<br>
+      <br>
+The plant canopy model has been extended
+to the prognostic equation for&nbsp;the potential temperature
+and&nbsp;passive scalar, as proposed by Watanabe (2004) and Shaw and
+Schumann (1992).<br>
+      <br>
+Particle advection adjusted for ocean runs.<br>
+      <br>
+Grid
+coarsening (multigrid method) is limited to subdomains (i.e. no
+collection of data on PE0 for further coarsening beyond subdomains) if <span style="font-family: monospace;">mg_switch_to_pe0_level</span> = <span style="font-style: italic;">-1</span>.<br>
+      <br>
+User-defined spectra are allowed.<br>
+      <br>
+Output of <span style="font-family: monospace;">q*2</span> profile and
+      <span style="font-family: monospace;">w"u"0</span>, <span style="font-family: monospace;">w"v"0</span>, <span style="font-family: monospace;">w"q"0</span> timeseries are added.<br>
+      <br>
+Argument<span style="font-family: monospace;"> -c </span>introduced to
+most of the subjob calls, which allows the user to choose his own job
+catalog by setting the environment variable<span style="font-family: monospace;"> job_catalog </span>in the
+configuration file (default is <span style="font-family: monospace;">~/job_queue</span>).<br>
+      <br>
+This release contains first adjustments for the SGI-ICE system at HLRN.<br>
+      <br>
+      <span style="font-weight: bold;">Attention: On the
+SGI-ICE,&nbsp;runs are still aborted or are hanging for unknown reasons
+from time to time.</span></td>
+      <td style="vertical-align: top;">advec_particles, calc_spectra,
+check_open, check_parameters, data_output_spectra,
+header, init_3d_model, init_particles, init_pegrid, modules, netcdf,
+parin, particle_boundary_conds, plant_canopy_model,
+prognostic_equations, read_3d_binary, read_var_list, time_integration,
+user_interface, write_3d_binary, write_var_list<br>
+      <br>
+      <span style="font-weight: bold;">new:</span><br>
+inflow_turbulence<br>
+      </td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">&nbsp;</td>
+      <td align="undefined" valign="undefined">&nbsp;</td>
+      <td align="undefined" valign="undefined">&nbsp;</td>
+      <td style="vertical-align: top;">C</td>
+      <td style="vertical-align: top;">Allow 100 spectra levels instead
+of 10 for consistency with define_netcdf_header. (<span style="font-family: monospace;">calc_spectra</span>, <span style="font-family: monospace;">data_output_spectra</span>, <span style="font-family: monospace;">header</span>, <span style="font-family: monospace;">modules</span>, <span style="font-family: monospace;">netcdf</span>)<br>
+      <br>
+Modification
+of the integrated version of the profile function for momentum for
+unstable stratification; more consistent flux definitions. (<span style="font-family: monospace;">wall_fluxes</span>, <span style="font-family: monospace;">production_e</span>)<br>
+      <br>
+Strict grid matching along z is not needed for mg-solver. (<span style="font-family: monospace;">check_parameters</span>)<br>
+      <br>
+Sharp
+lateral edges of the plant canopy introduced. Before, smaller values of
+the leaf area density than those applied in the prognostic equation for
+the vertical velocity were used in the prognostic equations for u and v
+at the boundaries of the plant_canopy. (<span style="font-family: monospace;">init_3d_model</span>)<br>
+      <br>
+-<span style="font-family: monospace;">cross_ts_*</span> (<span style="font-family: monospace;">read_var_list</span>, <span style="font-family: monospace;">write_var_list</span>), -<span style="font-family: monospace;">dopr_time_count</span>, old profil
+parameters (<span style="font-family: monospace;">cross_...</span>, <span style="font-family: monospace;">dopr_crossindex</span>,&nbsp;<span style="font-family: monospace;">profile_***</span>) removed. (<span style="font-family: monospace;">read_3d_binary</span>, <span style="font-family: monospace;">write_3d_binary</span>)<br>
+      <br>
+Reading/writing of <span style="font-family: monospace;">hom_sum</span>,
+      <span style="font-family: monospace;">volume_flow_area</span>, <span style="font-family: monospace;">volume_flow_initial</span> is moved
+from <span style="font-family: monospace;">..._3d_binary</span> to <span style="font-family: monospace;">..._var_list</span>, <span style="font-family: monospace;">hom_sum</span> is now allocated in <span style="font-family: monospace;">parin</span> instead of <span style="font-family: monospace;">init_3d_model</span>.<br>
+      <br>
+      <span style="font-family: monospace;">npex</span>, <span style="font-family: monospace;">npey</span> moved from inipar- to
+d3par-namelist. (<span style="font-family: monospace;">parin</span>)<br>
+      <br>
+      <span style="font-family: monospace;">myid_char14</span>
+removed. This was used, since on IBM machines the process rank could be
+changed when the final communicator was defined, in order to save the
+preliminary processor-id for opening the binary output file for
+restarts (unit 14), because otherwise a mismatch occured when reading
+this file in a restart job. This mechanism is not needed any more since
+the subdomain informations are now contained in file _0000. (<span style="font-family: monospace;">parin</span>, <span style="font-family: monospace;">check_open</span>)<br>
+      <br>
+Transpositions for the 2D domain decomposition have been optimized by
+using <span style="font-family: monospace;">f_inv</span>
+as an automatic array instead of providing the memory by a dummy
+argument. This spares one copy loop per transposition. Order of indices
+in the 3D loops in some of the transpose routines have been rearranged
+for better cache utilization. Both have been suggested by Roland
+Richter (SGI) as part of the HLRN-II benchmark process. (<span style="font-family: monospace;">transpose</span>)<br>
+      <br>
+Workaround for getting information about the coupling mode, because the<span style="font-family: monospace;"> -env </span>Option (mpiexec) is not
+available on many systems (SGI, lcxt4 at&nbsp; Bergen Center for
+Computational Science). (<span style="font-family: monospace;">palm</span>,
+      <span style="font-family: monospace;">mrun</span>)<br>
+      <br>
+Format adjustments in order to allow CPU# &gt; 999. (<span style="font-family: monospace;">cpu_statistics</span>)<br>
+      <br>
+Provisional solution for run_control_1d output: add 'CALL check_open(
+15 )'. (<span style="font-family: monospace;">init_1d_model</span>)<br>
+      <br>
+Subdomain data are read into temporary arrays <span style="font-family: monospace;">pf_tmp</span> / <span style="font-family: monospace;">pf3d_tmp</span> in order to avoid
+INTEL compiler warnings about (automatic) creation of temporary arrays.
+(<span style="font-family: monospace;">combine_plot_fields</span>)<br>
+      <br>
+Time coordinate t=0 stored on netcdf-file only if an output is required
+for this time for at least one of the profiles.<br>
+      <br>
+Output of spline timeseries <span style="font-family: monospace;">splptx</span>
+etc. removed. (<span style="font-family: monospace;">flow_statistics</span>)</td>
+      <td style="vertical-align: top;">advec_s_ups,
+advec_u_ups, advec_v_ups, advec_w_ups, calc_spectra, check_open,
+check_parameters, cpu_statistics, data_output_profiles,
+data_output_spectra, flow_statistics, header, init_1d_model,
+init_3d_model, modules, netcdf, palm, parin, poisfft, production_e,
+read_3d_binary, read_var_list, transpose, wall_fluxes, write_3d_binary,
+write_var_list<br>
+      </td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">&nbsp;</td>
+      <td align="undefined" valign="undefined">&nbsp;</td>
+      <td align="undefined" valign="undefined">&nbsp;</td>
+      <td style="vertical-align: top;">E</td>
+      <td style="vertical-align: top;">Bugfix:
+modification of the calculation of the vertical turbulent momentum
+fluxes u'w' and v'w'; the first usws that is computed corresponds to
+-u'w'/u* and not as priorily assumed to (-u'w')**0.5, the first vsws
+that is computed corresponds to -v'w'/u* and not as priorily assumed to
+(-v'w')**0.5. Therefore, the intermediate result for usws has to be
+multiplied by -u* instead by itself in order to get u'w'. Accordingly,
+the intermediate result for vsws has to be multiplied by -u* instead by
+itself in order to get v'w'. As u* is calculated for the position of a
+scalar an additional interpolation of u* to the position of u and v,
+respectively, is necessary. As u* is not determined for the ghost
+points on each PE, an additional exchange of information from
+neighbouring PEs is necessary. Tests showed that this
+decreases u* by some 10% and increases TKE and momentum fluxes by some
+10% because friction was underestimated and momentum fluxes were
+wrongly calculated due to the bug. (<span style="font-family: monospace;">prandtl_fluxes</span>, <span style="font-family: monospace;">wall_fluxes</span>)<br>
+      <br>
+      <span style="font-weight: bold;">Attention:</span> <br>
+      <span style="font-weight: bold;">The content of the
+testresult-file (run control output) has changed
+due to the above bugfix.</span><br>
+      <br>
+Bugfix:
+change definition of us_wall from 1D to 2D.&nbsp;<br>
+      <br>
+Bugfix: exponent = 1.0 / ( ny + 1.0 ) in calc_spectra_x. (<span style="font-family: monospace;">calc_spectra</span>)<br>
+      <br>
+Bugfix: calculation of horizontal fluxes at vertical walls. (<span style="font-family: monospace;">diffusion_s</span>)<br>
+      <br>
+Bugfix: zero assignments to tendency arrays in case of restarts. (<span style="font-family: monospace;">init_3d_model</span>)<br>
+      <br>
+Bugfix: wrong grid level used in multigrid solver, routine <span style="font-family: monospace;">restrict</span>. (<span style="font-family: monospace;">poismg</span>)<br>
+      <br>
+Bugfix:
+Construction of vertical profiles when 10 gradients have been specified
+in the parameter list (ug, vg, pt, q, sa, lad). (<span style="font-family: monospace;">check_parameters</span>)<br>
+      <br>
+Bugfix: Determination of the number of vertical levels for which
+spectra shall be output - 100 replaced by 10. (<span style="font-family: monospace;">netcdf</span>)<br>
+      <br>
+Bugfix:
+Lengths of those characters that are needed for the output of the
+characteristic levels of potential temperature, the geostrophic wind,
+scalar concentration, humidity and leaf area density to the header file
+has been increased. (<span style="font-family: monospace;">header</span>)<br>
+      <br>
+Bugfix: add ')' in <span style="font-family: monospace;">user_read_restart_data</span>.<br>
+      <br>
+The leaf area density is explicitly set to its surface value at k=0. (<span style="font-family: monospace;">check_parameters</span>)<br>
+      <br>
+Introduce<span style="font-family: monospace;"> prefix_chr</span> to
+ensure unique dvrp_file path.<br>
+      <br>
+small bugfixes for <span style="font-family: monospace;">user_interface</span>
+sample code (comments):<br>
+- initialize ustvst with 0.0 as it is now computed only until <span style="font-family: monospace;">nxr</span> and <span style="font-family: monospace;">nyn</span><br>
+- two ALLOCATE statements moved from <span style="font-family: monospace;">user_read_restart_data</span> back to <span style="font-family: monospace;">user_init</span><br>
+- remove 'READ (13) u2_av' statement in <span style="font-family: monospace;">user_read_restart_data</span><br>
+      <br>
+Bugfix: remove IF statement in <span style="font-family: monospace;">plant_canopy_model_ij</span>.<br>
+      <br>
+Bugfix: divide sums(k,8) (e) and sums(k,34) (e*) by
+ngp_2dh_s_inner(k,sr) (like other scalars). (<span style="font-family: monospace;">flow_statistics</span>)<br>
+      <br>
+Bugfix: <span style="font-family: monospace;">dopr_time_count</span>
+was written on the binary file, which caused that NetCDF files newly
+created by restart files (no append of existing files!) contained
+uneccessary time levels. (<span style="font-family: monospace;">read_3d_binary</span>,
+      <span style="font-family: monospace;">write_3d_binary</span>)<br>
+      <br>
+Bugfix: extra '*' removed in user_statistics sample code. (<span style="font-family: monospace;">user_interface</span>)<br>
+      <br>
+Bugfix: a stop command was missing in some cases of the parallel
+branch. (<span style="font-family: monospace;">local_stop</span>)<br>
+      <br>
+Bugfix in volume flow control for non-cyclic boundary conditions. (<span style="font-family: monospace;">pres</span>)<br>
+      <br>
+Bugfix: misplaced #endif directives. (<span style="font-family: monospace;">combine_plot_fields</span>)<br>
+      <br>
+Data are collected from PE0 in an ordered sequence which seems to avoid
+hanging of processes on SGI-ICE. (<span style="font-family: monospace;">cpu_statistics</span>)</td>
+      <td style="vertical-align: top;">calc_spectra,
+check_parameters, cpu_statistics, diffusion_s, flow_statistics,
+init_3d_model, init_dvrp, local_stop, plant_canopy_model, poismg,
+prandtl_fluxes, pres, read_3d_binary, user_interface, wall_fluxes,
+write_3d_binary<br>
+      </td>
+    </tr>
+    
+    
+    
+    
+    
+    
+  </tbody>
+</table>
+
+&nbsp;<b><blink>Attention:</blink></b>
+If<tt> make </tt>is not used
+for
+compiling,
+<b>all routines</b> have to be re-compiled after every
+change
+to <b>modules.f90!</b>
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<h2><a name="Kapitel2.0"></a>2.0&nbsp; How
+to change the model source
+code</h2>
+
+Currently
+(Sep 23rd, 2009), only selected users are allowed to commit changes to
+the repository. Some rules about how to check in modified code will be
+added later.<br>
+
+<h2>
+<a name="Kapitel3.0"></a>3.0&nbsp; Description
+of selected parts of the
+model source code</h2>
+
+
+<p>This section gives links to existing descriptions about special
+parts of the PALM code, e.g. special numerical methods that are used
+(including mathematical background). Documents are stored in single
+files with different formats. Some are in German (sorry for the
+inconvenience).
+<br>
+&nbsp;
+</p>
+
+<ul>
+
+  <li> <a name="UPS"></a>upstream-spline
+advection scheme ( <a href="methods/upstream_spline/ups.pdf">.pdf</a>
+, only in German)</li>
+  <li> <a name="Cloud_physics"></a>cloud
+physics module ( <a href="methods/cloud_physics/cloud_physics.pdf">.pdf</a>
+)</li>
+  <li> <a name="Bitkompression"></a>data compression with <a href="methods/bit_compression/bit_compression.html">bit shifting method</a>
+(only in German)<br>
+  </li>
+  <li>Runge-Kutta
+time integration scheme ( <a href="methods/runge_kutta/runge_kutta.pdf">.pdf</a>
+, only in German)</li>
+</ul>
+
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+<br>
+
+&nbsp;
+</body></html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 4.5</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041015;12234229"> <meta name="CHANGED" content="20041022;13412723"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">4.5 Data analysis and
+visualization<br>
+</h3><p style="line-height: 100%;">PALM is able to
+output
+data of different quantities as time series,
+vertical profiles (usually horizontally averaged), two-dimensional
+cross sections or <font color="#000000">3d-volume data.</font>
+Depending on the kind of output (time series, profiles, etc.) and the
+output format (ASCII&nbsp; or binary) data are written
+to different files (file descriptions can be found in
+<a href="../app/chapter_3.4.html">chapter
+3.4</a>). By default, all data
+output files are in NetCDF format (link to the NetCDF documentations in
+the Internet and on the PALM homepage), which can be processed by many
+public domain and commercial (graphic) software. Data from NetCDF files
+can also be easily read from FORTRAN programs provided that a NetCDF
+library is available. More detailed informations about the
+PALM-NetCDF-output is given in the next subchapter (<a href="../app/chapter_4.5.1.html">4.5.1</a>).</p>
+<p style="line-height: 100%;">Due to historical reasons,
+PALM can also
+output data in other formats suitable for some special graphic
+software. The exact format of these files corresponds to the
+requirements of the respective software. Still available at IMUK are <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>
+(time series, profiles), <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">iso2d</a>
+(2d cross sections) and <b>AVS</b> (e.g. iso-surfaces of
+3d volume
+data). The special files created by PALM can be directly used
+as input files for these plot programs. Beyond that, <b>profil</b>
+and
+<b>iso2d</b> need additional information
+about the plot layout (e.g. titles, axes labels, arrangement of the
+coordinate systems, etc.) provided by so-called parameter files<font color="#800000">.
+</font><font color="#000000">Thes</font>e
+files are also created by
+the PALM, providing a default layout (e.g. plots produced by <b>iso2d</b>
+show. only isolines and no color shading). Within certain
+limits the plot layout can be steered by some PALM parameters.
+Beyond that the user can edit the parameter files created by PALM and
+change, supplement or remove the given default values
+according to his needs. Beside the file with the (binary) data to be
+visualized, <b>AVS</b> additionally needs a file with
+coordinate information (likewise binary) and an ASCII file in the
+so-called FLD format, which describes the structure of the two binary
+files. Coordinate and FLD file are also created by the PALM. However,
+with <b>AVS</b> (differently than with <b>profile</b>
+or <b>iso2d</b>)
+the plot layout must always be additionally designed by the user
+with the help of the AVS network editor. &nbsp;</p>
+<p style="line-height: 100%;">In the following
+subchapters, steering
+of the different data output and how to create plots of the data is
+described by some examples. Not all details of steering
+are mentioned. If necessary, these can be found within the
+description of the respective parameters.<br>
+</p>&nbsp;For most purposes it should be sufficient to read <a href="../app/chapter_4.5.1.html">chapter 4.5.1</a>
+which explains the PALM-NetCDF-output.<hr>
+<p style="line-height: 100%;"><br><font color="#000080"><font color="#000080"><a href="chapter_4.4.2.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" src="left.gif" name="Grafik1"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.1.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p>
+<p style="line-height: 100%;">&nbsp;<span style="font-style: italic;">Last
+change:</span> $Id$<br>
+</p></body></html>

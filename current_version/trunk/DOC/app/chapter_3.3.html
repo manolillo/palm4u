@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM
+chapter 3.3</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Marcus Oliver Letzel"> <meta name="CREATED" content="20040728;14053490"> <meta name="CHANGED" content="20041112;14150257"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">3.3 Initialization and restart
+runs</h3>
+<p style="line-height: 100%;">A job started by <b>mrun</b>
+will
+- according to its requested computing time, its memory size
+requirement and
+the number of necessary processing elements (on parallel computers) -
+be queued by the queuing-system of the remote computer into a suitable
+job
+class which fulfills these requirements. Each job class permits only
+jobs with certain maximum requirements (e.g.
+the job class <tt><font style="font-size: 11pt;" size="2">cdev</font></tt>
+on the IBM Regatta "hanni" of the HLRN permits only jobs with no more
+than 7200 seconds required computing time and with using no more than
+32
+processing elements). The job classes are important for the scheduling
+process of&nbsp; the computer. Jobs with small requirements usually
+come to execution
+very fast, jobs with higher requirements must wait longer (sometimes
+several days). </p>
+<p style="line-height: 100%;">Before the start of a model
+run the user
+must estimate how much CPU time the model will need for the simulation.
+The necessary time in seconds has to be indicated with the mrun
+<b>option</b> <tt><a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#Opt-t">-t</a></tt>
+and has an influence on the job class into which the job is queued. Due
+to the fact that the model usually uses a variable
+time step and thus the number of time steps to be executed and
+consequently the time needed by the model is not
+known at the beginning, this can be measured only very roughly in
+many cases. So it may happen that the model needs more time than
+indicated for the option <tt><u><font style="font-size: 10pt;" size="2">-t</font></u>,</tt>
+which normally leads to an abort of the job as soon as the available
+CPU time is consumed. In principle one could solve this problem by
+setting a very generously estimated value for <u><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">-t</font></font></u>,
+but this will possibly lead to the disadvantage that the queued job has
+to wait longer for execution.<br>
+</p><p style="line-height: 100%;">To avoid this
+problem <b>mrun </b>offers
+the possibility of so-called <b>restart runs</b>. During
+the model
+run PALM continuously examines how much time is left for the
+execution of the job. If the run is not completed and finished shortly
+before
+expiration of this time, the model stops and writes down the values
+of (nearly) all model variables in binary form to a file (local name
+<a href="chapter_3.4.html#BINOUT">BINOUT</a>).
+After copying the output files required by the user, <b>mrun</b>
+automatically starts a restart run. For this purpose a new <b>mrun</b>
+call is set off automatically on the local computer of the user; <b>mrun</b>
+thus calls itself. The options with this call correspond to a large
+extent to those which the user had selected with his initial call of <b>mrun</b>.
+The model restarts and this time at the beginning it reads in the
+binary data written before and continues the run with them. If in
+this job the CPU time is not sufficient either, in order to terminate
+the run, at the end of the job another restart run is started, etc.,
+until the time which shall be simulated by the model, is reached.
+Thus a set of restart runs can develop - a so-called job chain. The
+first run of this chain (model start at t=0) is called
+<b>initial run</b>. </p>
+<p style="line-height: 100%;">Working with restart runs
+and their
+generation through <b>mrun</b> requires certain entries in
+the
+mrun-configuration file and in the parameter file, which are
+described and explained in the following. The configuration file must
+contain the following entries (example for the IBM Regatta of the
+HLRN): </p>
+<ul> <pre style="line-height: 100%;"><font style="font-size: 10pt;" size="2">%write_binary true restart</font><br><font style="font-size: 10pt;" size="2">#</font><br><a href="chapter_3.4.html#PARIN"><font style="font-size: 10pt;" size="2">PARIN</font></a><font style="font-size: 10pt;" size="2"> in:job:npe d3# ~/palm/current_version/JOBS/$fname/INPUT _p3d</font><br><font style="font-size: 10pt;" size="2">PARIN in:job:npe d3f ~/palm/current_version/JOBS/$fname/INPUT _p3df</font><br><a href="chapter_3.4.html#BININ"><font style="font-size: 10pt;" size="2">BININ</font></a><font style="font-size: 10pt;" size="2"> in:loc d3f ~/palm/current_version/JOBS/$fname/OUTPUT _d3d</font><br><font style="font-size: 10pt;" size="2">#</font><br><a href="chapter_3.4.html#BINOUT"><font style="font-size: 10pt;" size="2">BINOUT</font></a><font style="font-size: 10pt;" size="2"> out:loc restart ~/palm/current_version/JOBS/$fname/OUTPUT _d3d</font></pre></ul>
+<p style="line-height: 100%;">The <b>mrun</b>
+call for the
+initialization run of the job chain must look as follows: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun -h ibmh -d abcde -t 900 -r "d3# restart"</font></pre></ul>
+<p style="line-height: 100%;">The specification of the
+environment
+variable <tt><tt><font style="font-size: 10pt;" size="2">writ</font></tt></tt><tt><tt><font style="font-size: 10pt;" size="2">e_binary</font><font style="font-size: 11pt;" size="2">, </font></tt></tt>which
+must be
+assigned the value <tt><tt><font style="font-size: 10pt;" size="2">true</font></tt></tt>,
+is essential. Only in this case the model writes
+binary-coded data for a possible restart run to the local file <tt><tt><a href="chapter_3.4.html#BINOUT">BINOUT</a></tt></tt>
+at the end of the run. Then of course this output file must be stored
+on a permanent file with an appropriate file connection statement
+(last line of the example above). As you can see, both instructions
+(variable declaration and connection statements) are only carried out
+by <b>mrun</b>, if the character string <tt><tt><font style="font-size: 10pt;" size="2">restart</font></tt></tt>
+is given for the option <tt><font style="font-size: 10pt;" size="2">-r</font>
+</tt>in the <span style="font-weight: bold;">mrun</span>
+call. Thus
+the example above can also be used
+if no restart runs are intended. In such cases the character string
+<tt><tt><font style="font-size: 10pt;" size="2">restart</font></tt></tt>
+with the option <tt><font style="font-size: 10pt;" size="2">-r</font></tt>
+can simply be omitted. </p>
+<p style="line-height: 100%;">Only by the specification of
+<tt><font style="font-size: 10pt;" size="2">write_binary=true</font><font style="font-size: 11pt;" size="2">
+</font><font face="Thorndale, serif">the</font></tt>
+model is
+instructed to compute the remaining CPU time after each time step and
+stop, if the run is not going to be completed and finished briefly
+before expiration of
+this time. Actually the stop takes place when the
+difference from the available job time (determined by the <b>mrun</b>
+option <tt><font style="font-size: 10pt;" size="2">-t</font></tt>)
+and
+the time used so far by the job becomes smaller than the time given
+by the model variable <a href="chapter_4.2.html#termination_time_needed">termination_time_needed</a>.
+With the variable <b>termination_time_needed </b>the user
+determines,
+how much time is needed for binary copying of the data for restart
+runs, as
+well as for the following data archiving and transfer of result data
+etc. (as long as this is part of the job). Thus, as soon as the
+remaining job time is less than <b>termination_time_needed</b>,
+the
+model stops
+the time step procedure and copies the data for a restart run to the
+local binary file BINOUT. The so-called initialization parameters are
+also written to this file (see <a href="chapter_4.0.html">chapter
+4.0</a>). In a last step the model produces another file with the
+local name CONTINUE_RUN. The presence of this file signals <b>mrun</b>
+the fact that a restart run must be started and leads to the
+start of an appropriate job. </p>
+<p style="line-height: 100%;"><font color="#000000">During
+the initial
+phase of a restart ru</font>n different actions than during the
+initial
+phase of an initial run of the model are neccessary. In this
+case the model must read in the binary data written by the preceding
+run at the beginning of the run. Beyond that it also reads the
+initialization parameters from this file. Therefore these do not need
+to be indicated in the parameter file (local name <a href="chapter_3.4.html#PARIN">PARIN</a>).
+If they are indicated nevertheless and if their value deviates from
+their value of the initial run, then this is ignored. There is
+exactly one exception to this rule: with the help of the
+initialization parameter <a href="chapter_4.1.html#initializing_actions">initializing_actions</a>
+it is determined whether the job is a restart run or an
+initial run. If <b>initializing_actions</b> =
+&ldquo;<i>read_restart_data&rdquo;</i>, then it is
+a restart
+run, otherwise an initial run. The previous remarks make it
+clear that the model obviously needs two different parameter files
+(local name PARIN) for the case of job chains. One is needed for the
+initial run and contains all initialization parameters set by
+the user and the other one is needed for restart runs. The
+last one only contains the initialization parameter
+<b>initializing_actions</b> (also, initialization
+parameters with values different from the initial run may appear in
+this file, but they will be ignored), which
+must have the value &ldquo;<i>read_restart_data&rdquo;</i>.
+Therefore the user must produce two different parameter files if he
+wants to operate job chains. Since the model always expects the
+parameter file on the local file <tt>PARIN</tt>, two
+different file
+connection statements must be given for this file in the
+configuration file. One may be active only at the initial run,
+the other one only at restart runs. The <b>mrun </b>call
+for the
+initial run shown above activates the first of the two
+specified connection statements, because the character string <tt><font style="font-size: 10pt;" size="2">d3#</font></tt>
+with the option <tt><font style="font-size: 10pt;" size="2">-r</font></tt>
+coincides with the character
+string in the third column of the connection statement. Obviously
+the next statement must be active</p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">PARIN in:job:npe d3f ~/palm/current_version/JOBS/$fname/INPUT _p3df</font></pre></ul>
+<p style="line-height: 100%;">with the restart runs. Given
+that t<font color="#000000">his statement only gets</font>
+active if the option <tt><font style="font-size: 10pt;" size="2">-r</font></tt> is given the value
+<tt><font style="font-size: 11pt;" size="2">d3f</font></tt>
+and that
+the <b>mrun</b> call for this restart run is produced
+automatically (thus not by the user), <b>mrun</b>
+obviously has to
+replace <tt><font style="font-size: 10pt;" size="2">"d3#"</font></tt>
+of the initial run with <tt><tt><font style="font-size: 10pt;" size="2">"d3f"</font>
+</tt></tt>within the call of this restart run. Actually,
+with restart
+runs all <tt><font style="font-size: 10pt;" size="2">"#"</font></tt>
+characters within the strings given for the options <tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">-r</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">
+, </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">-i</font></font></tt>
+and <tt><font style="font-size: 10pt;" size="2">-o</font></tt>
+are
+replaced by <tt><font style="font-size: 10pt;" size="2">&ldquo;f&rdquo;</font></tt>.
+</p>
+<p style="line-height: 100%;">For example, for the initial
+run
+the permanent file </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;">~/palm/current_version/JOBS/abcde/INPUT/abcde_p3d</pre></ul>
+<p style="line-height: 100%;">and for restart runs the
+permanent file<span style="font-family: monospace;"> </span></p>
+<ul style="font-family: monospace;"> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">~/palm/current_version/JOBS/abcde/INPUT/abcde_p3df</font></pre></ul>
+<p style="line-height: 100%;">is used. Only with restart
+runs the
+local file <tt>BININ</tt> is made available as input file,
+because
+the appropriate file connection statement also contains the
+character string <tt><font style="font-size: 10pt;" size="2">"d3f"</font></tt>
+in the third column. This is logical and necessary since in BININ the
+binary data, produced by the model of the preceding job of the chain,
+are expected and the initial run does not need these
+data The permanent names of this input file (local name BININ) and
+the corresponding output file (local name BINOUT) are identical and
+read </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">~/palm/current_version/JOBS/abcde/OUTPUT/abcde_d3d.</font></pre></ul>
+<p style="line-height: 100%;">However, after the file
+produced by the
+previous job was read in by the model and after at the local file
+<tt>BINOUT </tt>was produced at the end of the job, the
+restart job does not overwrite this permanent file (<tt>&hellip;/<font style="font-size: 10pt;" size="2">abcde_d3d</font></tt>)
+with the new data. Instead of that, it is examined whether already
+a permanent file with the name <tt><font style="font-size: 10pt;" size="2">&hellip;/abcde_d3d</font>
+<font face="Thorndale, serif">exists </font></tt>when
+copying the
+output file (<tt><font style="font-size: 10pt;" size="2">BINOUT</font></tt>)
+of <b>mrun</b>. If this is the case, <tt><font style="font-size: 10pt;" size="2">BINOUT</font></tt>
+is copied to the file<font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">
+</font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">&hellip;/abcde_d3d.1</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">.</font></font>
+Even if this file is already present, <tt><font style="font-size: 10pt;" size="2">&hellip;/abcde_d3d.2</font></tt>
+is tried etc. For an input file the highest existing cycle
+of the respective permanent file is copied. In the example above this
+means: the initial run creates the permanent file
+<tt><font style="font-size: 10pt;" size="2">&hellip;/abcde_d3d</font></tt><font style="font-size: 11pt;" size="2">,</font>
+the first restart run uses this file and creates <tt>&hellip;/<font style="font-size: 10pt;" size="2">abcde_d3d.1</font></tt>,
+the second restart run creates <tt><font style="font-size: 10pt;" size="2">&hellip;/abcde_d3d.2</font></tt><font style="font-size: 10pt;" size="2">
+</font>etc. After completion of the job chain the user can still
+access all files created by the jobs. This makes it possible for the
+user for example to restart the model run of a certain job of the job
+chain again. </p>
+<p style="line-height: 100%;">Therefore restart jobs can
+not only be
+started automatically through <b>mrun</b>, but also
+manually by the
+user. This is necessary e.g. whenever after the end of a job chain
+it is decided that the simulation must be continued further, because
+the phenomenon which should be examined did not reach the desired
+state yet. In such cases the <b>mrun</b> options
+completely
+correspond to those of the initial call; simply the <tt><font style="font-size: 10pt;" size="2">"#"</font></tt>
+characters in the
+arguments of options <tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">-r</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">,
+</font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">-i</font></font></tt>
+and <tt><font style="font-size: 10pt;" size="2">-o</font></tt>
+must be
+replaced by <tt><font style="font-size: 10pt;" size="2">"f"</font></tt>.
+</p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.2.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.4.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;</i>
+$Id: chapter_3.3.html 62 2007-03-13 02:52:40Z raasch $</p>
+</body></html>

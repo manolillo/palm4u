@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252">
+  
+
+
+  <title>PALM chapter 3.9</title><meta name="GENERATOR" content="StarOffice 7 (Win32)">
+
+  <meta name="AUTHOR" content="Siegfried Raasch">
+
+  <meta name="CREATED" content="20040809;13460943">
+
+  <meta name="CHANGED" content="20041112;15085727">
+
+  <meta name="KEYWORDS" content="parallel LES model">
+
+  <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+  </style></head>
+<body style="direction: ltr;" lang="en-US">
+
+<h3 style="line-height: 100%;">3.9 Setup for turbulent inflow</h3>
+
+<p style="line-height: 100%;">Starting from version 3.5
+PALM includes a so-called turbulence recycling method which allows a
+turbulent inflow with non-cyclic horizontal boundary conditions. The
+method follows the one described by Lund et al. (1998, J. Comp. Phys., <span style="font-weight: bold;">140</span>, 233-258), modified by Kataoka and Mizuno (2002, Wind and Structures, <span style="font-weight: bold;">5</span>, 379-392). The method is switched on by setting the initial parameter <a href="chapter_4.1.html#turbulent_inflow">turbulent_inflow</a> = <span style="font-style: italic;">.TRUE.</span>.</p><p style="line-height: 100%;">The turbulent signal A'(y,z) to be imposed at the left inflow boundary is taken from the same simulation at a fixed distance x<sub>r</sub> from the inflow (given by parameter <a href="chapter_4.1.html#recycling_width">recycling_width</a>): A'(y,z) = A(x<sub>r</sub>,y,z) - <span style="font-weight: bold;">A(z)</span>, where <span style="font-weight: bold;">A(z)</span>
+is the horizontal average between the inflow boundary and the recycling
+plane. The turbulent quantity A'(y,z) is then added to a mean inflow
+profile a(z) which is the horizontal (and temporal) average as
+calculated from a precursor run. This is done after each timestep.</p><p style="line-height: 100%; font-weight: bold;">So far (09/16/08), a turbulent signal is imposed to all prognostic variables except humidity (passive scalar) and salinity!</p><p style="line-height: 100%;">In
+order to avoid a continous growth of the turbulent layer with time, the
+height up to which turbulence is recycled is limited by parameter <a href="chapter_4.1.html#inflow_damping_height">inflow_damping_height</a>. By default, this height is calculated and taken from the precursor run. </p>The following tries to give a short recipe about how to create a proper setup for using the turbulence recycling method:<br><br><ul><li>A
+precursor run with cyclic horizontal boundary conditions has to be
+carried out in order to create a (quasi-) stationary state. Since the
+horizontal average from this precursor run is used as the mean inflow
+profile for the main run, <span style="font-weight: bold;">the
+wall-normal velocity component must point
+into the domain at every grid point and its magnitude should be large
+enough in order to guarantee an inflow even if a turbulence signal is
+added</span>.<br></li><li>The
+main run requires&nbsp;from the precursor run&nbsp;the mean profiles to
+be used at the inflow. For this, the horizontally and temporally
+averaged mean profiles as provided with the standard PALM output are
+used. The user has to set parameters <a href="chapter_4.2.html#dt_data_output_pr">dt_data_output_pr</a>, <a href="chapter_4.2.html#averaging_interval">averaging_interval</a>,
+etc. for the precursor run appropriately, so that an output is done <span style="font-weight: bold;">at
+the end</span> of the precursor run. The profile information is then contained
+in the restart (binary) file created at the end of the precursor run
+and can be used by the main run. <span style="font-weight: bold;">It is very important that the mean profiles at the end of the precursor run are in a stationary or quasi-stationary state</span>, because otherwise it may not be justified to use them as constant profiles at the inflow. <span style="font-weight: bold;">Also, turbulence at the end of the precursor run should be fully developed. </span>Otherwise, the main run would need an additional spinup-time at the beginning to get the turbulence to its final stage.<br></li><li>In order to read the binary data from the precursor run, parameter <a href="chapter_4.1.html#initializing_actions">initializing_actions</a> = <span style="font-style: italic;">'cyclic_fill'</span> has to be set in the main run. &nbsp; .... &nbsp;
+&nbsp; set bc_lr = 'dirichlet/radiation' ... &nbsp;
+conserve_volume_flow = .TRUE. ? ....</li><li>The main run allows to use a larger domain along x and y than in the precursor run ...</li><li>Recycling width should be equal to the domain size of the precursor run (or larger?)</li></ul><pre style="line-height: 100%;"><font style="font-size: 10pt;" size="2">#</font><br><font style="font-size: 10pt;" size="2">RUN_CONTROL<span style="font-weight: bold;">_O</span></font><font style="font-size: 10pt;" size="2"> out:loc:tr d3<span style="font-weight: bold;">o</span># ~/palm/current_version/JOBS/$fname/MONITORING <span style="font-weight: bold;">_</span></font><font style="font-size: 10pt;" size="2"><span style="font-weight: bold;">o</span>_</font><font style="font-size: 10pt;" size="2">rc</font><br><font style="font-size: 10pt;" size="2">HEADER</font><font style="font-size: 10pt;" size="2"><span style="font-weight: bold;">_O</span> out:loc:tr d3<span style="font-weight: bold;">o</span># ~/palm/current_version/JOBS/$fname/MONITORING <span style="font-weight: bold;">_</span></font><font style="font-size: 10pt;" size="2"><span style="font-weight: bold;">o</span>_</font><font style="font-size: 10pt;" size="2">header</font><br><font style="font-size: 10pt;" size="2">PLOT1D_PAR<span style="font-weight: bold;">_O</span></font><font style="font-size: 10pt;" size="2"> out:loc:tr pr<span style="font-weight: bold;">o</span># ~/palm/current_version/JOBS/$fname/OUTPUT <span style="font-weight: bold;">_</span></font><font style="font-size: 10pt;" size="2"><span style="font-weight: bold;">o</span>_</font><font style="font-size: 10pt;" size="2">pr_par</font><br><font style="font-size: 10pt;" size="2">PLOT1D_DATA</font><font style="font-size: 10pt;" size="2"><span style="font-weight: bold;">_O</span> out:loc:tr pr<span style="font-weight: bold;">o</span># ~/palm/current_version/JOBS/$fname/OUTPUT <span style="font-weight: bold;">_</span></font><font style="font-size: 10pt;" size="2"><span style="font-weight: bold;">o</span>_</font><font style="font-size: 10pt;" size="2">pr_in</font><br></pre><br><hr>
+<p style="line-height: 100%;"><br>
+
+<font color="#000080"><font color="#000080"><a href="chapter_3.8.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" src="left.gif" name="Grafik1"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.0.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" src="right.gif" name="Grafik3"></font></a></font></font></p>
+
+<p style="line-height: 100%;"><i>Last
+change:&nbsp;</i> $Id$</p>
+
+</body></html>

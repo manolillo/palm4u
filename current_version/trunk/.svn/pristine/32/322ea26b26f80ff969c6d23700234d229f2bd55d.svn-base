@@ -1,0 +1,221 @@
+#$Id: .mrun.config.forwind 1446 2014-08-07 10:08:56Z maronga $
+#column 1          column 2                                   column 3
+#name of variable  value of variable (~ must not be used)     scope
+#----------------------------------------------------------------------------
+%mainprog          palm.f90
+%base_directory    $HOME/palm/current_version
+%base_data         ~/palm/current_version/JOBS
+################################################################################
+# Replace "/fw/" by "/iwes/" if your user directory resides in /iwes/.
+################################################################################
+%output_data       /data/work/gpfs/fw/<replace_with_your_FLOW_username>/palm/current_version/JOBS
+%source_path       $base_directory/trunk/SOURCE
+%add_source_path   $base_directory/USER_CODE/$fname
+%depository_path   $base_directory/MAKE_DEPOSITORY
+%use_makefile      true
+#
+#
+%host_identifier   flow*        lcflow
+%host_identifier   cfdl*        lcflow
+%host_identifier   cfdh*        lcflow
+%host_identifier   cfdx*        lcflow
+%host_identifier   cfdi*        lcflow
+
+################################################################################
+# Replace <eplace_with_your_local_hostname> by the hostname of your desktop
+# an uncomment following line to enable job submission from you local desktop
+################################################################################
+#%host_identifier       <replace_with_your_local_hostname>           lcfor
+
+################################################################################
+# Configuration for Ubuntu Linux 12.04 LTS with gcc (4.6.3) and OpenMPI (1.4.3)
+#
+# The next block contains all informations for compiling the PALM code
+# and for generating and running the PALM executable using MPI on a Linux machine 
+# with gcc and OpenMPI. Replace <replace_with_your_local_username> with your 
+# username on your
+# local machine
+#
+# NOTE: - Other hosts may require different settings.
+#       - following packages are required:
+#         openmpi-common, libopenmpi-dev, libopenmpi, libnetcdf, libnetcdf-dev,
+#         gcc
+#       - depending on where you installed netcdf, you may have to adjust the paths
+#         given in %netcdf_inc and %netcdf_lib
+#
+################################################################################
+%remote_username   <replace_with_your_local_username>                        lcfor parallel
+%tmp_user_catalog  /tmp                                                      lcfor parallel
+%tmp_data_catalog  /tmp                                                      lcfor parallel
+%compiler_name     mpif90                                                    lcfor parallel
+%compiler_name_ser gfortran                                                  lcfor parallel
+%cpp_options       -DMPI_REAL=MPI_DOUBLE_PRECISION:-DMPI_2REAL=MPI_2DOUBLE_PRECISION:-D__lc:-D__netcdf:-D__netcdf4:-D__parallel  lcfor parallel
+%netcdf_inc        -I/usr/include                                            lcfor parallel
+%netcdf_lib        -L/usr/lib:-lnetcdff:-lnetcdf                             lcfor parallel
+%mopts             -j:4                                                      lcfor parallel
+%fopts             -Ofast:-IPA:-mtune=native:-march=native:-cpp:-fdefault-real-8:-fbackslash:-fconvert=little-endian   lcfor parallel
+%lopts             -Ofast:-IPA:-mtune=native:-march=native:-cpp:-fdefault-real-8:-fbackslash                           lcfor parallel
+
+################################################################################
+# Configuration for FLOW
+#
+# The next block contains all informations for compiling the PALM code
+# and for generating and running the PALM executable using MPI. Replace <USERNAME_FLOW>
+# with your username on FLOW and if necessary "/fw/" by "/iwes/".
+# The following 'lcflow parallel' block assumes PALM compilation and execution
+# on host flow. Please note that other hosts may require different settings.
+################################################################################
+%remote_username   <replace_with_your_FLOW_username>                                                                             lcflow parallel
+%tmp_user_catalog  /data/work/gpfs/fw/$remote_username/tmp                                                                       lcflow parallel
+%tmp_data_catalog  /data/work/gpfs/fw/$remote_username/palm_restart_data                                                         lcflow parallel
+%compiler_name     mpiifort                                                                                                      lcflow parallel
+%compiler_name_ser ifort                                                                                                         lcflow parallel
+%cpp_options       -DMPI_REAL=MPI_DOUBLE_PRECISION:-DMPI_2REAL=MPI_2DOUBLE_PRECISION:-D__lc:-D__netcdf:-D__netcdf4:-D__parallel  lcflow parallel
+%netcdf_inc        -I/cm/shared/uniol/apps/netcdf/4.3.2/intel/2013_sp1.3.174/include                                             lcflow parallel
+%netcdf_lib        -L/cm/shared/uniol/apps/netcdf/4.3.2/intel/2013_sp1.3.174/lib:-lnetcdff:-lnetcdf:-L/cm/shared/uniol/apps/hdf5/1.8.13/intel/2013_sp1.3.174/lib:-lhdf5_hl:-lhdf5:-lz       lcflow parallel
+%mopts             -j:8                                                                                                          lcflow parallel
+%fopts             -O3:-fpp:-r8:-align:all:-ftz:-fno-alias:-no-scalar-rep:-no-prec-sqrt:-ip:-nbs:-convert:little_endian:-static-intel   lcflow parallel
+%lopts             -O3:-fpp:-r8:-align:all:-ftz:-fno-alias:-no-scalar-rep:-no-prec-sqrt:-ip:-nbs:-static-intel:-Wl,-rpath:/cm/shared/uniol/apps/intel/ics/2013_sp1.3.174/composer_xe_2013_sp1.3.174/compiler/lib/intel64          lcflow parallel
+%login_init_cmd    .:/etc/bashrc\;:export:HOSTNAME=flow                                                                           lcflow parallel
+%modules           hpc-uniol-env:sge/2011.11p1:ics/2013_sp1.3.174/64:impi/5.0.0.028/64:qt4                                       lcflow parallel 
+#
+#
+%write_binary                true                             restart
+#
+#----------------------------------------------------------------------------
+# INPUT-commands, executed before running PALM - lines must start with "IC:" 
+#----------------------------------------------------------------------------
+#IC:
+#
+#----------------------------------------------------------------------------
+# ERROR-commands - executed when program terminates abnormally
+#----------------------------------------------------------------------------
+EC:[[ \$locat = execution ]]  &&  cat  RUN_CONTROL
+EC:pwd; ls -al
+#
+#----------------------------------------------------------------------------
+# OUTPUT-commands - executed when program terminates normally
+#----------------------------------------------------------------------------
+#
+# Combine 1D- and 3D-profile output (these files are not usable for plotting)
+OC:[[ -f LIST_PROFIL_1D     ]]  &&  cat  LIST_PROFIL_1D  >>  LIST_PROFILE
+OC:[[ -f LIST_PROFIL        ]]  &&  cat  LIST_PROFIL     >>  LIST_PROFILE
+#
+# Combine all particle information files
+OC:[[ -f PARTICLE_INFOS/_0000 ]]  &&  cat  PARTICLE_INFOS/* >> PARTICLE_INFO
+#
+#----------------------------------------------------------------------------
+# List of input-files
+#----------------------------------------------------------------------------
+PARIN                    in:job        d3#      $base_data/$fname/INPUT     _p3d
+PARIN                    in:job        d3f      $base_data/$fname/INPUT     _p3df
+TOPOGRAPHY_DATA          in:locopt     d3#:d3f  $base_data/$fname/INPUT     _topo
+NUDGING_DATA             in:locopt     d3#:d3f  $base_data/$fname/INPUT    _nudge
+LSF_DATA                 in:locopt     d3#:d3f  $base_data/$fname/INPUT    _lsf
+WTM_DATA                 in:locopt     d3#:d3f  $base_data/$fname/INPUT    _wtm
+BININ                    in:loc:flpe   d3f:rec  $base_data/$fname/RESTART   _d3d
+PARTICLE_RESTART_DATA_IN in:loc:flpe   prtf     $base_data/$fname/RESTART   _rprt
+DATA_1D_FL_NETCDF        in:locopt     flf      $output_data/$fname/OUTPUT  _fl     nc
+DATA_1D_PR_NETCDF        in:locopt     prf      $output_data/$fname/OUTPUT  _pr     nc
+DATA_1D_SP_NETCDF        in:locopt     spf      $output_data/$fname/OUTPUT  _sp     nc
+DATA_1D_TS_NETCDF        in:locopt     tsf      $output_data/$fname/OUTPUT  _ts     nc
+DATA_1D_PTS_NETCDF       in:locopt     ptsf     $output_data/$fname/OUTPUT  _pts    nc
+DATA_2D_XY_NETCDF        in:locopt     xyf      $output_data/$fname/OUTPUT  _xy     nc
+DATA_2D_XY_AV_NETCDF     in:locopt     xyf      $output_data/$fname/OUTPUT  _xy_av  nc
+DATA_2D_XZ_NETCDF        in:locopt     xzf      $output_data/$fname/OUTPUT  _xz     nc
+DATA_2D_XZ_AV_NETCDF     in:locopt     xzf      $output_data/$fname/OUTPUT  _xz_av  nc
+DATA_2D_YZ_NETCDF        in:locopt     yzf      $output_data/$fname/OUTPUT  _yz     nc
+DATA_2D_YZ_AV_NETCDF     in:locopt     yzf      $output_data/$fname/OUTPUT  _yz_av  nc
+DATA_3D_NETCDF           in:locopt     3df      $output_data/$fname/OUTPUT  _3d     nc
+DATA_3D_AV_NETCDF        in:locopt     3df      $output_data/$fname/OUTPUT  _3d_av  nc
+DATA_PRT_NETCDF          in:locopt:pe  prtf     $output_data/$fname/OUTPUT  _prt    nc
+#
+#----------------------------------------------------------------------------
+# List of output-files
+#----------------------------------------------------------------------------
+BINOUT                    out:loc:flpe restart   $base_data/$fname/RESTART  _d3d
+PARTICLE_RESTART_DATA_OUT out:loc:flpe prt#:prtf $base_data/$fname/RESTART  _rprt
+#
+RUN_CONTROL       out:loc:tr   d3#     $base_data/$fname/MONITORING  _rc
+RUN_CONTROL       out:loc:tra  d3f     $base_data/$fname/MONITORING  _rc
+HEADER            out:loc:tr   d3#     $base_data/$fname/MONITORING  _header
+HEADER            out:loc:tra  d3f     $base_data/$fname/MONITORING  _header
+CPU_MEASURES      out:loc:tr   d3#     $base_data/$fname/MONITORING  _cpu
+CPU_MEASURES      out:loc:tra  d3f     $base_data/$fname/MONITORING  _cpu
+TURBINE_PARAMETERS01   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters01
+TURBINE_PARAMETERS02   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters02
+TURBINE_PARAMETERS03   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters03
+TURBINE_PARAMETERS04   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters04
+TURBINE_PARAMETERS05   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters05
+TURBINE_PARAMETERS06   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters06
+TURBINE_PARAMETERS07   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters07
+TURBINE_PARAMETERS08   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters08
+TURBINE_PARAMETERS09   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters09
+TURBINE_PARAMETERS10   out:loc:tr    d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters10
+#
+DATA_1D_FL_NETCDF      out:loc    fl#:flf   $output_data/$fname/OUTPUT  _fl      nc
+DATA_1D_PR_NETCDF      out:loc    pr#       $output_data/$fname/OUTPUT  _pr      nc
+DATA_1D_PR_NETCDF      out:loc    prf       $output_data/$fname/OUTPUT  _pr      nc
+DATA_1D_SP_NETCDF      out:loc    sp#       $output_data/$fname/OUTPUT  _sp      nc
+DATA_1D_SP_NETCDF      out:loc    spf       $output_data/$fname/OUTPUT  _sp      nc
+DATA_1D_TS_NETCDF      out:loc    ts#       $output_data/$fname/OUTPUT  _ts      nc
+DATA_1D_TS_NETCDF      out:loc    tsf       $output_data/$fname/OUTPUT  _ts      nc
+DATA_1D_PTS_NETCDF     out:loc    pts#      $output_data/$fname/OUTPUT  _pts     nc
+DATA_1D_PTS_NETCDF     out:loc    ptsf      $output_data/$fname/OUTPUT  _pts     nc
+DATA_2D_XY_NETCDF      out:loc    xy#:xyf   $output_data/$fname/OUTPUT  _xy      nc
+DATA_2D_XY_AV_NETCDF   out:loc    xy#:xyf   $output_data/$fname/OUTPUT  _xy_av   nc
+DATA_2D_XZ_NETCDF      out:loc    xz#:xzf   $output_data/$fname/OUTPUT  _xz      nc
+DATA_2D_XZ_AV_NETCDF   out:loc    xz#:xzf   $output_data/$fname/OUTPUT  _xz_av   nc
+DATA_2D_YZ_NETCDF      out:loc    yz#:yzf   $output_data/$fname/OUTPUT  _yz      nc
+DATA_2D_YZ_AV_NETCDF   out:loc    yz#:yzf   $output_data/$fname/OUTPUT  _yz_av   nc
+DATA_3D_NETCDF         out:loc    3d#:3df   $output_data/$fname/OUTPUT  _3d      nc
+DATA_3D_AV_NETCDF      out:loc    3d#:3df   $output_data/$fname/OUTPUT  _3d_av   nc
+DATA_MASK_01_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m01     nc
+DATA_MASK_01_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m01_av  nc
+DATA_MASK_02_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m02     nc
+DATA_MASK_02_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m02_av  nc
+DATA_MASK_03_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m03     nc
+DATA_MASK_03_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m03_av  nc
+DATA_MASK_04_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m04     nc
+DATA_MASK_04_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m04_av  nc
+DATA_MASK_05_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m05     nc
+DATA_MASK_05_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m05_av  nc
+DATA_MASK_06_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m06     nc
+DATA_MASK_06_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m06_av  nc
+DATA_MASK_07_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m07     nc
+DATA_MASK_07_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m07_av  nc
+DATA_MASK_08_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m08     nc
+DATA_MASK_08_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m08_av  nc
+DATA_MASK_09_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m09     nc
+DATA_MASK_09_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m09_av  nc
+DATA_MASK_10_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m10     nc
+DATA_MASK_10_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m10_av  nc
+DATA_MASK_11_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m11     nc
+DATA_MASK_11_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m11_av  nc
+DATA_MASK_12_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m12     nc
+DATA_MASK_12_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m12_av  nc
+DATA_MASK_13_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m13     nc
+DATA_MASK_13_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m13_av  nc
+DATA_MASK_14_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m14     nc
+DATA_MASK_14_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m14_av  nc
+DATA_MASK_15_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m15     nc
+DATA_MASK_15_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m15_av  nc
+DATA_MASK_16_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m16     nc
+DATA_MASK_16_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m16_av  nc
+DATA_MASK_17_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m17     nc
+DATA_MASK_17_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m17_av  nc
+DATA_MASK_18_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m18     nc
+DATA_MASK_18_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m18_av  nc
+DATA_MASK_19_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m19     nc
+DATA_MASK_19_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m19_av  nc
+DATA_MASK_20_NETCDF    out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m20     nc
+DATA_MASK_20_AV_NETCDF out:loc    ma#:maf   $output_data/$fname/OUTPUT  _m20_av  nc
+DATA_PRT_NETCDF        out:loc:pe prt#:prtf $output_data/$fname/OUTPUT  _prt     nc
+DATA_DVR               out:loc:pe dvr       $output_data/$fname/OUTPUT  _dvr 
+#
+DVRP_LOG          out:loc:tr   dv#       $base_data/$fname/MONITORING  _dvrp_log
+DVRP_LOG          out:loc:tra  dvf       $base_data/$fname/MONITORING  _dvrp_log
+PARTICLE_INFO     out:loc:tr   pt#       $base_data/$fname/MONITORING  _prt_info
+PARTICLE_INFO     out:loc:tra  ptf       $base_data/$fname/MONITORING  _prt_info
+PARTICLE_DATA     out:loc:flpe prt#:prtf $base_data/$fname/OUTPUT      _prt_dat
+# A BLANK LINE MUST FOLLOW

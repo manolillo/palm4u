@@ -1,0 +1,218 @@
+#$Id: .mrun.config.yonsei2011 1959 2016-07-07 11:09:49Z suehring $
+# recommended settings for Department of Atmospheric Sciences
+# machines climate0-climate3 (host identifier "lcyon")
+# and for IBM-Regatta-Power6 at KISTI (host identifier "ibmkisti")
+# DON'T FORGET to replace <...> by your respective valid username
+#column 1          column 2                                   column 3
+#name of variable  value of variable (~ must not be used)     scope
+#----------------------------------------------------------------------------
+%mainprog          palm.f90
+%base_directory    $HOME/palm/current_version
+%base_data         ~/palm/current_version/JOBS
+%source_path       $base_directory/trunk/SOURCE
+%add_source_path   $base_directory/USER_CODE/$fname
+%depository_path   $base_directory/MAKE_DEPOSITORY
+#
+%host_identifier   climate0    lcyon
+%host_identifier   gaia*       ibmkisti
+#
+%remote_username   <replace_by_username_on_climate0>             lcyon parallel
+%tmp_user_catalog  $base_directory/work                          lcyon parallel
+%tmp_data_catalog  $base_directory/work                          lcyon parallel
+%compiler_name     mpif90                                        lcyon parallel
+%compiler_name_ser ifort                                         lcyon parallel
+%cpp_options       -cpp:-DMPI_REAL=MPI_DOUBLE_PRECISION:-DMPI_2REAL=MPI_2DOUBLE_PRECISION:-D__netcdf   lcyon parallel
+%netcdf_inc        -I:/usr/local/netcdf/363_intel11/include      lcyon parallel
+%netcdf_lib        -L/usr/local/netcdf/363_intel11/lib:-lnetcdf        lcyon parallel
+%mopts             -j:4                                          lcyon parallel
+%fopts             -fpe0:-axW:-O3:-r8:-fp-model:precise:-ftz:-fno-alias:-no-prec-div:-no-prec-sqrt:-ip:-nbs:-convert:little_endian:-I:/usr/local/mpich2/intel11/include     lcyon parallel
+%lopts             -fpe0:-axW:-O3:-r8:-fp-model:precise:-ftz:-fno-alias:-no-prec-div:-no-prec-sqrt:-ip:-nbs:-Vaxlib:-L:/usr/local/mpich2/intel11/lib                    lcyon parallel
+%memory            2000                                          lcyon parallel
+#
+%compiler_name     mpxlf95_r                                  ibmkisti parallel
+%compiler_name_ser xlf95                                      ibmkisti parallel
+%cpp_options       -qsuffix=cpp=f90:-WF,-DMPI_REAL=MPI_DOUBLE_PRECISION,-D__netcdf=__netcdf,-D__netcdf_64bit=__netcdf_64bit  ibmkisti parallel
+%netcdf_inc        -I:/applic/local/64BIT/NETCDF/V363/include       ibmkisti parallel
+%netcdf_lib        -L/applic/local/64BIT/NETCDF/V363/lib:-lnetcdf   ibmkisti parallel
+%fopts             -O3:-g:-qfloat=nomaf:-qrealsize=8:-Q:-q64:-qmaxmem=-1:-qtune=pwr6:-qarch=pwr6:-qnosave:-qnoescape    ibmkisti parallel
+%lopts             -O3:-g:-qfloat=nomaf:-qrealsize=8:-Q:-q64:-qmaxmem=-1:-qtune=pwr6:-qarch=pwr6:-qnosave:-qnoescape:-lesslsmp   ibmkisti parallel
+%memory            2000                                       ibmkisti parallel
+%cpumax            1000                                       ibmkisti parallel
+%numprocs          4                                          ibmkisti parallel
+%remote_username   <replace_by_username_on_KISTI-IBM>         ibmkisti parallel
+%tmp_data_catalog  /gpfs1/<replace_by_username_on_KISTI-IBM>/palm_restart_data    ibmkisti parallel
+%tmp_user_catalog  /gpfs1/<replace_by_username_on_KISTI-IBM>                      ibmkisti parallel
+#
+%write_binary                true                             restart
+#
+#----------------------------------------------------------------------------
+# INPUT-commands, executed before running PALM - lines must start with "IC:" 
+#----------------------------------------------------------------------------
+#IC:[[ \$( echo \$localhost | cut -c1-3 ) = t3e ]]  &&  assign -F cachea:512:1:1 f:BININ
+#
+#----------------------------------------------------------------------------
+# ERROR-commands - executed when program terminates abnormally
+#----------------------------------------------------------------------------
+EC:[[ \$locat = compile && ( \$( echo \$localhost | cut -c1-3 ) = t3e ) ]]  &&  cat  cflist.out
+EC:[[ \$locat = execution ]]  &&  cat  RUN_CONTROL
+EC:[[ \$locat = execution ]]  &&  cat  PARTICLE_INFOS/*
+EC:[[ \$( echo \$localhost | cut -c1-3 ) = t3e ]]  &&  ls -al
+EC:[[ \$( echo \$localhost | cut -c1-3 ) = ibm ]]  &&  ls -al
+#
+#----------------------------------------------------------------------------
+# OUTPUT-commands - executed when program terminates normally
+#----------------------------------------------------------------------------
+#
+# Combine 1D- and 3D-profile output (these files are not usable for plotting)
+OC:[[ -f LIST_PROFIL_1D     ]]  &&  cat  LIST_PROFIL_1D  >>  LIST_PROFILE
+OC:[[ -f LIST_PROFIL        ]]  &&  cat  LIST_PROFIL     >>  LIST_PROFILE
+#
+# Combine all particle information files
+OC:[[ -f PARTICLE_INFOS/_0000 ]]  &&  cat  PARTICLE_INFOS/* >> PARTICLE_INFO
+#
+# tar all 3D-plot-data files in case that compressed output is switched on
+OC:[[ -f PLOT3D_COMPRESSED  ]]  &&  tar cf  PLOT3D_DATA  PLOT3D_DATA_*
+#
+#----------------------------------------------------------------------------
+# List of input-files
+#----------------------------------------------------------------------------
+PARIN                    in:job        d3#   $base_data/$fname/INPUT    _p3d
+PARIN                    in:job        pcr   $base_data/$fname/INPUT    _pcr
+PARIN                    in:job        d3f   $base_data/$fname/INPUT    _p3df
+TOPOGRAPHY_DATA          in:locopt     d3#:d3f   $base_data/$fname/INPUT    _topo
+NUDGING_DATA             in:locopt     d3#:d3f  $base_data/$fname/INPUT    _nudge
+LSF_DATA                 in:locopt     d3#:d3f  $base_data/$fname/INPUT    _lsf
+WTM_DATA                 in:locopt     d3#:d3f  $base_data/$fname/INPUT    _wtm
+BININ                    in:loc:flpe   d3f:rec   $base_data/$fname/RESTART  _d3d
+PARTICLE_RESTART_DATA_IN in:loc:flpe   prtf  $base_data/$fname/RESTART  _rprt
+DATA_1D_FL_NETCDF        in:locopt     flf   $base_data/$fname/OUTPUT   _fl     nc
+DATA_1D_PR_NETCDF        in:locopt     prf   $base_data/$fname/OUTPUT   _pr     nc
+DATA_1D_SP_NETCDF        in:locopt     spf   $base_data/$fname/OUTPUT   _sp     nc
+DATA_1D_TS_NETCDF        in:locopt     tsf   $base_data/$fname/OUTPUT   _ts     nc
+DATA_1D_PTS_NETCDF       in:locopt     ptsf  $base_data/$fname/OUTPUT   _pts    nc
+DATA_2D_XY_NETCDF        in:locopt     xyf   $base_data/$fname/OUTPUT   _xy     nc
+DATA_2D_XY_AV_NETCDF     in:locopt     xyf   $base_data/$fname/OUTPUT   _xy_av  nc
+DATA_2D_XZ_NETCDF        in:locopt     xzf   $base_data/$fname/OUTPUT   _xz     nc
+DATA_2D_YZ_NETCDF        in:locopt     yzf   $base_data/$fname/OUTPUT   _yz     nc
+#DATA_3D_NETCDF           in:locopt     3df   $base_data/$fname/OUTPUT   _3d     nc
+DATA_PRT_NETCDF          in:locopt:pe  prtf  $base_data/$fname/OUTPUT   _prt
+#
+#----------------------------------------------------------------------------
+# List of output-files
+#----------------------------------------------------------------------------
+BINOUT                    out:loc:flpe restart   $base_data/$fname/RESTART  _d3d
+PARTICLE_RESTART_DATA_OUT out:loc:flpe prt#:prtf $base_data/$fname/RESTART  _rprt
+#
+RUN_CONTROL       out:loc:tr   d3#:pcr $base_data/$fname/MONITORING  _rc
+RUN_CONTROL       out:loc:tra  d3f     $base_data/$fname/MONITORING  _rc
+HEADER            out:loc:tr   d3#:pcr $base_data/$fname/MONITORING  _header
+HEADER            out:loc:tra  d3f     $base_data/$fname/MONITORING  _header
+CPU_MEASURES      out:loc:tr   d3#:pcr $base_data/$fname/MONITORING  _cpu
+CPU_MEASURES      out:loc:tra  d3f     $base_data/$fname/MONITORING  _cpu
+TURBINE_PARAMETERS01  out:loc:tr  d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters01
+TURBINE_PARAMETERS02  out:loc:tr  d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters02
+TURBINE_PARAMETERS03  out:loc:tr  d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters03
+TURBINE_PARAMETERS04  out:loc:tr  d3#:d3f   $base_data/$fname/MONITORING  _turbine_parameters04
+DVRP_LOG          out:loc:tr   dv#     $base_data/$fname/MONITORING  _dvrp_log
+DVRP_LOG          out:loc:tra  dvf     $base_data/$fname/MONITORING  _dvrp_log
+PARTICLE_INFO     out:loc:tr   pt#     $base_data/$fname/MONITORING  _prt_info
+PARTICLE_INFO     out:loc:tra  ptf     $base_data/$fname/MONITORING  _prt_info
+LIST_PROFIL       out:loc:tr   d3#     $base_data/$fname/MONITORING  _list_pr
+#
+DATA_1D_FL_NETCDF out:loc:tr   fl#:flf $base_data/$fname/OUTPUT      _fl  nc
+DATA_1D_PR_NETCDF out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr  nc
+#DATA_1D_PR_NETCDF out:loc      pr#:prf $base_data/$fname/OUTPUT      _pr  nc
+DATA_1D_SP_NETCDF out:loc:tr   sp#:spf $base_data/$fname/OUTPUT      _sp  nc
+#DATA_1D_SP_NETCDF out:loc      sp#:spf $base_data/$fname/OUTPUT      _sp  nc
+DATA_1D_TS_NETCDF out:loc:tr   ts#:tsf $base_data/$fname/OUTPUT      _ts  nc
+#DATA_1D_TS_NETCDF out:loc      ts#:tsf $base_data/$fname/OUTPUT      _ts  nc
+DATA_1D_PTS_NETCDF out:loc     pts#:ptsf $base_data/$fname/OUTPUT      _pts  nc
+DATA_1D_PTS_NETCDF out:loc:tr  pts#:ptsf $base_data/$fname/OUTPUT      _pts  nc
+#DATA_2D_XY_NETCDF out:loc:tr   xy#:xyf $base_data/$fname/OUTPUT      _xy  nc
+DATA_2D_XY_NETCDF out:loc      xy#:xyf $base_data/$fname/OUTPUT      _xy  nc
+DATA_2D_XY_AV_NETCDF out:loc:tr   xy#:xyf $base_data/$fname/OUTPUT      _xy_av  nc
+#DATA_2D_XZ_NETCDF out:loc:tr   xz#:xzf $base_data/$fname/OUTPUT      _xz  nc
+DATA_2D_XZ_NETCDF out:loc      xz#:xzf $base_data/$fname/OUTPUT      _xz  nc
+DATA_2D_XZ_AV_NETCDF out:loc:tr   xz#:xzf $base_data/$fname/OUTPUT      _xz_av  nc
+#DATA_2D_YZ_NETCDF out:loc:tr   yz#:yzf $base_data/$fname/OUTPUT      _yz  nc
+DATA_2D_YZ_NETCDF out:loc      yz#:yzf $base_data/$fname/OUTPUT      _yz  nc
+DATA_2D_YZ_AV_NETCDF out:loc:tr   yz#:yzf $base_data/$fname/OUTPUT      _yz_av  nc
+DATA_3D_NETCDF    out:loc:tr   3d#:3df $base_data/$fname/OUTPUT      _3d  nc
+DATA_3D_AV_NETCDF    out:loc:tr   3d#:3df $base_data/$fname/OUTPUT      _3d_av  nc
+#DATA_3D_NETCDF    out:loc      3d#:3df $base_data/$fname/OUTPUT      _3d  nc
+DATA_PRT_NETCDF   out:loc:pe   prt#:prtf $base_data/$fname/OUTPUT    _prt
+DATA_PRT_NETCDF   out:loc:trpe prt#:prtf $base_data/$fname/OUTPUT    _prt
+DATA_DVR          out:loc:trpe dvr     $base_data/$fname/OUTPUT      _dvr
+PLOTTS_PAR        out:loc:tr   ts#:tsf $base_data/$fname/OUTPUT      _ts_par
+PLOTTS_DATA       out:loc:tr   ts#     $base_data/$fname/OUTPUT      _ts_in
+PLOTTS_DATA       out:loc:tra  tsf     $base_data/$fname/OUTPUT      _ts_in
+PLOT1D_PAR        out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr_par
+PLOT1D_DATA       out:loc:tr   pr#     $base_data/$fname/OUTPUT      _pr_in
+PLOT1D_DATA       out:loc:tr   prf     $base_data/$fname/OUTPUT      _pr_in
+PLOTSP_X_PAR      out:loc:tr   spx     $base_data/$fname/OUTPUT      _spx_par
+PLOTSP_X_DATA     out:loc:tr   spx     $base_data/$fname/OUTPUT      _spx_in
+PLOTSP_Y_PAR      out:loc:tr   spy     $base_data/$fname/OUTPUT      _spy_par
+PLOTSP_Y_DATA     out:loc:tr   spy     $base_data/$fname/OUTPUT      _spy_in
+#PLOT2D_XY_GLOBAL  out:loc:tr   xy      $base_data/$fname/OUTPUT      _xy_par
+#PLOT2D_XY         out:loc:tr   xy      $base_data/$fname/OUTPUT      _xy_in
+#PLOT2D_XZ_GLOBAL  out:loc:tr   xz      $base_data/$fname/OUTPUT      _xz_par
+#PLOT2D_XZ         out:loc:tr   xz      $base_data/$fname/OUTPUT      _xz_in
+#PLOT2D_YZ_GLOBAL  out:loc:tr   yz      $base_data/$fname/OUTPUT      _yz_par
+#PLOT2D_YZ         out:loc:tr   yz      $base_data/$fname/OUTPUT      _yz_in
+PLOT3D_FLD        out:loc:tr   avs     $base_data/$fname/OUTPUT      _fld  fld
+PLOT3D_COOR       out:loc:tr   avs     $base_data/$fname/OUTPUT      _avscor
+PLOT3D_DATA       out:loc:tr   avs     $base_data/$fname/OUTPUT      _avs
+PARTICLE_DATA     out:loc:flpe prt#:prtf $base_data/$fname/OUTPUT    _prt_dat
+#
+# Output-example for using more than one statistical region
+#PLOTTS_PAR_0      out:loc:tr   ts#:tsf $base_data/$fname/OUTPUT      _ts_0_par
+#PLOTTS_DATA_0     out:loc:tr   ts#     $base_data/$fname/OUTPUT      _ts_0_in
+#PLOTTS_DATA_0     out:loc:tra  tsf     $base_data/$fname/OUTPUT      _ts_0_in
+#PLOTTS_PAR_1      out:loc:tr   ts#:tsf $base_data/$fname/OUTPUT      _ts_1_par
+#PLOTTS_DATA_1     out:loc:tr   ts#     $base_data/$fname/OUTPUT      _ts_1_in
+#PLOTTS_DATA_1     out:loc:tra  tsf     $base_data/$fname/OUTPUT      _ts_1_in
+#PLOTTS_PAR_2      out:loc:tr   ts#:tsf $base_data/$fname/OUTPUT      _ts_2_par
+#PLOTTS_DATA_2     out:loc:tr   ts#     $base_data/$fname/OUTPUT      _ts_2_in
+#PLOTTS_DATA_2     out:loc:tra  tsf     $base_data/$fname/OUTPUT      _ts_2_in
+PLOT1D_PAR_0      out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr_0_par
+PLOT1D_DATA_0     out:loc:tr   pr#     $base_data/$fname/OUTPUT      _pr_0_in
+PLOT1D_PAR_1      out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr_1_par
+PLOT1D_DATA_1     out:loc:tr   pr#     $base_data/$fname/OUTPUT      _pr_1_in
+PLOT1D_PAR_2      out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr_2_par
+PLOT1D_DATA_2     out:loc:tr   pr#     $base_data/$fname/OUTPUT      _pr_2_in
+PLOT1D_PAR_3      out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr_3_par
+PLOT1D_DATA_3     out:loc:tr   pr#     $base_data/$fname/OUTPUT      _pr_3_in
+PLOT1D_PAR_4      out:loc:tr   pr#:prf $base_data/$fname/OUTPUT      _pr_4_par
+PLOT1D_DATA_4     out:loc:tr   pr#     $base_data/$fname/OUTPUT      _pr_4_in
+PLOTTS_PAR_0      out:loc:tr   ts#:tsf $base_data/$fname/OUTPUT      _ts_par
+PLOTTS_DATA_0     out:loc:tr   ts#     $base_data/$fname/OUTPUT      _ts_in
+PLOTTS_DATA_0     out:loc:tra  tsf     $base_data/$fname/OUTPUT      _ts_in
+#
+#----------------------------------------------------------------------------
+# List of input-files for coupled ocean model
+#----------------------------------------------------------------------------
+PARIN_O                  in:job        d3o#   $base_data/$fname/INPUT  _o_p3d
+PARIN_O                  in:job        d3of   $base_data/$fname/INPUT  _o_p3df
+#
+#----------------------------------------------------------------------------
+# List of output-files for coupled ocean model
+#----------------------------------------------------------------------------
+RUN_CONTROL_O     out:loc:tr   d3o#     $base_data/$fname/MONITORING  _o_rc
+RUN_CONTROL_O     out:loc:tra  d3of     $base_data/$fname/MONITORING  _o_rc
+HEADER_O          out:loc:tr   d3o#     $base_data/$fname/MONITORING  _o_header
+HEADER_O          out:loc:tra  d3of     $base_data/$fname/MONITORING  _o_header
+CPU_MEASURES_O    out:loc:tr   d3o#     $base_data/$fname/MONITORING  _o_cpu
+CPU_MEASURES_O    out:loc:tra  d3of     $base_data/$fname/MONITORING  _o_cpu
+LIST_PROFIL_O     out:loc:tr   d3o#     $base_data/$fname/MONITORING  _o_list_pr
+#
+DATA_1D_PR_NETCDF_O    out:loc:tr pro#:prof   $base_data/$fname/OUTPUT _o_pr  nc
+DATA_1D_SP_NETCDF_O    out:loc:tr spo#:spof   $base_data/$fname/OUTPUT _o_sp  nc
+DATA_1D_TS_NETCDF_O    out:loc:tr tso#:tsof   $base_data/$fname/OUTPUT _o_ts  nc
+DATA_1D_PTS_NETCDF_O   out:loc:tr ptso#:ptsof $base_data/$fname/OUTPUT _o_pts nc
+DATA_2D_XY_NETCDF_O    out:loc:tr xyo#:xyof   $base_data/$fname/OUTPUT _o_xy  nc
+DATA_2D_XY_AV_NETCDF_O out:loc:tr xyo#:xyof   $base_data/$fname/OUTPUT _o_xy_av  nc
+DATA_2D_XZ_NETCDF_O    out:loc:tr xzo#:xzof   $base_data/$fname/OUTPUT _o_xz  nc
+DATA_2D_XZ_AV_NETCDF_O out:loc:tr xzo#:xzof   $base_data/$fname/OUTPUT _o_xz_av  nc
+DATA_2D_YZ_NETCDF_O    out:loc:tr yzo#:yzof   $base_data/$fname/OUTPUT _o_yz  nc
+DATA_2D_YZ_AV_NETCDF_O out:loc:tr yzo#:yzof   $base_data/$fname/OUTPUT _o_yz_av  nc
+# A BLANK LINE MUST FOLLOW

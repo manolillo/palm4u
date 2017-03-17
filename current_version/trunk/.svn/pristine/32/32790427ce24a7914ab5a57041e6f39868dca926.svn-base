@@ -1,0 +1,4405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+    
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>PALM Appendix A</title></head><body>
+
+    
+<h1>PALM error messages</h1>
+
+
+    
+    
+<h3>Explanation</h3>
+
+    
+<dl>
+
+      <dt> PA**** </dt>
+
+      <dd> Identifier for messages in the PALM standard code  </dd>
+
+      <dt>UI**** </dt>
+
+      <dd> Identifier for messages in "user_" routines </dd>
+
+      <dt>NC**** </dt>
+
+      <dd>  Identifier for messages from the NetCDF library </dd>
+
+    
+</dl>
+
+
+    
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2">
+
+      <tbody>
+    <tr>
+
+        <td style="width: 15%; vertical-align: top;"><font size="4"><b>Message identifier</b></font></td>
+
+        <td style="width: 50%; vertical-align: top;"><font size="4"><b>Error message</b></font></td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0001"></a>PA0001</td>
+
+         <td style="vertical-align: top;">
+      "host" is not set. Please check that environment 
+              variable "localhost" is set before running PALM<br>
+      </td>
+<td style="vertical-align: top;"><br>
+</td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0002"></a>PA0002</td>
+
+         <td style="vertical-align: top;">
+      illegal coupling mode: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0003"></a>PA0003</td>
+
+         <td style="vertical-align: top;">
+      dt_coupling is  not set but required for coupling mode "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0004"></a>PA0004</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": dt_coupling = ... is not equal 
+             to dt_coupling_remote = ... 
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0005"></a>PA0005</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": dt_coupling &lt;= 0.0 is not allowed 
+             and is reset to MAX(dt_max(A,O)) = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0006"></a>PA0006</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": restart_time = ... is not equal 
+             to restart_time_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0007"></a>PA0007</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": dt_restart = ... is not equal 
+             to dt_restart_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0008"></a>PA0008</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": simulation_time_since_reference =
+             ... is not equal to
+             simulation_time_since_reference_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0009"></a>PA0009</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...":  dx = ... is not equal to 
+             dx_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0010"></a>PA0010</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...":  dy = ... is not equal to 
+             dy_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0011"></a>PA0011</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": nx = ... is not equal to 
+             nx_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0012"></a>PA0012</td>
+
+         <td style="vertical-align: top;">
+      coupling mode "...": ny = ... is not equal to 
+             ny_remote = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0013"></a>PA0013</td>
+
+         <td style="vertical-align: top;">
+      illegal value given for loop_optimization: "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0014"></a>PA0014</td>
+
+         <td style="vertical-align: top;">
+      a non-flat topography does not allow ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0015"></a>PA0015</td>
+
+         <td style="vertical-align: top;">
+      ocean = .T. does not allow ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0016"></a>PA0016</td>
+
+         <td style="vertical-align: top;">
+      unknown solver for perturbation pressure: 
+             psolver = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0017"></a>PA0017</td>
+
+         <td style="vertical-align: top;">
+      psolver = "..." only works for a 
+             1d domain-decomposition along x 
+             please do not set npey/=1 in the parameter file
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0018"></a>PA0018</td>
+
+         <td style="vertical-align: top;">
+      psolver = ".." does not work for subdomains with 
+             unequal size please set grid_matching = ''strict''
+             in the parameter file<br>
+
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0019"></a>PA0019</td>
+
+         <td style="vertical-align: top;">
+      psolver = "..." only works for a parallel environment
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0020"></a>PA0020</td>
+
+         <td style="vertical-align: top;">
+      unknown multigrid cycle: cycle_mg = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+         <td style="vertical-align: top;"><a name="PA0021"></a>PA0021</td>
+
+         <td style="vertical-align: top;">
+      unknown fft-algorithm: fft_method = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0022"></a>PA0022</td>
+
+         <td style="vertical-align: top;">
+      unknown advection scheme: momentum_advec = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0023"></a>PA0023</td>
+
+         <td style="vertical-align: top;">
+      momentum_advec = "..." is not allowed with 
+             timestep_scheme = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0024"></a>PA0024</td>
+
+         <td style="vertical-align: top;">
+      unknown advection scheme: scalar_advec = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0025"></a>PA0025</td>
+
+         <td style="vertical-align: top;">
+      use_upstream_for_tke set .TRUE. because 
+             use_sgs_for_particles = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0026"></a>PA0026</td>
+
+         <td style="vertical-align: top;">
+      use_upstream_for_tke = .TRUE. not allowed with 
+             timestep_scheme = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0027"></a>PA0027</td>
+
+         <td style="vertical-align: top;">
+      unknown timestep scheme: timestep_scheme = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0028"></a>PA0028</td>
+
+         <td style="vertical-align: top;">
+      scalar advection scheme "..." does not work with 
+             timestep_scheme ".."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0029"></a>PA0029</td>
+
+         <td style="vertical-align: top;">
+      momentum advection scheme "..." does not work with 
+             timestep_scheme "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0030"></a>PA0030</td>
+
+         <td style="vertical-align: top;">
+      initializing_action = "..." unkown or not allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0031"></a>PA0031</td>
+
+         <td style="vertical-align: top;">
+      initializing_actions = "set_constant_profiles" and 
+             "set_1d-model_profiles" are not allowed simultaneously
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0032"></a>PA0032</td>
+
+         <td style="vertical-align: top;">
+      initializing_actions = "set_constant_profiles" and 
+             "by_user" are not allowed simultaneously
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0033"></a>PA0033</td>
+
+         <td style="vertical-align: top;">
+      initializing_actions = "by_user" and  
+             "set_1d-model_profiles" are not allowed simultaneously
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0034"></a>PA0034</td>
+
+         <td style="vertical-align: top;">
+      cloud_physics = ... is not allowed with humidity = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0035"></a>PA0035</td>
+
+         <td style="vertical-align: top;">
+      precipitation = ... is not allowed with 
+             cloud_physics = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0036"></a>PA0036</td>
+
+         <td style="vertical-align: top;">
+      humidity = .TRUE. and sloping_surface = .TRUE. are not 
+             allowed simultaneously
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0037"></a>PA0037</td>
+
+         <td style="vertical-align: top;">
+      UPS-scheme is not implemented for humidity = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0038"></a>PA0038</td>
+
+         <td style="vertical-align: top;">
+      humidity = .TRUE. and passive_scalar = .TRUE. is not 
+             allowed simultaneously'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0039"></a>PA0039</td>
+
+         <td style="vertical-align: top;">
+      UPS-scheme is not implemented for passive_scalar = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0040"></a>PA0040</td>
+
+         <td style="vertical-align: top;">
+      illegal value "..." found for parameter grid_matching
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0041"></a>PA0041</td>
+
+         <td style="vertical-align: top;">
+      plant_canopy = .TRUE. requires a non-zero 
+             drag coefficient given value is drag_coefficient = 0.0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0042"></a>PA0042</td>
+
+         <td style="vertical-align: top;">
+      use_top_fluxes must be .TRUE. in ocean version
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0043"></a>PA0043</td>
+
+         <td style="vertical-align: top;">
+      ABS( alpha_surface = ... ) must be&lt; 90.0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0044"></a>PA0044</td>
+
+         <td style="vertical-align: top;">
+      dt = ... &lt;= 0.0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0045"></a>PA0045</td>
+
+         <td style="vertical-align: top;">
+      cfl_factor = ...  out of range 
+             0.0 &lt; cfl_factor &lt;= 1.0 is required
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0046"></a>PA0046</td>
+
+         <td style="vertical-align: top;">
+      baroclinicity (ug) not allowed simultaneously with 
+              galilei transformation
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0047"></a>PA0047</td>
+
+         <td style="vertical-align: top;">
+      baroclinicity (vg) not allowed simultaneously with 
+              galilei transformation
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0048"></a>PA0048</td>
+
+         <td style="vertical-align: top;">
+      variable translation speed used for 
+             galilei-transformation, which may cause instabilities 
+             in stably stratified regions
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+
+       <tr>
+      <td style="vertical-align: top;"><a name="PA0049"></a>PA0049</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_lr = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0050"></a>PA0050</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_ns = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0051"></a>PA0051</td>
+
+         <td style="vertical-align: top;">
+      non-cyclic lateral boundaries do not 
+             allow psolver = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0052"></a>PA0052</td>
+
+         <td style="vertical-align: top;">
+      non-cyclic lateral boundaries do not allow 
+             momentum_advec = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0053"></a>PA0053</td>
+
+         <td style="vertical-align: top;">
+      non-cyclic lateral boundaries do not allow 
+             scalar_advec = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0054"></a>PA0054</td>
+
+         <td style="vertical-align: top;">
+      non-cyclic lateral boundaries do not allow 
+                       galilei_transformation = .T. 
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0055"></a>PA0055</td>
+
+         <td style="vertical-align: top;">
+      adjust_mixing_length = TRUE and bc_e_b = "neumann"
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0056"></a>PA0056</td>
+
+         <td style="vertical-align: top;">
+      adjust_mixing_length = FALSE and bc_e_b = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0057"></a>PA0057</td>
+
+         <td style="vertical-align: top;">
+      boundary condition bc_e_b changed to "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0058"></a>PA0058</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_e_b = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0059"></a>PA0059</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_p_b = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0060"></a>PA0060</td>
+
+         <td style="vertical-align: top;">
+      boundary condition: bc_p_b = "..." not allowed with 
+             prandtl_layer = .FALSE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0061"></a>PA0061</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_p_t = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0062"></a>PA0062</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_pt_b = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0063"></a>PA0063</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_pt_t = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0064"></a>PA0064</td>
+
+         <td style="vertical-align: top;">
+      both, top_momentumflux_u AND top_momentumflux_v 
+             must be set
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0065"></a>PA0065</td>
+
+         <td style="vertical-align: top;">
+      boundary_condition: bc_pt_b = "..." is not allowed 
+             with constant_heatflux = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0066"></a>PA0066</td>
+
+         <td style="vertical-align: top;">
+      constant_heatflux = .TRUE. is not allowed with 
+             pt_surface_initial_change (/=0) = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0067"></a>PA0067</td>
+
+         <td style="vertical-align: top;">
+      boundary_condition: bc_pt_t = "..." is not allowed 
+             with constant_top_heatflux = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0068"></a>PA0068</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_sa_t = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0069"></a>PA0069</td>
+
+         <td style="vertical-align: top;">boundary condition: bc_sa_t = "..." requires to set 
+             top_salinityflux
+      
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0070"></a>PA0070</td>
+
+         <td style="vertical-align: top;">
+      boundary condition: bc_sa_t = "..." is not allowed 
+                       with constant_top_salinityflux = .TRUE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0071"></a>PA0071</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_..._b ="..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0072"></a>PA0072</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_..._t ="..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0073"></a>PA0073</td>
+
+         <td style="vertical-align: top;">
+      boundary condition: bc_..._b = "..." is not allowed
+             with prescribed surface flux
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0074"></a>PA0074</td>
+
+         <td style="vertical-align: top;">
+      a prescribed surface flux is not allowed 
+             with ..._surface_initial_change (/=0) = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0075"></a>PA0075</td>
+
+         <td style="vertical-align: top;">
+      boundary condition: bc_uv_b = "..." is not allowed 
+             with prandtl_layer = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0076"></a>PA0076</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_uv_b = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0077"></a>PA0077</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition: bc_uv_t = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0078"></a>PA0078</td>
+
+         <td style="vertical-align: top;">
+      rayleigh_damping_factor = ... out of range [0.0,1.0]
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0079"></a>PA0079</td>
+
+         <td style="vertical-align: top;">
+      rayleigh_damping_height = ... out of range [0.0, ...]
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0080"></a>PA0080</td>
+
+         <td style="vertical-align: top;">
+      overshoot_limit_... &lt; 0.0 is not allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0081"></a>PA0081</td>
+
+         <td style="vertical-align: top;">ups_limit_... &lt; 0.0 is not allowed
+      
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0082"></a>PA0082</td>
+
+         <td style="vertical-align: top;">
+      number of statistic_regions = ...  but only 
+             10 regions are allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0083"></a>PA0083</td>
+
+         <td style="vertical-align: top;">
+      normalizing_region = ... must be &gt;= 0 and &lt;= ... (value 
+             of statistic_regions)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0084"></a>PA0084</td>
+
+         <td style="vertical-align: top;">
+      dt_sort_particles is reset to 0.0 because of 
+                       cloud_droplets = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0085"></a>PA0085</td>
+
+         <td style="vertical-align: top;">
+      averaging_interval = ...  must be &lt;= dt_data_output = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0086"></a>PA0086</td>
+
+         <td style="vertical-align: top;">
+      averaging_interval_pr = ...  must be &lt;= dt_dopr = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0087"></a>PA0087</td>
+
+         <td style="vertical-align: top;">
+      averaging_interval_sp = ...  must be &lt;= dt_dosp = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0088"></a>PA0088</td>
+
+         <td style="vertical-align: top;">
+      dt_averaging_input = ...  must 
+             be &lt;= averaging_interval = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0089"></a>PA0089</td>
+
+         <td style="vertical-align: top;">
+      dt_averaging_input_pr = ...  must be 
+                       &lt;= averaging_interval_pr = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0090"></a>PA0090</td>
+
+         <td style="vertical-align: top;">
+      precipitation_amount_interval = ...  must not be 
+                       larger than dt_do2d_xy = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0091"></a>PA0091</td>
+
+         <td style="vertical-align: top;">
+      data_output_pr = ...  is not implemented for 
+                       ocean = .FALSE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0092"></a>PA0092</td>
+
+         <td style="vertical-align: top;">
+      data_output_pr = ... is not implemented for 
+                       humidity = .FALSE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0093"></a>PA0093</td>
+
+         <td style="vertical-align: top;">
+      data_output_pr = ... is not implemented for
+                       passive_scalar = .FALSE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0094"></a>PA0094</td>
+
+         <td style="vertical-align: top;">
+      data_output_pr = ... is not implemented for 
+                       cloud_physics = .FALSE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0095"></a>PA0095</td>
+
+         <td style="vertical-align: top;">
+      data_output_pr = ... is not implemented for 
+                       cloud_physics = .FALSE. and humidity = .FALSE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0096"></a>PA0096</td>
+
+         <td style="vertical-align: top;">
+      data_output_pr = ... is not implemented for 
+                       cloud_physics = .FALSE. or cloud_droplets = .FALSE
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0097"></a>PA0097</td>
+
+         <td style="vertical-align: top;">
+      illegal value for data_output_pr or 
+             data_output_pr_user = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0098"></a>PA0098</td>
+
+         <td style="vertical-align: top;">
+      illegal value for data_output_pr = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0099"></a>PA0099</td>
+
+         <td style="vertical-align: top;">
+      z_max_do1d = ...  must be &gt;= ... or &lt;= ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0100"></a>PA0100</td>
+
+         <td style="vertical-align: top;">
+      unknown normalization method cross_normalized_x = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0101"></a>PA0101</td>
+
+         <td style="vertical-align: top;">
+      unknown normalization method cross_normalized_y = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0102"></a>PA0102</td>
+
+         <td style="vertical-align: top;">
+      number of output quantitities given by data_output 
+             and data_output_user exceeds the limit of 100
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0103"></a>PA0103</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires constant_diffusion = .FALSE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0104"></a>PA0104</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires a "particles_par"-NAMELIST 
+             in the parameter file (PARIN)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0105"></a>PA0105</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires humidity = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0106"></a>PA0106</td>
+
+         <td style="vertical-align: top;">
+      output of "" requires cloud_physics = .TRUE. or 
+                       cloud_droplets = .TRUE.'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0107"></a>PA0107</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires cloud_droplets = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0108"></a>PA0108</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires cloud_physics = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0109"></a>PA0109</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires ocean = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0110"></a>PA0110</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires passive_scalar = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0111"></a>PA0111</td>
+
+         <td style="vertical-align: top;">
+      illegal value for data_output: "..." only 
+             2d-horizontal cross sections are allowed for this value
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0112"></a>PA0112</td>
+
+         <td style="vertical-align: top;">
+      output of "..." requires precipitation = .TRUE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0113"></a>PA0113</td>
+
+         <td style="vertical-align: top;">
+      temporal averaging of precipitation amount "..." 
+             is not possible'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0114"></a>PA0114</td>
+
+         <td style="vertical-align: top;">
+      illegal value for data_output or data_output_user = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0115"></a>PA0115</td>
+
+         <td style="vertical-align: top;">
+      illegal value for data_output = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0116"></a>PA0116</td>
+
+         <td style="vertical-align: top;">z_max_do2d = ..., z_max_do2d must be &gt;= ... (zu(nzb+1)) 
+             and &lt;= ...(zu(nzt))
+      
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0117"></a>PA0117</td>
+
+         <td style="vertical-align: top;">
+      do3d_compress = .TRUE. not allowed on host ""
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0118"></a>PA0118</td>
+
+         <td style="vertical-align: top;">
+      illegal precision: do3d_comp_prec ( ...) = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0119"></a>PA0119</td>
+
+         <td style="vertical-align: top;">
+      unknown variable "..." given for do3d_comp_prec(...)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0120"></a>PA0120</td>
+
+         <td style="vertical-align: top;">
+      unknown value for data_output_format "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0121"></a>PA0121</td>
+
+         <td style="vertical-align: top;">
+      km_constant = ... &lt; 0.0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0122"></a>PA0122</td>
+
+         <td style="vertical-align: top;">
+      prandtl_number = ... &lt; 0.0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0123"></a>PA0123</td>
+
+         <td style="vertical-align: top;">
+      prandtl_layer is not allowed with fixed value of km
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0124"></a>PA0124</td>
+
+         <td style="vertical-align: top;">
+      outflow_damping width out of range
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0125"></a>PA0125</td>
+
+         <td style="vertical-align: top;">
+      rif_min = ...  must be less than rif_max = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0126"></a>PA0126</td>
+
+         <td style="vertical-align: top;">
+      disturbance_level_b = ... must be &gt;= ... (zu(3))
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0127"></a>PA0127</td>
+
+         <td style="vertical-align: top;">
+      disturbance_level_b = ... must be &lt;= ... (zu(nzt-2))
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0128"></a>PA0128</td>
+
+         <td style="vertical-align: top;">
+      disturbance_level_t = ... must be &lt;= ... (zu(nzt-2))
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0129"></a>PA0129</td>
+
+         <td style="vertical-align: top;">
+      disturbance_level_t = ... must 
+             be &gt;= disturbance_level_b = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0130"></a>PA0130</td>
+
+         <td style="vertical-align: top;">
+      disturbance_level_ind_t =...  must 
+                       be &gt;= disturbance_level_b = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0131"></a>PA0131</td>
+
+         <td style="vertical-align: top;">
+      inflow_disturbance_begin out of range
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0132"></a>PA0132</td>
+
+         <td style="vertical-align: top;">
+      inflow_disturbance_end out of range
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0133"></a>PA0133</td>
+
+         <td style="vertical-align: top;">
+      turbulent_inflow = .T. requires a Dirichlet 
+             condition at the inflow boundary
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0134"></a>PA0134</td>
+
+         <td style="vertical-align: top;">
+      illegal value for recycling_width: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0135"></a>PA0135</td>
+
+         <td style="vertical-align: top;">
+      unknown random generator: random_generator = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0136"></a>PA0136</td>
+
+         <td style="vertical-align: top;">
+      damp_level_1d = ...  must be &gt; 0.0 and &lt; ... (zu(nzt+1))
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0137"></a>PA0137</td>
+
+         <td style="vertical-align: top;">
+      mixing_length_1d = "..." is unknown
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0138"></a>PA0138</td>
+
+         <td style="vertical-align: top;">
+      dissipation_1d = "..." is unknown
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0139"></a>PA0139</td>
+
+         <td style="vertical-align: top;">
+      termination_time_needed = ...  must be &gt; 30.0 on host ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0140"></a>PA0140</td>
+
+         <td style="vertical-align: top;">
+      termination_time_needed = ... should be &gt;= 300.0 
+             on host "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0141"></a>PA0141</td>
+
+         <td style="vertical-align: top;">
+      coupling requires PALM to be called with 
+             ''mrun -K parallel''
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0142"></a>PA0142</td>
+
+         <td style="vertical-align: top;">
+      absolute temperature &lt; 0.0 at zu(...) = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0143"></a>PA0143</td>
+
+         <td style="vertical-align: top;">
+      k=... j=... i=... ql_c=... part(...)%wf=...  
+                       delta_r=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0144"></a>PA0144</td>
+
+         <td style="vertical-align: top;">
+      #1 k=... j=... i=... e_s=...  e_a=... t_int=... 
+             d_radius=... delta_r=... particle_radius=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0145"></a>PA0145</td>
+
+         <td style="vertical-align: top;">
+      collision_efficiency out of range: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0146"></a>PA0146</td>
+
+         <td style="vertical-align: top;">
+      maximum_number_of_particles needs to be increased 
+                       but this is not allowed with netcdf_data_format &lt; 3
+      </td><td style="vertical-align: top;">NetCDF output is switched on (<a href="chapter_4.2.html#data_output_format">data_output_format</a> = <span style="font-style: italic;">'netcdf'</span>) and a NetCDF3 format is used (<a href="chapter_4.2.html#netcdf_data_format">netcdf_data_format </a>&lt; <span style="font-style: italic;">3</span>).<br>
+      <br>
+If output of particle data is switched on (see <a href="chapter_4.2.html#dt_write_particle_data">dt_write_particle_data</a>), the size of the particle array, given on each processor by <a href="chapter_4.2.html#maximum_number_of_particles">maximum_number_of_particles</a>,
+is not allowed to increase during the run, when the NetCDF3 data format
+is used, because NetCDF3 allows only one unlimited dimension, which is
+the time dimension. Anyhow, PALM tries to increase the size of the
+particle array, if the number of particles in a subdomain becomes
+larger than the size of this array. This may happen because of a flow
+convergence or because new sets of particles are released (see <a href="chapter_4.2.html#dt_prel">dt_prel</a>).<br>
+      <br>
+This problem can be avoided by using the NetCDF4 data format (<a href="chapter_4.2.html#netcdf_data_format">netcdf_data_format</a> &gt; <span style="font-style: italic;">2</span>), which allows more than one unlimited dimension.<br>
+      <br>
+Alternatively, <a href="chapter_4.2.html#maximum_number_of_particles">maximum_number_of_particles</a> can be given a sufficiently large value.<br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0147"></a>PA0147</td>
+
+         <td style="vertical-align: top;">
+      maximum_number_of_tails needs to be increased 
+                       but this is not allowed with netcdf_data_format &lt; 3
+      </td><td style="vertical-align: top;">NetCDF output is switched on (<a href="chapter_4.2.html#data_output_format">data_output_format</a> = <span style="font-style: italic;">'netcdf'</span>) and a NetCDF3 format is used (<a href="chapter_4.2.html#netcdf_data_format">netcdf_data_format</a> &lt; <span style="font-style: italic;">3</span>).<br>
+
+      <br>
+
+If output of particle data is switched on (see <a href="chapter_4.2.html#dt_write_particle_data">dt_write_particle_data</a>), the size of the particle tail array, given on each processor by <a href="chapter_4.2.html#maximum_number_of_tails">maximum_number_of_tails</a>,
+is not allowed to increase during the run, when the NetCDF3 data format
+is used, because NetCDF3 allows only one unlimited dimension, which is
+the time dimension. Anyhow, PALM tries to increase the size of the
+particle tail array, if the number of particle tails in a subdomain becomes
+larger than the size of this array. This may happen because of a flow
+convergence or because new sets of particles are released (see <a href="chapter_4.2.html#dt_prel">dt_prel</a>).<br>
+
+      <br>
+
+This problem can be avoided by using the NetCDF4 data format (<a href="chapter_4.2.html#netcdf_data_format">netcdf_data_format</a> &gt; <span style="font-style: italic;">2</span>), which allows more than one unlimited dimension.<br>
+
+      <br>
+
+Alternatively, <a href="chapter_4.2.html#maximum_number_of_tails">maximum_number_of_tails</a> can be given a sufficiently large value.
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0148"></a>PA0148</td>
+
+         <td style="vertical-align: top;">
+      particle too fast.  n = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0149"></a>PA0149</td>
+
+         <td style="vertical-align: top;">
+      particle out of range: i=... j=... k=... 
+             nxl=... nxr=... nys=... nyn=... nzb=... nzt=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0150"></a>PA0150</td>
+
+         <td style="vertical-align: top;">
+      Both dp_external and conserve_volume_flow are .TRUE. 
+                       but one of them must be .FALSE.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0151"></a>PA0151</td>
+
+         <td style="vertical-align: top;">
+      dp_level_b = ... is out of range
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0152"></a>PA0152</td>
+
+         <td style="vertical-align: top;">
+      dp_external is .TRUE. but dpdxy is zero, 
+             i.e. the external 
+             pressure gradient will not be applied
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0153"></a>PA0153</td>
+
+         <td style="vertical-align: top;">
+      dpdxy is nonzero but dp_external is .FALSE., i.e. the 
+             external pressure gradient will not be applied
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0154"></a>PA0154</td>
+
+         <td style="vertical-align: top;">
+      unknown conserve_volume_flow_mode: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0155"></a>PA0155</td>
+
+         <td style="vertical-align: top;">
+      noncyclic boundary conditions require
+             conserve_volume_flow_mode = ''inflow_profile''
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0156"></a>PA0156</td>
+
+         <td style="vertical-align: top;">
+      cyclic boundary conditions require 
+             conserve_volume_flow_mode = ''initial_profiles'' or 
+             ''bulk_velocity'' requires noncyclic boundary conditions
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA01357"></a>PA0137</td>
+
+         <td style="vertical-align: top;">
+      nonzero bulk velocity requires 
+             conserve_volume_flow = .T. and 
+             conserve_volume_flow_mode = ''bulk_velocity''
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0158"></a>PA0158</td>
+
+         <td style="vertical-align: top;">
+      no vertical boundary condition for variable "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0159"></a>PA0159</td>
+
+         <td style="vertical-align: top;">
+      no term for component "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0160"></a>PA0160</td>
+
+         <td style="vertical-align: top;">
+      non-cyclic lateral boundaries along x do not allow 
+                       calculation of spectra along x
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA00161"></a>PA0161</td>
+
+         <td style="vertical-align: top;">
+      sorry, calculation of spectra in non parallel mode is 
+                       still not realized
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0162"></a>PA0162</td>
+
+         <td style="vertical-align: top;">
+      non-cyclic lateral boundaries along y do not allow 
+                       calculation of spectra along y
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0163"></a>PA0163</td>
+
+         <td style="vertical-align: top;">
+      run will be terminated because it is running out of 
+                       job cpu limit remaining time: ... s 
+                       termination time needed: ... s
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0164"></a>PA0164</td>
+
+         <td style="vertical-align: top;">
+      run will be terminated due to user settings of 
+                       restart_time / dt_restart new restart time is: ... s
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0165"></a>PA0165</td>
+
+         <td style="vertical-align: top;">
+      re-open of unit 14 is not verified. Please check results!
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0166"></a>PA0166</td>
+
+         <td style="vertical-align: top;">
+      re-opening of file-id ... is not allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0167"></a>PA0167</td>
+
+         <td style="vertical-align: top;">
+      opening file-id ... not allowed for PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0168"></a>PA0168</td>
+
+         <td style="vertical-align: top;">
+      opening file-id ... is not allowed since it is used 
+             otherwise
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0169"></a>PA0169</td>
+
+         <td style="vertical-align: top;">
+      no filename for AVS-data-file found in MRUN-config-file 
+             filename in FLD-file set to "unknown"
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0170"></a>PA0170</td>
+
+         <td style="vertical-align: top;">no path for batch_scp on host "..."
+      
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0171"></a>PA0171</td>
+
+         <td style="vertical-align: top;">
+      
+      NetCDF: NetCDF4 format requested but no cpp-directive __netcdf4 given<br>
+switch back to 64-bit offset format<br>
+</td><td style="vertical-align: top;"><span style="font-family: Courier New,Courier,monospace;">netcdf_data_format</span> &gt; <span style="font-style: italic;">2</span> has been set. This requires NetCDF4 features, which have to be activated by setting the cpp-directive <span style="font-family: Courier New,Courier,monospace;">__netcdf4</span> in the configuration file (<span style="font-family: Courier New,Courier,monospace;">%cpp_options</span>). It also requires a NetCDF4 library. Set <span style="font-family: Courier New,Courier,monospace;">-I</span>, <span style="font-family: Courier New,Courier,monospace;">-L</span>, and <span style="font-family: Courier New,Courier,monospace;">-l</span> options in compile (<span style="font-family: Courier New,Courier,monospace;">%copts</span>) and load (<span style="font-family: Courier New,Courier,monospace;">%lopts</span>) options of the configuration file appropriately.<br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0172"></a>PA0172</td>
+
+         <td style="vertical-align: top;">
+      no OPEN-statement for file-id ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0173"></a>PA0173</td>
+
+         <td style="vertical-align: top;">
+      wrong component: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0174"></a>PA0174</td>
+
+         <td style="vertical-align: top;">
+      wrong argument  expected: ... given:
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0175"></a>PA0175</td>
+
+         <td style="vertical-align: top;">
+      no time measurement defined on this host
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0176"></a>PA0176</td>
+
+         <td style="vertical-align: top;">
+      negative time interval occured 
+             PE ... L=PAUSE "..." new=...  last=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0177"></a>PA0177</td>
+
+         <td style="vertical-align: top;">
+      negative time interval occured
+             PE ... L=STOP "..." new=... last=... isum=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0178"></a>PA0178</td>
+
+         <td style="vertical-align: top;">
+      negative time interval occured
+                       PE ... L=STOP "..." sum=...  mtime=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0179"></a>PA0179</td>
+
+         <td style="vertical-align: top;">
+      unknown modus of time measurement: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0180"></a>PA0180</td>
+
+         <td style="vertical-align: top;">
+      unknown cross-section: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0181"></a>PA0181</td>
+
+         <td style="vertical-align: top;">
+      no output provided for: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0182"></a>PA0182</td>
+
+         <td style="vertical-align: top;">
+      no output available for: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0183"></a>PA0183</td>
+
+         <td style="vertical-align: top;">
+      if humidity/passive_scalar = FALSE output of ... 
+             is not provided
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0184"></a>PA0184</td>
+
+         <td style="vertical-align: top;">
+      if cloud_physics = FALSE output of ... is not provided
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0185"></a>PA0185</td>
+
+         <td style="vertical-align: top;">
+      data_output_profiles: normalizing cross ... 
+             is not possible since one of the normalizing factors 
+             is zero! 
+             cross_normx_factor(...,...) = ... 
+             cross_normy_factor(...,...) = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0186"></a>PA0186</td>
+
+         <td style="vertical-align: top;">
+      no spectra data available
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0187"></a>PA0187</td>
+
+         <td style="vertical-align: top;">
+      fft method "..." currently does not work on NEC
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0188"></a>PA0188</td>
+
+         <td style="vertical-align: top;">
+      no system-specific fft-call available
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0189"></a>PA0189</td>
+
+         <td style="vertical-align: top;">
+      fft method "..." not available
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0190"></a>PA0190</td>
+
+         <td style="vertical-align: top;">
+      flow_statistics is called two times within one timestep
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0191"></a>PA0191</td>
+
+         <td style="vertical-align: top;">
+      unknown action(s): ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0192"></a>PA0192</td>
+
+         <td style="vertical-align: top;">
+      timestep has exceeded the lower limit dt_1d = ... s   
+             simulation stopped!
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA01793"></a>PA0193</td>
+
+         <td style="vertical-align: top;">
+      unknown initializing problem
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0194"></a>PA0194</td>
+
+         <td style="vertical-align: top;">
+      number of time series quantities exceeds its maximum 
+             of dots_max = ... Please increase dots_max in 
+             modules.f90.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0195"></a>PA0195</td>
+
+         <td style="vertical-align: top;">
+      dvrp_username is undefined
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0196"></a>PA0196</td>
+
+         <td style="vertical-align: top;">dvrp_output="..." not allowed
+      
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0197"></a>PA0197</td>
+
+         <td style="vertical-align: top;">
+      dvrp_file="..." not allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0198"></a>PA0198</td>
+
+         <td style="vertical-align: top;">
+      mode_dvrp="..." not allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0199"></a>PA0199</td>
+
+         <td style="vertical-align: top;">
+      split of communicator not realized with  MPI1 coupling 
+             atmosphere-ocean'
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0200"></a>PA0200</td>
+
+         <td style="vertical-align: top;">
+      missing dz
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0201"></a>PA0201</td>
+
+         <td style="vertical-align: top;">
+      dz=... &lt;= 0.0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0202"></a>PA0202</td>
+
+         <td style="vertical-align: top;">
+      grid anisotropy exceeds threshold given by only local
+                horizontal reduction of near_wall mixing length l_wall
+                starting from height level k = ... .
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0203"></a>PA0203</td>
+
+         <td style="vertical-align: top;">
+      inconsistent building parameters: bxl=... bxr=... bys=...
+                byn=... nx=... ny=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0204"></a>PA0204</td>
+
+         <td style="vertical-align: top;">
+      no street canyon width given
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0205"></a>PA0205</td>
+
+         <td style="vertical-align: top;">
+      inconsistent canyon parameters: cxl=... cxr=...
+               cwx=... ch=... nx=... ny=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0206"></a>PA0206</td>
+
+         <td style="vertical-align: top;">
+      inconsistent canyon parameters:... cys=... cyn=...
+                cwy=... ch=... nx=... ny=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0207"></a>PA0207</td>
+
+         <td style="vertical-align: top;">
+      inconsistent canyon parameters: street canyon can 
+                only be oriented either in x- or in y-direction
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0208"></a>PA0208</td>
+
+         <td style="vertical-align: top;">
+      file TOPOGRAPHY_DATA does not exist
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0209"></a>PA0209</td>
+
+         <td style="vertical-align: top;">
+      errors in file TOPOGRAPHY_DATA
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0210"></a>PA0210</td>
+
+         <td style="vertical-align: top;">
+      nzb_local values are outside the model domain
+                MINVAL( nzb_local ) = ...
+               MAXVAL( nzb_local ) = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0211"></a>PA0211</td>
+
+         <td style="vertical-align: top;">
+      nzb_local does not fulfill cyclic boundary condition 
+                in x-direction
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0212"></a>PA0212</td>
+
+         <td style="vertical-align: top;">
+      nzb_local does not fulfill cyclic boundary condition 
+                in y-direction  
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0213"></a>PA0213</td>
+
+         <td style="vertical-align: top;">
+      max_number_of_particle_groups =...
+                number_of_particle_groups reset to ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0214"></a>PA0214</td>
+
+         <td style="vertical-align: top;">
+      version mismatch concerning data from prior run 
+                version on file    = ...
+                version in program = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0215"></a>PA0215</td>
+
+         <td style="vertical-align: top;">
+      particle group # ...  has a density ratio /= 0 
+                but radius = 0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0216"></a>PA0216</td>
+
+         <td style="vertical-align: top;">
+      number of initial particles (...) exceeds
+                maximum_number_of_particles (...) on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0217"></a>PA0217</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition bc_par_b = "..." 
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0218"></a>PA0218</td>
+
+         <td style="vertical-align: top;">
+       unknown boundary condition bc_par_t = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0219"></a>PA0219</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition bc_par_lr = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0220"></a>PA0220</td>
+
+         <td style="vertical-align: top;">
+      unknown boundary condition bc_par_ns = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0221"></a>PA0221</td>
+
+         <td style="vertical-align: top;">
+      number of PEs of the prescribed topology (...) does not 
+                match the number of PEs available to the job ()
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0222"></a>PA0222</td>
+
+         <td style="vertical-align: top;">
+      if the processor topology is prescribed by the user,
+                both values of "npex" and "npey" must be given
+                in the NAMELIST-parameter file
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0223"></a>PA0223</td>
+
+         <td style="vertical-align: top;">
+      psolver = "poisfft_hybrid" can only be used in case of 
+                       a 1d-decomposition along x
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0224"></a>PA0224</td>
+
+         <td style="vertical-align: top;">
+      no matching grid for transpositions found
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0225"></a>PA0225</td>
+
+         <td style="vertical-align: top;">
+      x-direction: gridpoint number (...)is not an
+                integral divisor of the number of procesors (...)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0226"></a>PA0226</td>
+
+         <td style="vertical-align: top;">
+      x-direction: nx does not match the requirements given 
+                by the number of PEs used
+               please use nx = ... instead of nx =...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+ 
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0227"></a>PA0227</td>
+
+         <td style="vertical-align: top;">
+      y-direction: gridpoint number (...) is not an
+                integral divisor of the number of processors (...)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0228"></a>PA0228</td>
+
+         <td style="vertical-align: top;">
+      y-direction: ny does not match the requirements given 
+                by the number of PEs used
+                please use ny = ... instead of ny =...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0229"></a>PA0229</td>
+
+         <td style="vertical-align: top;">
+      1d-decomposition along x chosen but nz restrictions 
+                may occur since ups-scheme is activated
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0230"></a>PA0230</td>
+
+         <td style="vertical-align: top;">
+      transposition z --&gt; x:
+                nz=... is not an integral divisior of pdims(1)= ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+    
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA031"></a>PA0231</td>
+
+         <td style="vertical-align: top;">
+      transposition x --&gt; y:
+                nx+1=... is not an integral divisor of pdims(2)= ... 
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0232"></a>PA0232</td>
+
+         <td style="vertical-align: top;">
+      transposition y --&gt; z:
+                ny+1=... is not an integral divisor of pdims(1)=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0233"></a>PA0233</td>
+
+         <td style="vertical-align: top;">
+      transposition x --&gt; y:
+                ny+1=... is not an integral divisor of pdims(1)=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0234"></a>PA0234</td>
+
+         <td style="vertical-align: top;">
+      direct transposition z --&gt; y (needed for spectra):
+                nz=... is not an integral divisor of pdims(2)=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0235"></a>PA0235</td>
+
+         <td style="vertical-align: top;">
+      mg_switch_to_pe0_level out of range and reset to 
+                default (=0)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0236"></a>PA0236</td>
+
+         <td style="vertical-align: top;">
+      not enough memory for storing gathered multigrid data 
+                on PE0
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0237"></a>PA0237</td>
+
+         <td style="vertical-align: top;">
+      multigrid gather/scatter impossible in non parallel mode
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0238"></a>PA0238</td>
+
+         <td style="vertical-align: top;">
+      more than 10 multigrid levels
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0239"></a>PA0239</td>
+
+         <td style="vertical-align: top;">
+      The value for "topography_grid_convention" is not set. 
+                Its default value is only valid for 
+                "topography" = ''single_building'', 
+                ''single_street_canyon'' or ''read_from_file'' 
+                Choose ''cell_edge'' or ''cell_center''.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0240"></a>PA0240</td>
+
+         <td style="vertical-align: top;">
+      The value for "topography_grid_convention" is not 
+                recognized. Choose ''cell_edge'' or ''cell_center''.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0241"></a>PA0241</td>
+
+         <td style="vertical-align: top;">
+      netcdf_precision must contain a "_" 
+                netcdf_precision(...)="..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0242"></a>PA0242</td>
+
+         <td style="vertical-align: top;">
+      illegal netcdf precision: netcdf_precision( ...)="..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0243"></a>PA0243</td>
+
+         <td style="vertical-align: top;">
+      unknown variable in inipar assignment:
+                netcdf_precision(', i, ')="..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0244"></a>PA0244</td>
+
+         <td style="vertical-align: top;">
+      no grid defined for variable ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0245"></a>PA0245</td>
+
+         <td style="vertical-align: top;">
+       NetCDF file for volume data ... from previuos run found,
+                 but this file cannot be extended due to variable
+                 mismatch. 
+                 New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0246"></a>PA0246</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for volume data ... from previuos run found,
+                but this file cannot be extended due to mismatch in 
+                number of vertical grid points (nz_do3d).
+                New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0247"></a>PA0247</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for volume data ... from previuos run found,
+                but this file cannot be extended because the current 
+                output time is less or equal than the last output time 
+                on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0248"></a>PA0248</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for volume data ... from previous run found.
+                This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0249"></a>PA0249</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for cross-sections ... from previuos run 
+                found, but this file cannot be extended due to 
+                variable mismatch. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0250"></a>PA0250</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for cross-sections ... from previuos run 
+                found, but this file cannot be extended due to
+                mismatch in  number of cross sections. New file 
+                is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0251"></a>PA0251</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for cross-sections ... from previuos run 
+                found but this file cannot be extended due to mismatch 
+                in cross section levels. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0252"></a>PA0252</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for cross sections ... from previuos run 
+                found, but this file cannot be extended because the 
+                current output time is less or equal than the last 
+                output time on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0253"></a>PA0253</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for cross-sections ... from previous run 
+                found. This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0254"></a>PA0254</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for vertical profiles from previuos run 
+                found, but this file cannot be extended due to variable
+                mismatch. New file is created instead. 
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0255"></a>PA0255</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for vertical profiles from previuos run 
+                found, but this file cannot be extended because the 
+                current output time is less or equal than the last 
+                output time on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0256"></a>PA0256</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for vertical profiles from previous run 
+                found. This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0257"></a>PA0257</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for vertical profiles from previous run 
+                found. This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0258"></a>PA0258</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for time series from previuos run found,
+                but this file cannot be extended because the current 
+                output time is less or equal than the last output time 
+                on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0259"></a>PA0259</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for time series from previous run found.
+                This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0260"></a>PA0260</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for spectra from previuos run found, 
+                but this file cannot be extended due to variable 
+                mismatch. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0261"></a>PA0261</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for spectra from previuos run found, 
+                but this file cannot be extended due to mismatch in 
+                number of vertical levels. New file is created instead. 
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0262"></a>PA0262</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for spectra from previuos run found, 
+                but this file cannot be extended due to mismatch in 
+                heights of vertical levels. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0263"></a>PA0263</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for spectra from previuos run found, 
+                but this file cannot be extended because the current 
+                output time is less or equal than the last output time 
+                on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0264"></a>PA0264</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for spectra from previous run found.
+                This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0265"></a>PA0265</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for particles from previuos run found,
+                but this file cannot be extended because the current 
+                output time is less or equal than the last output time 
+                on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0266"></a>PA0266</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for particles from previous run found. 
+                This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0267"></a>PA0267</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for particle time series from previuos run 
+                found, but this file cannot be extended due to 
+                variable mismatch. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0268"></a>PA0268</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for particle time series from previuos run 
+                found, but this file cannot be extended because the 
+                current output time is less or equal than the last 
+                output time on this file. New file is created instead.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0269"></a>PA0269</td>
+
+         <td style="vertical-align: top;">
+      NetCDF file for particle time series from previous run 
+                found. This file will be extended.
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0270"></a>PA0270</td>
+
+         <td style="vertical-align: top;">
+      mode "..." not supported
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0271"></a>PA0271</td>
+
+         <td style="vertical-align: top;">
+      errors in \$inipar &#8744; no \$inipar-namelist found 
+                (CRAY-machines only)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0272"></a>PA0272</td>
+
+         <td style="vertical-align: top;">
+       no \$inipar-namelist found
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0273"></a>PA0273</td>
+
+         <td style="vertical-align: top;">
+      no value or wrong value given for nx: nx=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0274"></a>PA0274</td>
+
+         <td style="vertical-align: top;">
+      no value or wrong value given for ny: ny=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0275"></a>PA0275</td>
+
+         <td style="vertical-align: top;">
+      no value or wrong value given for nz: nz=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0276"></a>PA0276</td>
+
+         <td style="vertical-align: top;">
+      local file ENVPAR not found 
+                some variables for steering may not be properly set
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0277"></a>PA0277</td>
+
+         <td style="vertical-align: top;">
+      errors in local file ENVPAR 
+                some variables for steering may not be properly set
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0278"></a>PA0278</td>
+
+         <td style="vertical-align: top;">
+      no envpar-NAMELIST found in local file ENVPAR
+                some variables for steering may not be properly set
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0279"></a>PA0279</td>
+
+         <td style="vertical-align: top;">
+       wrong component: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0280"></a>PA0280</td>
+
+         <td style="vertical-align: top;">
+      Number of OpenMP threads = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0281"></a>PA0281</td>
+
+         <td style="vertical-align: top;">
+      running optimized multinode version
+                switch_per_lpar        = ...
+                tasks_per_lpar         = ...
+                tasks_per_logical_node = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0282"></a>PA0282</td>
+
+         <td style="vertical-align: top;">
+      parallel environment (MPI) required
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0283"></a>PA0283</td>
+
+         <td style="vertical-align: top;">
+      no sufficient convergence within 1000 cycles
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0284"></a>PA0284</td>
+
+         <td style="vertical-align: top;">
+      data from subdomain of previous run mapped more 
+                than 1000 times
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0285"></a>PA0285</td>
+
+         <td style="vertical-align: top;">
+      number of PEs or virtual PE-grid changed in restart run
+                PE ... will read from files ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0286"></a>PA0286</td>
+
+         <td style="vertical-align: top;">
+      version mismatch concerning data from prior run
+                version on file    = "..."
+                version in program = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0287"></a>PA0287</td>
+
+         <td style="vertical-align: top;">
+      problem with index bound nxl on restart file "..."
+                nxl = ... but it should be = ... from the index bound 
+                information array
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0288"></a>PA0288</td>
+
+         <td style="vertical-align: top;">
+      problem with index bound nxr on restart file "..."
+                nxr = ... but it should be = ... from the index bound 
+                information array
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0289"></a>PA0289</td>
+
+         <td style="vertical-align: top;">
+      problem with index bound nys on restart file "..."
+                nys = .. but it should be = ... from the index bound 
+                information array
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0290"></a>PA0290</td>
+
+         <td style="vertical-align: top;">
+      problem with index bound nyn on restart file "..."
+                nyn = ... but it should be = ... from the index bound 
+                information array
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0291"></a>PA0291</td>
+
+         <td style="vertical-align: top;">
+      mismatch between actual data and data 
+                from prior run on PE ...
+                nzb on file = ... 
+                nzb         = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0292"></a>PA0292</td>
+
+         <td style="vertical-align: top;">
+      mismatch between actual data and data 
+                from prior run on PE ...
+                nzt on file = ...
+                nzt         = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0293"></a>PA0293</td>
+
+         <td style="vertical-align: top;">
+      read_3d_binary: spectrum_x 
+                on restart file ignored because total numbers of 
+                grid points (nx) do not match
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0294"></a>PA0294</td>
+
+         <td style="vertical-align: top;">
+      read_3d_binary: spectrum_y 
+                on restart file ignored because total numbers of 
+                grid points (ny) do not match
+      
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0295"></a>PA0295</td>
+
+         <td style="vertical-align: top;">
+      unknown field named "..." found in data from 
+                prior run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0296"></a>PA0296</td>
+
+         <td style="vertical-align: top;">
+      version mismatch concerning control variables
+                version on file    = "..."
+                version on program = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0297"></a>PA0297</td>
+
+         <td style="vertical-align: top;">
+      numprocs not found in data from prior run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0298"></a>PA0298</td>
+
+         <td style="vertical-align: top;">
+      hor_index_bounds not found in data from prior 
+                run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0299"></a>PA0299</td>
+
+         <td style="vertical-align: top;">
+      nz not found in data from prior run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0300"></a>PA0300</td>
+
+         <td style="vertical-align: top;">
+      max_pr_user not found in data from prior run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0301"></a>PA0301</td>
+
+         <td style="vertical-align: top;">
+      statistic_regions not found in data from prior 
+                run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0302"></a>PA0302</td>
+
+         <td style="vertical-align: top;">
+      unknown variable named "..." found in data from 
+                prior run on PE ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0303"></a>PA0303</td>
+
+         <td style="vertical-align: top;">
+      nz not found in restart data file
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0304"></a>PA0304</td>
+
+         <td style="vertical-align: top;">
+      mismatch concerning number of gridpoints along z
+                nz on file    = "..."
+                nz from run   = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0305"></a>PA0305</td>
+
+         <td style="vertical-align: top;">
+      max_pr_user not found in restart data file
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0306"></a>PA0306</td>
+
+         <td style="vertical-align: top;">
+      number of user profiles on restart data file differs 
+                from the current run
+                max_pr_user on file    = "..."
+                max_pr_user from run   = "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0307"></a>PA0307</td>
+
+         <td style="vertical-align: top;">
+      statistic_regions not found in restart data file
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0308"></a>PA0308</td>
+
+         <td style="vertical-align: top;">
+      statistic regions on restart data file differ 
+                from the current run
+                statistic regions on file    = "..."
+                statistic regions from run   = "..."
+                statistic data may be lost!
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0309"></a>PA0309</td>
+
+         <td style="vertical-align: top;">
+      inflow profiles not temporally averaged.
+                Averaging will be done now using ... samples.  
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0310"></a>PA0310</td>
+
+         <td style="vertical-align: top;">
+      remote model "..." terminated with 
+                terminate_coupled_remote = ... 
+                local model  "..." has terminate_coupled = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0311"></a>PA0311</td>
+
+         <td style="vertical-align: top;">
+      number of gridpoints along x or/and y contain illegal  
+                factors only factors 8,6,5,4,3,2 are allowed
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0312"></a>PA0312</td>
+
+         <td style="vertical-align: top;">
+       Time step has reached minimum limit.<br>
+
+                 dt      = ... s  Simulation is terminated.<br>
+ 
+                 old_dt  = ... s<br>
+                          
+                 dt_u    = ... s<br>
+                             
+                 dt_v    = ... s<br>
+                            
+                 dt_w    = ... s<br>
+                             
+                 dt_diff = ... s<br>
+                          
+                 u_max   = ... m/s   k=... j=...  i=...<br>
+            
+                 v_max   = ... m/s   k=... j=...  i=...<br>
+            
+                 w_max   = ... m/s   k=... j=...  i=...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0313"></a>PA0313</td>
+
+         <td style="vertical-align: top;">
+      illegal value for parameter particle_color: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0314"></a>PA0314</td>
+
+         <td style="vertical-align: top;">
+      illegal value for parameter particle_dvrpsize: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0315"></a>PA0315</td>
+
+         <td style="vertical-align: top;">
+      color_interval(2) &lt;= color_interval(1)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0316"></a>PA0316</td>
+
+         <td style="vertical-align: top;">
+      dvrpsize_interval(2) &lt;= dvrpsize_interval(1)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0317"></a>PA0317</td>
+
+         <td style="vertical-align: top;">
+      ocean = .F. does not allow coupling_char = ...
+                set by mrun-option "-y"
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0318"></a>PA0318</td>
+
+         <td style="vertical-align: top;">
+      inflow_damping_height must be explicitly specified
+                because the inversion height calculated by the prerun
+                is zero
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0319"></a>PA0319</td>
+
+         <td style="vertical-align: top;">
+      section_xy must be &lt;= nz + 1 = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0320"></a>PA0320</td>
+
+         <td style="vertical-align: top;">
+      section_xz must be &lt;= ny + 1 = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="PA0321"></a>PA0321</td>
+
+         <td style="vertical-align: top;">
+      section_yz must be &lt;= nx + 1 = ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+      <td style="vertical-align: top;"><a name="PA0322"></a>PA0322</td>
+      <td style="vertical-align: top;">output of q*w*(0) requires humidity=.TRUE.</td><td style="vertical-align: top;"><br>
+      </td>
+
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><a name="PA0323"></a>PA0323<br>
+      </td>
+      <td style="vertical-align: top;">output of averaged quantity "..." requires to set a non-zero averaging interval<br>
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><a name="PA0324"></a>PA0324<br>
+      </td>
+      <td style="vertical-align: top;">Applying large scale vertical motion is not 
+                          allowed for ocean runs<br>
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+    </tr>
+<tr>
+
+        <td style="vertical-align: top;"><a name="UI0001"></a>UI0001</td>
+
+         <td style="vertical-align: top;">
+      unknown location "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0002"></a>UI0002</td>
+
+         <td style="vertical-align: top;">
+      location "..." is not allowed to be called with 
+                parameters "i" and "j"
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0003"></a>UI0003</td>
+
+         <td style="vertical-align: top;">
+      no output possible for: ...
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0004"></a>UI0004</td>
+
+         <td style="vertical-align: top;">
+      unknown mode "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0005"></a>UI0005</td>
+
+         <td style="vertical-align: top;">
+      topography "..." not available yet
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0006"></a>UI0006</td>
+
+         <td style="vertical-align: top;">
+      unknown topography "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0007"></a>UI0007</td>
+
+         <td style="vertical-align: top;">
+      canopy_mode "..." not available yet
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0008"></a>UI0008</td>
+
+         <td style="vertical-align: top;">
+      unknown canopy_mode "..."
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0009"></a>UI0009</td>
+
+         <td style="vertical-align: top;">
+      the number of user-defined profiles given in 
+                data_output_pr (...) does not match the one 
+                found in the restart file (...)
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0010"></a>UI0010</td>
+
+         <td style="vertical-align: top;">
+      Spectra of ... can not be calculated
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0011"></a>UI0011</td>
+
+         <td style="vertical-align: top;">
+      Spectra of ... are not defined
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="UI0012"></a>UI0012</td>
+
+         <td style="vertical-align: top;">
+      unknown variable named "..." found in data from prior 
+                run on PE
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+      <tr>
+
+        <td style="vertical-align: top;"><a name="NC****"></a>NC****</td>
+
+         <td style="vertical-align: top;">
+      **** contains numbers in the range from 1-444
+      </td><td style="vertical-align: top;"><br>
+      </td>
+
+
+      </tr>
+
+ 
+    
+  </tbody>
+</table>
+
+
+     
+<p style="line-height: 100%;"><i>Last
+      change:&nbsp;</i> $Id$ 
+
+  
+</p></body></html>

@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta content="text/html; charset=windows-1252" http-equiv="CONTENT-TYPE"><title>PALM chapter 2.0</title> <meta content="StarOffice 7 (Win32)" name="GENERATOR"> <meta content="Marcus Oliver Letzel" name="AUTHOR"> <meta content="20040719;14534028" name="CREATED"> <meta content="20041117;10385730" name="CHANGED"> <meta content="parallel LES model" name="KEYWORDS"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+
+<body style="direction: ltr;" lang="en-US"><h2 style="line-height: 100%;"><font size="4">2.0
+Basic techniques of
+the LES model and its parallelization </font>
+</h2><p style="line-height: 100%;">LES models
+generally permit the
+simulation of turbulent flows, whereby those eddies, that carry the
+main energy are resolved by the numerical grid. Only the
+effect of such turbulence elements with diameter equal to or smaller
+than the grid spacing are parameterized in the model and
+by so-called subgrid-scale (SGS) transport. Larger structures are
+simulated directly (they are explicitly resolved) and their effects are
+represented by the advection terms. </p>
+<p style="font-style: normal; line-height: 100%;">PALM is
+based on the
+non-hydrostatic incompressible Boussinesq equations. It contains a
+water cycle with cloud formation and takes into account infrared
+radiative cooling in cloudy conditions. The model has six prognostic
+quantities in total &ndash; u,v,w, liquid water potential
+temperature
+<font face="Thorndale, serif">&Theta;</font><sub>l
+</sub>(BETTS,
+1973), total water content q and subgrid-scale turbulent kinetic energy
+e. The
+subgrid-scale turbulence is modeled according to DEARDOFF (1980) and
+requires the solution of an additional prognostic equation for the
+turbulent kinetic energy e. The long wave radiation scheme is based
+on the parametrization of cloud effective emissivity (e.g. Cox, 1976)
+and condensation is considered by a simple '0%-or-100%'-scheme, which
+assumes that within each grid box the air is either entirely
+unsaturated or entirely saturated ( see e.g., CUIJPERS and DUYNKERKE,
+1993). The water cycle is closed by using a simplified version of
+KESSLERs scheme (KESSLER, 1965; 1969) to parameterize precipitation
+processes (M&Uuml;LLER and CHLOND, 1996). Incompressibility is
+applied by means of a Poisson equation for pressure, which is solved
+with a direct method (SCHUMANN and SWEET, 1988). The Poisson equation
+is Fourier transformed in both horizontal directions and the
+resulting tridiagonal matrix is solved for the transformed pressure
+which is then transformed back. Alternatively, a multigrid method can
+also be used. Lateral boundary conditions of the model are cyclic and
+MONIN-OBUKHOV similarity is assumed between the surface and the first
+computational grid level above. Alternatively, noncyclic boundary
+conditions
+(Dirichlet/Neumann) can be used along one of the
+horizontal directions. At the lower surface, either temperature/
+humidity or their respective fluxes can be prescribed. </p>
+<p style="font-style: normal; line-height: 100%;">The
+advection terms
+are treated by the scheme proposed by PIACSEK and WILLIAMS (1970),
+which conserves the integral of linear and quadratic quantities up to
+very small errors. The advection of scalar quantities can optionally
+be performed by the monotone, locally modified version of Botts
+advection scheme (CHLOND, 1994). The time integration is performed
+with the third-order Runge-Kutta scheme. A second-order Runge-Kutta
+scheme, a leapfrog scheme and an Euler scheme are also implemented.</p>
+<p style="line-height: 100%;">By default, the time step is
+computed
+with respect to the different criteria (CFL, diffusion) and adapted
+automatically. In case of a non-zero geostrophic
+wind the coordinate system can be moved along with the mean wind in
+order to maximize the time step (Galilei-Transformation). </p>
+<p style="font-style: normal; line-height: 100%;">In
+principle a model
+run is carried out in the following way: After reading the control
+parameters given by the user, all prognostic variables are
+initialized. Initial values can be e.g. vertical profiles of the
+horizontal wind, calculated using a 1D subset of the 3D prognostic
+equation and are set in the 3D-Model as horizontally homogeneous
+initial values. Temperature profiles can only be prescribed linear
+(with constant gradients, which may change for different vertical
+height intervals) and they are assumed in the 1D-Model as stationary.
+After the initialization phase during which also different kinds of
+disturbances may be imposed to the prognostic fields, the time
+integration begins. Here for each individual time step the prognostic
+equations are successively solved for the velocity components u, v and
+w
+as well as for the potential temperature and possibly for the TKE.
+After the calculation of the boundary values in accordance with the
+given boundary conditions the provisional velocity fields are
+corrected with the help of the pressure solver. Following this, all
+diagnostic turbulence quantities including possible
+Prandtl-layer&ndash;quantities are computed. At the end of a time
+step the data output requested by the user is made
+(e.g. statistic of analyses for control purposes or profiles and/or
+graphics data). If the given end-time was reached, binary data maybe
+be saved for restart. </p>
+<p style="font-style: normal; line-height: 100%;">The
+model is based
+on the originally non-parallel LES model which has been operated at the
+institute since 1989
+and which was parallelized for massively parallel computers with
+distributed memory using the Message-Passing-Standard MPI. It is
+still applicable on a single processor and also well optimized for
+vector machines. The parallelization takes place via a so-called domain
+decomposition, which divides the entire model
+domain into individual, vertically standing cubes, which extend from
+the bottom to the top of the model domain. One processor (processing
+element, PE) is assigned to each cube, which
+accomplishes the computations on all grid points of the subdomain.
+Users can choose between a two- and a one-dimensional domain
+decomposition. A 1D-decomposition is preferred on machines with a
+slow&nbsp; network interconnection. In case of a 1D-decomposition,
+the
+grid points along x direction are
+distributed among the individual processors, but in y- and z-direction
+all respective grid points belong to the same PE. </p>
+<p style="line-height: 100%;">The calculation of central
+differences or
+non-local arithmetic operations (e.g. global
+sums, FFT) demands communication and an appropriate data exchange
+between the PEs. As a substantial innovation in relation to
+the non-parallel model version the individual subdomains are
+surrounded by so-called ghost points, which contain the grid point
+information of the neighbor processors. The appropriate grid point
+values must be exchanged after each change (i.e. in particular after
+each time step). For this purpose MPI routines (<tt>MPI_SENDRCV</tt>)
+are used. For the solution of the FFT conventional (non-parallelized)
+procedures are used. Given that the FFTs are used in x and/or
+y-direction, the data which lie distributed on the individual central
+processing elements, have to be collected and/or relocated before.
+This happens by means of the routine <tt>MPI_ALLTOALLV</tt>.
+Certain
+global operations like e.g. the search for absolute maxima or minima
+within the 3D-arrays likewise require the employment of special MPI
+routines (<tt>MPI_ALLREDUCE</tt>). </p>
+<p style="line-height: 100%;">Further details of the
+internal model
+structure are described in the <a href="../tec/index.html">technical/numerical
+documentation</a>. <br>
+&nbsp; </p>
+<hr><font color="#000080"><font color="#000080"><br><a href="chapter_1.0.html"><font color="#000080"><img name="Grafik1" src="left.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img name="Grafik2" src="up.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.0.html"><font color="#000080"><img name="Grafik3" src="right.gif" align="bottom" border="2" height="32" width="32"></font></a><br>
+</font></font><br><p style="line-height: 100%;"><span style="font-style: italic;">Last
+change: </span>$Id: chapter_2.0.html 62 2007-03-13 02:52:40Z raasch $<font color="#000080"><font color="#000080"><br>
+</font></font></p></body></html>

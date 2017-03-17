@@ -1,0 +1,97 @@
+#!/bin/ksh
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2014  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# -----------------
+#
+# Former revisions:
+# -----------------
+# $Id$
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9)
+#
+# palm_simple_install - a script for simple installation and compilation of
+#                       the palm code without using mbuild
+     # This script creates (from the working copy of the palm repository)
+     # a subdirectory MAKE_DEPOSITORY_simple which contains a copy of the
+     # palm source code and  a modified makefile which loads required compiler
+     # and preprocessor settings via "include MAKE.inc"
+
+     # Options: -i <include file>
+     #          one of the include files in ~/palm/current_version/trunk/INSTALL
+
+     # Last changes:
+     # 25/01/10 - Siggi - Generating the first version
+     # 18/03/10 - Siggi - switch to palm/current_version removed: working
+     #                    copy can be in any directory
+
+
+    # Variable declarations + default values
+ include_file=unknown
+
+
+    # Read shellscript options
+ while  getopts  :i:  option
+ do
+   case  $option  in
+       (i)   include_file=$OPTARG;;
+       (\?)  printf "\n  +++ unknown option $OPTARG \n"
+             printf "\n      allowed option are -d, -f, -l, -s \n"
+             exit;;
+   esac
+ done
+
+
+
+    # Check, if include file exists
+ if [[ ! -f trunk/INSTALL/$include_file ]]
+ then
+    echo "+++ ERROR: include file"
+    echo "    \"trunk/INSTALL/$include_file\""
+    echo "    not found"
+    exit
+ fi
+
+
+     # Create the make depository
+ if [[ ! -d MAKE_DEPOSITORY_simple ]]
+ then
+    mkdir  MAKE_DEPOSITORY_simple
+ else
+    rm  MAKE_DEPOSITORY_simple/*
+ fi
+
+
+     # Copy makefile and all source code files to make depository
+ cp  trunk/SOURCE/Makefile        MAKE_DEPOSITORY_simple/Makefile_old
+ cp  trunk/INSTALL/$include_file  MAKE_DEPOSITORY_simple/MAKE.inc
+ cp  trunk/SOURCE/*.f90           MAKE_DEPOSITORY_simple
+
+
+     # Replace comment in makefile by include statement
+ sed  's/#to_be_replaced_by_include/include MAKE.inc/g'  MAKE_DEPOSITORY_simple/Makefile_old  >  MAKE_DEPOSITORY_simple/Makefile
+ rm  MAKE_DEPOSITORY_simple/Makefile_old
+
+
+     # Create directory for input files
+ if [[ ! -d JOBS/example_cbl/INPUT ]]
+ then
+    mkdir -p  JOBS/example_cbl/INPUT
+    cp trunk/INSTALL/example_cbl_p3d  JOBS/example_cbl/INPUT
+ fi

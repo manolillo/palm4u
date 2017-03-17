@@ -1,0 +1,1502 @@
+#!/bin/bash
+
+# mbuild - script for compiling the PALM code and its utility programs
+
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2014  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# ------------------
+# 
+# 
+# Former revisions:
+# -----------------
+# $Id$
+#
+# 1944 2016-06-15 06:29:00Z raasch
+# adjustments for using HLRN ssh-keys
+#
+# 1841 2016-04-07 19:14:06Z raasch
+# script now running under bash
+# 
+# 1817 2016-04-06 15:44:20Z maronga
+# Bugfix: Makefile_check removed (parameter file check)
+# 
+# 1804 2016-04-05 16:30:18Z maronga
+# Removed parameter file check
+# 
+# 1652 2015-09-17 08:12:24Z raasch
+# bugfix for terminal output of configuration settings removed,
+# output of login init commands
+#
+# 1621 2015-07-17 11:39:33Z heinze
+# adjustments for Mistral at DKRZ Hamburg (lcbullhh)
+#
+# 1613 2015-07-08 14:53:29Z maronga
+# nc2vdf removed
+# 
+# 1547 2015-01-29 15:09:12Z witha
+# adjustments for ForWind computing cluster (lcflow)
+# 
+# 1487 2014-10-25 14:36:28Z raasch
+# bash compatibility adjustments: output formatting with printf instead
+# of "typeset -L/-R", print replaced by echo
+#
+# 1468 2014-09-24 14:06:57Z maronga
+# Typo removed (addres->address)
+# Adjustments for lcxe6
+# 
+# 1390 2014-05-06 07:57:37Z maronga
+# disabled compilation of parameter file check (currently not working),
+# adjustments for lcxe6
+# 
+# 1388 2014-05-06 07:42:38Z maronga
+# small adjustments for lcxe6
+# 
+# 1350 2014-04-04 13:01:30Z maronga
+# init_cmds is now executed before module calls in case of compilation on local 
+# host
+#
+# 1289 2014-03-04 07:12:34Z raasch
+# comments translated from German to English
+# fimm-, scirocco-, ibmy-, and sgi-specific code removed
+#
+# 1274 2014-01-09 13:14:54Z heinze
+# adjustments for lccrayh
+#
+# 1255 2013-11-07 14:43:35Z raasch
+# further adjustments for lccrayb remote access
+#
+# 1229 2013-09-20 06:55:19Z raasch
+# adjustments for lccrayb
+#
+# 1216 2013-08-26 09:31:42Z raasch
+# RCS renamed SOURCES
+#
+# 1210 2013-08-14 10:58:20Z raasch
+# fftw support added
+#
+# 1197 2013-07-04 06:19:45Z raasch
+# adjustments for CSC Helsinki (lccrayf)
+#
+# 1099 2013-02-10 01:47:43Z raasch
+# adjustments for Forwind cluster (lcflow)
+#
+# 1096 2013-02-03 01:52:12Z raasch
+# decalpha parts (yonsei) removed
+#
+# 2013-02-02 07:06:13Z raasch
+# adjustments for Kyushu-University computing center (lckyut)
+# old changelog messages removed
+#
+# 1083 2013-01-04 10:22:09Z maronga
+# bugfix in parameter file check (in case that no preprocessor flag, i.e. -cpp was
+# set in %cpp_options, the last directive in the variable was processed.
+#
+# 1081 2013-01-03 08:44:36Z maronga
+# loader options set for parameter file check_depository_path
+#
+# 1069 2012-11-28 16:18:43Z maronga
+# added copy of nc2vdf tools to remote host_found
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9) 
+# 
+# 12/06/02 - Siggi - first version finished
+# 06/05/02 - Siggi - script development started
+#
+#--------------------------------------------------------------------------------#
+# mbuild - script for compiling the PALM code and its utility programs
+#
+# Procedure to compile code on local and remote hosts using the
+# make-mechanism. The source code must be provided on the local host.
+#
+# @note This script does not work on MAC OS
+#--------------------------------------------------------------------------------#
+
+
+    # VARIABLE DECLARATIONS + DEFAULT VALUES
+ block_conditions=none
+ block_conditions_found=false
+ calltime=""
+ column1=""
+ column2=""
+ compile_utility_programs=false
+ config_file=.mrun.config
+ host=all
+ host_found=false
+ locat=normal
+ makefile=""
+ module_calls=""
+ util_compiled_localhost=false
+ silent=false
+ suf=f90
+ update=false
+ version="MBUILD  2.1  Rev$Rev$"
+ working_directory=`pwd`
+
+ typeset -i  ih ihost=0
+
+
+    # ERROR HANDLING
+    # IN CASE OF EXIT:
+ trap 'rm -rf  $working_directory/tmp_mbuild
+       if [[ $locat != normal ]]
+       then
+          printf "\n\n +++ mbuild killed \n\n"
+       else
+          printf "\n\n *** mbuild finished \n\n"
+       fi' exit
+
+
+    # IN CASE OF TERMINAL-BREAK:
+ trap 'rm -rf  $working_directory/tmp_mbuild
+       printf "\n\n +++ mbuild killed by \"^C\" \n\n"
+       exit
+      ' 2
+
+
+ tmp_mbuild=${working_directory}/tmp_mbuild
+
+    # READ SHELLSCRIPT-OPTIONS
+ while  getopts  :c:h:K:m:s:uv  option
+ do
+   case  $option  in
+       (c)   config_file=$OPTARG;;
+       (h)   host=$OPTARG;;
+       (K)   block_conditions=$OPTARG;;
+       (m)   makefile=$OPTARG;;
+       (s)   suf=$OPTARG;;
+       (u)   compile_utility_programs=true;;
+       (v)   silent=true;;
+       (\?)  printf "\n  +++ unknown option $OPTARG \n";
+             locat=parameter; exit;;
+   esac
+ done
+
+
+
+    # CHECK, IF CONFIGURATION-FILE EXISTS
+ if [[ ! -f $config_file ]]
+ then
+    printf "\n  +++ configuration file: "
+    printf "\n           $config_file"
+    printf "\n      does not exist"
+    locat=configuration; exit  
+ fi
+
+
+
+    # DETERMINE THE LOCAL HOST
+ local_host_real_name=$(hostname)
+ local_address=$(nslookup `hostname` 2>&1 | grep "Address:" | tail -1 | awk '{echo $2}')
+
+
+
+    # DETERMINE HOST-IDENTIFIER (local_host) FROM THE CONFIG-FILE
+ line=""
+ grep  "%host_identifier"  $config_file  >  $tmp_mbuild
+ while read line
+ do
+    if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       HOSTNAME=`echo $line | cut -d" " -s -f2`
+       host_identifier=`echo $line | cut -d" " -s -f3`
+       if [[ $local_host_real_name = $HOSTNAME ]]
+       then
+          local_host=$host_identifier
+          break
+       fi
+    fi
+ done < $tmp_mbuild
+
+ if [[ "$local_host" = "" ]]
+ then
+    printf "\n  +++ no host identifier found in configuration file \"$config_file\""
+    printf "\n      for local host \"$local_host_real_name\"."
+    printf "\n      Please add line"
+    printf "\n      \"\%host_identifier $local_host_real_name <identifier>\""
+    printf "\n      to the configuration file."
+    locat=local_host; exit
+ fi
+
+
+ if [[ $local_host != ibms ]]
+ then
+    config_file=$PWD/$config_file
+ else
+    config_file=`pwd`/$config_file
+ fi
+
+
+    # DETERMINE THE BLOCK CONDITIONS
+ if [[ $block_conditions != none ]]
+ then
+    block_condition1=`echo $block_conditions | cut -d" " -f1`
+    block_condition2=`echo $block_conditions | cut -d" " -f2`
+    if [[ "$block_condition2" = "$block_condition1" ]]
+    then
+       block_condition2=""
+    fi
+ fi
+
+ 
+    # DETERMINE USER NAME ON LOCAL HOST FROM THE CONFIG-FILE
+ line=""
+ grep  " $local_host" $config_file | grep "%remote_username"  >  $tmp_mbuild
+ while read line
+ do
+    if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       local_username=`echo $line | cut -d" " -s -f2`
+    fi
+ done < $tmp_mbuild
+
+
+ if [[ "$local_username" = "" ]]
+ then
+    printf "\n  +++ no user name found in configuration file"
+    printf "\n      for local host \"$local_host\" "
+    locat=config_file; exit
+ fi
+
+
+    # DETERMINE LOCAL SOURCE-CODE PATH.
+    # FIRST CHECK, IF A GLOBAL SOURCE-CODE PATH HAS BEEN DECLARED FOR ALL HOSTS.
+    # THEREFORE, FIRST SET ALL GLOBAL VARIABLES DECLARED IN THE CONFIG-FILE,
+    # BECAUSE THEY MAY BE USED AS PART OF THE PATH NAME.
+ line=""
+ grep "%" $config_file  >  $tmp_mbuild
+ while read line
+ do
+    if [[ "$line" != ""  &&  "$(echo $line | cut -d" " -s -f3)" = ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       var=`echo $line | cut -d" " -s -f1 | cut -c2-`
+       value=`echo $line | cut -d" " -s -f2`
+       eval export $var=\$value
+    fi
+ done < $tmp_mbuild
+
+    # NOW CHECK, IF A GLOBAL SOURCE-CODE-PATH HAS BEEN DECLARED
+ line=""
+ grep "%source_path" $config_file  >  $tmp_mbuild
+ while read line
+ do
+    if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       if [[ "$(echo $line | cut -d" " -s -f3)" = "" ]]
+       then
+          global_source_path=`echo $line | cut -d" " -s -f2`
+       fi
+    fi
+ done < $tmp_mbuild
+
+ line=""
+ grep  " $local_host" $config_file | grep "%source_path"  >  $tmp_mbuild
+ while read line
+ do
+    if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       local_source_path=`echo $line | cut -d" " -s -f2`
+    fi
+ done < $tmp_mbuild
+
+ if [[ "$local_source_path" = "" ]]
+ then
+    if [[ "$global_source_path" != "" ]]
+    then
+       local_source_path=$global_source_path
+    else
+       printf "\n  +++ no source path found in configuration file"
+       printf "\n      for local host \"$local_host\" "
+       printf "\n      please set \"\%source_path\" in configuration file"
+       locat=config_file; exit
+    fi
+ fi
+ eval local_source_path=$local_source_path
+ eval local_source_path=$local_source_path
+
+
+
+    # DETERMINE GLOBAL DEPOSITORY-PATH
+ line=""
+ grep "%depository_path" $config_file  >  $tmp_mbuild
+ while read line
+ do
+    if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       if [[ "$(echo $line | cut -d" " -s -f3)" = "" ]]
+       then
+          global_depository_path=`echo $line | cut -d" " -s -f2`
+       fi
+    fi
+ done < $tmp_mbuild
+
+ if [[ $found = false ]]
+ then
+    printf "\n  +++ no \%depository_path found in" 
+    printf "\n                            $config_file"
+    locat=depository_path; exit
+  fi
+
+    # CHECK, IF A MAIN PROGRAM HAS BEEN DEFINED IN THE CONFIG-FILE
+ if [[ $(grep -c "%mainprog" $config_file) != 1 ]]
+ then
+    printf "\n  +++ no main program or more than one main program defined"
+    printf "\n      in configuration file"
+    locat=configuration; exit
+ else
+    line=`grep "%mainprog" $config_file`
+    if [[ "$line" = ""  ||  $(echo $line | cut -c1) = "#" ]]
+    then
+       printf "\n  +++ no main program defined in configuration file"
+       locat=configuration; exit
+    fi
+    mainprog=`echo $line | cut -d" " -s -f2 | cut -d"." -f1`
+ fi
+
+
+
+    # CHECK IF MAKEFILE EXITS
+ [[ "$makefile" = "" ]]  &&  makefile=$local_source_path/Makefile
+ if [[ ! -f $makefile ]]
+ then
+    printf "\n  +++ makefile: "
+    printf "\n           $makefile"
+    printf "\n      does not exist"
+    locat=makefile; exit  
+ fi
+
+
+    # HEADER-OUTPUT (PART1: MESSAGES CONCERNING THE LOCAL HOST)
+ calltime=$(date)
+ printf "\n"
+ printf "#------------------------------------------------------------------------# \n"
+ printf "| %-40s%30s | \n" "$version" "$calltime"
+ printf "|                                                                        | \n"
+ printf "| %-20s%-50s | \n" "called on:" "$local_host_real_name"
+ printf "| %-20s%-50s | \n" "local username:" "$local_username"
+ printf "| %-20s%-50s | \n" "local IP-address:" "$local_address"
+ column2=$(echo $config_file | cut -c1-50 )
+ printf "| %-20s%-50s | \n" "config file:" "$column2"
+ line=$(echo "$config_file" | cut -c51-)
+ while [[ "$line" != "" ]]
+ do
+    column1=""
+    column2=$(echo $line | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "$column1" "$column2"
+    line=$(echo "$line" | cut -c51-)
+ done
+ column2=$(echo $makefile | cut -c1-50 )
+ printf "| %-20s%-50s | \n" "makefile:" "$column2"
+ line=$(echo "$makefile" | cut -c51-)
+ while [[ "$line" != "" ]]
+ do
+    column1=""
+    column2=$(echo $line | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "$column1" "$column2"
+    line=$(echo "$line" | cut -c51-)
+ done
+ column2=$(echo $local_source_path | cut -c1-50 )
+ printf "| %-20s%-50s | \n" "local source path:" "$column2"
+ line=$(echo "$local_source_path" | cut -c51-)
+ while [[ "$line" != "" ]]
+ do
+    column1=""
+    column2=$(echo $line | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "$column1" "$column2"
+    line=$(echo "$line" | cut -c51-)
+ done
+ printf "#------------------------------------------------------------------------# \n"
+
+
+ if [[ $compile_utility_programs = false ]]
+ then
+
+       # IN ANY CASE, GIVE ALL FILES WRITE-PERMIT, IN ORDER TO AVOID PROBLEMS
+       # WITH OVERWRITING FILES ON THE REMOTE HOST
+    cd  $local_source_path
+    printf "\n\n  *** tar of makefile and source files in $local_source_path"  
+    tar -cf  ${mainprog}_sources.tar  Makefile  *.$suf
+    printf "\n"
+
+ else
+    cd  $local_source_path
+    printf "\n\n  *** tar of makefile and source files in $local_source_path"  
+    printf "\n"
+ fi
+
+
+
+    # GET CONFIRMATION TO CONTINUE
+ if [[ $host = all ]]
+ then
+    printf "\n  *** updates will be made for ALL hosts found in"
+    printf "\n      the configuration file"
+ else
+    printf "\n  *** update will be made for host \"$host\" "
+ fi
+
+ if [[ $silent = false ]]
+ then
+    answer=dummy
+    printf "\n\n"
+    while [[ "$answer" != y  &&  "$answer" != Y  &&  "$answer" != n  &&  "$answer" != N ]]
+    do
+       printf " >>> continue (y/n) ?  "
+       read  answer
+    done
+    if [[ $answer = n  ||  $answer = N ]]
+    then
+       locat=user_abort; exit
+    fi
+ fi
+ 
+ 
+
+    
+    # GENERATE MODEL-VERSIONS FOR ALL HOST-BLOCKS
+    # FOUND IN THE CONFIGURATION-FILE
+ printf "\n  *** scanning configuration file for host(s) ..."
+
+ grep  %fopts  $config_file  >  $tmp_mbuild
+ while read line
+ do
+       # SKIP COMMENT-LINES
+    [[ $(echo $line | cut -c1) = "#" ]]  &&  continue
+    (( ihost = ihost + 1 ))
+    hostline[$ihost]="$line"
+ done < $tmp_mbuild
+
+ 
+ while (( ih < ihost ))
+ do
+
+    (( ih = ih + 1 ))
+
+       # DETERMINE REMOTE HOST AND CONDITIONS FOR THE RESPECTIVE BLOCK
+       # CONTINUE, ONLY IF THIS HOST HAS BEEN CHOSEN VIA -h OPTION AND IF
+       # CONDITIONS HAVE BEEN CHOSEN VIA -K OPTION
+    remote_host_string=`echo ${hostline[$ih]} | cut -d" " -s -f3-`
+    remote_host=`echo $remote_host_string | cut -d" " -f1`
+    if [[ $host != all ]]
+    then
+       [[ $remote_host != $host ]]  &&  continue
+    fi
+    host_found=true
+    condition1=`echo $remote_host_string | cut -d" " -s -f2`
+    if [[ $condition1 = $remote_host ]]
+    then
+       condition1=""
+    else
+       condition2=`echo $remote_host_string | cut -d" " -s -f3`
+    fi
+
+    if [[ $block_conditions != none ]]
+    then
+       if [[ "$condition1" != "$block_condition1"  || "$condition2" != "$block_condition2" ]]
+       then
+          continue
+       fi
+       block_conditions_found=true
+    fi
+
+    fftw_inc=""
+    fftw_lib=""
+    modules=""
+    netcdf_inc=""
+    netcdf_lib=""
+    make_options=""
+
+       # DETERMINE IP-ADDRES OF THE REMOTE-HOST
+    case  $remote_host  in
+        (lcbullhh)       remote_address=136.172.50.13;;
+        (lccrayb)        remote_address=130.73.233.1;;
+        (lccrayh)        remote_address=130.75.4.1;;
+        (lcflow)         remote_address="flow02.hpc.uni-oldenburg.de";;
+        (lckordi)        remote_adress=210.219.61.8;;
+        (lcmuk)          remote_address=130.75.105.2;;
+        (lcrte)          remote_address=133.5.185.60;;
+        (lcsb)           remote_address=147.46.30.151;;
+        (lck)            remote_address=165.132.26.61;;
+        (lckiaps)        remote_address=118.128.66.223;;
+        (lckyut)         remote_address=133.5.4.37;;
+        (lctit)          remote_address=10.1.6.170;;
+        (lcxe6)          remote_address=129.177.20.113;;
+        (lcxt5m)         remote_address=193.166.211.144;;
+        (ibmh)           remote_address=136.172.40.15;;
+        (ibmkisti)       remote_address=150.183.146.24;;
+        (ibmku)          remote_address=133.5.4.129;;
+        (ibms)           remote_address=150.183.5.101;;
+        (nech)           remote_address=136.172.44.192;;
+        (neck)           remote_address=133.5.178.11;;
+        (ground.yonsei.ac.kr) remote_address=134.75.155.33;;
+        (*)              if [[ $local_host != $remote_host ]]
+                         then
+                            printf "\n  +++ remote host \"$remote_host\" unknown";
+                            printf "\n      please inform PALM group support!"
+                            locat=remote_host; exit
+                         fi;;
+    esac
+
+
+       # DETERMINE REMOTE-USERNAME
+    line=""
+    found=false
+    grep  "$remote_host_string" $config_file | grep "%remote_username"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          remote_username=`echo $line | cut -d" " -s -f2`
+          found=true
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ $found = false ]]
+    then
+       printf "\n  +++ no remote username found in configuration file"
+       printf "\n      for \"$remote_host_string\" "
+       locat=config_file; exit
+    fi
+
+
+       # DETERMINE REMOTE-SOURCE-CODE-PATH
+    line=""
+    remote_source_path=""
+    grep  "$remote_host_string" $config_file | grep "%source_path"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          remote_source_path=`echo $line | cut -d" " -s -f2`
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ "$remote_source_path" = "" ]]
+    then
+       if [[ "$global_source_path" != "" ]]
+       then
+          remote_source_path=$global_source_path
+       else
+          printf "\n  +++ no source path found in configuration file"
+          printf "\n      for \"$remote_host_string\" "
+          locat=config_file; exit
+       fi
+    fi
+
+    remote_ud=${remote_source_path}/../UTIL
+    remote_ud=$(eval echo $remote_ud)
+
+
+       # DETERMINE REMOTE-PATH FOR MAKE-DEPOSITORY
+    remote_md=""
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%depository_path"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          remote_md=`echo $line | cut -d" " -s -f2`
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ "$remote_md" = "" ]]
+    then
+       if [[ "$global_depository_path" != "" ]]
+       then
+          remote_md=$global_depository_path
+       else
+          printf "\n  +++ no depository path found in configuration file"
+          printf "\n      for \"$remote_host_string\" "
+          printf "\n      please set \"\%depository_path\" in configuration file"
+          locat=config_file; exit
+       fi
+    fi
+
+    remote_md=$(eval echo $remote_md)
+    block=""
+    [[ "$condition1" != "" ]]  &&  block=_$condition1
+    [[ "$condition2" != "" ]]  &&  block=${block}_$condition2
+    remote_md=${remote_md}$block
+
+
+       # DETERMINE COMPILERNAME
+    line=""
+    found=false
+    grep  "$remote_host_string" $config_file | grep "%compiler_name "  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          compiler_name=`echo $line | cut -d" " -s -f2`
+          found=true
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ $found = false ]]
+    then
+       printf "\n  +++ no compiler name found in configuration file"
+       printf "\n      for \"$remote_host_string\" "
+       locat=config_file; exit
+    fi
+
+
+       # DETERMINE SSH-KEY TO BE USED
+    ssh_key=""
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%ssh_key "  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          ssh_key="-i $HOME/.ssh/`echo $line | cut -d" " -s -f2`"
+       fi
+
+    done < $tmp_mbuild
+
+
+
+       # IN CASE OF PARALLEL EXECUTION (COMPILER FOR PARALLEL EXECUTION),
+       # A SERIAL COMPILERNAME MUST BE DETERMINED ALSO
+    if [[ $(echo $remote_host_string | grep -c parallel) = 1 ]]
+    then
+       line=""
+       found=false
+       grep  "$remote_host_string" $config_file | grep "%compiler_name_ser"  >  $tmp_mbuild
+       while read line1
+       do
+
+          if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+          then
+             line="$line1"
+          fi
+
+          if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+          then
+             compiler_name_ser=`echo $line | cut -d" " -s -f2`
+             found=true
+          fi
+
+       done < $tmp_mbuild
+
+       if [[ $found = false ]]
+       then
+          printf "\n  +++ no serial compiler name found in configuration file"
+          printf "\n      for \"$remote_host_string\" "
+          locat=config_file; exit
+       fi
+    else
+       compiler_name_ser=$compiler_name
+    fi
+
+
+
+       # DETERMINE PREPROCESSOR-OPTIONS AND DIRECTIVES
+    line=""
+    found=false
+    grep  "$remote_host_string" $config_file | grep "%cpp_options"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          cpp_options=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+          found=true
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ $found = false ]]
+    then
+       printf "\n  +++ no preprocessor options found in configuration file"
+       printf "\n      for \"$remote_host_string\" "
+       locat=config_file; exit
+    fi
+
+
+       # ADD HOST-SPECIFIC PREPROCESSOR-DIRECTIVES
+    for  string  in  $remote_host_string
+    do
+       if [[ $(echo $remote_host | cut -c1-2) = lc  &&  $(echo $string | cut -c1-2) = lc ]]
+       then
+          cpp_options="$cpp_options -D__lc "
+       elif [[ $(echo $remote_host | cut -c1-3) = ibm  &&  $(echo $string | cut -c1-3) = ibm ]]
+       then
+          cpp_options="${cpp_options},-D__ibm"
+       elif [[ $(echo $remote_host | cut -c1-3) = nec  &&  $(echo $string | cut -c1-3) = nec ]]
+       then
+          cpp_options="${cpp_options} -D__nec"
+       else
+          if [[ $(echo $remote_host | cut -c1-3) = ibm ]]
+          then
+             cpp_options="${cpp_options},-D__$string"
+          else
+             cpp_options="$cpp_options -D__$string "
+          fi
+       fi
+    done
+
+
+
+       # GET netCDF OPTIONS
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%netcdf_inc"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          netcdf_inc=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+       fi
+
+    done < $tmp_mbuild
+
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%netcdf_lib"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          netcdf_lib=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+       fi
+
+    done < $tmp_mbuild
+
+
+
+       # GET FFTW OPTIONS
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%fftw_inc"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          fftw_inc=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+       fi
+
+    done < $tmp_mbuild
+
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%fftw_lib"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          fftw_lib=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+       fi
+
+    done < $tmp_mbuild
+
+
+
+       # GET MAKE OPTIONS
+    line=""
+    found=false
+    grep  "$remote_host_string" $config_file | grep "%mopts"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          make_options=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+
+       fi
+
+    done < $tmp_mbuild
+
+
+
+       # GET COMPILER OPTIONS
+    line=""
+    found=false
+    grep  "$remote_host_string" $config_file | grep "%fopts"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          compiler_options=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+          found=true
+
+             # ADD INCLUDE PATHS FOR netCDF AND FFTW
+          compiler_options="$compiler_options $netcdf_inc $fftw_inc"
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ $found = false ]]
+    then
+       printf "\n  +++ no compiler options found in configuration file"
+       printf "\n      for \"$remote_host_string\" "
+       locat=config_file; exit
+    fi
+
+
+       # GET LOGIN INIT COMMANDS
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%login_init_cmd"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          init_cmds=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+          init_cmds="${init_cmds};"
+       fi
+    done < $tmp_mbuild
+
+
+       # GET MODULES TO BE LOADED
+    line=""
+    grep  "$remote_host_string" $config_file | grep "%modules"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          modules=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+       fi
+
+    done < $tmp_mbuild
+
+
+       # GET LINKER OPTIONS
+    line=""
+    found=false
+    grep  "$remote_host_string" $config_file | grep "%lopts"  >  $tmp_mbuild
+    while read line1
+    do
+
+       if [[ $(echo $line1 | cut -d" " -s -f3-) = "$remote_host_string" ]]
+       then
+          line="$line1"
+       fi
+
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+             # REMOVE COLONS FROM THE OPTION-STRING, IF THERE ARE ANY
+          loader_options=`echo $line | cut -d" " -s -f2 | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+          found=true
+
+             # ADD netCDF- AND FFTW-LIBRARY
+          loader_options="$loader_options $netcdf_lib $fftw_lib"
+       fi
+
+    done < $tmp_mbuild
+
+    if [[ $found = false ]]
+    then
+       printf "\n  +++ no loader options found in configuration file"
+       printf "\n      for \"$remote_host_string\" "
+       locat=config_file; exit
+    fi
+
+
+    printf "\n\n#------------------------------------------------------------------------# \n"
+    if [[ $remote_host = $local_host ]]
+    then
+       column2="$remote_host (= local host!)"
+    else
+       column2=$remote_host
+    fi
+    printf "| %-20s%-50s | \n" "remote_host:" "$column2"
+    printf "|                                                                        | \n"
+    printf "| %-20s%-50s | \n" "conditions:" "$condition1 $condition2"
+    column2=$(echo "$remote_md" | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "make depository:" "$column2"
+    line=$(echo "$remote_md" | cut -c51-)
+    while [[ "$line" != "" ]]
+    do
+       column1=""
+       column2=$(echo "$line" | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "$column1" "$column2"
+       line=$(echo "$line" | cut -c51-)
+    done
+    if [[ $compile_utility_programs = true ]]
+    then
+       column2=$(echo "$remote_ud" | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "utility directory:" "$column2"
+       line=$(echo "$remote_ud" | cut -c51-)
+       while [[ "$line" != "" ]]
+       do
+          column1=""
+          column2=$(echo "$line" | cut -c1-50 )
+          printf "| %-20s%-50s | \n" "$column1" "$column2"
+          line=$(echo "$line" | cut -c51-)
+       done
+    fi
+    printf "| %-20s%-50s | \n" "username:" "$remote_username"
+    printf "| %-20s%-50s | \n" "address:" "$remote_address"
+    printf "| %-20s%-50s | \n" "compiler:" "$compiler_name"
+    if [[ $compile_utility_programs = true ]]
+    then
+       printf "| %-20s%-50s | \n" "serial compiler:" "$compiler_name_ser"
+    fi
+    if [[ "$make_options" != "" ]]
+    then
+       printf "| %-20s%-50s | \n" "make options:" "$make_options"
+    fi
+    column2=$(echo $cpp_options | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "cpp options:" "$column2"
+    line=$(echo "$cpp_options" | cut -c51-)
+    while [[ "$line" != "" ]]
+    do
+       column1=""
+       column2=$(echo $line | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "$column1" "$column2"
+       line=$(echo "$line" | cut -c51-)
+    done
+    column2=$(echo $compiler_options | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "compiler options:" "$column2"
+    line=$(echo "$compiler_options" | cut -c51-)
+    while [[ "$line" != "" ]]
+    do
+       column1=""
+       column2=$(echo $line | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "$column1" "$column2"
+       line=$(echo "$line" | cut -c51-)
+    done
+    column2=$(echo $loader_options | cut -c1-50 )
+    printf "| %-20s%-50s | \n" "loader options:" "$column2"
+    line=$(echo "$loader_options" | cut -c51-)
+    while [[ "$line" != "" ]]
+    do
+       column1=""
+       column2=$(echo $line | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "$column1" "$column2"
+       line=$(echo "$line" | cut -c51-)
+    done
+    if [[ $init_cmds != "" ]]
+    then
+       column2=$(echo $init_cmds | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "login init command:" "$column2"
+       line=$(echo "$init_cmds" | cut -c51-)
+       while [[ "$line" != "" ]]
+       do
+          column1=""
+          column2=$(echo $line | cut -c1-50 )
+          printf "| %-20s%-50s | \n" "$column1" "$column2"
+          line=$(echo "$line" | cut -c51-)
+       done
+    fi
+    if [[ $modules != "" ]]
+    then
+       column2=$(echo $modules | cut -c1-50 )
+       printf "| %-20s%-50s | \n" "modules to be load:" "$column2"
+       line=$(echo "$modules" | cut -c51-)
+       while [[ "$line" != "" ]]
+       do
+          column1=""
+          column2=$(echo $line | cut -c1-50 )
+          printf "| %-20s%-50s | \n" "$column1" "$column2"
+          line=$(echo "$line" | cut -c51-)
+       done
+    fi
+    printf "#------------------------------------------------------------------------# \n"
+
+    if [[ $silent = false ]]
+    then
+       answer=dummy
+       printf "\n\n"
+       while [[ "$answer" != y  &&  "$answer" != Y  && "$answer" != c  &&  "$answer" != C  && "$answer" != s  &&  "$answer" != S  &&  "$answer" != a  &&  "$answer" != A ]]
+       do
+          printf " >>> continue (y(es)/c(ontinue)/a(bort)/s(skip)) ?  "
+          read  answer
+       done
+       if [[ $answer = a  ||  $answer = A ]]
+       then
+          locat=user_abort; exit
+       fi
+       if [[ $answer = c  ||  $answer = C ]]
+       then
+          silent=true
+       fi
+       if [[ $answer = s  ||  $answer = S ]]
+       then
+          continue
+       fi
+    fi
+
+
+       # MAKE ON REMOTE HOST
+    if [[ $remote_host != $local_host ]]
+    then
+       if [[ $compile_utility_programs = false ]]
+       then
+
+             # COPY CURRENT SOURCE CODE TO SOURCE-CODE DIRECTORY ON THE REMOTE HOST
+             # CREATE THIS DIRECTORY, IF IT DOES NOT EXIST
+          echo "  *** copying \"${mainprog}_sources.tar\" to \"${remote_address}:${remote_md}/\" "
+          if [[ $remote_host != lctit ]]
+          then
+             ssh  $ssh_key  ${remote_username}@${remote_address} "[[ ! -d ${remote_md} ]]  &&  (echo \"  *** ${remote_md} will be created\"; mkdir -p  ${remote_md})"
+          else
+                # USING PIPE, BECAUSE TIT ALLOWS SSH TO EXECUTE ONLY SOME SELECTED COMMANDS
+             echo "[[ ! -d ${remote_md} ]]  &&  (echo \"  *** ${remote_md} will be created\"; mkdir -p  ${remote_md})"  |  ssh ${remote_username}@${remote_address}  2>&1
+          fi
+
+          scp  $ssh_key ${local_source_path}/${mainprog}_sources.tar  ${remote_username}@${remote_address}:${remote_md}/${mainprog}_sources.tar
+
+
+
+             # UNTAR PREVIOUS UPDATE ON REMOTE HOST, IF EXISTING
+          echo "  *** untar previous update on remote host, if existing"
+          if [[ $remote_host != lctit ]]
+          then
+             ssh  $ssh_key  ${remote_username}@${remote_address}  "cd ${remote_md}; [[ -f ${mainprog}_current_version.tar ]]  &&  tar -xf  ${mainprog}_current_version.tar"
+          else
+                # USING PIPE, BECAUSE TIT ALLOWS SSH TO EXECUTE ONLY SOME SELECTED COMMANDS
+             echo "cd ${remote_md}; [[ -f ${mainprog}_current_version.tar ]]  &&  tar -xf  ${mainprog}_current_version.tar"  |  ssh  ${remote_username}@${remote_address}  2>&1
+          fi
+
+
+             # UNTAR CURRENT SOURCES ON REMOTE HOST
+          echo "  *** untar current sources on remote host"
+          if [[ $remote_host != lctit ]]
+          then
+             ssh  $ssh_key  ${remote_username}@${remote_address}  "cd ${remote_md}; tar -xf  ${mainprog}_sources.tar"
+          else
+                # USING PIPE, BECAUSE TIT ALLOWS SSH TO EXECUTE ONLY SOME SELECTED COMMANDS
+             echo  "cd ${remote_md}; tar -xf  ${mainprog}_sources.tar"  |  ssh  ${remote_username}@${remote_address}  2>&1
+          fi
+
+
+             # EXECUTE MAKE WITH THOSE OPTIONS DETERMINED ABOVE
+             # COMMANDS WILL BE COMMUNICATED TO SSH VIA PIPE, SINCE THIS WAY THE SYSTEM- AND
+             # USER-PROFILES OF THE SHELL ARE COMPLETELY EXECUTED (OTHERWISE, MAKE
+             # WILL E.G. MISS THE COMPILER-PATHS)
+          echo "  *** execute \"make\" on remote host"
+
+
+             # GENERATE MAKE CALL WITH MAKE OPTIONS
+          if [[ $remote_host = nech ]]
+          then
+             make_call_string="sxmake  $make_options  PROG=$mainprog  F90=$compiler_name  COPT=\"$cpp_options\"  F90FLAGS=\"$compiler_options\"  LDFLAGS=\"$loader_options\" "
+          else
+             make_call_string="make  $make_options  PROG=$mainprog  F90=$compiler_name  COPT=\"$cpp_options\"  F90FLAGS=\"$compiler_options\"  LDFLAGS=\"$loader_options\" "
+          fi
+
+             # GENERATE COMMAND TO LOAD MODULES, IF MODULES ARE GIVEN
+          if [[ "$modules" != "" ]]
+          then
+             if [[ $remote_host = lctit ]]
+             then
+                module_calls=". $modules"
+             else
+                module_calls="module load ${modules};"
+             fi
+          else
+             module_calls=""
+          fi
+
+          if [[ $remote_host = ibmkisti  ||  $remote_host = ibms ]]
+          then
+
+             ssh  ${remote_username}@${remote_address}  "$init_cmds $module_calls cd ${remote_md}; echo '$make_call_string' > LAST_MAKE_CALL; chmod u+x LAST_MAKE_CALL; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" 2>&1 | tee ${remote_host}_last_make_protokoll
+
+          elif [[ $remote_host = ibmh ]]
+          then
+
+             echo "$init_cmds $module_calls export OBJECT_MODE=64; cd ${remote_md}; echo $make_call_string > LAST_MAKE_CALL; chmod u+x LAST_MAKE_CALL; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" | ssh  ${remote_username}@${remote_address} 2>&1 | tee ${remote_host}_last_make_protokoll
+
+          elif [[ $remote_host = lctit ]]
+          then
+
+             echo  " "  >  ${remote_host}_last_make_protokoll
+             while [[ $(cat ${remote_host}_last_make_protokoll | grep -c "Forwarding to N1GE") = 0 ]]
+             do
+                echo "cd ${remote_md}; echo $make_call_string > LAST_MAKE_CALL; chmod u+x LAST_MAKE_CALL; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" | ssh  ${remote_username}@${remote_address} 2>&1 | tee ${remote_host}_last_make_protokoll
+             done
+
+          elif [[ $remote_host = lcxe6 ]]
+          then
+
+             ssh  ${remote_username}@${remote_address} "$init_cmds $module_calls cd ${remote_md}; echo $make_call_string > LAST_MAKE_CALL; chmod u+x LAST_MAKE_CALL; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" 2>&1 | tee ${remote_host}_last_make_protokoll
+
+          else
+
+             echo "$init_cmds $module_calls cd ${remote_md}; echo $make_call_string > LAST_MAKE_CALL; chmod u+x LAST_MAKE_CALL; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" | ssh  $ssh_key  ${remote_username}@${remote_address} 2>&1 | tee ${remote_host}_last_make_protokoll
+
+          fi
+
+          if [[ $(grep -c MAKE_ERROR ${remote_host}_last_make_protokoll) != 0 ]]
+          then
+             printf "\a\n  +++ error(s) occurred during compiling or linking on host \"$remote_host\" "
+             if [[ $silent = false ]]
+             then
+                answer=dummy
+                printf "\n"
+                while [[ "$answer" != c  &&  "$answer" != k ]]
+                do
+                   printf "  >>> continue / list errors / kill mbuild (c/l/k) ? "
+                   read  answer
+                   if [[ "$answer" = l ]]
+                   then
+                      more ${remote_host}_last_make_protokoll
+                   fi
+                done
+                if [[ $answer = k ]]
+                then
+                   locat=user_abort; exit
+                fi
+             fi
+          fi
+
+
+
+             # TAR UPDATED VERSION ON THE REMOTE HOST
+          printf "\n  *** tar update on remote host ..."
+          if [[ $remote_host != lctit ]]
+          then
+             ssh  $ssh_key  ${remote_username}@${remote_address}  "cd ${remote_md}; chmod u+w *; tar -cf  ${mainprog}_current_version.tar  ${mainprog}  *.f90 *.o *.mod"
+          else
+                # USING PIPE, BECAUSE TIT ALLOWS SSH TO EXECUTE ONLY SOME SELECTED COMMANDS
+             echo  "cd ${remote_md}; chmod u+w *; tar -cf  ${mainprog}_current_version.tar  ${mainprog}  *.f90 *.o *.mod"  |  ssh  ${remote_username}@${remote_address}  2>&1
+          fi
+
+
+
+          # DO THE SAME THINGS FOR THE UTILITY-ROUTINES:
+          # COPY CURRENT SOURCE CODE TO SOURCE-CODE DIRECTORY ON THE REMOTE HOST
+          # CREATE THIS DIRECTORY, IF IT DOES NOT EXIST
+       elif [[ $compile_utility_programs = true ]]
+       then
+
+          printf "\n\n"
+          echo "  *** copying scripts and utility programs to \"${remote_address}:${remote_ud}/\" "
+          cd  ${local_source_path}/../SCRIPTS
+
+          if [[ $remote_host != lctit ]]
+          then
+             ssh  $ssh_key  ${remote_username}@${remote_address} "[[ ! -d ${remote_ud} ]]  &&  (echo \"  *** ${remote_ud} will be created\"; mkdir -p  ${remote_ud}); [[ ! -d ${remote_ud}/../SCRIPTS ]]  &&  (echo \"  *** ${remote_ud}/../SCRIPTS will be created\"; mkdir -p ${remote_ud}/../SCRIPTS)"
+          else
+                # USING PIPE, BECAUSE TIT ALLOWS SSH TO EXECUTE ONLY SOME SELECTED COMMANDS
+             echo "[[ ! -d ${remote_ud} ]]  &&  (echo \"  *** ${remote_ud} will be created\"; mkdir -p  ${remote_ud}); [[ ! -d ${remote_ud}/../SCRIPTS ]]  &&  (echo \"  *** ${remote_ud}/../SCRIPTS will be created\"; mkdir -p  ${remote_ud}/../SCRIPTS)"  |  ssh ${remote_username}@${remote_address}  2>&1
+          fi
+
+             # COPY SHELL-SCRIPTS
+          scp  $ssh_key  batch_scp mbuild mrun process_dvr_output .dvrserver.config subjob ${remote_username}@${remote_address}:${remote_ud}/../SCRIPTS  >  /dev/null
+
+          cd  -  > /dev/null
+          cd  ${local_source_path}/../UTIL
+
+
+             # COPY UTILITY-ROUTINES
+          scp  $ssh_key  Makefile  *.f90  ${remote_username}@${remote_address}:${remote_ud}  >  /dev/null
+
+
+
+             # EXECUTE MAKE WITH THOSE OPTIONS DETERMINED ABOVE
+             # COMMANDS WILL BE COMMUNICATED TO SSH VIA PIPE, SINCE THIS WAY THE SYSTEM- AND
+             # USER-PROFILES OF THE SHELL ARE COMPLETELY EXECUTED (OTHERWISE, MAKE
+             # WILL E.G. MISS THE COMPILER-PATHS)
+          echo "  *** execute \"make\" on remote host"
+
+          if [[ $remote_host = nech ]]
+          then
+             make_call_string="sxmake  $make_options  BLOCK=$block  F90=$compiler_name  F90_SER=$compiler_name_ser  COPT=\"$cpp_options\"  F90FLAGS=\"$compiler_options\"  LDFLAGS=\"$loader_options\" "
+          else
+             make_call_string="make  $make_options  BLOCK=$block  F90=$compiler_name  F90_SER=$compiler_name_ser  COPT=\"$cpp_options\"  F90FLAGS=\"$compiler_options\"  LDFLAGS=\"$loader_options\" "
+          fi
+
+             # GENERATE COMMAND TO LOAD MODULES, IF MODULES ARE GIVEN
+          if [[ "$modules" != "" ]]
+          then
+             if [[ $remote_host = lctit ]]
+             then
+                module_calls=". $modules"
+             else
+                module_calls="module load ${modules};"
+             fi
+          else
+             module_calls=""
+          fi
+
+
+          if [[ $remote_host = ibms ]]
+          then
+
+             ssh  ${remote_username}@${remote_address}  "$init_cmds $module_calls cd ${remote_ud}; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR"
+
+          elif [[ $remote_host = ibmh ]]
+          then
+
+             echo "$init_cmds $module_calls export OBJECT_MODE=64; cd ${remote_ud}; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" | ssh  ${remote_username}@${remote_address}
+
+          elif [[ $remote_host = lctit ]]
+          then
+
+             echo  " "  >  ${remote_host}_last_make_protokoll
+             while [[ $(cat ${remote_host}_last_make_protokoll | grep -c "Forwarding to N1GE") = 0 ]]
+             do
+                echo "$init_cmds $module_calls cd ${remote_ud}; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" | ssh  ${remote_username}@${remote_address} 2>&1 | tee ${remote_host}_last_make_protokoll
+             done
+
+          elif [[ $remote_host = lcxe6 ]]
+          then
+
+             ssh  ${remote_username}@${remote_address} "$init_cmds $module_calls cd ${remote_ud}; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" 2>&1 | tee ${remote_host}_last_make_protokoll
+
+          else
+
+             echo "$init_cmds $module_calls cd ${remote_ud}; $make_call_string; [[ \$? != 0 ]] && echo MAKE_ERROR" | ssh  $ssh_key  ${remote_username}@${remote_address} 2>&1 | tee ${remote_host}_last_make_protokoll
+
+          fi
+
+       fi    # END OF COMPILING UTILITY-ROUTINES
+
+       rm -rf  ${remote_host}_last_make_protokoll
+
+       # MAKE ON LOCAL HOST
+    else
+
+          # INIT WORKAROUND FOR lcxe6
+       if [[ $remote_host = lcxe6  ||  $remote_host = lccrayb  ||  $remote_host = lccrayf ||  $remote_host = lccrayh ]]
+       then
+
+          eval $init_cmds  >  /dev/null  2>&1
+
+       fi
+
+       # FIRST LOAD MODULES, IF GIVEN
+       if [[ "$modules" != "" ]]
+       then
+          if [[ $remote_host = lctit ]]
+          then
+             . $modules
+          elif [[ $remote_host = lcflow ]]
+          then
+             eval `$MODULESHOME/bin/modulecmd ksh load ${modules}`
+          else
+             eval init_cmds=$init_cmds
+             module load ${modules}
+          fi
+       fi
+
+
+       if [[ $compile_utility_programs = false ]]
+       then
+
+             # CREATE MAKE-DEPOSITORY, IF IT DOES NOT EXIST
+          eval remote_md=$remote_md
+          if [[ ! -d $remote_md ]]
+          then
+             if  mkdir $remote_md
+             then
+                printf "\n\n  *** directory for make depository:"
+                printf "\n           $remote_md"
+                printf "\n      was created\n"
+             else
+                printf "\n  +++ directory for make depository:"
+                printf "\n           $remote_md"
+                printf "\n      cannot be created"
+                locat=local_depository_path; exit
+             fi
+          fi
+
+             # COPY SOURCE-CODE FROM REPOSITORY TO MAKE-DEPOSITORY
+          echo " "
+          echo "  *** updating sources in $remote_md"
+          cd  $remote_md
+          cp  $local_source_path/${mainprog}_sources.tar  .
+          tar xf  ${mainprog}_sources.tar
+
+             # CALL MAKE ON LOCAL HOST USING THE  OPTIONS DETERMINED FURTHER ABOVE
+          echo " "
+          echo "  *** execute \"make\" on local host"
+
+          make  $make_options  PROG=$mainprog  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$compiler_options"  LDFLAGS="$loader_options"  2>&1 | tee ${remote_host}_last_make_protokoll
+
+          if [[ $? != 0 ]]
+          then
+             printf "\a\n  +++ error(s) occurred during compiling or linking on host \"$remote_host\" "
+             if [[ $silent = false ]]
+             then
+                answer=dummy
+                printf "\n"
+                while [[ "$answer" != c  &&  "$answer" != k ]]
+                do
+                   printf "  >>> continue / list errors / kill mbuild (c/l/k) ? "
+                   read  answer
+                   if [[ "$answer" = l ]]
+                   then
+                      more ${remote_host}_last_make_protokoll
+                   fi
+                done
+                if [[ $answer = k ]]
+                then
+                   locat=user_abort; exit
+                fi
+             fi
+          fi
+
+
+             # TAR NEW VERSION ON LOCAL HOST
+          printf "\n  *** tar update on local host ..."
+          tar -cf  ${mainprog}_current_version.tar  *.$suf *.o *.mod
+
+
+          # COMPILE THE UTILITY PROGRAMS
+       elif [[ $compile_utility_programs = true ]]
+       then
+          printf "\n\n"
+          echo "  *** compiling the utility programs ..."
+          cd ${local_source_path}/../UTIL
+
+             # TOUCH FILES IN ORDER TO FORCE COMPILATION FOR EVERY BLOCK
+          touch  *.f90
+          eval init_cmds=$init_cmds
+          make  $make_options  BLOCK=$block  F90=$compiler_name  F90_SER=$compiler_name_ser  COPT="$cpp_options"  F90FLAGS="$compiler_options"  LDFLAGS="$loader_options"
+
+             # CHECK IF QMAKE IS AVAILABLE AND COMPILE MRUNGUI
+          if [[ $util_compiled_localhost == false ]]
+          then
+             printf "\n\n"
+             echo "  *** compiling the mrun GUI"
+             if which qmake >/dev/null; then
+                cd mrungui
+                touch *
+                qmake
+                make
+                make clean
+                rm Makefile
+                cd ..
+             else
+                echo "  +++ no qmake found. The (optional) GUI will not be compiled."
+             fi
+          else
+             cd $check_depository_path
+             printf "\n\n"
+             echo "  *** skipped compilation of mrun GUI."            
+          fi
+
+       fi
+    fi
+ done
+
+
+ if [[ $host_found = false ]]
+ then
+    if [[ $host = all ]]
+    then
+       printf "\n  +++ no hosts found in configuration file"
+    else
+       printf "\n  +++ host \"$host\" not found in configuration file"
+    fi
+    locat=config_file; exit
+ fi
+
+ if [[ "$block_conditions" != none  &&  $block_conditions_found = false ]]
+ then
+    printf "\n  +++ block conditions \"$block_conditions\" not found for host \"$host\""
+ fi
+
+
+    # FINAL WORK
+ rm -f  hosts_found_in_config_file

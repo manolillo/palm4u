@@ -1,0 +1,109 @@
+\documentclass[11pt,a4paper,titlepage]{scrreprt}
+\documentstyle[Flow]
+\usepackage{graphics}
+\usepackage{german}
+\usepackage{chimuk}
+\usepackage{bibgerm}
+\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{flafter}
+\usepackage[dvips]{epsfig}
+\usepackage{texdraw}
+\usepackage{supertabular}
+\usepackage{longtable}
+\usepackage{scrpage}
+\usepackage{fancyheadings}
+\usepackage{flow}
+\frenchspacing
+\sloppy
+\pagestyle{fancyplain}
+\addtolength{\headheight}{\baselineskip}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter~~#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\lhead{\fancyplain{}{\bfseries\leftmark}}
+\rhead{}
+%\begin{titlepage}
+%\author{Gerald Steinfeld}
+%\title{Prandtl layer parameterisation in PALM}
+%\end{titlepage}
+\begin{document}
+%\maketitle
+%\tableofcontents
+\pagebreak
+
+\chapter{Plant canopy model in PALM}
+The basic equations used in the LES are the Navier-Stokes equations using the Boussinesq approximation (conservation of momentum; equation \ref{NSG}), 
+the equation of continuity (conservation of mass; equation \ref{KON}), the first law of thermodynamics (conservation of energy; equation \ref{1HS}) and 
+the conservation equation for a passive scalar (equation \ref{CPS}). All equations are filtered (in PALM by averaging over a discrete grid volume) in 
+order to eliminate small-scale perturbations. Thus, the set of equations on that the LES model PALM is based is formed by the following equations:  
+
+\begin{equation} \label{NSG}
+\frac{\partial \overline{u}_i}{\partial t} = - \frac{\partial}{\partial x_k} \overline{u}_k \overline{u}_i - \frac{1}{\rho_0} \frac{\partial \overline{p^{\ast}}}{\partial x_i} - \left ( \epsilon_{ijk} f_j \overline{u}_k - \epsilon_{i3k} f_3 u_{g_k} \right ) + g \frac{\overline{\Theta^{\ast}}}{\Theta_0} \delta_{i3} - \frac{\partial}{\partial x_k} \overline{u_i'u_k'} - c_d a U \overline{u}_i
+\end{equation}
+
+\begin{equation} \label{KON} 
+\frac{\partial \overline{u}}{\partial x_i} = 0
+\end{equation}
+
+\begin{equation} \label{1HS}
+\frac{\partial \overline{\Theta}}{\partial t} = - \frac {\partial}{\partial x_k} \overline{u}_k \overline{\Theta} - \frac{\partial}{\partial x_k} \overline{u_k'\Theta'} + S
+\end{equation}
+
+\begin{equation} \label{CPS}
+\frac{\partial \overline s}{\partial t} = - \frac{\partial}{\partial x_k} \overline{u}_k \overline{s} - \frac{\partial}{\partial x_k} \overline{u_k's'} - c_s a U \left ( \overline{s} - s_l \right )
+\end{equation}
+
+The overline denotes filtered variables, while the prime denotes sub-gridscale, local spatial fluctuations at time t that are not resolved by the model; 
+the star denotes a departure of the basic state that is marked by a subscript $0$ and that varies only 
+with height; $u_i$ is the velocity in the $x_i$-direction; $\rho$ is the air density; $p$ is the pressure; $f_i=(0,2\Omega cos(\phi),2\Omega sin(\phi))$ 
+is the Coriolis parameter with the angular velocity of the earth $\Omega$; ${u_g}_i$ denotes the components of the geostrophic wind; $g$ is the 
+acceleration due to gravity; $\Theta$ is the potential temperature and $s$ denotes the concentration of a passive scalar.
+The sub-gridscale fluxes in equations \ref{NSG}, \ref{1HS} and \ref{CPS} are parameterised by a 1.5-order closure model using resolved-scale variables 
+and the sub-gridscale turbulent kinetic energy $\overline{e}$. Thus, an additional prognostic equation has to be solved for the sub-gridscale turbulent 
+kinetic energy $\overline{e}$:     
+
+\begin{equation} \label{TKE}
+\frac{\partial \overline e}{\partial t} = - \frac{\partial}{\partial x_k} \overline{u}_k \overline{e} - \tau_{ij} \frac{\partial \overline{u}_i}{\partial x_j} + \frac{g}{\Theta_0} \overline{u_3'\Theta_j'} - \frac{\partial}{\partial x_j} \left ( \overline{u_j' \left ( e + \frac{p'}{\rho_0} \right ) } \right ) - \epsilon - 2 c_d a U \overline{e}.
+\end{equation}
+
+Here, $\tau_{ij}$ denotes the sub-gridscale stress tensor. The final terms in equations \ref{NSG}, \ref{1HS}, \ref{CPS} and \ref{TKE} represent the sink 
+or source of momentum, heat and the passive scalar due to canopy elements, respectively. Thus, these terms do only occur within the plant canopy, while 
+they vanish outside the plant canopy (in PALM this distinction between canopy layer and the remaining area is realised by the specification of a height 
+index that contains the information up to which vertical grid level the plant canopy extends; the additional terms for the plant canopy layer are 
+only evaluated for grid levels smaller or equal that plant canopy height index). The additional, canopy related source and sink sources, are considered in 
+PALM in the same way as in the models of WATANABE (2004, Boundary-Layer Meteorol., 112, 307-341) and SHAW AND SCHUMANN 
+(1992, Boundary-Layer Meteorol., 61, 47-64).   
+$c_d$ and $c_s$ are the leaf drag coefficient and the scalar exchange 
+coefficient for a leaf, respectively; $a$ is the leaf area density; $U$ is the instantaneous local wind speed, defined as 
+\begin{equation}
+U = \left (  \overline{u}^2 + \overline{v}^2 + \overline{w}^2 \right )^{\frac{1}{2}},
+\end{equation}
+and $s_l$ is the scalar concentration at a leaf surface. 
+The heat source distribution $S(z)$ in convective conditions has been given by BROWN AND COVEY (1966, Agric. Meteorol., 3, 73-96) and SHAW AND SCHUMANN 
+(1992). The assumption that leads to the heat source distribution is that short-wave solar radiation penetrates the plant canopy and warms the foliage 
+which, in turn, warms the air in contact with it. The heat source is distributed in such a way that the heat flux $Q$ at the top of the canopy, $z=h$, is 
+prescribed and that the heat flux within the canopy follows a declining exponential function of the downward cumulative leaf area index. The decline of 
+heat flux with decreasing height is similar to the decline of net radiation that has been described by BROWN AND COVEY (1966). The heat source $S(z)$ that 
+is included in equation \ref{1HS} is the vertical derivative of the upward kinematic vertical heat flux $Q$   
+\begin{equation}
+S = \frac{\partial Q}{\partial z}.
+\end{equation}
+According to the explanations given above the upward kinematic vertical heat flux $Q$ is evaluated as
+\begin{equation} \label{kvh}
+Q(z) = Q(h) exp(- \alpha F(z)),
+\end{equation}
+where $F$ is the downward cumulative leaf area index (non-dimensional) determined by integration over the leaf area density $a$ 
+\begin{equation}
+F = \int_z^h a dz
+\end{equation}
+and $\alpha$ is an extinction coefficient that is set by default to 0.6 in PALM.
+
+The final term in equation \ref{TKE} represents the sink for sub-gridscale turbulent kinetic energy 
+due to the rapid dissipation of wake turbulence formed in the lee of canopy elements. This term is included 
+on the assumption that individual wake motions behind canopy elements are of even smaller scale than those 
+making up the bulk of sub-gridscale kinetic energy. For simulations in that the grid length is of the 
+order of the scale of wake turbulence modifications within equation \ref{TKE} might be necessary. KANDA 
+AND HINO (1994, Boundary-Layer Meteorol., 68, 237-257) made a suggestion how equation \ref{TKE} has to be 
+modified for such cases. 
+
+\end{document}

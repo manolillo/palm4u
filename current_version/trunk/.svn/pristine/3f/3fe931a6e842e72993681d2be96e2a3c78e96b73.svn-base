@@ -1,0 +1,37 @@
+ &inipar nx = 39, ny = 39, nz = 40,
+         dx = 50.0, dy = 50.0, dz = 50.0,
+         dz_stretch_level = 1200.0,
+
+         fft_method = 'temperton-algorithm',
+
+         initializing_actions = 'set_constant_profiles',
+         ug_surface = 0.0, vg_surface = 0.0,
+         pt_vertical_gradient       = 0.0, 1.0,
+         pt_vertical_gradient_level = 0.0, 800.0,
+
+
+	 surface_heatflux = 0.1, bc_pt_b = 'neumann',  /
+
+
+ &d3par  end_time = 3600.0,
+
+         create_disturbances = .T.,
+         dt_disturb = 150.0, disturbance_energy_limit = 0.01,
+
+         dt_run_control = 0.0,
+
+         data_output = 'w_xy', 'w_xz', 'w_xz_av', 'pt_xy', 'pt_xz',
+
+         dt_data_output = 900.0,
+         dt_data_output_av = 1800.0,
+         averaging_interval = 900.0,
+         dt_averaging_input = 10.0,
+
+         section_xy = 2, 10, section_xz = 20,
+
+         data_output_2d_on_each_pe = .F.,
+
+         dt_dopr = 900.0,
+         averaging_interval_pr = 600.0, dt_averaging_input_pr = 10.0,
+         data_output_pr = '#pt', 'w"pt"', 'w*pt*', 'wpt', 'w*2', 'pt*2', /
+

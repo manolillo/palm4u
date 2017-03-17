@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+<meta content="text/html; charset=windows-1252" http-equiv="CONTENT-TYPE"><title>PALM chapter 5.1</title>
+<meta content="StarOffice 7 (Win32)" name="GENERATOR">
+<meta content="Siegfried Raasch" name="AUTHOR"> <meta content="20041103;12395815" name="CREATED"> <meta content="20041119;12321236" name="CHANGED"> <meta content="parallel LES model" name="KEYWORDS"></head><body style="direction: ltr;" lang="en-US"><h3>5.1
+Installation of new / other versions, version update</h3>
+<p>The PALM&nbsp;group announces code revisions by emails
+send to the
+PALM mailing list. If you like to be put on this list, just send an
+email to <a href="mailto:raasch@muk.uni-hannover.de">raasch@muk.uni-hannover.de</a>.
+Details about new releases can be found in the
+<a href="../tec/technical_documentation.html">technical/numerical
+documentation</a>.</p><p>Generally,
+there are two ways of installing new / other versions. You can install
+a version from the list of available PALM releases or you can update
+your current installation with the newest developer version of PALM.</p><p>If you have previously checked out the most recent (at that time)  PALM developer version by using</p><p style="margin-left: 40px; font-family: Courier New,Courier,monospace;">svn checkout ...../palm/trunk trunk &nbsp; &nbsp; ,</p><p>you can easily make an update to the newest version by
+changing into
+the working directory<span style="font-family: Courier New,Courier,monospace;">
+~/palm/current_version
+</span>and executing<span style="font-family: Courier New,Courier,monospace;"></span></p><p style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">svn
+update trunk</span></p><p><span style="font-family: Courier New,Courier,monospace;"></span>This
+updates all files in the PALM working copy in subdirectory<span style="font-family: Courier New,Courier,monospace;"> trunk</span>.
+The update may fail due&nbsp;the&nbsp;<span style="font-weight: bold;">subversion</span> rules, if
+you have modified the contents of<span style="font-family: Courier New,Courier,monospace;"> trunk</span>.
+In case of any conflicts with the repository, please refer to the <span style="font-weight: bold;">subversion</span>
+documentation on how to remove them.&nbsp;In order to avoid such
+conflicts, modifications of the default PALM code should be omitted and
+be restricted to the user-interface only
+(see <a href="chapter_3.5.html">chapter
+3.5</a>).</p>
+
+<p>Alternatively, you can install new or other releases in a
+different directory, eg.</p><p style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">mkdir
+~/palm/release-3.1c</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">cd
+~/palm/release-3.1c</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">svn
+checkout --username &lt;your username&gt;
+svn://130.75.105.2/palm/tags/release-3.1c trunk</span></p>
+<p>However, this would require to carry out again the complete
+installation process described in chapter 5.0. So far, differet
+versions of PALM cannot be used at the same time. The PALM releases from<span style="font-family: Courier New,Courier,monospace;"> palm/tags&nbsp;</span>never have to be updated with "<span style="font-family: Courier New,Courier,monospace;">svn update</span>", since these releases are frozen!</p><p>After
+updating the working copy, please check for any differences between
+your current configuration file (<span style="font-family: Courier New,Courier,monospace;">.mrun.config</span>)
+and the default configuration file under<span style="font-family: Courier New,Courier,monospace;">
+trunk/SCRIPTS/.mrun.config.default </span>and adjust your
+current file, if neccessary.</p><p>The scripts and the
+pre-compiled code must then be updated
+via</p><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">mbuild
+-u -h lcmuk<br>mbuild -u -h ibmh<br>mbuild -h ibmh</div><p>or
+via</p>
+
+<blockquote style="font-family: Courier New,Courier,monospace;">mbuild
+-u<br>mbuild</blockquote>
+<p>on all remote hosts listed in the configuration file<span style="font-family: Courier New,Courier,monospace;">
+.mrun.config</span>.</p><p>You
+can use "subversion" for code comparison between the different
+versions. Also,&nbsp;modified code can be committed to the repository,
+but this is restricted to&nbsp;PALM developers. </p>
+<p>As a last step, a suitable test run should be carried out. It
+should
+be carefully examined whether and how the results created by the new
+version differ from those of the old version. Possible discrepancies
+which go beyond the ones announced in the <a href="../tec/technical_documentation.html">technical/numerical
+documentation</a>
+should be communicated as soon as possible to the PALM group.
+</p><hr>
+<p><br><font color="#000080"><font color="#000080"><a href="chapter_5.0.html"><font color="#000080"><img name="Grafik1" src="left.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img name="Grafik2" src="up.gif" align="bottom" border="2" height="32" width="32"></font></a></font></font><br>
+&nbsp;
+<br>&nbsp;<span style="font-style: italic;">Last
+change:</span> $Id$<br>
+</p></body></html>

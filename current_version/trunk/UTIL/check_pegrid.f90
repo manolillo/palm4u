@@ -1,0 +1,172 @@
+ PROGRAM check_pegrid
+
+!--------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the terms
+! of the GNU General Public License as published by the Free Software Foundation,
+! either version 3 of the License, or (at your option) any later version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2014  Leibniz Universitaet Hannover
+!--------------------------------------------------------------------------------!
+!
+! Current revisions:
+! -----------------
+! 
+!
+! Former revisions:
+! -----------------
+! $Id: check_pegrid.f90 1310 2014-03-14 08:01:56Z raasch $
+!
+! 1046 2012-11-09 14:38:45Z maronga
+! code put under GPL (PALM 3.9)
+!
+! Description:
+! -------------
+! Ueberpruefung der Konsistenz von Prozessortopologie und gewaehlten Feldgrenzen
+!-------------------------------------------------------------------------------!
+
+    IMPLICIT NONE
+
+    CHARACTER (LEN=1) ::  char = ''
+    INTEGER ::  i, j, k, maximum_grid_level, mg_levels_x, mg_levels_y,        &
+                mg_levels_z, numprocs, numproc_sqr, nx, nxanz, ny, nyanz, nz, &
+                pdims(2)
+
+!
+!-- Prozessoranzahl abfragen
+    PRINT*, '*** Anzahl der verfuegbaren PE''s:'
+    READ (*,*)  numprocs
+
+!
+!-- Prozessortopologie bestimmen
+    numproc_sqr = SQRT( REAL( numprocs ) )
+    pdims(1)    = MAX( numproc_sqr , 1 )
+    DO  WHILE ( MOD( numprocs , pdims(1) ) /= 0 )
+       pdims(1) = pdims(1) - 1
+    ENDDO
+    pdims(2) = numprocs / pdims(1)
+
+!
+!-- Prozessortopologie ausgeben
+    PRINT*, ' '
+    PRINT*, '*** berechnetes Prozessorgitter: (',pdims(1),',',pdims(2),')'
+
+!
+!-- Evtl. Uebersteuerung der Prozessortopologie durch den Benutzer
+    PRINT*, ' '
+    PRINT*, '*** soll dieses Prozessorgitter benutzt werden? (y/n/<return>=y)'
+    READ (*,'(A1)')  char
+    IF ( char /= 'y'  .AND.  char /= 'Y'  .AND.  char /= '' )  THEN
+       DO
+          PRINT*, ' '
+          PRINT*, '*** Bitte Prozessoranzahl in x- und y-Richtung angeben:'
+          READ (*,*)  pdims(1), pdims(2)
+          IF ( pdims(1)*pdims(2) == numprocs )  EXIT
+          PRINT*, '+++ berechnete Prozessoranzahl (', pdims(1)*pdims(2), &
+                  ') stimmt nicht mit vorgegebener Anzahl'
+          PRINT*, '    (', numprocs, ') ueberein!'
+       ENDDO
+    ENDIF
+
+!
+!-- Gitterpunktanzahl abfragen
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** bitte nx, ny und nz angeben:'
+    READ (*,*)  nx, ny, nz
+
+!
+!-- Pruefung, ob sich Gitterpunkte in x-Richtung glatt aufteilen lassen
+    IF ( MOD( nx+1 , pdims(1) ) /= 0 )  THEN
+       PRINT*,'+++ x-Richtung:  Gitterpunktanzahl (',nx+1,') ist kein ganz-'
+       PRINT*,'                 zahliges Vielfaches der Prozessoranzahl (',&
+                                &pdims(1),')'
+       STOP
+    ELSE
+       nxanz  = ( nx + 1 ) / pdims(1)
+    ENDIF
+
+!
+!-- Pruefung, ob sich Gitterpunkte in y-Richtung glatt aufteilen lassen
+    IF ( MOD( ny+1 , pdims(2) ) /= 0 )  THEN
+       PRINT*,'+++ y-Richtung:  Gitterpunktanzahl (',ny+1,') ist kein ganz-'
+       PRINT*,'                 zahliges Vielfaches der Prozessoranzahl (',&
+                                &pdims(2),')'
+       STOP
+    ELSE
+       nyanz  = ( ny + 1 ) / pdims(2)
+    ENDIF
+
+    PRINT*, ''
+    PRINT*, '*** Anzahl der Gitterpunkte in x- und y-Richtung je PE: (', &
+            nxanz,',',nyanz,')'
+
+!
+!-- Pruefen der Gitterpunktanzahl bzgl. Transposition
+    IF ( MOD( nz , pdims(1) ) /= 0 )  THEN
+       PRINT*,'+++ Transposition z --> x:'
+       PRINT*,'    nz=',nz,' ist kein ganzzahliges Vielfaches von pdims(1)=', &
+              &pdims(1)
+       PRINT*, ''
+       STOP
+    ENDIF
+    IF ( MOD( nx+1 , pdims(2) ) /= 0 )  THEN
+       PRINT*,'+++ Transposition x --> y:'
+       PRINT*,'    nx+1=',nx+1,' ist kein ganzzahliges Vielfaches von ',&
+              &'pdims(2)=',pdims(2)
+       PRINT*, ''
+       STOP
+    ENDIF
+    IF ( MOD( ny+1 , pdims(1) ) /= 0 )  THEN
+       PRINT*,'+++ Transposition y --> z:'
+       PRINT*,'    ny+1=',ny+1,' ist kein ganzzahliges Vielfaches von ',&
+              &'pdims(1)=',pdims(1)
+       PRINT*, ''
+       STOP
+    ENDIF
+
+!
+!-- Moegliche Anzahl von Gitterniveaus im Falle der Benutzung des
+!-- Mehrgitterverfahrens berechnen und die Gitterpunktanzahl des groebsten
+!-- Gitters ausgeben
+    mg_levels_x = 1
+    mg_levels_y = 1
+    mg_levels_z = 1
+
+    i = nxanz
+    DO WHILE ( MOD( i, 2 ) == 0  .AND.  i /= 2 )
+       i = i / 2
+       mg_levels_x = mg_levels_x + 1
+    ENDDO
+
+    j = nyanz
+    DO WHILE ( MOD( j, 2 ) == 0  .AND.  j /= 2 )
+       j = j / 2
+       mg_levels_y = mg_levels_y + 1
+    ENDDO
+
+    k = nz
+    DO WHILE ( MOD( k, 2 ) == 0  .AND.  k /= 2 )
+       k = k / 2
+       mg_levels_z = mg_levels_z + 1
+    ENDDO
+
+    maximum_grid_level = MIN( mg_levels_x, mg_levels_y, mg_levels_z )
+    i = nxanz / 2**(maximum_grid_level-1) 
+    j = nyanz / 2**(maximum_grid_level-1)
+    k = nz    / 2**(maximum_grid_level-1)
+
+    PRINT*, '    Anzahl der moeglichen Gitterniveaus: ', maximum_grid_level
+    PRINT*, '    Anz. Gitterpunkte auf groebstem Gitter (x,y,z): (', i, ',', &
+                 j,',',k,')'
+    PRINT*, ''
+
+ END PROGRAM check_pegrid

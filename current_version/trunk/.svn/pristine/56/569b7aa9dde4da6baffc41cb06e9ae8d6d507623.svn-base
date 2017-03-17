@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 4.5.6</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041029;13171001"> <meta name="CHANGED" content="20041117;12013945"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h4 style="line-height: 100%;"><font size="4">4.5.6
+Plots of compressed
+3d volume data with AVS</font></h4>
+<p style="line-height: 100%;">Files containing 3d volume
+data usually
+need large amounts of disc space. For parallel runs, the disc space
+requirement can
+be clearly reduced if the data are output in compressed format (note:
+currently a data
+compression is permitted only for parallel runs on Cray-T3E). Data
+compression
+can switched on by setting the initialization parameter <a href="chapter_4.2.html#do3d_compress">do3d_compress</a>
+= <i>.TRUE.</i> and by assigning the desired accuracy
+(number of
+significant digits) via <a href="chapter_4.2.html#do3d_comp_prec">do3d_comp_prec</a>.
+A separate accuracy must be assigned for each individual quantity.
+Using uncompressed data, each grid point value is
+represented by a 32-bit real number, in case of compression the grid
+point values are represented by integers whose length depends
+on the desired accuracy (in general clearly smaller than 32 bits).
+The individual grid point values are packed into 32-bit integers and
+output. To plot these compressed data the following output command must
+be inserted into the
+<span style="font-weight: bold;">mrun</span>
+configuration file<b> </b>(in
+addition to the steps described
+in <a href="chapter_4.5.5.html">chapter
+4.5.5</a>): </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">OC:[[ -f PLOT3D_COMPRESSED ]] &amp;&amp; tar cf PLOT3D_DATA PLOT3D_DATA_*</font></pre></ul>
+<p style="line-height: 100%;">If a file named <tt><font style="font-size: 10pt;" size="2">PLOT3D_COMPRESSED</font></tt>
+exists in the local working directory, <tt><font face="Thorndale, serif">t</font></tt><font face="Thorndale, serif">he
+files produ</font>ced by the individual processors are packed
+into one
+file (<tt><font style="font-size: 10pt;" size="2">PLOT3D_DATA</font></tt>)
+using the "tar"
+command. The flag file
+<tt><font size="2">PLOT3D_COMPRESSED </font></tt>is
+created by PALM
+whenever data in compressed form is to be output. For
+uncompressed output, the individual files have to be joined via the
+program <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font>
+</tt>. In this case, an additional output command is also
+necessary
+(see chapter 4.5.5). For compressed output, this output command may
+remain
+unchanged in the configuration file, since <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>
+recognizes the
+ex<font face="Thorndale, serif">isten</font>ce of <tt><font style="font-size: 10pt;" size="2">PLOT3D_COMPRESSED</font></tt>
+and carries out no actions in such cases. </p>
+<p style="line-height: 100%;">The file connection
+statements for the
+local file <a href="chapter_3.4.html#PLOT3D_DATA">PLOT3D_DATA</a>
+and all further necessary statements to create plots of 3d volume
+data can be found in <a href="chapter_4.5.5.html">chapter
+4.5.5</a>. </p>
+<p style="line-height: 100%;">After been transferred to
+the local
+computer
+of the user, the tar file with the compressed data cannot be read
+with the usual <span style="font-weight: bold;">AVS</span>
+module
+&ldquo;read field&rdquo;. Alternatively,
+the module &ldquo;read_compressed_field&rdquo; particularly
+developed
+for this purpose must be used. This module is located in a module
+library under: </p>
+<pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">http://www.muk.uni-hannover.de/~raasch/PALM_group/AVS/Libraries/palm</font></pre><p style="line-height: 100%;">This module must be loaded within
+AVS
+(network editor - &gt; module
+tools - &gt; read module library) and then it can be used like all
+other modules. <a href="http://www.muk.uni-hannover.de/institut/people/raasch/PALM_group/AVS/Doc/read_compressed_field.html">Further
+information</a> about using this module is available (e.g. for
+accelerated treatment of compressed data with <span style="font-weight: bold;">AVS</span> the module
+<a href="http://www.muk.uni-hannover.de/institut/people/raasch/PALM_group/AVS/Doc/write_compressed_field.html">write_compressed_field</a>
+is available). <br>
+&nbsp; <br>
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_4.5.5.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.7.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;">&nbsp;<i>Last
+change:&nbsp;</i> $Id$</p>
+</body></html>

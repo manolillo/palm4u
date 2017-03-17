@@ -1,0 +1,1650 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>PALM technical/numerical documentation</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Unix)">
+	<META NAME="AUTHOR" CONTENT="Siegfried Raasch">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGED" CONTENT="20100909;12050600">
+	<META NAME="KEYWORDS" CONTENT="parallel LES model">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0in"><FONT SIZE=7>PALM&nbsp;&nbsp; </FONT>a
+<B>pa</B>rallelized <B>L</B>ES <B>m</B>odel 
+</P>
+<HR>
+<P STYLE="margin-bottom: 0in"><BR><FONT SIZE=5>technical/numerical
+documentation</FONT> <BR>&nbsp; <BR>&nbsp; 
+</P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in">&nbsp; 
+</P>
+<TABLE CELLPADDING=0 CELLSPACING=0>
+	<TR>
+		<TD>
+			<P><B>Current fixed release:</B></P>
+		</TD>
+		<TD>
+			<P><B>3.7a</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P><B>Last change of this document</B>:&nbsp;</P>
+		</TD>
+		<TD>
+			<P><B>$Id: technical_documentation.html 544 2010-08-17 10:44:58Z
+			maronga $</B></P>
+		</TD>
+	</TR>
+</TABLE>
+<HR>
+<P><FONT SIZE=5>Table of contents</FONT> <BR>&nbsp; <BR>&nbsp; 
+</P>
+<UL>
+	<P><A HREF="#Kapitel1.0">1.0</A>&nbsp; History of changes 
+	</P>
+	<P><A HREF="#Kapitel2.0">2.0</A>&nbsp; How to change the source code
+	and how to document modifications</P>
+	<P><A HREF="#Kapitel3.0">3.0</A>&nbsp; Description of selected model
+	numerics<BR>&nbsp;</P>
+</UL>
+<P><BR><BR>
+</P>
+<H2><A NAME="Kapitel1.0"></A>1.0&nbsp; History of changes</H2>
+<P STYLE="margin-bottom: 0in">The following table documents all
+changes to the PALM repository since 2009. Older changes can be found
+<A HREF="tec_doc_1998-2008.html">here</A>.<BR><BR>Entries in the
+fifth column specify the type of the change: change&nbsp; of existing
+code (C), new code (N) or bugfix (B). More detailed information about
+the changes may sometimes be found in the header comment lines of the
+respective routines. <BR>&nbsp; 
+</P>
+<TABLE WIDTH=1223 BORDER=1 CELLPADDING=2 CELLSPACING=3>
+	<COL WIDTH=37>
+	<COL WIDTH=56>
+	<COL WIDTH=68>
+	<COL WIDTH=62>
+	<COL WIDTH=36>
+	<COL WIDTH=517>
+	<COL WIDTH=393>
+	<TR>
+		<TD WIDTH=37>
+			<P><FONT SIZE=4><B>date</B></FONT></P>
+		</TD>
+		<TD WIDTH=56>
+			<P><FONT SIZE=4><B>author</B></FONT></P>
+		</TD>
+		<TD WIDTH=68>
+			<P><FONT SIZE=4><B>svn revision</B></FONT></P>
+		</TD>
+		<TD WIDTH=62>
+			<P><FONT SIZE=4><B>last release</B></FONT></P>
+		</TD>
+		<TD WIDTH=36>
+			<P><FONT SIZE=4><B>type</B></FONT></P>
+		</TD>
+		<TD WIDTH=517>
+			<P><FONT SIZE=4><B>description</B></FONT></P>
+		</TD>
+		<TD WIDTH=393>
+			<P><FONT SIZE=4><B>affected routines</B></FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37 SDVAL="40430" SDNUM="1033;0;MM/DD/YY">
+			<P STYLE="font-weight: normal"><FONT SIZE=3>09/09/10</FONT></P>
+		</TD>
+		<TD WIDTH=56>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>CH</FONT></P>
+		</TD>
+		<TD WIDTH=68 SDVAL="560" SDNUM="1033;">
+			<P STYLE="font-weight: normal"><FONT SIZE=3>560</FONT></P>
+		</TD>
+		<TD WIDTH=62>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>3.7a</FONT></P>
+		</TD>
+		<TD WIDTH=36>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>B</FONT></P>
+		</TD>
+		<TD WIDTH=517>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>Bugfix of calculating
+			<FONT FACE="Courier New, monospace">ngp_3d</FONT> for 64 bit. So
+			far <FONT FACE="Courier New, monospace">ngp_3d</FONT><FONT FACE="Times New Roman, serif">
+			has not been 64 bit.</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=393>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>init_3d_model</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37 SDVAL="40368" SDNUM="1033;0;MM/DD/YY">
+			<P STYLE="font-weight: normal"><FONT SIZE=3>07/09/10</FONT></P>
+		</TD>
+		<TD WIDTH=56>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>CH</FONT></P>
+		</TD>
+		<TD WIDTH=68 SDVAL="557" SDNUM="1033;">
+			<P STYLE="font-weight: normal"><FONT SIZE=3>557</FONT></P>
+		</TD>
+		<TD WIDTH=62>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>3.7a</FONT></P>
+		</TD>
+		<TD WIDTH=36>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>B</FONT></P>
+		</TD>
+		<TD WIDTH=517>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>Bugfix of message
+			string in if statement (dz_stretch_level) of subroutine
+			set_mask_locations.</FONT></P>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>The changes concern
+			the masked data output, which is still not documented.</FONT></P>
+		</TD>
+		<TD WIDTH=393>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>init_masks</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>07/09/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>556</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Documentation for <FONT FACE="Courier New, Courier, monospace">surface_heatflux
+			</FONT>in case of <FONT FACE="Courier New, Courier, monospace">prandtl_layer
+			</FONT>= <I>.F.</I> improved.<BR><BR>bugfix for wrong netcdf/3.6.3
+			module on lcsgi (mbuild, mrun)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>mbuild, mrun</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix in if statement (disturb_heatflux)<BR><BR>Bugfix: in
+			2201 statement: closing &quot; was missing
+			(interpret_config)<BR><BR>Bugfix: default setting of nzb_local for
+			flat topography (init_grid)<BR><BR>Bugfix: wrong dimension used
+			for ts_value_l (user_statistics)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>disturb_heatflux, init_grid, user_statistics<BR><BR>interpret_config</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37 SDVAL="40187" SDNUM="1033;0;MM/DD/YY">
+			<P STYLE="font-weight: normal"><FONT SIZE=3>01/09/10</FONT></P>
+		</TD>
+		<TD WIDTH=56>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>CH</FONT></P>
+		</TD>
+		<TD WIDTH=68 SDVAL="553" SDNUM="1033;">
+			<P STYLE="font-weight: normal"><FONT SIZE=3>553</FONT></P>
+		</TD>
+		<TD WIDTH=62>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>3.7a</FONT></P>
+		</TD>
+		<TD WIDTH=36>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>C</FONT></P>
+		</TD>
+		<TD WIDTH=517>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>d3dpar-parameters for
+			masked output <FONT FACE="Courier New, monospace">data_output_mask_*,
+			data_output_mask_user_*, mask_*_x, mask_*_y, mask_*_z,
+			mask_*_x_loop, mask_*_y_loop </FONT><FONT FACE="Times New Roman, serif">and
+			</FONT><FONT FACE="Courier New, monospace">mask_*_z_loop </FONT>have
+			been replaced by corresponding arrays <FONT FACE="Courier New, monospace">data_output_masks,
+			data_output_masks_user, mask_x, mask_y, mask_z, mask_x_loop,
+			mask_y_loop </FONT><FONT FACE="Times New Roman, serif">and</FONT>
+			<FONT FACE="Courier New, monospace">mask_z_loop</FONT></FONT></P>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>inipar-parameter <FONT FACE="Courier New, monospace">masks</FONT>
+			has been removed. </FONT>
+			</P>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>The changes concern
+			the masked data output, which is still not documented.</FONT></P>
+		</TD>
+		<TD WIDTH=393>
+			<P STYLE="font-weight: normal"><FONT SIZE=3>check_parameters,
+			init_masks, modules, parin, user_parin</FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>17/08/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>BM</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>544</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B/C/N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>adjustments for lcxt4; bugfix (mbuild): loading of user-defined
+			modules; new .mrun.config.lcxt4 for Cray XT4 in Bergen/Norway</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>mrun, mbuild, subjob</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>15/06/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>RH</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>540</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>ssh from compute nodes to login nodes on hosts lcsgih/lcsgib is
+			done using the names hicegate0/bicegate0 instead of the IP
+			addresses</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>mrun</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>21/04/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>RH</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>532</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Large scale vertical motion (subsidence/ascent) can be added as
+			additional source to the prognostic equation for humidity/passive
+			scalar<BR>&nbsp;<BR>character length for dopr_unit
+			enlarged<BR><BR>Adjustment of the NCL scripts to allow for output
+			of png files 
+			</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>modules, prognostic_equations<BR><BR>.ncl.config.default,
+			cross_sections.ncl, profiles.ncl, timeseries.ncl, spectra.ncl</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix: unit of hyp changed to dbar</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>check_parameters</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>01/04/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>RH</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>530</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix: treatment of special character * in NCL variables
+			containing lists corrected</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>palmplot</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>31/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>RH</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>529</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>List of variable names have to specified using blank separated
+			lists and single quotes</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>palmplot</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>30/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>RH</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>526</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Adjustment of the NCL scripts and <FONT FACE="Courier New, Courier, monospace">palmplot
+			</FONT>to allow for special characters in NetCDF variable names 
+			</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>palmplot, .ncl.config.default, cross_sections.ncl,
+			profiles.ncl, timeseries.ncl, spectra.ncl</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>30/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>525</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix: &quot;/&quot; in netcdf profile variable names replaced
+			by &quot;:&quot;</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>check_parameters</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>19/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>520</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>NetCDF4 support for particle data. Total number of particles is
+			allowed to increase during the run, when netcdf_data_format &gt; <I>2</I>
+			is used.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_particles, check_open, netcdf</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Special characters like * and &quot; are now allowed for NetCDF
+			variable names. Replacement of these characters has been removed
+			(routine clean_netcdf_varname removed)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>18/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>516</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Simple installation method has been documented (see chapter
+			5.0). Respective scripts and configuration files have been
+			updated.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>palm_simple_install, palm_simple_run</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>opt=1 is forced for PGI-compiler in routine <FONT FACE="Courier New, Courier, monospace">buoyancy
+			</FONT>by compiler-directive. Otherwise, program aborts with
+			SIGFPE.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>buoyancy</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>16/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>RH</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>513</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>NCL scripts can be run with the shell script <FONT FACE="Courier New, Courier, monospace">palmplot.</FONT></P>
+		</TD>
+		<TD WIDTH=393>
+			<P>palmplot, .ncl.config.default, cross_sections.ncl, profiles.ncl</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>12/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>509</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>bugfix for rev 504: remode_md was given a wrong value</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>mbuild</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>08/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>506</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>hack for better usage of <B>mrun</B> on Kyoto computing center
+			machine (<FONT FACE="Courier New, Courier, monospace">lckyoto</FONT>)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>mrun</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>03/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>504</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P><FONT FACE="Courier New, Courier, monospace">combine_plot_fields</FONT>
+			is now directly called within <B>mrun</B> and must not be given by
+			an output command in the configuration file any more. Please
+			remove the respective output command (<FONT FACE="Courier New, Courier, monospace">OC:combine_plot_fields.x</FONT>)
+			from your configuration file!<BR><BR>Utility programs
+			(<FONT FACE="Courier New, Courier, monospace">combine_plot_fields</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">interpret_config</FONT>)
+			are created by <B>mbuild</B> separately for each block in the
+			configuration file. Depending on option <FONT FACE="Courier New, Courier, monospace">-K</FONT>,
+			<B>mrun</B> is using the utility programs for the respective
+			block.<BR><BR>Utility programs are also compiled in parallel,
+			depending on variable <FONT FACE="Courier New, Courier, monospace">%mopts</FONT>
+			in the configuration file..<BR><BR>Default configuration files
+			updated.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>mbuild, mrun, UTIL/Makefile, SCRIPTS/.mrun.config.*</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>02/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>496</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Particle data for restart runs are only written if environment
+			variable <FONT FACE="Courier New, Courier, monospace">write_binary</FONT>
+			= <I>.T.</I>, i.e. particle data are now handled in the same way
+			as the other restart data.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>palm</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>01/03/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>494</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Output in NetCDF4-format.<BR><BR>NetCDF4 allows for parallel
+			I/O. Also, variables are not limited in size any more (i.e. arrays
+			can be larger than 2GB). The new d3par-parameter
+			<FONT FACE="Courier New, Courier, monospace">netcdf_data_format</FONT>.can
+			be used to select among the different NetCDF file formats (<I>1</I>:
+			classic format, <I>2</I>: 64-bit-offset format (this is now the
+			default), <I>3</I>: NetCDF4/HDF5 format, <I>4</I>: NetCDF4 format
+			with NF90_CLASSIC_MODEL bit set). Setting <FONT FACE="Courier New, Courier, monospace">netcdf_data_format</FONT>
+			&gt; <I>2</I> only affects 2d- and 3d-output, i.e. there is no
+			parallel output for profiles, time series, spectra, and particles.
+			Parallel output of particle data may realized in the future.<BR><BR>In
+			case of parallel output, all PEs write into one file, which means
+			that postprocessing the data with <FONT FACE="Courier New, Courier, monospace">combine_plot_fields</FONT>
+			(merging data from single files - one per PE - into one file) is
+			not neccessary. In this case, flag files are automatically set,
+			telling <FONT FACE="Courier New, Courier, monospace">combine_plot_fields</FONT>
+			that nothing is to be done.<BR><BR>Using NetCDF4 format requires a
+			NetCDF4/HDF library. Respective settings for -I, -L, and -l
+			compiler/loader options for the SGI-ICE at HLRN can be found in
+			the new example configuration file
+			<FONT FACE="Courier New, Courier, monospace">..../trunk/SCRIPTS/.mrun.config.imuk_ice2_netcdf4</FONT><BR><BR><B>Attention:</B><BR>So
+			far, NetCDF parallel I/O has only been tested a little. Further
+			performance optimizations may be required, especially in case of
+			large data sets (e.g. data chunking, or lustre file system
+			settings with <FONT FACE="Courier New, Courier, monospace">lfs
+			setstripe</FONT>). <B>Please report bugs and performance problems
+			immediately!</B><BR><BR><FONT FACE="Courier New, Courier, monospace">combine_plot_fields</FONT>
+			outputs cpu-time needed for file merging.<BR><BR>Modules to be
+			loaded for compilation (mbuild) or job execution (mrun) can/should
+			now be given in the configuration file (<FONT FACE="Courier New, Courier, monospace">.mrun.config</FONT>)
+			using variable <FONT FACE="Courier New, Courier, monospace">modules</FONT>.
+			Example:<BR><BR>&nbsp;&nbsp; <FONT FACE="Courier New, Courier, monospace">%modules&nbsp;&nbsp;&nbsp;&nbsp;
+			ifort/11.0.069:netcdf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lcsgih
+			parallel</FONT><BR><BR>This method replaces the (undocumented)
+			<FONT FACE="Courier New, Courier, monospace">mpilib</FONT>-variable.<BR><BR><B>WARNING:</B><BR><B>All
+			fixed settings of modules in the scripts mbuild, mrun, and subjob
+			have been removed! Please set the </B><FONT FACE="Courier New, Courier, monospace"><B>modules</B></FONT>
+			<B>variable appropriately and remove the mpilib variable in your
+			configuration file.<BR><BR></B>Compilation time can be reduced be
+			using parallel make. The number of allowed simultaneous compiler
+			calls (threads) is set in the configuration file using variable
+			<FONT FACE="Courier New, Courier, monospace">mopt</FONT>, e.g.<BR><BR>&nbsp;&nbsp;
+			<FONT FACE="Courier New, Courier, monospace">%mopts&nbsp; -j:4 &nbsp;
+			lcsgih parallel</FONT><BR><BR>allows a maximum of 4 routines to be
+			compiled simultaneously (provided that the makefile does not show
+			any dependencies between these routines).</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>check_open, check_parameters, close_file, data_output_2d,
+			data_output_3d, header, modules, netcdf,
+			parin<BR><BR>combine_plot_fields<BR><BR>mbuild, mrun, subjob</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>d3par-parameters <FONT FACE="Courier New, Courier, monospace">netcdf_64bit</FONT>
+			and <FONT FACE="Courier New, Courier, monospace">netcdf_64bit_3d</FONT>
+			have been removed. Use the new d3par-variable <FONT FACE="Courier New, Courier, monospace">netcdf_data_format</FONT>
+			= <I>2</I> for choosing the NetCDF 64bit-offset format (this is
+			the default from now on). The offset-format can not be set
+			independently for the 3d-output-data any more.<BR><BR>d3par-parameters
+			<FONT FACE="Courier New, Courier, monospace">netcdf_format_mask</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">netcdf_format_mask_av</FONT>,
+			and variables <FONT FACE="Courier New, Courier, monospace">nc_format_mask</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">format_parallel_io</FONT>
+			removed. They are replaced by the new parameter
+			<FONT FACE="Courier New, Courier, monospace">netcdf_data_format</FONT>.
+			This change concerns the masked data output, which is still not
+			documented.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>check_open, close_file,<BR>data_output_mask, header,
+			init_masks, modules, parin</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix in trunk/UTIL/Makefile: forgot to compile for
+			interpret_config.<BR><BR>Bugfix: timeseries data have to be
+			collected by PE0 (user_statistics).</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>user_statistics<BR><BR>trunk/UTIL/Makefile</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>05/02/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>485</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P><FONT FACE="Courier New, Courier, monospace">ngp_3d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">ngp_3d_inner</FONT>
+			changed to 64 bit. Otherwise, on large grids &gt; 2*10**9 grid
+			points some global statistics (e.g. total kinetic energy) have
+			wrong values.</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>init_3d_model, modules</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>05/02/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>484</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Typo in file headers removed (&quot;current&quot; instead of
+			&quot;actual&quot;).</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>many</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>05/02/10</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>483</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7a</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P><FONT FACE="Courier New, Courier, monospace">compare_palm_logs
+			</FONT>is additionally compiled with <B>mbuild</B> <FONT FACE="Courier New, Courier, monospace">-u</FONT>
+			. (<FONT FACE="Courier New, Courier, monospace">Makefile</FONT> in
+			<FONT FACE="Courier New, Courier, monospace">trunk/UTIL</FONT>)<BR><BR>make
+			options (<FONT FACE="Courier New, Courier, monospace">mopts</FONT>)
+			to be set by configuration file implemented. (<B>mrun</B>,
+			<B>mbuild</B>)<BR><BR><FONT FACE="Courier New, Courier, monospace">humidity</FONT>
+			= <I>.T.</I> can be used for runs with topography.
+			<FONT FACE="Courier New, Courier, monospace">wall_humidityflux</FONT>
+			and<BR><FONT FACE="Courier New, Courier, monospace">wall_scalarflux</FONT>
+			are the corresponding new inipar parameters.<BR>(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">parin</FONT>)<BR><BR>Large
+			scale vertical motion (subsidence/ascent) can be added as
+			additional source to the prognostic equation for potential
+			temperature. See new parameters <FONT FACE="Courier New, Courier, monospace">large_scale_subsidence</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">ws_vertical_gradient</FONT>,
+			and <FONT FACE="Courier New, Courier, monospace">ws_vertical_gradient_level</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">Makefile</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">prognostic_equations</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">subsidence</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>Scripts
+			have been updated for Cray-XT5 machine (lcxt5m) and
+			Hitachi-machine (lckyoto).<BR><BR>A simple method for installing
+			and running palm (with limited features) has been added.
+			(<FONT FACE="Courier New, Courier, monospace">Makefile</FONT>, new
+			scripts <B>palm_simple_install</B>, <B>palm_simple_run</B>)<BR><BR>Masked
+			data output has been implemented but it is not documented in the
+			user manual so far. This feature can already use NetCDF4 file
+			format. (check_open, check_parameters, close_file, modules,
+			netcdf, parin, time_integration, user_parin, new:
+			data_output_mask, init_masks, user_data_output_mask)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>check_open, check parameters, close_file, header,
+			init_3d_model, Makefile, mbuild, modules, mrun, netcdf, parin,
+			prognostic_equations, read_var_list, time_integration, user_parin,
+			write_var_list<BR><BR><B>new:</B> data_output_mask,&nbsp;
+			init_masks, palm_simple_install, palm_simple_run, subsidence,
+			user_data_output_mask</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>2d-decomposition is default for Cray-XT machines.
+			(<FONT FACE="Courier New, Courier, monospace">init_pegrid</FONT>)<BR><BR><FONT FACE="Courier New, Courier, monospace">var_ts</FONT>
+			is replaced by <FONT FACE="Courier New, Courier, monospace">dots_max</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>)<BR><BR>Every
+			cloud droplet has now an own weighting factor and can be deleted
+			due to collisions. Condensation and collision of cloud droplets
+			are adjusted accordingly. (<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>)<BR><BR>Collision
+			efficiency for large cloud droplets has changed according to table
+			of Rogers and Yau. (<FONT FACE="Courier New, Courier, monospace">collision_efficiency</FONT>)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_particles, collision_efficiency, init_3d_model,
+			init_pegrid, modules</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix for generating serial jobs. (<B>subjob</B>)<BR><BR>Bugfix:
+			index problem concerning gradient_level indices removed.
+			(<FONT FACE="Courier New, Courier, monospace">header</FONT>)<BR><BR>Dimension
+			of array <FONT FACE="Courier New, Courier, monospace">stat</FONT>
+			in cascade change to prevent type problems with mpi2 libraries.
+			(<FONT FACE="Courier New, Courier, monospace">poisfft_hybrid</FONT>)<BR><BR>Loop
+			was split to make runs reproducible when using ifort compiler.
+			(<FONT FACE="Courier New, Courier, monospace">disturb_field</FONT>)<BR><BR>Bugfix:
+			exchange of ghost points for <FONT FACE="Courier New, Courier, monospace">prho</FONT>
+			included. (<FONT FACE="Courier New, Courier, monospace">time_integration</FONT>)<BR><BR>Bugfix
+			in calculation of time-averaged surface heatfluxes.
+			(<FONT FACE="Courier New, Courier, monospace">sum_up_3d_data</FONT>)<BR><BR>Bugfix
+			in calculation of precipitation_rate.
+			(<FONT FACE="Courier New, Courier, monospace">calc_precipitation</FONT>)<BR><BR>Bugfix:
+			initial data assignments to some dvrp arrays changed due to error
+			messages from gfortran compiler. (<FONT FACE="Courier New, Courier, monospace">modules</FONT>)<BR><BR>Bugfix
+			in calculation of cloud droplet velocity.
+			(<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>)<BR><BR>Bugfix
+			in transfer of particles at south/left edge.
+			(<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>)<BR><BR>Bugfix
+			in calculation of collision efficiency. (<FONT FACE="Courier New, Courier, monospace">collision_efficiency</FONT>)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_particles, calc_precipitation, collision_efficiency,
+			disturb_field, header, modules, poisfft_hybrid, subjob,
+			sum_up_3d_data, time_integration</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>23/09/09</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>392</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.7</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P><B>Most important changes:</B> atmosphere-ocean coupling has
+			been improved and steering of dvr-software is more user-friendly
+			now. Beside that, the release contains a lot of optimizations,
+			changes, and bugfixes which have accumulated over the last
+			months.<BR><BR>The atmosphere-ocean coupling allows to use
+			independent precursor runs in order to account for different
+			spin-up times. The time when coupling has to be started is given
+			by new inipar parameter <FONT FACE="Courier New, Courier, monospace">coupling_start_time</FONT>.
+			The precursor ocean run has to be started using new <B>mrun</B>
+			option &quot;<FONT FACE="Courier New, Courier, monospace">-y</FONT>&quot;
+			in order to add the appendix &quot;<FONT FACE="Courier New, Courier, monospace">_O</FONT>&quot;
+			to all output files. (<FONT FACE="Courier New, Courier, monospace">check_for_restart</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_3d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_profiles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_ptseries</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_spectra</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_tseries</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_coupling</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>, <FONT FACE="Courier New, Courier, monospace">mrun</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">surface_coupler</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">time_integration</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>Clipping
+			of dvrp output implemented. Default colourtable for particles
+			implemented, particle attributes (color, dvrp_size) can be set
+			with new parameters <FONT FACE="Courier New, Courier, monospace">particle_color</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">particle_dvrpsize</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">color_interval</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">dvrpsize_interval</FONT>.
+			Slicer attributes (dvrp) are set with new routine
+			<FONT FACE="Courier New, Courier, monospace">set_slicer_attributes_dvrp</FONT>
+			and are controlled with existing parameters <FONT FACE="Courier New, Courier, monospace">slicer_range_limits</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">init_dvrp</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_dvrp</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">set_slicer_attributes_dvrp</FONT>,&nbsp;
+			<FONT FACE="Courier New, Courier, monospace">user_data_output_dvrp</FONT>)<BR><BR>Polygon
+			reduction for topography and ground plate isosurface. Reduction
+			level for buildings can be chosen with parameter cluster_size.
+			(<FONT FACE="Courier New, Courier, monospace">init_dvrp</FONT>)<BR><BR>Variables
+			<FONT FACE="Courier New, Courier, monospace">bc_lr</FONT> / <FONT FACE="Courier New, Courier, monospace">bc_ns</FONT>&nbsp;
+			in most subroutines replaced by LOGICAL variables
+			<FONT FACE="Courier New, Courier, monospace">bc_lr_cyc</FONT>,<BR><FONT FACE="Courier New, Courier, monospace">bc_ns_cyc</FONT>
+			for speed optimization. This gives a significant speedup of more
+			than 10%. (<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">diffusion_u</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">diffusion_v</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">diffusion_w</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>)<BR><BR>Scripts
+			have been adapted for machine lck (Yonsei Univ.). (<FONT FACE="Courier New, Courier, monospace">mrun</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">mbuild</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">subjob</FONT>)<BR><BR>Additional
+			timestep criterion in case of simulations with plant canopy.
+			(<FONT FACE="Courier New, Courier, monospace">timestep</FONT>)<BR><BR>Check
+			for illegal entries in <FONT FACE="Courier New, Courier, monospace">section_xy</FONT>|<FONT FACE="Courier New, Courier, monospace">xz</FONT>|<FONT FACE="Courier New, Courier, monospace">yz</FONT>
+			that exceed <FONT FACE="Courier New, Courier, monospace">nz+1</FONT>|<FONT FACE="Courier New, Courier, monospace">ny+1</FONT>|<FONT FACE="Courier New, Courier, monospace">nx+1</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>)<BR><BR>External
+			pressure gradient can be used as driving force. (<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">prognostic_equations</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>New
+			topography case '<I>single_street_canyon</I>'. (<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_grid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_init_grid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>Option
+			to predefine a target bulk velocity for <FONT FACE="Courier New, Courier, monospace">conserve_volume_flow</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>Option
+			for user defined 2D data output in xy cross sections at z=<FONT FACE="Courier New, Courier, monospace">nzb</FONT>+1.
+			(<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_data_output_2d</FONT>)<BR><BR>xy
+			cross section output of surface heatfluxes (sensible and latent).
+			(<FONT FACE="Courier New, Courier, monospace">average_3d_data</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_3d_binary</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">sum_up_3d_data</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_3d_binary</FONT>)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>average_3d_data, check_for_restart, check_parameters,
+			data_output_2d, data_output_3d, data_output_dvrp,
+			data_output_profiles, data_output_ptseries, data_output_spectra,
+			data_output_tseries, diffusion_u, diffusion_v, diffusion_w,
+			init_coupling, init_dvrp, init_grid, init_3d_model, header,
+			mbuild, modules, mrun, package_parin, parin, prognostic_equations,
+			read_3d_binary, read_var_list, subjob, sum_up_3d_data,
+			surface_coupler, timestep, time_integration,
+			user_check_parameters, user_data_output_2d, user_data_output_dvrp,
+			user_header, user_init_grid, write_3d_binary, write_var_list<BR><BR><B>new:</B>
+			set_particle_attributes, set_slicer_attributes_dvrp</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Output of messages replaced by message handling routine.
+			(<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">advec_s_bc</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">buoyancy</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">calc_spectra</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">check_for_restart</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">check_open</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">coriolis</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">cpu_log</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_3d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_dvrp</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_profiles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_spectra</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">fft_xy</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">flow_statistics</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,&nbsp;
+			<FONT FACE="Courier New, Courier, monospace">init_1d_model</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_dvrp</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_grid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_particles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_pegrid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">netcdf</FONT>, <FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">plant_canopy_model</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">poisfft_hybrid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">poismg</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_3d_binary</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">surface_coupler</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">temperton_fft</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">timestep</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_actions</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_data_output_dvrp</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_dvrp_coltab</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_init_grid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_init_plant_canopy</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_read_restart_data</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_spectra</FONT>)<BR><BR>Output
+			of NetCDF messages with aid of message handling routine.
+			(<FONT FACE="Courier New, Courier, monospace">check_open</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">close_file</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_3d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_profiles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_ptseries</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_spectra</FONT>,&nbsp;
+			<FONT FACE="Courier New, Courier, monospace">data_output_tseries</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">netcdf</FONT>)<BR><BR>__lcmuk
+			changed to __lc to avoid problems with Intel compiler on sgi-ice.
+			(<FONT FACE="Courier New, Courier, monospace">poisfft</FONT>)<BR><BR>For
+			extended NetCDF files, the updated title attribute includes an
+			update of time_average_text where appropriate. (<FONT FACE="Courier New, Courier, monospace">netcdf</FONT>)<BR><BR>In
+			case of restart runs without extension, initial profiles are not
+			written to NetCDF-file anymore. So far, time axis always started
+			at t=0. (<FONT FACE="Courier New, Courier, monospace">data_output_profiles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR><FONT FACE="Courier New, Courier, monospace">initializing_actions</FONT>='<I>read_data_for_recycling</I>'
+			renamed to '<I>cyclic_fill</I>'. A cyclic fill can now <BR>be used
+			independent of <FONT FACE="Courier New, Courier, monospace">turbulent_inflow</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>)<BR><BR>2
+			NetCDF error numbers changed. (<FONT FACE="Courier New, Courier, monospace">data_output_3d</FONT>)<BR><BR>A
+			link to the webspage appendix_a.html is printed for further
+			information about possible reasons of the error that appeared.
+			(message)<BR><BR>Temperature gradient criterion for estimating the
+			boundary layer height replaced by the gradient criterion of
+			Sullivan et al. (1998). (<FONT FACE="Courier New, Courier, monospace">flow_statistics</FONT>)<BR><BR>NetCDF
+			unit attribute in timeseries output in case of statistic regions
+			added. (<FONT FACE="Courier New, Courier, monospace">netcdf</FONT>)<BR><BR>Maximum
+			number of tails is calculated from maximum number of particles and
+			<FONT FACE="Courier New, Courier, monospace">skip_particles_for_tail</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">init_particles</FONT>)<BR><BR>Value
+			of <FONT FACE="Courier New, Courier, monospace">vertical_particle_advection</FONT>
+			is allowed to differ for each particle group. (<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">modules</FONT>)
+			<BR><BR>First constant in array <FONT FACE="Courier New, Courier, monospace">den</FONT>
+			also defined as type double. (<FONT FACE="Courier New, Courier, monospace">eqn_state_seawater</FONT>)<BR><BR>Parameter
+			<FONT FACE="Courier New, Courier, monospace">dvrp_psize</FONT>
+			moved from <FONT FACE="Courier New, Courier, monospace">particles_par</FONT>
+			to <FONT FACE="Courier New, Courier, monospace">dvrp_graphics_par</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">package_parin</FONT>)<BR><BR><FONT FACE="Courier New, Courier, monospace">topography_grid_convention</FONT>
+			moved from <FONT FACE="Courier New, Courier, monospace">userpar</FONT>
+			to <FONT FACE="Courier New, Courier, monospace">inipar</FONT>
+			(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">header</FONT>, <FONT FACE="Courier New, Courier, monospace">parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_check_parameters</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_header</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_init_grid</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">user_parin</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>Default
+			value of <FONT FACE="Courier New, Courier, monospace">grid_matching</FONT>
+			changed to '<I>strict</I>'. (<FONT FACE="Courier New, Courier, monospace">modules</FONT>)<BR><BR>Adjustments
+			for runs on lcxt4 (necessary due to a software update on CRAY) and
+			for coupled runs on ibmy. (<FONT FACE="Courier New, Courier, monospace">mrun</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">subjob</FONT>)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_particles, advec_s_bc, buoyancy, calc_spectra,
+			check_for_restart, check_open, check_parameters, close_file,
+			coriolis, cpu_log, data_output_2d, data_output_3d,
+			data_output_dvrp, data_output_profiles, data_output_ptseries,
+			data_output_spectra, data_output_tseries, eqn_state_seawater,
+			fft_xy, flow_statistics, header, init_1d_model, init_3d_model,
+			init_dvrp, init_grid, init_particles, init_pegrid, message, mrun,
+			netcdf, package_parin, parin, plant_canopy_model, poisfft,
+			poisfft_hybrid, poismg, read_3d_binary, read_var_list, subjob,
+			surface_coupler, temperton_fft, timestep,
+			user_actions,user_check_parameters, user_data_output_dvrp,
+			user_dvrp_coltab, user_header, user_init_grid,
+			user_init_plant_canopy, user_parin, user_read_restart_data,
+			user_spectra, write_var_list 
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix: Initial hydrostatic pressure profile in case of ocean
+			runs is now calculated in 5 iteration steps. (<FONT FACE="Courier New, Courier, monospace">init_ocean</FONT>)<BR><BR>Bugfix:
+			wrong sign in buoyancy production of ocean part in case of not
+			using the reference density (only in 3D routine <FONT FACE="Courier New, Courier, monospace">production_e</FONT>).
+			(<FONT FACE="Courier New, Courier, monospace">production_e</FONT>)<BR><BR>Bugfix:
+			output of averaged 2d/3d quantities requires that an avaraging
+			interval has been set, respective error message is included.
+			(<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>)<BR><BR>Bugfix:
+			Output on unit 14 only if requested by <FONT FACE="Courier New, Courier, monospace">write_binary</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">user_last_actions</FONT>)<BR><BR>Bugfix
+			to avoid zero division by <FONT FACE="Courier New, Courier, monospace">km_neutral</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">production_e</FONT>)<BR><BR>Bugfix
+			for extended NetCDF files: In order to avoid 'data mode' errors if
+			updated attributes are larger than their original size,
+			<FONT FACE="Courier New, Courier, monospace">NF90_PUT_ATT</FONT>
+			is called in 'define mode' enclosed by <FONT FACE="Courier New, Courier, monospace">NF90_REDEF</FONT>
+			and <FONT FACE="Courier New, Courier, monospace">NF90_ENDDEF</FONT>
+			calls. This implies a possible performance loss; an alternative
+			strategy would be to ensure equal attribute size in a job chain.
+			(<FONT FACE="Courier New, Courier, monospace">netcdf</FONT>)<BR><BR>Bugfix:
+			correction of initial volume flow for non-flat topography.
+			(<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>)<BR><BR>Bugfix:
+			zero initialization of arrays within buildings for '<I>cyclic_fill</I>'.
+			(<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>)<BR><BR>Bugfix:
+			<FONT FACE="Courier New, Courier, monospace">to_be_resorted</FONT>
+			=&gt; <FONT FACE="Courier New, Courier, monospace">s_av</FONT> for
+			time-averaged scalars. (<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">data_output_3d</FONT>)<BR><BR>Bugfix:
+			avoid that <FONT FACE="Courier New, Courier, monospace">ngp_2dh_s_inner</FONT>
+			becomes zero. (<FONT FACE="Courier New, Courier, monospace">init_3_model</FONT>)<BR><BR>Typographical
+			error: unit of wpt in dots_unit. (<FONT FACE="Courier New, Courier, monospace">modules</FONT>)<BR><BR>Bugfix:
+			error in check, if particles moved further than one subdomain
+			length. This check must not be applied for newly released
+			particles. (<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>)<BR><BR>Bugfix:
+			several tail counters are initialized, <FONT FACE="Courier New, Courier, monospace">particle_tail_coordinates</FONT>
+			is only written to file if its third index is &gt; 0, arrays for
+			tails are allocated with a minimum size of 10 tails if there is no
+			tail initially. (<FONT FACE="Courier New, Courier, monospace">advec_particles</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">init_particles</FONT>)<BR><BR>Bugfix:
+			pressure included for profile output. (<FONT FACE="Courier New, Courier, monospace">check_parameters</FONT>)<BR><BR>Bugfix:
+			Type of <FONT FACE="Courier New, Courier, monospace">count</FONT>
+			and <FONT FACE="Courier New, Courier, monospace">count_rate</FONT>
+			changed to default <FONT FACE="Courier New, Courier, monospace">INTEGER</FONT>
+			on NEC machines. (<FONT FACE="Courier New, Courier, monospace">cpu_log</FONT>)<BR><BR>Bugfix:
+			output of particle time series only if particle advection is
+			switched on. (<FONT FACE="Courier New, Courier, monospace">time_integration</FONT>)<BR><BR>Bugfix:
+			qsws was calculated in case of <FONT FACE="Courier New, Courier, monospace">constant
+			heatflux</FONT> = <FONT FACE="Courier New, Courier, monospace">.FALSE.</FONT>.
+			(<FONT FACE="Courier New, Courier, monospace">prandtl_fluxes</FONT>)<BR><BR>Bugfix:
+			averaging along z is not allowed for 2d quantities (e.g. u* and
+			z0). (<FONT FACE="Courier New, Courier, monospace">data_output_2d</FONT>)<BR><BR>Typographical
+			errors. (<FONT FACE="Courier New, Courier, monospace">netcdf</FONT>)<BR><BR>If
+			the inversion height calculated by the prerun is zero,
+			inflow_damping_height must be explicitly specified.
+			(<FONT FACE="Courier New, Courier, monospace">init_3d_model</FONT>)<BR><BR>Small
+			bugfix concerning 3d 64bit netcdf output format. (<FONT FACE="Courier New, Courier, monospace">header</FONT>)<BR><BR>Bugfix:
+			<FONT FACE="Courier New, Courier, monospace">dt_fixed</FONT>
+			removed from the restart file, because otherwise, no change from a
+			fixed to a variable timestep would be possible in restart runs.
+			(<FONT FACE="Courier New, Courier, monospace">read_var_list</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">write_var_list</FONT>)<BR><BR>Bugfix:
+			initial setting of <FONT FACE="Courier New, Courier, monospace">time_coupling</FONT>
+			in coupled restart runs. (<FONT FACE="Courier New, Courier, monospace">time_integration</FONT>)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_particles, check_parameters, cpu_log, data_output_2d,
+			data_output_3d, header, init_3d_model, init_particles, init_ocean,
+			modules, netcdf, prandtl_fluxes, production_e, read_var_list,
+			time_integration, user_last_actions, write_var_list</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P>02/02/09</P>
+		</TD>
+		<TD WIDTH=56>
+			<P>SR</P>
+		</TD>
+		<TD WIDTH=68>
+			<P>228</P>
+		</TD>
+		<TD WIDTH=62>
+			<P>3.6</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>N</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>This release contains further additions, changes, and bugfixes
+			for the SGI-ICE system, as well as important changes like the
+			splitting of the user-interface into single files, a complete
+			revision of the pre-compiling mechanism allowing to use different
+			make-depositories simultaneously, and a revision of the
+			reading-mechanism from restart files, which has no more
+			restrictions in case that the previous and current run have
+			different domain/subdomain sizes. A new handling of all kind of
+			output messages is introduced with this release and will be
+			applied to all existing messages within the next releases.<BR><BR><B>New
+			features are:</B><BR><BR>Restart runs on SGI-ICE are working.
+			(mrun)<BR>2d-decomposition is default on SGI-ICE systems.
+			(init_pegrid)<BR><BR>Ocean-atmosphere coupling realized with
+			MPI-1. mrun adjusted for this case (-Y option). Check that PALM is
+			called with <FONT FACE="Courier New, Courier, monospace">mrun</FONT>-option
+			&quot;<I>-K parallel</I>&quot; for coupling. Adjustments in <FONT FACE="Courier New, Courier, monospace">mrun</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">mbuild</FONT>, and
+			<FONT FACE="Courier New, Courier, monospace">subjob</FONT> for
+			lcxt4.<BR><BR>DVRP arguments changed to single precision, mode
+			pathlines added.<BR><BR>User can add additional routines in files
+			<FONT FACE="Courier New, Courier, monospace">user_additional_routines</FONT>.<BR><BR>User
+			can check user parameters and deduce further quantities in
+			<FONT FACE="Courier New, Courier, monospace">user_check_parameters</FONT></P>
+		</TD>
+		<TD WIDTH=393>
+			<P>check_for_restart, check_parameters, data_output_dvrp,
+			init_dvrp, init_pegrid, local_stop, modules, package_parin, palm,
+			surface_coupler, timestep<BR><BR>Makefile,&nbsp;mbuild, mrun,
+			subjob<BR><BR><B>new:</B><BR>init_coupling,
+			user_additional_routines, user_check_parameters</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>C</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>User interface has been split into single files.<BR><BR>Type of
+			variables <FONT FACE="Courier New, Courier, monospace">count</FONT>
+			and <FONT FACE="Courier New, Courier, monospace">count_rate</FONT>
+			changed to INTEGER(8) in order to avoid &quot;out of range&quot;
+			problems, which result in measured negative time intervals.
+			(cpu_log, local_tremain, local_tremain_ini)<BR><BR>Reading
+			mechanism from restart files completely revised. The
+			subdomain/total domain size is now allowed to vary arbitrarily
+			between the current and previous run. (read_var_list,
+			read_3d_binary, user_read_restart_data)<BR><BR>Precompilation
+			mechanism (<FONT FACE="Courier New, Courier, monospace">mbuild</FONT>)
+			completely revised: the source-tarfile remains in the source
+			directory (<FONT FACE="Courier New, Courier, monospace">trunk/SOURCE</FONT>).
+			One depository per block (given in the config-file) is created.
+			Always all files from the source directory are copied to the
+			respective depository. No additional file checks are done any more
+			(mrun version 2.1). The depository name used contains the
+			conditions given by <FONT FACE="Courier New, Courier, monospace">mrun</FONT>-option
+			&quot;<FONT FACE="Courier New, Courier, monospace">-K</FONT>&quot;.
+			(mbuild, mrun)<BR><BR>Output messages (including required stop of
+			execution) can now be handled with the new subroutine&nbsp;<FONT FACE="Courier New, Courier, monospace">message</FONT>.
+			All output messages will be replaced by this routine step by step
+			within the next revisions.<BR><BR>Neumann boundary condition at
+			<FONT FACE="Courier New, Courier, monospace">k=nzb</FONT> is
+			explicitly set for better reading, although this has been already
+			done in boundary_conds. (advec_s_bc)<BR><BR>Origin of the
+			xy-coordinate system shifted from the center of the first grid
+			cell (indices <FONT FACE="Courier New, Courier, monospace">i=0</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">j=0</FONT>) to the
+			south-left corner of this cell. (netcdf) Topography definition
+			according to new user parameter <FONT FACE="Courier New, Courier, monospace">topography_grid_convention</FONT>.
+			(init_grid, modules, user_header, user_init_grid, user_parin)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_s_bc, check_parameters, cpu_log, init_grid, local_stop,
+			local_tremain, local_tremain_ini, modules, netcdf, read_3d_binary,
+			read_var_list, user_read_restart_data<BR><BR>Makefile, mbuild,
+			mrun<BR><BR><B>removed:</B><BR>user_interface<BR><BR><B>new:</B><BR>message,
+			user_3d_data_averaging, user_actions, user_advec_particles,
+			user_check_data_output, user_check_data_output_pr,
+			user_data_output_2d, user_data_output_3d, user_data_output_dvrp,
+			user_define_netcdf_grid, user_dvrp_coltab, user_header,
+			user_init_3d_model, user_init, user_init_grid,
+			user_init_particles, user_init_plant_canopy, user_last_actions,
+			user_parin, user_parin, user_particle_attributes,
+			user_read_restart_data, user_spectra, user_statistics</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=37>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=56>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=68>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=62>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=36>
+			<P>B</P>
+		</TD>
+		<TD WIDTH=517>
+			<P>Bugfix: array <FONT FACE="Courier New, Courier, monospace">d</FONT>
+			is reallocated in case that multigrid is used.
+			(calc_spectra)<BR><BR>Bugfixes for nonparallel execution.
+			(check_for_restart, cpu_statistics,
+			inflow_turbulence,&nbsp;timestep)<BR><BR>Size of <FONT FACE="Courier New, Courier, monospace">pf3d
+			</FONT>adjusted to the required output size (1 gridpoint less,
+			along all three dimensions), because output of a subset of the
+			data (<FONT FACE="Courier New, Courier, monospace">pf3d(nxa:nxe...)</FONT>)
+			in the NF90_PUT_VAR statement caused segmentation fault with the
+			INTEL compiler. (combine_plot_fields)<BR><BR>Bugfix: error in <FONT FACE="Courier New, Courier, monospace">zu</FONT>
+			index in case of <FONT FACE="Courier New, Courier, monospace">section_xy=-1</FONT>.
+			(header)<BR><BR>Inconsistency removed: as the thermal
+			stratification is not taken into account for the evaluation of the
+			wall fluxes at vertical walls, the eddy viscosity <FONT FACE="Courier New, Courier, monospace">km</FONT>
+			must not be used for the evaluation of the velocity gradients
+			<FONT FACE="Courier New, Courier, monospace">dudy</FONT>, <FONT FACE="Courier New, Courier, monospace">dwdy</FONT>,
+			<FONT FACE="Courier New, Courier, monospace">dvdx</FONT> and <FONT FACE="Courier New, Courier, monospace">dwdx</FONT>.
+			(production_e)<BR><BR>Bugfix in calculating <FONT FACE="Courier New, Courier, monospace">k</FONT>
+			index in case of oceans runs. (sort_particles)<BR><BR>Bugfix: no
+			output of particle concentration and radius unless particles have
+			been started. (data_output_2d)<BR><BR>Bugfix: reading of
+			<FONT FACE="Courier New, Courier, monospace">spectrum_x|y</FONT>
+			from restart files ignored if total numbers of grid points do not
+			match. (read_3d_binary)<BR><BR>Bugfix: abort in case that absolute
+			temperature is below zero. (init_cloud_physics)</P>
+		</TD>
+		<TD WIDTH=393>
+			<P>advec_particles, calc_spectra, check_for_restart,
+			cpu_statistics, data_output_2d, header, inflow_turbulence,
+			init_cloud_physics, production_e, read_3d_binary,
+			timestep<BR><BR>combine_plot_fields</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>&nbsp; <BR>&nbsp; 
+</P>
+<H2><A NAME="Kapitel2.0"></A>2.0&nbsp; How to change the source code
+and how to document modifications</H2>
+<P>Currently (Sep 23rd, 2009), only selected users are allowed to
+commit changes to the repository. Rules given below are preliminary,
+until we have switched to the &quot;trac&quot;-System.</P>
+<OL>
+	<LI><P>Change source code in your current working copy. Document
+	changes in the respective file headers unter &quot;<FONT FACE="Courier New, Courier, monospace">Current
+	revisions:</FONT>&quot;. Additionally, document all changes in a
+	local file (e.g. ~/palm/current_version/CURRENT_MODIFICATIONS),
+	including the files that have been changed. Classify changes in
+	three cases, new (N), changed (C), and bugfix (B). <B>Try to be as
+	short and as precise as possible in describing the changes!</B></P>
+	<LI><P>Test the changed version, unless it works sufficiently.</P>
+	<LI><P>Commit the changes to the repository<BR><BR>&nbsp;&nbsp; <FONT FACE="Courier New, Courier, monospace">svn
+	commit -m &quot;message string&quot; trunk<BR></FONT><BR>where
+	&quot;<FONT FACE="Courier New, Courier, monospace">message string</FONT>&quot;
+	is a short, <B>meaningful</B> summary of the
+	changes.<BR><BR>Alternatively, in case that you have made quite a
+	lot of changes, you can also give the contents of your file
+	CURRENT_MODIFICATIONS as the log message:<BR><BR>&nbsp;&nbsp; <FONT FACE="Courier New, Courier, monospace">svn
+	commit -F CURRENT_MODIFICATIONS trunk</FONT></P>
+	<LI><P>Enter the changes into the technical documentation (under
+	<FONT FACE="Courier New, Courier, monospace">.../trunk/DOC/tec/technical_documentation.html</FONT>).</P>
+	<LI><P>Move the change comments in the file headers from &quot;Current
+	revisions:&quot; to &quot;Former revisions:&quot;. Set the current
+	svn id in front of that.<BR><BR><B>Example:</B><BR><BR><B>before
+	move:</B><BR><BR><FONT FACE="Courier New, Courier, monospace">!
+	Current revisions:</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	-----------------</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	</FONT><FONT FACE="Courier New, Courier, monospace"><B>new dummy
+	argument abcd</B></FONT><BR><FONT FACE="Courier New, Courier, monospace">!</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	Former revisions:</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	-----------------</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	§Id: init_3d_model.f90 </FONT><FONT COLOR="#3366ff"><FONT FACE="Courier New, Courier, monospace"><B>425
+	2010-02-06 13:37:48Z raasch</B></FONT></FONT> <FONT FACE="Courier New, Courier, monospace">§</FONT><BR><FONT FACE="Courier New, Courier, monospace">!</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	407 2009-12-01 15:01:15Z maronga</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	var_ts is replaced by dots_max </FONT><BR><BR><B>after move:</B><BR><BR><FONT FACE="Courier New, Courier, monospace">!
+	Current revisions:</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	-----------------</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	</FONT><BR><FONT FACE="Courier New, Courier, monospace">!</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	Former revisions:</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	-----------------</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	§Id: init_3d_model.f90 425 2010-02-06 13:37:48Z raasch</FONT> <FONT FACE="Courier New, Courier, monospace">§<BR>!</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	</FONT><FONT COLOR="#3366ff"><FONT FACE="Courier New, Courier, monospace"><B>425
+	2010-02-06 13:37:48Z raasch</B></FONT></FONT><FONT FACE="Courier New, Courier, monospace"><BR>!
+	</FONT><FONT FACE="Courier New, Courier, monospace"><B>new dummy
+	argument abcd</B></FONT><BR><FONT FACE="Courier New, Courier, monospace">!</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	407 2009-12-01 15:01:15Z maronga</FONT><BR><FONT FACE="Courier New, Courier, monospace">!
+	var_ts is replaced by dots_max<BR><BR></FONT><FONT FACE="Times New Roman, Times, serif">Note
+	that the &quot;</FONT><FONT FACE="Courier New, Courier, monospace">§</FONT><FONT FACE="Times New Roman, Times, serif">&quot;
+	in this example should read &quot;$&quot;, but &quot;$&quot; cannot
+	be used here, because otherwise svn would replace these entries
+	after every change to this technical documentation.</FONT></P>
+	<LI><P>Commit the changes in the technical documentation and the
+	file headers:<BR><BR>&nbsp;&nbsp; <FONT FACE="Courier New, Courier, monospace">svn
+	commit -m &quot;last commit documented&quot; trunk</FONT><BR><BR><BR>
+	</P>
+</OL>
+<H2><A NAME="Kapitel3.0"></A>3.0&nbsp; Description of selected parts
+of the model source code</H2>
+<P>This section gives links to existing descriptions about special
+parts of the PALM code, e.g. special numerical methods that are used
+(including mathematical background). Documents are stored in single
+files with different formats. Some are in German (sorry for the
+inconvenience). <BR>&nbsp; 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in"><A NAME="UPS"></A>upstream-spline
+	advection scheme ( <A HREF="methods/upstream_spline/ups.pdf">.pdf</A>
+	, only in German) 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in"><A NAME="Cloud_physics"></A>cloud
+	physics module ( <A HREF="methods/cloud_physics/cloud_physics.pdf">.pdf</A>
+	) 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in"><A NAME="Bitkompression"></A>data
+	compression with <A HREF="methods/bit_compression/bit_compression.html">bit
+	shifting method</A> (only in German)</P>
+	<LI><P>Runge-Kutta time integration scheme ( <A HREF="methods/runge_kutta/runge_kutta.pdf">.pdf</A>
+	, only in German) 
+	</P>
+</UL>
+<P><BR>&nbsp; <BR>&nbsp; <BR>&nbsp; <BR>&nbsp; <BR>&nbsp; <BR>&nbsp;
+<BR>&nbsp; <BR>&nbsp; 
+</P>
+</BODY>
+</HTML>

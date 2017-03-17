@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.5.5</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20040802;14050943"> <meta name="CHANGED" content="20041117;12180008"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;"><font size="4">3.5.5
+Compiling and
+linking user-defined code<br>
+</font></h3><p style="line-height: 100%;">Users
+can add their own (modified) user-interface to a PALM-run by carrying
+out the following steps:</p><ol><li>Copy the appropriate default
+(empty) user-interface&nbsp;files<span style="font-family: Courier New,Courier,monospace;">
+user_***.f90</span> to a directory of your choice, e.g.:<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp;
+&nbsp;cd ~/palm/current_version</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">&nbsp;
+&nbsp;mkdir -p USER_CODE/example</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">&nbsp;
+&nbsp;cp trunk/SOURCE/user_***.f90&nbsp;
+USER_CODE/example<br><br><span style="font-family: Times New Roman,Times,serif; font-weight: bold;">Attention: do not change the filenames!</span><br></span><br></li><li>Set
+an additional path in the configuration file<span style="font-family: Courier New,Courier,monospace;">
+.mrun.config </span>to allow <span style="font-weight: bold;">mrun
+</span>to find and include these files:<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp;
+&nbsp;%add_source_path&nbsp;&nbsp;
+$base_directory/USER_CODE/$fname</span><br><br>The
+default configuration file (<span style="font-family: Courier New,Courier,monospace;">trunk/SCRIPTS/.mrun.config.default</span>)
+already includes this setting.<br></li><li>Modify the interface
+routines according to your needs.<br></li><li>Start a PALM run
+by executing<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp;
+&nbsp;mrun -d example ...</span><br><br>The files<span style="font-family: Courier New,Courier,monospace;">
+user_***.f90 </span>will be automatically compiled within
+the job and will replace the respective PALM&lsquo;s default user-interface routines.<br></li></ol>The
+above method with including<span style="font-family: Courier New,Courier,monospace;"> $fname </span>in
+the additional source path allows to use different user-interfaces for
+different runs at the same time. Just store the respective
+interface-files in subdirectories<span style="font-family: Courier New,Courier,monospace;">
+USER_CODE/abcd</span>,<span style="font-family: Courier New,Courier,monospace;">
+USER_CODE/cdef</span>, etc. and start <span style="font-weight: bold;">mrun</span> with option
+&ldquo;<span style="font-family: Courier New,Courier,monospace;">-d
+abcd</span>&ldquo;, &ldquo;<span style="font-family: Courier New,Courier,monospace;">-d cdef</span>&ldquo;,
+etc.<br><br>If the user wants to add additional routines, he/she can a) put them into the default user-interface file <span style="font-family: Courier New,Courier,monospace;">user_additional_routines.f90</span>
+or b) can create new files in the additional source directory. These
+files must have names different from the default PALM source code
+files. In case of b), the user must also copy the default makefile into
+the additional source directory:<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp; &nbsp;cp trunk/SOURCE/Makefile&nbsp;
+USER_CODE/example</span><br><br>The makefile must be modified appropriately followinf the "make"-rules in order to allow the new files to be compiled.<br><br><span style="font-weight: bold;">The
+modified user-interface files cannot be pre-compiled by using mbuild!</span><br><br>While
+programming user-defined code,
+errors are frequently made. Possible ways of error
+tracing are described in the next chapter. <br><p style="line-height: 100%;">
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.5.3.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.6.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;</i>
+$Id$</p>
+</body></html>

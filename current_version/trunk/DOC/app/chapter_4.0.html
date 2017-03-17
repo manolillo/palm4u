@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+
+
+  
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252">
+
+  
+ 
+  
+  <title>PALM chapter 4.0</title>
+  <meta name="GENERATOR" content="StarOffice 7 (Win32)">
+
+ 
+  
+  <meta name="AUTHOR" content="Siegfried Raasch">
+
+ 
+  
+  <meta name="CREATED" content="20040809;14214479">
+
+ 
+  
+  <meta name="CHANGED" content="20041112;15151993">
+
+ 
+  
+  <meta name="KEYWORDS" content="parallel LES model">
+
+ 
+  
+  <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+  </style>
+</head>
+
+
+<body style="direction: ltr;" lang="en-US">
+
+<h2 style="line-height: 100%;"><font size="4">4.0
+Steering parameters</font></h2>
+
+
+<p style="line-height: 100%;">Before carrying out a model
+run, the user
+has to /determine/ a data set - the model parameters - e.g. how
+many grid points are to be used, how large the horizontal and
+vertical grid spacing should be, which kind of boundary conditions are
+to be used for the individual variables, which numerical schemes
+implemented in the model are to be used, how long the simulated time
+should be, at which times and points plot output are supposed to be
+made, etc. <br>
+
+
+</p>
+
+<p style="line-height: 100%;">These data are
+assigned with the help of
+so-called&nbsp;&ldquo;NAMELIST-driven input&rdquo; (FORTRAN -
+NAMELIST &ndash;
+input). The chosen values of the model parameters are
+written
+into an ASCII file with fixed format, which is expected by the model as
+an input
+file under the local name <a href="chapter_3.4.html#PARIN">PARIN</a>.
+On this file the parameters are represented by their variable names
+they have in the model. These parameters can be assigned one or more
+values, depending on the type and size the variable has. The following
+example shows the format of the file
+PARIN: <br>
+
+
+&nbsp; </p>
+
+
+<ul>
+
+ 
+  
+  <p style="line-height: 100%; font-family: monospace;">&amp;inipar
+nx
+= 79, ny = 79, nz = 40, <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+dx = 50.0, dy = 50.0, dz =
+50.0, <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+initializing_actions =
+"set_1d-model_profiles", <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+prandtl_layer = .TRUE.,/ </p>
+
+ 
+  
+  <p style="line-height: 100%; font-family: monospace;">&amp;d3par&nbsp;
+end_time = 9000.0, section_xy = 1, 10, 20,/ </p>
+
+ 
+  
+  <p style="line-height: 100%; font-family: monospace;">&amp;packagename
+var1 = .TRUE. / </p>
+
+ 
+  
+  <p style="line-height: 100%;"><span style="font-family: monospace;">&amp;userpar
+abcd = 1234,0,/ </span><br>
+
+
+&nbsp; <br>
+
+
+&nbsp;</p>
+
+
+</ul>
+
+<p style="line-height: 100%;">The parameters
+are separated into four
+different groups which all start with the so-called NAMELIST group
+names.
+These are <span style="font-family: monospace;">&amp;inipar</span>,
+<span style="font-family: monospace;">&amp;d3par</span>
+and <span style="font-family: monospace;">&amp;packagename</span>
+as well as <span style="font-family: monospace;">&amp;userpar</span>.
+In each case a
+group is terminated with one backslash ("/"). Between the beginning of
+the line and the group name at least one blank has to be typed. Between
+the
+group names and the "/", the
+values are assigned to the variables. The example shows that in
+principle all FORTRAN data types are allowed. For more details
+concerning the NAMELIST syntax, refer to
+appropriate FORTRAN manuals. <br>
+
+
+</p>
+
+<p style="line-height: 100%;">Parameters
+belonging to the group <span style="font-family: monospace;">inipar</span>
+are first read by PALM.
+These are the initialization parameters. Second, the so-called run
+parameters belonging to the group <span style="font-family: monospace;">d3par</span>
+are read in, then the parameters for steering the optional software
+packages (group <span style="font-family: monospace;">packagename,</span>
+the string <span style="font-family: monospace;">"packagename"</span>
+must be replaced by the NAMELIST
+group name of the respective package) as well as user-defined
+parameters
+(group <span style="font-family: monospace;">userpar</span>).
+The four
+groups must be given in this order, the last groups, <span style="font-family: monospace;">packagename</span> and
+<span style="font-family: monospace;">userpar</span>,
+may
+be omitted. If several software packages are selected
+(see chapter <a href="chapter_3.7.html">3.7</a>),
+further NAMELIST groups may be inserted before the group <span style="font-family: monospace;">userpar</span>.
+</p>
+
+<p style="line-height: 100%;"><b>The
+initialization, run</b> and
+<b>package parameters</b> differ as follows: </p>
+
+
+<ul>
+
+ <li> 
+    
+    <p style="margin-bottom: 0cm; line-height: 100%;">The <b>initialization
+parameters </b>are steering the basic settings of the model run.
+They
+define e.g. the number of the grid points, the numerical schemes to be
+used, initial and boundary conditions to be applied, how the
+three-dimensional fields are initialized at the beginning of a model
+run (constant&nbsp; value profiles or 1D-model-pre-run, the initial
+temperature profile etc.). These parameters apply to the total model
+run and thus can not be changed with restart runs! If one tries to
+change these values within the NAMELIST input file of a restart run,
+then these changes are ignored (sole exception is the parameter <a style="font-family: monospace;" href="chapter_4.1.html#initializing_actions">initializing_actions</a><font style="font-size: 10pt;" size="2">, </font>which
+must be given the
+value<span style="font-family: thorndale,serif,mon;"> </span><span style="font-family: monospace; font-style: italic;">read_restart_data</span><span style="font-family: thorndale,serif,mon;"> for </span>restart
+runs). <br>
+
+
+&nbsp; </p>
+
+ </li>
+
+ <li> 
+    
+    <p style="margin-bottom: 0cm; line-height: 100%;">The <b>run
+parameters</b> are generally steering actions to be carried out
+during
+a model run. One can select for example, at which times plot output
+should happen and which variables are to be written. Additionally one
+can (and must) specify the time to be simulated. Run parameters only
+apply to the actual run (job) and with each restart run other values
+may be declared (if runs are restarted automatically, parameters will
+usually keep their values, provided that the NAMELIST input file was
+not changed by the user in the meantime). <br>
+
+
+&nbsp; </p>
+
+ </li>
+
+ <li> 
+    
+    <p style="line-height: 100%;"><b>Package parameters</b>
+behave like <b>run parameters</b>. Package parameters
+determine the behavior of
+the additional (not user-defined) software packages . </p>
+
+ </li>
+
+
+</ul>
+
+<p style="line-height: 100%;">The user-defined
+parameters are assigned
+by the user within the NAMELIST group name <tt>&amp;userpar</tt>
+(see <a href="chapter_3.5.2.html">chapter
+3.5.2</a>). They steer actions programmed by the user. By
+default,
+this group has only one parameter (<a href="chapter_4.3.html#region">region</a>).
+If the
+user don't want to assign any values to the user-defined&nbsp;
+parameters, the group<span style="font-family: monospace;">
+userpar
+</span>may be omitted. The group name <span style="font-family: monospace;">&amp;userpar</span>
+can be changed by the user in the user-defined code. In
+addition to this, further NAMELIST groups may also be declared (all
+within routine <span style="font-family: monospace;">user_parin</span>
+in file <span style="font-family: monospace;">user_interface.f90</span>).
+<a href="chapter_4.4.1.html">Chapter
+4.4.1</a> shows a simple but complete example of the input file
+PARIN.
+This example file can be used together with the configuration file
+(described in <a href="chapter_3.2.html">chapter
+3.2</a>) for the execution of a model test run. </p>
+
+
+<p style="line-height: 100%;">PALM assigns default
+values to nearly all parameters. They become effective
+if no other assignments are given in the parameter file. These
+default values as well as the parameter name, type and its
+explanation are described in the lists of the following subsections. <br>
+
+
+&nbsp; </p>
+
+
+<hr>
+<p style="line-height: 100%;"><br>
+
+
+<font color="#000080"><font color="#000080"><a href="chapter_3.8.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" src="left.gif" name="Grafik1"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.1.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font><br>
+
+&nbsp;
+<br>
+
+
+&nbsp;<span style="font-style: italic;">Last change:</span>
+$Id: chapter_4.0.html 108 2007-08-24 15:10:38Z letzel $<br>
+
+
+</p>
+
+</body>
+</html>

@@ -1,0 +1,1057 @@
+!> @file read_var_list.f90
+!------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the
+! terms of the GNU General Public License as published by the Free Software
+! Foundation, either version 3 of the License, or (at your option) any later
+! version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2016 Leibniz Universitaet Hannover
+!------------------------------------------------------------------------------!
+!
+! Current revisions:
+! ------------------
+! 
+! 
+! Former revisions:
+! -----------------
+! $Id$
+!
+! 2042 2016-11-02 13:47:31Z suehring
+! Bugfix, read restart data for wall_heatflux, wall_qflux and wall_sflux
+! 
+! 2000 2016-08-20 18:09:15Z knoop
+! Forced header and separation lines into 80 columns
+! 
+! 1992 2016-08-12 15:14:59Z suehring
+! top_scalarflux added
+! 
+! 1960 2016-07-12 16:34:24Z suehring
+! Separate humidity and passive scalar
+! Remove unused variables from ONLY list
+!
+! 1957 2016-07-07 10:43:48Z suehring
+! flight module added
+!
+! 1849 2016-04-08 11:33:18Z hoffmann
+! Adapted for modularization of microphysics
+!
+! 1833 2016-04-07 14:23:03Z raasch
+! spectra_mod added
+!
+! 1831 2016-04-07 13:15:51Z hoffmann
+! turbulence renamed collision_turbulence, drizzle renamed
+! cloud_water_sedimentation
+!
+! 1808 2016-04-05 19:44:00Z raasch
+! test output removed
+!
+! 1783 2016-03-06 18:36:17Z raasch
+! netcdf module name changed + related changes
+!
+! 1699 2015-10-29 08:02:35Z maronga
+! Bugfix: update of binary version from 3.9b to 4.0 was missing
+! 
+! 1691 2015-10-26 16:17:44Z maronga
+! Added output of most_method, constant_flux_layer, zeta_min, zeta_max. Removed 
+! output of prandtl_layer and rif_min, rif_max.
+! 
+! 1682 2015-10-07 23:56:08Z knoop
+! Code annotations made doxygen readable
+! 
+! 1615 2015-07-08 18:49:19Z suehring
+! Enable turbulent inflow for passive_scalar and humidity
+!
+! 1585 2015-04-30 07:05:52Z maronga
+! Adapted for RRTMG
+! 
+! 1560 2015-03-06 10:48:54Z keck
+! +recycling_yshift
+! 
+! 1522 2015-01-14 10:53:12Z keck
+! added query for checking if the advection scheme in the restart run is the
+! same as the advection scheme in the corresponding initial run
+! 
+! 1502 2014-12-03 18:22:31Z kanani
+! Canopy module and parameters removed (parameters are always read from 
+! canopy_par NAMELIST for initial and restart runs)
+! 
+! 1496 2014-12-02 17:25:50Z maronga
+! Renamed "radiation" -> "cloud_top_radiation"
+! 
+! 1484 2014-10-21 10:53:05Z kanani
+! Changes in the course of the canopy-model modularization:
+!   parameters alpha_lad, beta_lad, lai_beta added,
+!   module plant_canopy_model_mod added,
+!   drag_coefficient, leaf_surface_concentration and scalar_exchange_coefficient
+!   renamed to canopy_drag_coeff, leaf_surface_conc and leaf_scalar_exch_coeff
+!
+! 1322 2014-03-20 16:38:49Z raasch
+! REAL functions provided with KIND-attribute
+!
+! 1320 2014-03-20 08:40:49Z raasch
+! ONLY-attribute added to USE-statements,
+! kind-parameters added to all INTEGER and REAL declaration statements,
+! kinds are defined in new module kinds,
+! old module precision_kind is removed,
+! revision history before 2012 removed,
+! comment fields (!:) to be used for variable explanations added to
+! all variable declaration statements
+!
+! 1308 2014-03-13 14:58:42Z fricke
+! +do2d_xy_time_count, do2d_xz_time_count, do2d_yz_time_count,
+! +do3d_time_count
+!
+! 1253 2013-11-07 10:48:12Z fricke
+! Bugfix: add ref_state to read_parts_of_var_list, otherwise ref_state 
+! is zero for initializing_actions = 'cyclic_fill'
+!
+! 1241 2013-10-30 11:36:58Z heinze
+! +nudging
+! +large_scale_forcing
+!
+! 1195 2013-07-01 12:27:57Z heinze
+! Bugfix: allocate ref_state
+!
+! 1179 2013-06-14 05:57:58Z raasch
+! +ref_state
+!
+! 1115 2013-03-26 18:16:16Z hoffmann
+! unused variables removed
+!
+! 1092 2013-02-02 11:24:22Z raasch
+! unused variables removed
+!
+! 1065 2012-11-22 17:42:36Z hoffmann
+! +nc, c_sedimentation, limiter_sedimentation, turbulence
+! -mu_constant, mu_constant_value
+!
+! 1053 2012-11-13 17:11:03Z hoffmann
+! necessary expansions according to the two new prognostic equations (nr, qr) 
+! of the two-moment cloud physics scheme:
+! +bc_*_b, +bc_*_t, +bc_*_t_val, *_init, *_surface, *_surface_initial_change,
+! +*_vertical_gradient, +*_vertical_gradient_level, *_vertical_gradient_level_ind,
+! +surface_waterflux_*
+!
+! in addition, steering parameters parameters of the two-moment cloud physics 
+! scheme:   
+! +cloud_scheme, +drizzle, +mu_constant, +mu_constant_value, +ventilation_effect
+!
+! 1036 2012-10-22 13:43:42Z raasch
+! code put under GPL (PALM 3.9)
+!
+! 1015 2012-09-27 09:23:24Z raasch
+! -adjust_mixing_length
+!
+! 1003 2012-09-14 14:35:53Z raasch
+! -grid_matching
+!
+! 1001 2012-09-13 14:08:46Z raasch
+! -cut_spline_overshoot, dt_fixed, last_dt_change, long_filter_factor,
+! overshoot_limit_*, ups_limit_*
+!
+! 978 2012-08-09 08:28:32Z fricke
+! -km_damp_max, outflow_damping_width
+! +pt_damping_factor, pt_damping_width
+! +z0h_factor
+!
+! 940 2012-07-09 14:31:00Z raasch
+! +neutral
+!
+! 927 2012-06-06 19:15:04Z raasch
+! +masking_method
+!
+! 849 2012-03-15 10:35:09Z raasch
+! first_call_advec_particles renamed first_call_lpm
+!
+! 824 2012-02-17 09:09:57Z raasch
+! +curvature_solution_effects
+!
+! Revision 1.1  1998/03/18 20:18:48  raasch
+! Initial revision
+!
+!
+! Description:
+! ------------
+!> Reading values of global control variables from restart-file (binary format)
+!------------------------------------------------------------------------------!
+ SUBROUTINE read_var_list
+ 
+
+    USE arrays_3d,                                                             &
+        ONLY:  inflow_damping_factor, mean_inflow_profiles, pt_init,           &
+               q_init, ref_state, s_init, sa_init, u_init, ug, v_init, vg
+
+    USE control_parameters
+
+    USE flight_mod,                                                            &
+        ONLY:  flight_read_restart_data
+    
+    USE grid_variables,                                                        &
+        ONLY:  dx, dy
+
+    USE indices,                                                               &
+        ONLY:  nz, nx, nx_on_file, ny, ny_on_file
+
+    USE microphysics_mod,                                                      &
+        ONLY:  c_sedimentation, collision_turbulence,                          &
+               cloud_water_sedimentation, limiter_sedimentation,               &
+               nc_const, ventilation_effect
+
+    USE model_1d,                                                              &
+        ONLY:  damp_level_1d, dt_pr_1d, dt_run_control_1d, end_time_1d
+
+    USE netcdf_interface,                                                      &
+        ONLY:  netcdf_precision, output_for_t0
+
+    USE particle_attributes,                                                   &
+        ONLY:  curvature_solution_effects, time_sort_particles
+
+    USE pegrid
+
+    USE radiation_model_mod,                                                   &
+        ONLY:  time_radiation
+
+    USE spectra_mod,                                                           &
+        ONLY:  average_count_sp
+
+    USE statistics,                                                            &
+        ONLY:  statistic_regions, hom, hom_sum, pr_palm, u_max, u_max_ijk,     &
+               v_max, v_max_ijk, w_max, w_max_ijk
+
+
+    IMPLICIT NONE
+
+    CHARACTER (LEN=10) ::  binary_version, version_on_file
+    CHARACTER (LEN=30) ::  variable_chr
+
+
+    CALL check_open( 13 )
+
+!
+!-- Make version number check first
+    READ ( 13 )  version_on_file
+    binary_version = '4.1'
+    IF ( TRIM( version_on_file ) /= TRIM( binary_version ) )  THEN
+       WRITE( message_string, * ) 'version mismatch concerning control ', &
+                                  'variables',                            &
+                                  '&version on file    = "',              &
+                                  TRIM( version_on_file ), '"',           &
+                                  '&version on program = "',              &
+                                  TRIM( binary_version ), '"'
+       CALL message( 'read_var_list', 'PA0296', 1, 2, 0, 6, 0 )
+    ENDIF
+
+!
+!-- Read number of PEs and horizontal index bounds of all PEs used in previous
+!-- run
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'numprocs' )  THEN
+       WRITE( message_string, * ) 'numprocs not found in data from prior ', &
+                                  'run on PE ', myid
+       CALL message( 'read_var_list', 'PA0297', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  numprocs_previous_run
+
+    IF ( .NOT. ALLOCATED( hor_index_bounds_previous_run ) )  THEN
+       ALLOCATE( hor_index_bounds_previous_run(4,0:numprocs_previous_run-1) )
+    ENDIF
+
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'hor_index_bounds' )  THEN
+       WRITE( message_string, * ) 'hor_index_bounds not found in data from ', &
+                                  'prior run on PE ', myid
+       CALL message( 'read_var_list', 'PA0298', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  hor_index_bounds_previous_run
+
+!
+!-- Read vertical number of gridpoints and number of different areas used
+!-- for computing statistics. Allocate arrays depending on these values,
+!-- which are needed for the following read instructions.
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'nz' )  THEN
+       WRITE( message_string, * ) 'nz not found in data from prior run on PE ',&
+                                  myid
+       CALL message( 'read_var_list', 'PA0299', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  nz
+
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'max_pr_user' )  THEN
+       WRITE( message_string, * ) 'max_pr_user not found in data from ', &
+                    'prior run on PE ', myid
+       CALL message( 'read_var_list', 'PA0300', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  max_pr_user    ! This value is checked against the number of
+                                ! user profiles given for the current run
+                                ! in routine user_parin (it has to match)
+
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'statistic_regions' )  THEN
+       WRITE( message_string, * ) 'statistic_regions not found in data from ', &
+                    'prior run on PE ', myid
+       CALL message( 'read_var_list', 'PA0301', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  statistic_regions
+    IF ( .NOT. ALLOCATED( ug ) )  THEN
+       ALLOCATE( ug(0:nz+1), u_init(0:nz+1), vg(0:nz+1),                       &
+                 v_init(0:nz+1), pt_init(0:nz+1), q_init(0:nz+1),              &
+                 ref_state(0:nz+1), s_init(0:nz+1), sa_init(0:nz+1),           &
+                 hom(0:nz+1,2,pr_palm+max_pr_user,0:statistic_regions),        &
+                 hom_sum(0:nz+1,pr_palm+max_pr_user,0:statistic_regions) )
+    ENDIF
+
+!
+!-- Now read all control parameters:
+!-- Caution: When the following read instructions have been changed, the
+!-- -------  version number stored in the variable binary_version has to be
+!--          increased. The same changes must also be done in write_var_list.
+    READ ( 13 )  variable_chr
+    DO  WHILE ( TRIM( variable_chr ) /= '*** end ***' )
+
+       SELECT CASE ( TRIM( variable_chr ) )
+
+          CASE ( 'advected_distance_x' )
+             READ ( 13 )  advected_distance_x
+          CASE ( 'advected_distance_y' )
+             READ ( 13 )  advected_distance_y
+          CASE ( 'alpha_surface' )
+             READ ( 13 )  alpha_surface
+          CASE ( 'average_count_pr' )
+             READ ( 13 )  average_count_pr
+          CASE ( 'average_count_sp' )
+             READ ( 13 )  average_count_sp
+          CASE ( 'average_count_3d' )
+             READ ( 13 )  average_count_3d
+          CASE ( 'bc_e_b' )
+             READ ( 13 )  bc_e_b
+          CASE ( 'bc_lr' )
+             READ ( 13 )  bc_lr
+          CASE ( 'bc_ns' )
+             READ ( 13 )  bc_ns
+          CASE ( 'bc_p_b' )
+             READ ( 13 )  bc_p_b
+          CASE ( 'bc_p_t' )
+             READ ( 13 )  bc_p_t
+          CASE ( 'bc_pt_b' )
+             READ ( 13 )  bc_pt_b
+          CASE ( 'bc_pt_t' )
+             READ ( 13 )  bc_pt_t
+          CASE ( 'bc_pt_t_val' )
+             READ ( 13 )  bc_pt_t_val
+          CASE ( 'bc_q_b' )
+             READ ( 13 )  bc_q_b
+          CASE ( 'bc_q_t' )
+             READ ( 13 )  bc_q_t
+          CASE ( 'bc_q_t_val' )
+             READ ( 13 )  bc_q_t_val
+          CASE ( 'bc_s_b' )
+             READ ( 13 )  bc_s_b
+          CASE ( 'bc_s_t' )
+             READ ( 13 )  bc_s_t
+          CASE ( 'bc_sa_t' )
+             READ ( 13 )  bc_sa_t
+          CASE ( 'bc_uv_b' )
+             READ ( 13 )  bc_uv_b
+          CASE ( 'bc_uv_t' )
+             READ ( 13 )  bc_uv_t
+          CASE ( 'bottom_salinityflux' )
+             READ ( 13 )  bottom_salinityflux
+          CASE ( 'building_height' )
+             READ ( 13 )  building_height
+          CASE ( 'building_length_x' )
+             READ ( 13 )  building_length_x
+          CASE ( 'building_length_y' )
+             READ ( 13 )  building_length_y
+          CASE ( 'building_wall_left' )
+             READ ( 13 )  building_wall_left
+          CASE ( 'building_wall_south' )
+             READ ( 13 )  building_wall_south
+          CASE ( 'call_psolver_at_all_substeps' )
+             READ ( 13 )  call_psolver_at_all_substeps
+          CASE ( 'canyon_height' )
+             READ ( 13 )  canyon_height
+          CASE ( 'canyon_width_x' )
+             READ ( 13 )  canyon_width_x
+          CASE ( 'canyon_width_y' )
+             READ ( 13 )  canyon_width_y
+          CASE ( 'canyon_wall_left' )
+             READ ( 13 )  canyon_wall_left
+          CASE ( 'canyon_wall_south' )
+             READ ( 13 )  canyon_wall_south
+          CASE ( 'c_sedimentation' )
+             READ ( 13 )  c_sedimentation
+          CASE ( 'cfl_factor' )
+             READ ( 13 )  cfl_factor
+          CASE ( 'cloud_droplets' )
+             READ ( 13 )  cloud_droplets
+          CASE ( 'cloud_physics' )
+             READ ( 13 )  cloud_physics
+          CASE ( 'cloud_scheme' )
+             READ ( 13 )  cloud_scheme
+          CASE ( 'collective_wait' )
+             READ ( 13 )  collective_wait
+          CASE ( 'conserve_volume_flow' )
+             READ ( 13 )  conserve_volume_flow
+          CASE ( 'conserve_volume_flow_mode' )
+             READ ( 13 )  conserve_volume_flow_mode
+          CASE ( 'constant_flux_layer' )
+             READ ( 13 )  constant_flux_layer
+          CASE ( 'coupling_start_time' )
+             READ ( 13 )  coupling_start_time
+          CASE ( 'current_timestep_number' )
+             READ ( 13 )  current_timestep_number
+          CASE ( 'curvature_solution_effects' )
+             READ ( 13 )  curvature_solution_effects
+          CASE ( 'cycle_mg' )
+             READ ( 13 )  cycle_mg
+          CASE ( 'damp_level_1d' )
+             READ ( 13 )  damp_level_1d
+          CASE ( 'dissipation_1d' )
+             READ ( 13 )  dissipation_1d
+          CASE ( 'do2d_xy_time_count' )
+             READ ( 13 )  do2d_xy_time_count
+          CASE ( 'do2d_xz_time_count' )
+             READ ( 13 )  do2d_xz_time_count
+          CASE ( 'do2d_yz_time_count' )
+             READ ( 13 )  do2d_yz_time_count
+          CASE ( 'do3d_time_count' )
+             READ ( 13 )  do3d_time_count
+          CASE ( 'dp_external' )
+             READ ( 13 )  dp_external
+          CASE ( 'dp_level_b' )
+             READ ( 13 )  dp_level_b
+          CASE ( 'dp_smooth' )
+             READ ( 13 )  dp_smooth
+          CASE ( 'dpdxy' )
+             READ ( 13 )  dpdxy
+          CASE ( 'cloud_water_sedimentation' )
+             READ ( 13 )  cloud_water_sedimentation
+          CASE ( 'dt_pr_1d' )
+             READ ( 13 )  dt_pr_1d
+          CASE ( 'dt_run_control_1d' )
+             READ ( 13 )  dt_run_control_1d
+          CASE ( 'dt_3d' )
+             READ ( 13 )  dt_3d
+          CASE ( 'dvrp_filecount' )
+             READ ( 13 )  dvrp_filecount
+          CASE ( 'dx' )
+             READ ( 13 )  dx
+          CASE ( 'dy' )
+             READ ( 13 )  dy
+          CASE ( 'dz' )
+             READ ( 13 )  dz
+          CASE ( 'dz_max' )
+             READ ( 13 )  dz_max
+          CASE ( 'dz_stretch_factor' )
+             READ ( 13 )  dz_stretch_factor
+          CASE ( 'dz_stretch_level' )
+             READ ( 13 )  dz_stretch_level
+          CASE ( 'e_min' )
+             READ ( 13 )  e_min
+          CASE ( 'end_time_1d' )
+             READ ( 13 )  end_time_1d
+          CASE ( 'fft_method' )
+             READ ( 13 )  fft_method
+          CASE ( 'first_call_lpm' )
+             READ ( 13 )  first_call_lpm
+          CASE ( 'galilei_transformation' )
+             READ ( 13 )  galilei_transformation
+          CASE ( 'hom' )
+             READ ( 13 )  hom
+          CASE ( 'hom_sum' )
+             READ ( 13 )  hom_sum
+          CASE ( 'humidity' )
+             READ ( 13 )  humidity
+          CASE ( 'inflow_damping_factor' )
+             IF ( .NOT. ALLOCATED( inflow_damping_factor ) )  THEN
+                ALLOCATE( inflow_damping_factor(0:nz+1) )
+             ENDIF
+             READ ( 13 )  inflow_damping_factor
+          CASE ( 'inflow_damping_height' )
+             READ ( 13 )  inflow_damping_height
+          CASE ( 'inflow_damping_width' )
+             READ ( 13 )  inflow_damping_width
+          CASE ( 'inflow_disturbance_begin' )
+             READ ( 13 )  inflow_disturbance_begin
+          CASE ( 'inflow_disturbance_end' )
+             READ ( 13 )  inflow_disturbance_end
+          CASE ( 'km_constant' )
+             READ ( 13 )  km_constant
+          CASE ( 'large_scale_forcing' )
+             READ ( 13 )  large_scale_forcing
+           CASE ( 'large_scale_subsidence' )
+             READ ( 13 )  large_scale_subsidence
+          CASE ( 'limiter_sedimentation' )
+             READ ( 13 )  limiter_sedimentation
+          CASE ( 'loop_optimization' )
+             READ ( 13 )  loop_optimization
+          CASE ( 'masking_method' )
+             READ ( 13 )  masking_method
+          CASE ( 'mean_inflow_profiles' )
+             IF ( .NOT. ALLOCATED( mean_inflow_profiles ) )  THEN
+                ALLOCATE( mean_inflow_profiles(0:nz+1,7) )
+             ENDIF
+             READ ( 13 )  mean_inflow_profiles
+          CASE ( 'mg_cycles' )
+             READ ( 13 )  mg_cycles
+          CASE ( 'mg_switch_to_pe0_level' )
+             READ ( 13 )  mg_switch_to_pe0_level
+          CASE ( 'mixing_length_1d' )
+             READ ( 13 )  mixing_length_1d
+          CASE ( 'momentum_advec' )
+             READ ( 13 )  momentum_advec
+          CASE ( 'most_method' )
+             READ ( 13 )  most_method
+          CASE ( 'nc_const' )
+             READ ( 13 )  nc_const
+          CASE ( 'netcdf_precision' )
+             READ ( 13 )  netcdf_precision
+          CASE ( 'neutral' )
+             READ ( 13 )  neutral
+          CASE ( 'ngsrb' )
+             READ ( 13 )  ngsrb
+          CASE ( 'nsor' )
+             READ ( 13 )  nsor
+          CASE ( 'nsor_ini' )
+             READ ( 13 )  nsor_ini
+          CASE ( 'nudging' )
+             READ ( 13 )  nudging
+          CASE ( 'num_leg' )
+             READ ( 13 )  num_leg
+          CASE ( 'nx' )
+             READ ( 13 )  nx
+             nx_on_file = nx
+          CASE ( 'ny' )
+             READ ( 13 )  ny
+             ny_on_file = ny
+          CASE ( 'ocean' )
+             READ ( 13 )  ocean
+          CASE ( 'old_dt' )
+             READ ( 13 )  old_dt
+          CASE ( 'omega' )
+             READ ( 13 )  omega
+          CASE ( 'omega_sor' )
+             READ ( 13 )  omega_sor
+          CASE ( 'output_for_t0' )
+             READ (13)    output_for_t0
+          CASE ( 'passive_scalar' )
+             READ ( 13 )  passive_scalar
+          CASE ( 'phi' )
+             READ ( 13 )  phi
+          CASE ( 'prandtl_number' )
+             READ ( 13 )  prandtl_number
+          CASE ( 'precipitation' )
+             READ ( 13 ) precipitation
+          CASE ( 'psolver' )
+             READ ( 13 )  psolver
+          CASE ( 'pt_damping_factor' )
+             READ ( 13 )  pt_damping_factor
+          CASE ( 'pt_damping_width' )
+             READ ( 13 )  pt_damping_width
+          CASE ( 'pt_init' )
+             READ ( 13 )  pt_init
+          CASE ( 'pt_reference' )
+             READ ( 13 )  pt_reference
+          CASE ( 'pt_surface' )
+             READ ( 13 )  pt_surface
+          CASE ( 'pt_surface_initial_change' )
+             READ ( 13 )  pt_surface_initial_change
+          CASE ( 'pt_vertical_gradient' )
+             READ ( 13 )  pt_vertical_gradient
+          CASE ( 'pt_vertical_gradient_level' )
+             READ ( 13 )  pt_vertical_gradient_level
+          CASE ( 'pt_vertical_gradient_level_ind' )
+             READ ( 13 )  pt_vertical_gradient_level_ind
+          CASE ( 'q_init' )
+             READ ( 13 )  q_init
+          CASE ( 'q_surface' )
+             READ ( 13 )  q_surface
+          CASE ( 'q_surface_initial_change' )
+             READ ( 13 )  q_surface_initial_change
+          CASE ( 'q_vertical_gradient' )
+             READ ( 13 )  q_vertical_gradient
+          CASE ( 'q_vertical_gradient_level' )
+             READ ( 13 )  q_vertical_gradient_level
+          CASE ( 'q_vertical_gradient_level_ind' )
+             READ ( 13 )  q_vertical_gradient_level_ind
+          CASE ( 'cloud_top_radiation' )
+             READ ( 13 )  cloud_top_radiation
+          CASE ( 'random_generator' )
+             READ ( 13 )  random_generator
+          CASE ( 'random_heatflux' )
+             READ ( 13 )  random_heatflux
+          CASE ( 'rayleigh_damping_factor' )
+             READ ( 13 )  rayleigh_damping_factor
+          CASE ( 'rayleigh_damping_height' )
+             READ ( 13 )  rayleigh_damping_height
+          CASE ( 'recycling_width' )
+             READ ( 13 )  recycling_width
+          CASE ( 'recycling_yshift' )
+             READ ( 13 ) recycling_yshift
+          CASE ( 'reference_state' )
+             READ ( 13 )  reference_state
+          CASE ( 'ref_state' )
+             READ ( 13 )  ref_state
+          CASE ( 'residual_limit' )
+             READ ( 13 )  residual_limit
+          CASE ( 'roughness_length' )
+             READ ( 13 )  roughness_length
+          CASE ( 'runnr' )
+             READ ( 13 )  runnr
+          CASE ( 'run_coupled' )
+             READ ( 13 )  run_coupled
+          CASE ( 's_init' )
+             READ ( 13 )  s_init
+          CASE ( 's_surface' )
+             READ ( 13 )  s_surface
+          CASE ( 's_surface_initial_change' )
+             READ ( 13 )  s_surface_initial_change
+          CASE ( 's_vertical_gradient' )
+             READ ( 13 )  s_vertical_gradient
+          CASE ( 's_vertical_gradient_level' )
+             READ ( 13 )  s_vertical_gradient_level
+          CASE ( 's_vertical_gradient_level_ind' )
+             READ ( 13 )  s_vertical_gradient_level_ind 
+          CASE ( 'sa_init' )
+             READ ( 13 )  sa_init
+          CASE ( 'sa_surface' )
+             READ ( 13 )  sa_surface
+          CASE ( 'sa_vertical_gradient' )
+             READ ( 13 )  sa_vertical_gradient
+          CASE ( 'sa_vertical_gradient_level' )
+             READ ( 13 )  sa_vertical_gradient_level
+          CASE ( 'scalar_advec' )
+             READ ( 13 )  scalar_advec
+          CASE ( 'simulated_time' )
+             READ ( 13 )  simulated_time
+          CASE ( 'surface_heatflux' )
+             READ ( 13 )  surface_heatflux
+          CASE ( 'surface_pressure' )
+             READ ( 13 )  surface_pressure
+          CASE ( 'surface_scalarflux' )
+             READ ( 13 )  surface_scalarflux             
+          CASE ( 'surface_waterflux' )
+             READ ( 13 )  surface_waterflux      
+          CASE ( 'time_coupling' )
+             READ ( 13 )  time_coupling
+          CASE ( 'time_disturb' )
+             READ ( 13 )  time_disturb
+          CASE ( 'time_dopr' )
+             READ ( 13 )  time_dopr
+          CASE ( 'time_domask' )
+             READ ( 13 )  time_domask
+          CASE ( 'time_dopr_av' )
+             READ ( 13 )  time_dopr_av
+          CASE ( 'time_dopr_listing' )
+             READ ( 13 )  time_dopr_listing
+          CASE ( 'time_dopts' )
+             READ ( 13 )  time_dopts
+          CASE ( 'time_dosp' )
+             READ ( 13 )  time_dosp
+          CASE ( 'time_dots' )
+             READ ( 13 )  time_dots
+          CASE ( 'time_do2d_xy' )
+             READ ( 13 )  time_do2d_xy
+          CASE ( 'time_do2d_xz' )
+             READ ( 13 )  time_do2d_xz
+          CASE ( 'time_do2d_yz' )
+             READ ( 13 )  time_do2d_yz
+          CASE ( 'time_do3d' )
+             READ ( 13 )  time_do3d
+          CASE ( 'time_do_av' )
+             READ ( 13 )  time_do_av
+          CASE ( 'time_do_sla' )
+             READ ( 13 )  time_do_sla
+          CASE ( 'time_dvrp' )
+             READ ( 13 )  time_dvrp
+          CASE ( 'time_radiation' )
+             READ ( 13 )  time_radiation
+          CASE ( 'time_restart' )
+             READ ( 13 )  time_restart
+          CASE ( 'time_run_control' )
+             READ ( 13 )  time_run_control
+          CASE ( 'time_since_reference_point' )
+             READ ( 13 )  time_since_reference_point
+          CASE ( 'time_sort_particles' )
+             READ ( 13 )  time_sort_particles
+          CASE ( 'timestep_scheme' )
+             READ ( 13 )  timestep_scheme
+          CASE ( 'topography' )
+             READ ( 13 )  topography
+          CASE ( 'topography_grid_convention' )
+             READ ( 13 )  topography_grid_convention
+          CASE ( 'top_heatflux' )
+             READ ( 13 )  top_heatflux
+          CASE ( 'top_momentumflux_u' )
+             READ ( 13 )  top_momentumflux_u
+          CASE ( 'top_momentumflux_v' )
+             READ ( 13 )  top_momentumflux_v
+          CASE ( 'top_salinityflux' )
+             READ ( 13 )  top_salinityflux
+          CASE ( 'top_scalarflux' )
+             READ ( 13 )  top_scalarflux
+          CASE ( 'tsc' )
+             READ ( 13 )  tsc
+          CASE ( 'collision_turbulence' )
+             READ ( 13 )  collision_turbulence
+          CASE ( 'turbulent_inflow' )
+             READ ( 13 )  turbulent_inflow
+          CASE ( 'u_bulk' )
+             READ ( 13 )  u_bulk
+          CASE ( 'u_init' )
+             READ ( 13 )  u_init
+          CASE ( 'u_max' )
+             READ ( 13 )  u_max
+          CASE ( 'u_max_ijk' )
+             READ ( 13 )  u_max_ijk
+          CASE ( 'ug' )
+             READ ( 13 )  ug
+          CASE ( 'ug_surface' )
+             READ ( 13 )  ug_surface
+          CASE ( 'ug_vertical_gradient' )
+             READ ( 13 )  ug_vertical_gradient
+          CASE ( 'ug_vertical_gradient_level' )
+             READ ( 13 )  ug_vertical_gradient_level
+          CASE ( 'ug_vertical_gradient_level_ind' )
+             READ ( 13 )  ug_vertical_gradient_level_ind
+          CASE ( 'use_surface_fluxes' )
+             READ ( 13 )  use_surface_fluxes
+          CASE ( 'use_top_fluxes' )
+             READ ( 13 )  use_top_fluxes
+          CASE ( 'use_ug_for_galilei_tr' )
+             READ ( 13 )  use_ug_for_galilei_tr
+          CASE ( 'use_upstream_for_tke' )
+             READ ( 13 )  use_upstream_for_tke
+          CASE ( 'v_bulk' )
+             READ ( 13 )  v_bulk
+          CASE ( 'v_init' )
+             READ ( 13 )  v_init
+          CASE ( 'v_max' )
+             READ ( 13 )  v_max
+          CASE ( 'v_max_ijk' )
+             READ ( 13 )  v_max_ijk
+          CASE ( 'ventilation_effect' )
+             READ ( 13 )  ventilation_effect
+          CASE ( 'vg' )
+             READ ( 13 )  vg
+          CASE ( 'vg_surface' )
+             READ ( 13 )  vg_surface
+          CASE ( 'vg_vertical_gradient' )
+             READ ( 13 )  vg_vertical_gradient
+          CASE ( 'vg_vertical_gradient_level' )
+             READ ( 13 )  vg_vertical_gradient_level
+          CASE ( 'vg_vertical_gradient_level_ind' )
+             READ ( 13 )  vg_vertical_gradient_level_ind
+          CASE ( 'virtual_flight' )
+             READ ( 13 ) virtual_flight  
+          CASE ( 'volume_flow_area' )
+             READ ( 13 )  volume_flow_area
+          CASE ( 'volume_flow_initial' )
+             READ ( 13 )  volume_flow_initial
+          CASE ( 'wall_adjustment' )
+             READ ( 13 )  wall_adjustment
+          CASE ( 'subs_vertical_gradient' )
+             READ ( 13 )  subs_vertical_gradient
+          CASE ( 'subs_vertical_gradient_level' )
+             READ ( 13 )  subs_vertical_gradient_level
+          CASE ( 'subs_vertical_gradient_level_i' )
+             READ ( 13 )  subs_vertical_gradient_level_i
+          CASE ( 'wall_heatflux' )
+             READ ( 13 )  wall_heatflux
+          CASE ( 'wall_qflux' )
+             READ ( 13 )  wall_qflux
+          CASE ( 'wall_sflux' )
+             READ ( 13 )  wall_sflux
+          CASE ( 'w_max' )
+             READ ( 13 )  w_max
+          CASE ( 'w_max_ijk' )
+             READ ( 13 )  w_max_ijk
+          CASE ( 'zeta_max' )
+             READ ( 13 )  zeta_max
+          CASE ( 'zeta_min' )
+             READ ( 13 )  zeta_min
+          CASE ( 'z0h_factor' )
+             READ ( 13 )  z0h_factor
+
+          CASE DEFAULT
+             WRITE( message_string, * ) 'unknown variable named "',         &
+                                        TRIM( variable_chr ), '" found in', &
+                                        ' data from prior run on PE ', myid 
+             CALL message( 'read_var_list', 'PA0302', 1, 2, 0, 6, 0 )
+        END SELECT
+!
+!--    Read next string
+       READ ( 13 )  variable_chr
+
+    ENDDO
+    
+    IF ( virtual_flight )  CALL flight_read_restart_data
+
+
+ END SUBROUTINE read_var_list
+
+
+
+!------------------------------------------------------------------------------!
+! Description:
+! ------------
+!> Skipping the global control variables from restart-file (binary format)
+!> except some information needed when reading restart data from a previous
+!> run which used a smaller total domain or/and a different domain decomposition.
+!------------------------------------------------------------------------------!
+ 
+ SUBROUTINE read_parts_of_var_list
+
+
+    USE arrays_3d,                                                             &
+        ONLY:  inflow_damping_factor, mean_inflow_profiles, ref_state, ug, vg
+
+    USE control_parameters
+
+    USE indices,                                                               &
+        ONLY:  nz, nx, nx_on_file, ny, ny_on_file
+
+    USE kinds
+
+    USE pegrid
+
+    USE statistics,                                                            &
+        ONLY:  statistic_regions, hom, hom_sum, pr_palm, u_max, u_max_ijk,     &
+               v_max, v_max_ijk, w_max, w_max_ijk
+
+    IMPLICIT NONE
+
+    CHARACTER (LEN=10) ::  version_on_file
+    CHARACTER (LEN=20) ::  momentum_advec_check
+    CHARACTER (LEN=20) ::  scalar_advec_check
+    CHARACTER (LEN=30) ::  variable_chr
+    CHARACTER (LEN=1)  ::  cdum
+
+    INTEGER(iwp) ::  max_pr_user_on_file
+    INTEGER(iwp) ::  nz_on_file
+    INTEGER(iwp) ::  statistic_regions_on_file
+    INTEGER(iwp) ::  tmp_mpru
+    INTEGER(iwp) ::  tmp_sr
+
+    REAL(wp), DIMENSION(:,:,:),   ALLOCATABLE ::  hom_sum_on_file
+    REAL(wp), DIMENSION(:,:,:,:), ALLOCATABLE ::  hom_on_file
+
+
+    CALL check_open( 13 )
+
+    READ ( 13 )  version_on_file
+
+!
+!-- Read number of PEs and horizontal index bounds of all PEs used in previous
+!-- run
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'numprocs' )  THEN
+       WRITE( message_string, * ) 'numprocs not found in data from prior ', &
+                                  'run on PE ', myid
+       CALL message( 'read_parts_of_var_list', 'PA0297', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  numprocs_previous_run
+
+    IF ( .NOT. ALLOCATED( hor_index_bounds_previous_run ) )  THEN
+       ALLOCATE( hor_index_bounds_previous_run(4,0:numprocs_previous_run-1) )
+    ENDIF
+
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'hor_index_bounds' )  THEN
+       WRITE( message_string, * ) 'hor_index_bounds not found in data from ', &
+                                  'prior run on PE ', myid
+       CALL message( 'read_parts_of_var_list', 'PA0298', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  hor_index_bounds_previous_run
+
+!
+!-- Read vertical number of gridpoints and number of different areas used
+!-- for computing statistics. Allocate arrays depending on these values,
+!-- which are needed for the following read instructions.
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'nz' )  THEN
+       message_string = 'nz not found in restart data file'
+       CALL message( 'read_parts_of_var_list', 'PA0303', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  nz_on_file
+    IF ( nz_on_file /= nz )  THEN
+       WRITE( message_string, * ) 'mismatch concerning number of ',      &
+                                  'gridpoints along z',                  &
+                                  '&nz on file    = "', nz_on_file, '"', &
+                                  '&nz from run   = "', nz, '"'
+       CALL message( 'read_parts_of_var_list', 'PA0304', 1, 2, 0, 6, 0 )
+    ENDIF
+
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'max_pr_user' )  THEN
+       message_string = 'max_pr_user not found in restart data file'
+       CALL message( 'read_parts_of_var_list', 'PA0305', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  max_pr_user_on_file
+    IF ( max_pr_user_on_file /= max_pr_user )  THEN
+       WRITE( message_string, * ) 'number of user profiles on res',           &
+                                  'tart data file differs from the current ', &
+                                  'run&max_pr_user on file    = "',           &
+                                  max_pr_user_on_file, '"',                   &
+                                  '&max_pr_user from run   = "',              &
+                                  max_pr_user, '"'
+       CALL message( 'read_parts_of_var_list', 'PA0306', 0, 0, 0, 6, 0 )
+       tmp_mpru = MIN( max_pr_user_on_file, max_pr_user )
+    ELSE
+       tmp_mpru = max_pr_user
+    ENDIF
+
+    READ ( 13 )  variable_chr
+    IF ( TRIM( variable_chr ) /= 'statistic_regions' )  THEN
+       message_string = 'statistic_regions not found in restart data file'
+       CALL message( 'read_parts_of_var_list', 'PA0307', 1, 2, 0, 6, 0 )
+    ENDIF
+    READ ( 13 )  statistic_regions_on_file
+    IF ( statistic_regions_on_file /= statistic_regions )  THEN
+       WRITE( message_string, * ) 'statistic regions on restart data file ',& 
+                                  'differ from the current run',            &
+                                  '&statistic regions on file    = "',      &
+                                  statistic_regions_on_file, '"',           &
+                                  '&statistic regions from run   = "',      &
+                                   statistic_regions, '"',                  &
+                                  '&statistic data may be lost!'
+       CALL message( 'read_parts_of_var_list', 'PA0308', 0, 1, 0, 6, 0 )
+       tmp_sr = MIN( statistic_regions_on_file, statistic_regions )
+    ELSE
+       tmp_sr = statistic_regions
+    ENDIF
+
+
+!
+!-- Now read and check some control parameters and skip the rest
+    READ ( 13 )  variable_chr
+
+    DO  WHILE ( TRIM( variable_chr ) /= '*** end ***' )
+
+       SELECT CASE ( TRIM( variable_chr ) )
+
+          CASE ( 'average_count_pr' )
+             READ ( 13 )  average_count_pr
+             IF ( average_count_pr /= 0 )  THEN
+                WRITE( message_string, * ) 'inflow profiles not temporally ',  &
+                               'averaged. &Averaging will be done now using ', &
+                               average_count_pr, ' samples.'
+                CALL message( 'read_parts_of_var_list', 'PA0309', &
+                                                                 0, 1, 0, 6, 0 )
+             ENDIF
+
+          CASE ( 'hom' )
+             ALLOCATE( hom_on_file(0:nz+1,2,pr_palm+max_pr_user_on_file, &
+                       0:statistic_regions_on_file) )
+             READ ( 13 )  hom_on_file
+             hom(:,:,1:pr_palm+tmp_mpru,0:tmp_sr) = &
+                          hom_on_file(:,:,1:pr_palm+tmp_mpru,0:tmp_sr)
+             DEALLOCATE( hom_on_file )
+
+          CASE ( 'hom_sum' )
+             ALLOCATE( hom_sum_on_file(0:nz+1,pr_palm+max_pr_user_on_file, &
+                       0:statistic_regions_on_file) )
+             READ ( 13 )  hom_sum_on_file
+             hom_sum(:,1:pr_palm+tmp_mpru,0:tmp_sr) = &
+                          hom_sum_on_file(:,1:pr_palm+tmp_mpru,0:tmp_sr)
+             DEALLOCATE( hom_sum_on_file )
+
+          CASE ( 'momentum_advec' )
+             momentum_advec_check = momentum_advec
+             READ ( 13 )  momentum_advec
+             IF ( TRIM( momentum_advec_check ) /= TRIM( momentum_advec ) )  THEN
+                WRITE( message_string, * ) 'momentum_advec of the restart run ',&
+                               'differs from momentum_advec of the initial run.'
+                CALL message( 'read_parts_of_var_list', 'PA0100', &
+                                                                 1, 2, 0, 6, 0 )
+             END IF                           
+             
+          CASE ( 'nx' )
+             READ ( 13 )  nx_on_file
+
+          CASE ( 'ny' )
+             READ ( 13 )  ny_on_file
+
+          CASE ( 'ref_state' )
+             READ ( 13 )  ref_state
+
+          CASE ( 'scalar_advec' )
+             scalar_advec_check = scalar_advec
+             READ ( 13 )  scalar_advec
+             IF ( TRIM( scalar_advec_check ) /= TRIM( scalar_advec ) )  THEN
+                WRITE( message_string, * ) 'scalar_advec of the restart run ', &
+                               'differs from scalar_advec of the initial run.'
+                CALL message( 'read_parts_of_var_list', 'PA0101', &
+                                                                 1, 2, 0, 6, 0 )
+             END IF             
+             
+          CASE DEFAULT
+
+             READ ( 13 )  cdum
+
+       END SELECT
+
+       READ ( 13 )  variable_chr
+
+    ENDDO
+
+!
+!-- Calculate the temporal average of vertical profiles, if neccessary
+    IF ( average_count_pr /= 0 )  THEN
+       hom_sum = hom_sum / REAL( average_count_pr, KIND=wp )
+    ENDIF
+
+
+ END SUBROUTINE read_parts_of_var_list
+
+
+
+!------------------------------------------------------------------------------!
+! Description:
+! ------------
+!> Skipping the global control variables from restart-file (binary format)
+!------------------------------------------------------------------------------!
+ 
+ SUBROUTINE skip_var_list
+
+    USE control_parameters,                                                    &
+        ONLY:  virtual_flight
+ 
+    USE flight_mod,                                                            &
+        ONLY:  flight_skip_var_list
+ 
+    IMPLICIT NONE
+
+    CHARACTER (LEN=10) ::  version_on_file
+    CHARACTER (LEN=30) ::  variable_chr
+
+    CHARACTER (LEN=1) ::  cdum
+
+
+    READ ( 13 )  version_on_file
+
+    READ ( 13 )  variable_chr
+
+    DO  WHILE ( TRIM( variable_chr ) /= '*** end ***' )
+
+       READ ( 13 )  cdum
+       READ ( 13 )  variable_chr
+
+    ENDDO
+!
+!-- In case of virtual flights, skip also variables related to 
+!-- this module.
+    IF ( virtual_flight )  CALL flight_skip_var_list
+    
+
+ END SUBROUTINE skip_var_list

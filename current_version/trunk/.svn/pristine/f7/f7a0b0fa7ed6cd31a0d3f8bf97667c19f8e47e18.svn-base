@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+ <TITLE>Kompressionsverfahren</TITLE>
+<SCRIPT LANGUAGE="JavaScript1.1">
+<!--
+function footer(){
+Datum = new Date();
+document.writeln("<HR>");
+document.writeln("<TABLE width=100%><TD width=50% align=left bgcolor=orange><I>Layout: <A Href=\"mailto:harbusch@muk.uni-hannover.de\">Guido Harbusch</I></A> &copy;</TD><TD width=50% align=right bgcolor=orange><I>Letzte &Auml;nderung: "+document.lastModified+"</I></TH></TABLE>");
+}
+//--></SCRIPT>
+</HEAD>
+
+<BODY BGCOLOR="antiquewhite">
+<HR>
+<H1>Das Kompressionsverfahren der Bitverschiebung</H1>
+<HR>
+<!-- AS-TOC_BEGIN{ -->
+<H1>Inhalt:</H1>
+
+<OL>
+	<LI><A HREF="#as-h2-1853318">Einleitung:</A>
+	<LI><A HREF="#as-h2-1853319">Theorie:</A>
+	<LI><A HREF="#as-h2-1853320">Das Verfahren:</A>
+	<UL>
+		<LI><A HREF="#as-h3-1853321">Einleitung:</A>
+		<LI><A HREF="#as-h3-1853322">Genauigkeits-Skalierung:</A>
+		<LI><A HREF="#as-h3-1853323">Minimums-Skalierung:</A>
+		<LI><A HREF="#as-h3-1853324">Berechnung der ben&ouml;tigten Bitzahl:</A>
+		<LI><A HREF="#as-h3-1853325">Bitverschiebung:</A>
+	</UL>
+	<LI><A HREF="#as-h2-1853326">Anmerkungen zur Verwendung mit dem Parallelen LES-Modell Palm-1</A>
+	<LI><A HREF="#as-h2-1853327">Index der verwendeten Variablen:</A>
+</OL>
+<!-- AS-TOC_END} -->
+
+
+<H2><A NAME="as-h2-1853318">Einleitung:</A></H2>
+
+An dieser Stelle soll ein Kompressionsverfahren beschrieben werden, das verwendet werden kann , um Gleitkommazahlen (einfacher oder doppelter Genauigkeit) zu komprimieren. Geeignet ist das Verfahren allerdings nur f&uuml;r Daten, bei denen es nicht auf eine hohe Genauigkeit ankommt. Dies kann z.B. f&uuml;r Daten zur grafischen Darstellung der Fall sein. Z.B. reichen zur Darstellung eines Temperaturfeldes h&auml;ufig 1 oder 2 Nachkommastellen.<BR>
+Das hier beschriebene Verfahren beruht auf einem Prototyp von Dr. Alexander Beck-Ratzka, dem an dieser Stelle ein herzlicher Dank ausgesprochen werden soll. Dieser Prototyp wurde den hier gegebenen Problemen entsprechend modifiziert und erweitert.
+
+<H2><A NAME="as-h2-1853319">Theorie:</A></H2>
+Nach dem 1985 festgelegten <EM>Binary Floating Point Arithmetic Standard (754-1985)</EM> des IEEE (<B>I</B>nstitute for <B>E</B>lectrical and <B>E</B>lectronic <B>E</B>ngineers) wird eine <I>long real</I>-Zahl durch eine 64-bit-Darstellung repr&auml;sentiert:<BR>
+<TABLE BORDER="1" FRAME=border RULES=all CELLPADDING="2" ALIGN=center BGCOLOR="lightgrey">
+<TR ALIGN=center><TH>Bits<TH>Bitzahl<TH>Bedeutung<TH>Abk.
+<TR ALIGN=center><TD>64<TD>1<TD>Vorzeichen<TD>s
+<TR ALIGN=center><TD>63-53<TD>11<TD>Exponent<TD>E
+<TR ALIGN=center><TD>52-1<TD>52<TD>Mantisse<TD>M
+<TR ALIGN=center><TD>-<TD>-<TD>Basis (Rechnerabh&auml;ngig)<TD>B
+</TABLE>
+Eine Zahl wird dann in der Form <BR>
+<TABLE ALIGN=center>
+<TR><TD>(-1)<SUP>s</SUP>*B<SUP>E-1023</SUP>*(1+M)
+</TABLE>
+ dargestellt. Diese Darstellung gew&auml;hrt eine Genauigkeit von 15 bis 16 Dezimalstellen bei Normalisierung (keine 0 an f&uuml;hrender Nachkommastelle). Diese Genauigkeit ist h&auml;ufig nicht notwendig, die 15. Nachkommastelle eines Temperaturwertes l&auml;&szlig;t sich auch mit den heutigen technischen M&ouml;glichkeiten nicht bestimmen. Zur grafischen Darstellung ist es oft ausreichend, nur eine oder zwei Nachkommastellen zu ber&uuml;cksichtigen. Eine derart reduzierte Zahl bedarf aber keiner 64 Bit-Darstellung.
+
+<H2><A NAME="as-h2-1853320">Das Verfahren:</A></H2>
+<H3><A NAME="as-h3-1853321">Einleitung:</A></H3>
+Angenommen es existiert ein Datensatz von 1000 Temperaturme&szlig;werten zwichen -3.453 und +22.236 &deg;C. Alle diese Werte sind auf doppeltgenauer Zahlendarstellung gespeichert. Dann belegen diese 1000 Werte 8000 Byte Speicherplatz. Bei den heute durchgef&uuml;hrten numerischen Simulationen werden aber weitaus gr&ouml;&szlig;ere Zahlen von Datenpunkten verwandt (ich rechne z. Zt. mit 120x120x80 = 1152000 Datenpunkte zu je 8 Byte , also fast 9MB Speicherplatz pro Datensatz). Bei steigender Anzahl von Datens&auml;tzen steigt der ben&ouml;tigte Speicherplatz rasch in GigaByte-Bereiche. Neben der Datenlagerung ist aber auch die Verarbeitungsgeschwindigkeit ein Kriterium, das die Datenkompression geraten erscheinen l&auml;&szlig;t.<BR>
+
+<H3><A NAME="as-h3-1853322">Genauigkeits-Skalierung:</A></H3>
+Bleiben wir beispielhaft bei dem obigen Temperaturfeld. 
+Zun&auml;chst w&auml;hlt man die Genauigkeit, die die Zahlenwerte nach der Kompression noch haben soll, sagen wir p = 2 (p:precision) Nachkommastellen interessieren uns. Dann multipliziert man jeden Datenpunkt mit 10<SUP>p</SUP>=10<SUP>2</SUP>=100. Das entstandene Feld speichert man auf ein Inetegerfeld um, wodurch Nachkommastellen abgeschnitten werden. Genauer ist jedoch eine Umwandlung von Gleitkomma- in Integerwerte mit Rundung. Das Minimum des neuen Feldes betr&auml;gt dann -345, das Maximum +2224.<BR>
+
+<H3><A NAME="as-h3-1853323">Minimums-Skalierung:</A></H3>
+Im n&auml;chsten Schritt skaliert man das entstandene Integerfeld, indem man von jedem Datenwert das Minimum subtrahiert. Man verschiebt sozusagen die Zahlenachse, bis das Minimum des Ausgangsfeldes auf der Null zu liegen kommt.<BR>
+<TABLE ALIGN=center>
+<TR><TD>F<SUB>neu</SUB> = F<SUB>alt</SUB> - Min(F<SUB>alt</SUB>)
+</TABLE>
+Das Feldminimum ist ein Parameter, der f&uuml;r die Dekomprimierung des Feldes ben&ouml;tigt wird. Das auf diese Weise skalierte Integerfeld hat als Minimum nun 0, als Maximum den Wert 2569<BR>
+
+<H3><A NAME="as-h3-1853324">Berechnung der ben&ouml;tigten Bitzahl:</A></H3>
+Im 3. Schritt wird die Anzahl der Bits bestimmt, mit der jeder Datenwert dargestellt werden kann. Dabei ist der Maximalwert des Feldes ausschlaggebend. Kann er durch eine bestimmte Anzahl von Bits dargestellt werden, so kann es auch jeder andere Wert des Feldes. Die Bestimmung der notwendigen Bitzahl geschieht am einfachsten durch einen Vergleich des Maximalwertes mit den Werten eines Feldes von Bitmasken, die folgenderma&szlig;en definiert wird:<BR>
+<TABLE ALIGN=center>
+<TR><TD>mask<SUB>i</SUB> = 2<SUP>i</SUP>-1= 1,3,7,15,31,63,127,255,511,... (i=1,...,32)
+</TABLE>
+
+
+Diese Masken repr&auml;sentieren Ganzzahlen, bei denen jeweils alle Bits 1-i gesetzt sind, wobei Bit 1 das am weitesten rechts stehende bezeichne (z.B. 63 dezimal = 111111 bin&auml;r = 2<SUP>6</SUP>-1).
+Der Vergleich k&ouml;nnte in Fortran90 dann wie folgt aussehen:<BR>
+<TABLE ALIGN=center BGCOLOR="lightgrey">
+<TR><TD><PRE>
+  nsize = 1
+  DO WHILE (mask(nsize) < ampl)
+     nsize = nsize + 1
+  END DO
+</PRE>
+</TABLE>
+
+<TT>nsize</TT> gibt dabei die Anzahl von Bits an, die zur Darstellung des Maximums des skalierten Integerfeldes ben&ouml;tigt werden. F&uuml;r das verwendete Beispiel bedeutet dies, da&szlig; jede Zahl des Datensatzes durch 12 Bit (2<SUP>12</SUP>-1=4095) dargestellt werden kann. Wurde die Zahl ehemals durch eine doppelt genaue Gleitkommazahl repr&auml;sentiert (zumeist 64 Bit = 8 Byte), so erh&auml;lt man - freilich auf Kosten eines gewissen Genauigkeitsverlusts - einen Kompressionsfaktor von 5,3.<BR>
+Nun stellt sich aber das Problem, da&szlig; kaum eine Programmiersprache (gibt es &uuml;berhaupt eine?) Variablen beliebiger Bitgr&ouml;&szlig;e zul&auml;&szlig;t. Man behilft sich nun damit, da&szlig; man sich ein Feld bereitstellt, dessen minimale Gr&ouml;&szlig;e sich aus dem Produkt der Anzahl der Datenpunkte mit der ben&ouml;tigten Bitzahl ergibt. Beispiel: F&uuml;r 1000 Datenpunkte zu je 12 Bit ben&ouml;tigt man 12000 Bit = 1500 Byte. Betr&auml;gt die Gr&ouml;&szlig;e eines Integers 4 Byte, so stelle man Speicher f&uuml;r 375 Integerwerte bereit. In manch anderem Fall mag diese Rechnung nicht glatt aufgehen. W&auml;re die ben&ouml;tigte Bitzahl pro Wert z.B. 13, so w&auml;re ein Feld von 406.25 Integern vonn&ouml;ten, um alle komprimierten Datenpunkte zu erfassen. In einem solchen Fall w&auml;hle man die n&auml;chst h&ouml;here Ganzzahl und nehme ein paar unbenutzte Bits am Ende des Datensatzes in Kauf.<BR>
+
+<H3><A NAME="as-h3-1853325">Bitverschiebung:</A></H3>
+Wie bekommt man nun aber die Zahlen in das neu bereitgestellte Feld? Zur Beantwortung dieser Frage mu&szlig; man wissen, da&szlig; in der bin&auml;ren Zahlendarstellung jedes Datenpunktes des skalierten Integerfeldes jeweils nur die <TT>nsize</TT> am weitesten rechts stehenden Bits von Null verschieden sein k&ouml;nnen (Durch die Minimumskalierung enth&auml;lt das Feld nur positive Werte. Somit kann auch das Vorzeichenbit nicht gesetzt sein). 
+Diese Bits mu&szlig; man nun um eine entsprechende Zahl <TT>(32-nsize)</TT> nach links verschieben. Dies ist mit geeigneten Unterprogrammen und Funktionen der verwendeten Programmiersprache (z.B. &lt;&lt;-Operator in C oder ISHFT in Fortran90) m&ouml;glich oder aber, wenn solche Funktionen nicht zur Verf&uuml;gung stehen, dann mache man von der Eigenschaft gebrauch, da&szlig; in bin&auml;rer Zahlendarstellung eine Verschiebung um 1 Bit nach links einer Multiplikation der Zahl mit 2 entspricht (schneller ist allerdings die direkte Bit-Verschiebung). Hat man die Verschiebung f&uuml;r die erste Zahl durchgef&uuml;hrt, so hat man noch die rechten <TT>nfrei=32-nsize</TT> Bits der ersten Integerzahl im Packfeld frei. F&uuml;r <TT>nsize &lt; nfrei</TT> pa&szlig;t dort also noch mindestens eine weitere Zahl ganz hinein. Die zweite Zahl wird also um <TT>32-2*nsize</TT> Bits nach links verschoben und auf die erste Zahl des Packfeldes addiert. So f&auml;hrt man fort, bis keine weitere Zahl mehr ganz auf die Integerzahl des Packfeldes pa&szlig;t.<BR>
+Danach stehen f&uuml;r die folgende Zahl nur noch <TT>32-(n*nsize)</TT> Bits zur Verf&uuml;gung, wobei <TT>n</TT> die Anzahl der bereits gepackten Zahlen ist. F&uuml;r unser Beispiel bedeutet dies, da&szlig;, nachdem zwei Zahlen gepackt worden sind, keine weitere Zahl ganz in den Speicherbereich der ersten Zahl des Packfeldes pa&szlig;t; nur 8 Bit sind noch frei (<TT>nfrei=32-2*12=8</TT>). Die folgende Zahl mu&szlig; also aufgeteilt werden: die letzten 4 Bit werden in den Speicherbereich der folgenden Zahl des Packfeldes ganz nach links geschrieben, w&auml;hrend die Bits 5-12 noch in die verbleibenden 8 Bit passen. Hier wird es etwas kompliziert. Es kommen erneut die Bitmasken zum Einsatz. Man w&auml;hle die Bitmaske <TT>mask(nfrei)</TT>, verschiebe diese um <TT>nsize-nfrei</TT> Bits nach links, mache einen Bitweisen UND-Vergleich und verschiebe das Resultat wieder um <TT>nsize-nfrei</TT> Bits zur&uuml;ck (nach rechts). Dann braucht man nur noch diese Zahl auf die erste Zahl des Packfeldes zu addieren und man hat diese vollst&auml;ndig beschrieben. Nun schneide man die letzten 4 Bit des Datenwertes aus (bitweises UND von <TT>mask(4)</TT> und dem Wert), verschiebe das entstehende Bitmuster um 32-4 Bits nach links und schreibe dies auf die zweite Zahl des Packfeldes. F&uuml;r alle weiteren Zahlen verfahre man analog.<BR>
+Dies liest sich sicher sehr verwirrend an, ist aber in der programmtechnischen Realisierung recht einfach. Eine F90-Unterroutine k&ouml;nnte z.B. so aussehen:<BR>
+<TABLE FRAME=box ALIGN=center BGCOLOR="lightgrey">
+<TR><TD>
+<PRE>
+MODULE bpack
+  INTEGER, PARAMETER ::  ip4 = SELECTED_INT_KIND ( 9 )
+  integer(ip4) imask (16) !! Feld fuer Bitmasken.
+  integer(ip4), dimension(:), allocatable :: feld, feldabw, packfeld
+  integer :: feldmax = 0, feldmin = 0, ampl = 0
+  integer :: npack = 0, nsize = 1, offset = 0, lbits = 0, size = 15
+  integer laenge
+  real :: faktor = 1.0
+END MODULE bpack
+
+subroutine bitpack
+  !****************************************************************
+  USE bpack
+  !
+  !----- Deklarationen
+  !
+  IMPLICIT NONE
+  !
+  !----- Interna.
+  !
+  INTEGER :: i,ii,dummy1,dummy2,anfpos,nfrei
+  INTEGER(ip4) :: mask
+     !
+     !----- Das Packen.
+     !
+     anfpos = 0
+     ii = 1
+     !
+     DO i=1,laenge
+        !
+        dummy1 = IAND(feld(i),imask(nsize))
+        !
+        nfrei = 32 - anfpos - nsize
+        IF (nfrei > 0) THEN ! Info in Wort ii anfuegen.
+           anfpos = anfpos + nsize
+           dummy2 = ISHFT(dummy1,nfrei)
+           packfeld(ii) = packfeld(ii) + dummy2
+        ELSE IF (nfrei .EQ. 0) THEN ! Mit neuem Info ist Wort ii voll!
+           packfeld(ii) = packfeld(ii) + dummy1
+           ii = ii+1
+           anfpos = 0
+        ELSE ! Info muss auf ii und ii+1 verteilt werden.
+           dummy2 = ISHFT(dummy1,nfrei)
+           packfeld(ii) = packfeld(ii) + dummy2 
+           packfeld(ii+1) = ISHFT(dummy1, 32+nfrei)
+           ii = ii+1
+           anfpos = -nfrei
+        ENDIF
+        !
+     END DO
+     !
+  RETURN
+  !
+  !---- Ende von *bitpack*
+  !
+END SUBROUTINE bitpack
+</PRE>
+</TABLE>
+<H2><A NAME="as-h2-1853326">Anmerkungen zur Verwendung mit dem Parallelen LES-Modell Palm-1</A></H2>
+Ein Problem bei der Verwendung dieses Kompressionsverfahrens mit Modellen f&uuml;r massiv parallele Recher mit verteiltem Speicher wie <A HREF="http://www.muk.uni-hannover.de/institut/people/raasch/PALM-1/intro.html">PALM-1</A>, die mit einer Gebietszerlegung arbeiten, ist, da&szlig; ein Prozessor jeweils nur ein Teilgebiet behandelt, und auch nur dieses Teilgebiet im Speicher hat. Will man den Vorteil der parallelen Abarbeitung auch fuer den Kompressionsalgorithmus nutzen, so hat man es mit einigen Schwierigkeiten zu tun: Zum einen schriebt jeder Prozessor seine eigene Ausgabedatei. Im unkomprimierten Fall war das nicht das Problem, da jeder Wert eines Teilfeldes ein wohldefiniertes Koordinatentriple (x,y,z) hatte. Auf diese Weise lie&szlig; sich das Feld Problemlos wieder zusammenf&uuml;gen, indem auf diese Koordinaten zugegriffen wurde. Im komprimierten Feld ist diese Zuordnung nun aber nicht mejr m&ouml;glich, da jetzt mehrere Datenpunkte und teilweise sogar Bruchteile davon auf einem Integer-Wert abgelegt sind. Dazu kommt noch, da&szlig; die im Gesamtfeld nebeneinander im Speicher liegen sollten durch die Gebietsaufteilung getrennt werden. Dazu ein Beispiel: Es liegen alle x-Werte eines Teilgebiets zu einem y-Wert nacheinander im Speicher, dann folgen alle x-Werte zum naechsten y-Wert, usw.. Der betrachtete Prozessor habe noch einen Nachbar-Prozessor in x-Richung. Um im Gesamtfeld die exakte Reihenfolge der Daten zu erhalten m&uuml;&szlig;ten aber alle x-Werte aller Prozessoren nacheinander im Speicher liegen, gefolgt von allen x-Werten aller Prozessoren zum nachfolgenden y-Wert. Im unkomprimierten Fall ist das wegen der einfachen Zuordnung &uuml;ber die Koordinaten nicht problematisch, diese entf&auml;llt nun aber. Zudem k&ouml;nnen letzter x-Wert zum einen und erster x-Wert zum nachfolgenden y nun auf einem Integer liegen, was eine sp&auml;tere Zuordnung noch erschwert. Hier bieten sich nun mehrere L&ouml;sungsm&ouml;glichkeiten an. Eine elegante, aber programmieraufwendige M&ouml;glichkeit besteht darin, auf den einzelnen Prozessoren jeweils Schnittfl&auml;chen des GEsamtgebietes zu sammeln, diese zu komprimieren und auszugeben. Dazu w&auml;re aber ein umfangreicher Datenaustausch zwischen den Prozessorelementen n&ouml;tig. Daf&uuml;r h&auml;tte man die M&ouml;glichkeit, die Dateien einfach in der richtigen Reihenfolge aneinander zu h&auml;ngen. Aus zeitgr&uuml;nden haben wir uns im Fall PALM-1 aber zu einem anderen Verfahren entschlossen. Dabei komprimiert jeder Prozessor sein Teilvolumen und gibt diese auf Datei aus. In einer anschlie&szlig;enden Nachbehandlung werden diese Dateien mit dem Tar-Kommando archiviert. Da 3D-Daten von uns vornehmlich mit AVS visualisiert werden, wurde ein Modul entwickelt, das die entstandene Tar-Datei tempor&auml;r auspackt, die Teilvolumen einliest, dekomprimiert und in die richtige Reihenfolge ordnet. Ansonsten ist das Modul <TT><A HREF="Modules/read_compressed_field.html">read compressed field</A></TT> mit dem Standard-AVS-Modul <TT>read field</TT> vergleichbar, wenngleich auch nicht so umfangreich ausgestattet. Zus&auml;tzlich existiert ein weiteres Modul, <TT><A HREF="Modules/write_compressed_field.html">write compressed field</A></TT>, das ein 3D-AVS-Feld mit dem beschriebenen Verfahren komprimiert und auf Datei schreibt (weitere Informationen unter dem Link). Durch einfache Kombination read_compressed_field und write_compressed_field erh&auml;lt man eine Datei, die das gesamte komprimierte Feld in der exakten Reihenfolge beinhaltet. Dies spart das tempor&auml;re entpacken der Tar-Datei und das Neuordnen des Feldes.
+
+<H2><A NAME="as-h2-1853327">Index der verwendeten Variablen:</A></H2>
+<TABLE BORDER="2" FRAME=box RULES=all CELLPADDING="1">
+<TR><TH>Name<TH>Typ<TH>Bedeutung
+<TR><TD>anfpos<TD>Integer<TD>Position ab der Informationen auf den Speicherbereich eines Elementes des Packfeldes geschrieben werden soll
+<TR><TD>feld<TD>Integer()<TD>Feld auf dem die skalierten (Genauigkeits- und Minimumskalierung) Daten abliegen
+<TR><TD>feldmax<TD>Integer<TD>Wertemaximum des auf die zu verwendende Genauigkeit skalierten Feldes
+<TR><TD>feldmin<TD>Integer<TD>Werteminimum des auf die zu verwendende Genauigkeit skalierten Feldes
+<TR><TD>laenge<TD>Integer<TD>Anzahl der verwendeten Datenpunkte
+<TR><TD>nfrei<TD>Integer<TD>Die im Speicherbereich eines Elementes des Packfeldes noch unbenutzten Bits
+<TR><TD>nsize<TD>Integer<TD>Anzahl der Bits, durch die alle Datenwerte des gepackten Feldes dargestellt werden
+<TR><TD>packfeld<TD>Integer()<TD>Feld, in dem die komprimierten Daten abgelegt werden
+</TABLE>
+
+<SCRIPT>
+<!--
+footer();
+//-->
+</SCRIPT>
+</BODY>
+</HTML>

@@ -1,0 +1,460 @@
+\documentclass[11pt,a4paper]{scrartcl}
+\usepackage[latin9]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[a4paper,top=3.cm,bottom=3.5cm,outer=3cm,inner=3.cm]{geometry}  
+\usepackage{booktabs,longtable,tabularx} 
+\usepackage{amsmath,amssymb,textcomp}
+\usepackage{scrpage2}
+\usepackage[bookmarks=true,bookmarksopen=false,bookmarksnumbered=true,colorlinks=false]{hyperref}
+\setlength{\parindent}{0pt}
+
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\cfoot{{\small\sf \thepage}}
+
+%Adapting the references
+\newenvironment{bibliographie}[1]
+{\begin{thebibliography}{0000}{}
+\leftskip=5mm \setlength{\itemindent}{-5mm}#1} 
+{\end{thebibliography}}
+\makeatletter
+\renewcommand\@biblabel[1]{\setlength\labelsep{0pt}}  
+\renewcommand\@cite[2]{{#1\if@tempswa , #2\fi}} 
+\makeatother
+
+
+\begin {document}
+
+\begin{center}
+{\LARGE\bf\textsf{Introduction to the cloud physics module of PALM}}
+\vspace{3.0mm}
+\linebreak
+{\Large\bf\textsf{\textendash Amendments to the dry version of PALM\textendash}}
+\linebreak
+\linebreak
+ Michael Schr\"{o}ter
+\linebreak
+13.3.2000
+\linebreak
+translated and adapted by 
+\linebreak
+Rieke Heinze 
+\linebreak
+15.07.2010
+\end{center}
+
+\section{Introduction}
+The dry version of PALM does not contain any cloud physics. It has been extended 
+to account for a nearly complete water cycle and radiation processes:
+\vspace{0.2cm}
+\newline
+{\bf\textsf{Water cycle}}
+\begin{itemize}
+ \item evaporation/condensation
+ \item precipitation
+ \item transport of humidity and liquid water 
+\end{itemize}
+{\bf\textsf{Radiation processes}}
+\begin{itemize}
+ \item short-wave radiation
+ \item long-wave radiation
+\end{itemize}
+The dynamical processes are covered by advection and diffusion and they are described by the implemented methods. For the consideration of the
+thermodynamical processes modifications are necessary in the thermodynamics of PALM . In doing so evaporation and condensation are treated as 
+adiabatic processes whereas precipitation and radiation are treated as diabatic processes. In the dry version of PALM the thermodynamic variable 
+is the potential temperature $\theta$. The first law of thermodynamics provides the prognostic equation 
+for $\theta$. The system of thermodynamic variables has to be extended to deal with phase transitions:
+\begin{eqnarray*}
+ q_{v} & = &\textnormal{specific humidity to deal with water vapour} \\
+ q_{l} & = &\textnormal{liquid water content to deal with the liquid phase}
+\end{eqnarray*}
+Additionally, dependencies between these variables have to be introduced to describe the changes of state (condensation scheme).
+\newline
+In introducing the two variables liquid water potential temperature $\theta_{l}$ and total liquid water content $q$ the treatment of the 
+thermodynamics is simplified. The liquid water potential temperature $\theta_{l}$ is defined by \cite{betts73} and represents the potential 
+temperature attained by evaporating all the liquid water in an air parcel through reversible wet adiabatic descent. In a linearized version 
+it is defined as 
+\begin{eqnarray}
+ \theta_{l} & = & \theta -\frac{L_{v}}{c_{p}}\left(\frac{\theta}{T}\right)q_{l}.
+ \label{eq:theta_l}
+\end{eqnarray}
+For the total water content it is valid:
+\begin{eqnarray}
+ q & = & q_{v}+q_{l}.
+ \label{eq:q}
+\end{eqnarray}
+The usage of $\theta_{l}$ and $q$ as thermodynamic variables is based on the work of \cite{ogura63} and \cite{orville65}. The advantages of the 
+$\theta_l$-$q$ system are discussed by \cite{deardorff76}:
+\begin{itemize}
+ \item Without precipitation, radiation and freezing processes $\theta_{l}$ and $q$ are conservative quantities (for the whole system).
+ \item Therewith, the treatment of grid volumes in which only a fraction is saturated is simplified (sub-grid scale condensation scheme).
+ \item Parameterizations of the sub-grid scale fluxes are retained. 
+ \item The liquid water content is not a separate variable (storage space is saved).
+ \item For dry convection $\theta_{l}$ matches the potential temperature and $q$ matches the specific humidity when condensation is disabled.
+ \item Phase transitions do not have to be described as additional terms in the prognostic equations.
+\end{itemize}
+
+\section{Model equations}
+In combining the prognostic equations for dry convection with the processes for cloud physics the following set of prognostic and diagnostic 
+model equations is gained:
+\newline
+\newline
+Equation of continuity
+\begin{eqnarray}
+ \frac{\partial\overline u_{j}}{\partial x_{j}} & = & 0
+ \label{eq:conti}
+\end{eqnarray}
+Equations of motion
+\begin{eqnarray}
+ \frac{\partial\overline u_{i}}{\partial t} & = &
+  -\frac{\partial \left(\overline u_{j} \overline u_{i}\right)}{\partial x_{j}}  
+  -\frac{1}{\rho_{0}}\frac{\partial \overline \pi^{\ast}}{\partial x_{i}} 
+  - \varepsilon_{ijk}f_{j}\overline u_{k} + \varepsilon_{i3k}f_{3}u_{\mathrm{g}_{k}}
+  + g\frac{\overline\theta_{v}-\langle\overline\theta_{v}\rangle}{\theta_{0}}\delta_{i3} 
+  -\frac{\partial\,\tau_{ij}}{\partial x_{j}}
+ \label{eq:motion}
+\end{eqnarray}
+with 
+\begin{eqnarray}
+ \label{eq:pres}
+ \overline \pi^{\ast} & = & \overline p^{\ast} + \frac{2}{3}\rho_{0}\,\overline e \\
+ \label{eq:tau}
+ \tau_{ij} & = & \overline{u_{j}^{'}u_{i}^{'}} - \frac{2}{3}\overline e\,\delta_{ij} 
+\end{eqnarray}
+First law of thermodynamics
+\begin{eqnarray}
+ \frac{\partial\overline \theta_{l}}{\partial t} & = & 
+  -\frac{\partial \left(\overline u_{j} \overline \theta_{l}\right)}{\partial x_{j}}
+  -\frac{\partial\, \overline{u_{j}^{'}\theta_{l}^{'}}}{\partial x_{j}}  
+  +\left(\frac{\partial \overline\theta_{l}}{\partial t}\right)_{\mathrm{RAD}}
+  +\left(\frac{\partial \overline\theta_{l}}{\partial t}\right)_{\mathrm{PREC}}
+ \label{eq:theta}
+\end{eqnarray}
+Conservation equation for the total water content
+\begin{eqnarray}
+ \frac{\partial\overline q}{\partial t} & = & 
+  -\frac{\partial \left(\overline u_{j} \overline q\right)}{\partial x_{j}}
+  -\frac{\partial\, \overline{u_{j}^{'} q^{'}}}{\partial x_{j}}  
+  +\left(\frac{\partial \overline q}{\partial t}\right)_{\mathrm{PREC}}
+ \label{eq:total_water}
+\end{eqnarray}
+Conservation equation for the sub-grid scale turbulent kinetic energy $\overline{e}=\frac{1}{2}\overline{u_{i}^{'2}}$
+\begin{eqnarray}
+ \frac{\partial \overline e}{\partial t} & = & 
+  -\frac{\partial \left(\overline u_{j}\overline e\right)}{\partial x_{j}} 
+  -\overline{u_{j}^{'} u_{i}^{'}} \frac{\partial\overline u_{i}}{\partial x_{j}}
+  + \frac{g}{\theta_{0}}\overline{u^{'}_{3}\theta_{v}^{'}} 
+  -\frac{\partial}{\partial x_{j}}\left\{\overline{u^{'}_{j}\left(e^{'} + \frac{p^{'}}{\rho_{0}}\right)} \right\}- \epsilon
+ \label{eq:sgsTKE}
+\end{eqnarray}
+The virtual potential temperature is needed in equation (\ref{eq:motion}) to calculate the buoyancy term. It is defined by  
+e.g. \cite{sommeria77} as 
+\begin{eqnarray}
+ \overline \theta_{v} &=&
+  \left(\overline \theta_{l} + \frac{L_{v}}{c_{p}}\left(\frac{\theta}{T}\right)\overline q_{l}\right)
+  \left(1 + 0.61\,\overline q - 1.61\,\overline q_{l}\right).
+ \label{eq:theta_v}
+\end{eqnarray}
+Therewith, the influence of changing in density due to condensation is considered in the buoyancy term. 
+\newline
+The closure of the model equations is based on the approaches of \cite{deardorff80}:
+\begin{eqnarray}
+ \label{eq:ujui}
+ \overline{u_{j}^{'}u_{i}^{'}} & = & 
+  -K_{m}\left(\frac{\partial \overline u_{i}}{\partial x_{j}} 
+  + \frac{\partial \overline u_{j}}{\partial x_{i}} \right)
+  + \frac{2}{3}\overline e \,\delta_{ij} \\
+ \label{eq:ujtheta}
+ \overline{u_{j}^{'}\theta_{l}^{'}} & = & 
+  -K_{h}\left(\frac{\partial \overline \theta_{l}}{\partial x_{j}}\right) \\
+ \label{eq:ujq}
+ \overline{u_{j}^{'} q{'}} & = & 
+  -K_{h}\left(\frac{\partial \overline q}{\partial x_{j}}\right) \\
+ \label{eq:ujp}
+ \overline{u^{'}_{j}\left(e^{'} + \frac{p^{'}}{\rho_{0}}\right)} & = &
+  -2K_{m}\frac{\partial \overline e}{\partial x_{j}} \\
+ \label{eq:u3theta_v}
+ \overline{u_{3}^{'}\theta_{v}^{'}} & = &
+  K_{1} \,\overline{u_{3}^{'}\theta_{l}^{'}}
+  + K_{2} \,\overline{u_{3}^{'} q^{'}} \\
+ \label{eq:km} 
+  K_{m} & = & 0.1\,l\,\sqrt{\overline e} \\
+ \label{eq:kh} 
+  K_{h} & = & \left(1+2\frac{l}{\Delta}\right)K_{m} \\
+ \label{eq:epsilon} 
+  \epsilon & = & \left(0.19 + 0.74\,\frac{l}{\Delta}\right)\,\frac{\overline e^{\frac{3}{2}}}{l}
+\end{eqnarray}
+with 
+\begin{eqnarray}
+ l = \begin{cases}
+  \min\left(\Delta,\,  0.7\,d,\, 0.76\, \sqrt{\overline e}\,\left(\frac{g}{\theta_{0}}\frac{\partial \overline\theta_{v}}
+  {\partial z}\right)^{-\frac{1}{2}}\right) & , \quad \frac{\partial \overline\theta_{v}}{\partial z} > 0\\
+  \min\left(\Delta,\, 0.7\, d\right)   & , \quad \frac{\partial \overline\theta_{v}}{\partial z} \leq 0 
+  \end{cases}
+ \label{eq:l}
+\end{eqnarray}
+and 
+\begin{eqnarray}
+ \Delta & = & \left(\Delta x \Delta y \Delta z\right)^{1/3}
+ \label{eq:delta}
+\end{eqnarray}
+At the lower boundary Monin-Obukhov similarity theory is valid ( $\overline{w^{'}q^{'}}=u_{\ast}q_{\ast}$). 
+\newline
+\cite{cuijpers93} for example define the coefficients $K_{1}$ and $K_{2}$ as follows:\newline
+{\bf\textsf{in unsaturated air:}}
+\begin{eqnarray}
+ \label{eq:K_1}
+  K_{1} & = & 1.0 + 0.61\, \overline q \\
+ \label{eq:K_2}
+  K_{2} & = &  0.61\, \overline{\theta}
+\end{eqnarray}
+{\bf\textsf{in saturated air:}}
+\begin{eqnarray}
+ \label{eq:K_1_sat}
+  K_{1} & = & \frac{1.0-\overline q + 1.61\,\overline q_{s}\left(1.0 + 0.622\frac{L_{v}}{RT}\right)}
+  {1.0 + 0.622\frac{L_{v}}{RT}\,\frac{L_{v}}{c_{p}T}\overline q_{s}}  \\
+ \label{eq:K_2_sat}
+  K_{2} & = &  \overline{\theta}\left(\left(\frac{L_{v}}{c_{p}T}\right)K_{1}-1.0\right)
+\end{eqnarray}
+The saturation value of the specific humidity comes from the truncated Taylor expansion of $q_{s}(T)$:
+\begin{eqnarray}
+ q_{s}(T) = q_{s} = q_{s}\left(T_{l}\right) 
+ + \left(\frac{\partial q_{s}}{\partial T}\right)_{T=T_{l}} (T-T_{l}). 
+ \label{eq:qs1}
+\end{eqnarray}
+Using the Clausius-Clapeyron equation 
+\begin{eqnarray}
+ \left(\frac{\partial q_{s}}{\partial T}\right)_{T=T_{l}} & = & 
+  0.622\frac{L_{v}q_{s}(T_{l})}{R\,T_{l}^{2}}
+ \label{eq:clausius}
+\end{eqnarray}
+with 
+\begin{eqnarray}
+  T = T_{l} + \frac{L_{v}}{c_{p}}q_{l} \qquad \textnormal{respectively}  \qquad q_{l} = q - q_{s}
+ \label{eq:T}
+\end{eqnarray}
+gives
+\begin{eqnarray}
+  \overline q_{s} = \overline q_{s}(\overline T_{l})\frac{\left(1.0+\beta\,\overline q\right)}
+    {1.0 + \beta\, \overline q_{s}(\overline{T_{l}})}.
+ \label{eq:qs2}
+\end{eqnarray}
+Whereas
+\begin{eqnarray}
+  \overline q_{s}(\overline T_{l}) = 0.622\frac{\overline e_{s}(\overline T_{l})}
+    {p_{0}(z)-0.378\,\overline e_{s}(\overline T_{l})}
+ \label{eq:qs3}
+\end{eqnarray}
+and
+\begin{eqnarray}
+ \beta = 0.622\left(\frac{L_{v}}{R\,\overline T_{l}}\right) \left(\frac{L_{v}}{c_{p}\,\overline T_{l}}\right).
+ \label{eq:beta}
+\end{eqnarray}
+The actual liquid water temperature is defined as 
+\begin{eqnarray}
+ \overline T_{l} = \left(\frac{p_{0}(z)}{p_{0}(z=0)}\right)^{\kappa} \overline\theta_{l}
+ \label{eq:T_l}
+\end{eqnarray}
+with $p_{0}(z=0) = 1000$\,hPa. The value of the saturation vapour pressure at the temperature $\overline T_{l}$ is 
+calculated in the same way as in \cite{bougeault82}:
+\begin{eqnarray}
+ \overline e_{s}(\overline T_{l}) = 610.78 \exp\left(
+  17.269\frac{\overline T_{l}-273.16}{\overline T_{l}-35.86}\right).
+ \label{eq:es}
+\end{eqnarray}
+The hydrostatic pressure $p_{0}(z)$ is given by \cite{cuijpers93}:
+\begin{eqnarray}
+ p_{0}(z) = p_{0}(z=0)\left(\frac{T_{\mathrm{ref}}(z)}{T_{0}}\right)^{c_{p}/R}
+ \label{eq:p_0}
+\end{eqnarray}
+with
+\begin{eqnarray}
+ T_{\mathrm{ref}}(z) = T_{0} - \frac{g}{c_{p}} z.
+ \label{eq:T_ref}
+\end{eqnarray}
+The pressure is calculated once at the beginning of a simulation and remains unchanged. For the reference temperature at the earth surface $T_{0}$ 
+the initial surface temperature is applied. The ratio of the potential and the actual temperature is given by:
+\begin{eqnarray}
+ \frac{\theta}{T} = \left(\frac{p_{0}(z=0)}{p_{0}(z)}\right)^{\kappa}.
+ \label{eq:ratio}
+\end{eqnarray}
+The liquid water content $q_{l}$ is needed for the calculation of the virtual potential temperature (eq. (\ref{eq:theta_v})). It is 
+calculated from the difference of the total water content at a single grid point and the saturation value at this grid point:
+\begin{eqnarray}
+ \overline q_{l} = 
+ \begin{cases}
+   \overline q - \overline q_{s} & 
+   \textnormal{if} \quad \overline q > \overline q_{s} \\
+   0  & \textnormal{else}
+  \end{cases}
+ \label{eq:q_l}
+\end{eqnarray}
+With this approach a grid volume is either completely saturated or completely unsaturated. The values of the cloud cover of a grid volume 
+can only become 0 or 1 (\textsl{0\%-or100\% scheme}).
+
+\section{Parameterization of the source terms in the conservation equations}
+\subsection{Radiation model}
+The source term for radiation processes is parameterized via the scheme of effective emissivity which is based on \cite{cox76}:
+\begin{eqnarray}
+ \left(\frac{\partial \overline\theta_{l}}{\partial t}\right)_{\mathrm{RAD}} & = &
+  -\frac{\theta}{T}\frac{1}{\rho \,c_{p}\,\Delta z}\left[\Delta F(z^{+})-\Delta F(z^{-})\right]
+ \label{eq:radiation_term}
+\end{eqnarray}
+$\Delta F$ describes the difference between upward and downward irradiance at the grid point above ($z^{+}$) and below ($z^{-}$) 
+the level in which $\theta_{l}$ is defined.
+\newline
+The upward and downward irradiance $F\textnormal{\textuparrow}$ and $F\textnormal{\textdownarrow}$ are defined as follows:
+\begin{eqnarray}
+ \label{eq:F_up}
+  F\textnormal{\textuparrow}(z) & = &
+  B(0) + \varepsilon\textnormal{\textuparrow}(z,0)\left(B(z)-B(0)\right) \\
+ \label{eq:F_down} 
+  F\textnormal{\textdownarrow}(z) & = &
+  F\textnormal{\textdownarrow}(z_{\mathrm{top}})
+  + \varepsilon\textnormal{\textdownarrow}(z,z_{\mathrm{top}})\left(B(z)-F\textnormal{\textdownarrow}(z_{\mathrm{top}})\right)
+\end{eqnarray}
+$F\textnormal{\textdownarrow}(z_{\mathrm{top}})$ describes the impinging irradiance at the upper boundary of the model domain which has to be 
+prescribed. $B(0)$ and $B(z)$ represent the black body emission at the ground and the height $z$ respectively. 
+$\varepsilon\textnormal{\textuparrow}(z,0)$ and $\varepsilon\textnormal{\textdownarrow}(z,z_{\mathrm{top}})$ stand for the effective 
+cloud emissivity of the liquid water between the ground and the level $z$ and between $z$ and the upper boundary of the model domain 
+$z_{\mathrm{top}}$ respectively. They are defined as 
+\begin{eqnarray}
+ \label{eq:epsilon_up}
+  \varepsilon\textnormal{\textuparrow}(z,0) & = & 
+   1- \exp\left(-a\cdot LWP(0,z)\right)\\
+ \label{eq:epsilon_down} 
+  \varepsilon\textnormal{\textdownarrow}(z,z_{\mathrm{top}}) & = & 
+   1- \exp\left(-b\cdot LWP(z,z_{\mathrm{top}})\right)
+\end{eqnarray}
+$LWP(z_{1},z_{2})$ describes the liquid water path which is the vertically added content of liquid water above each grid column: 
+\begin{eqnarray}
+ LWP(z_{1},z_{2}) & = & \int_{z_{1}}^{z_{2}}\mathrm{dz}\,\rho\cdot\overline q_{l}.
+ \label{eq:LWP}
+\end{eqnarray}
+$a$ and $b$ are called mass absorption coefficients. Their empirical values are based on \linebreak
+\cite{stephans78} with $a=130\,\mathrm{m^{2}kg^{-1}}$ and $b=158\,\mathrm{m^{2}kg^{-1}}$.
+\newline
+The assumptions for the validity of this parameterization are:
+\begin{itemize}
+ \item Horizontal divergences in radiation are neglected.
+ \item Only absorption and emission of long-wave radiation due to water vapour and cloud droplets is considered.
+ \item The atmosphere is assumed to have constant in-situ temperature above and below the regarded level except for the earth surface.
+\end{itemize}
+
+\subsection{Precipitation model}
+The source term for precipitation processes is parameterized via a simplified scheme of \cite{kessler69}:
+\begin{eqnarray}
+ \left(\frac{\partial \overline q}{\partial t}\right)_{\mathrm{PREC}} & = &
+  \begin{cases}
+   \left(\overline q_{l}-\overline q_{l_{\mathrm{crit}}}\right)/ \tau & 
+   \quad\overline q_{l} > \overline q_{l_{\mathrm{crit}}} \\
+   0  & \quad\overline q_{l} \leq \overline q_{l_{\mathrm{crit}}}
+  \end{cases}
+ \label{precip_term_q}
+\end{eqnarray}
+The precipitation leaves the grid volume immediately if the threshold of the liquid water content 
+$\overline q_{l_{\mathrm{crit}}}=0.5\,\mathrm{g/kg}$ is exceeded. Hence, evaporation of the rain drops does not occur.
+$\tau$ is a retarding time scale with a value of 1000\,s.
+\newline
+The influence of the precipitation on the temperature is as follows:
+\begin{eqnarray}
+ \left(\frac{\partial \overline\theta_{l}}{\partial t}\right)_{\mathrm{PREC}} & = &
+  -\frac{L_{v}}{c_{p}}\left(\frac{\theta}{T}\right)\left(\frac{\partial \overline q}{\partial t}\right)_{\mathrm{PREC}}
+ \label{precip_term_pt}
+\end{eqnarray}
+
+\section*{List of symbols}
+\setlength{\extrarowheight}{0.8mm}
+\begin{longtable}{p{2.5cm} p{9.0cm} p{2.5cm}} 
+\toprule
+\addlinespace
+\textbf{Variable} & \textbf{Description} &\textbf{Value} \\
+\midrule
+ $B$ & black body radiation & \\
+ $c_{p}$ & heat capacity for dry air with p=const  & $1005\,\mathrm{J\,K^{-1}kg^{-1}}$  \\
+ $d$ & normal distance to the nearest solid surface & \\
+ $\overline e$ & sub-grid scale turbulent kinetic energy  & \\
+ $e_{s}$ & saturation vapour pressure  & \\
+ $f_{i}$ & Coriolis parameter $i\in\{1,2,3\}$ & \\
+ $F\textnormal{\textuparrow}$ & upward irradiance  & \\
+ $F\textnormal{\textdownarrow}$ & downward irradiance  & \\
+ $i$, $j$, $k$  & integer indices & \\
+ $K_{h}$ & turbulent diffusion coefficient for momentum & \\
+ $K_{m}$ & turbulent diffusion coefficient for heat & \\
+ $K_{1}$ & coefficient & \\
+ $K_{2}$ & coefficient & \\
+ $l$ & mixing length  & \\
+ $L_{v}$ & heat of evaporation & $2.5\cdot 10^{6}\,\mathrm{J\,kg^{-1}}$ \\
+ $LWP$ & liquid water path & \\
+ $R$ & gas constant for dry air & $287\,\mathrm{J\,K^{-1}kg^{-1}}$\\
+ $T$ & actual temperature & \\
+ $T_{l}$ & actual liquid water temperature & \\
+ $u$, $v$, $w$, $u_{i}$  & velocity components, $i\in\{1,2,3\}$ & \\
+ $p_{0}$  & hydrostatic pressure & \\
+ $q$ & total water content & \\
+ $q_{l}$ & liquid water content & \\
+ $q_{l_{\mathrm{crit}}}$ & threshold for the formation of precipitation & \\
+ $q_{s}$ & specific humidity in case of saturation & \\
+ $q_{v}$ & specific humidity & \\ 
+ $x$, $y$, $z$, $x_{i}$  & Cartesian coordinates, $i\in\{1,2,3\}$ & \\
+ $\Delta$ & characteristic grid length & \\
+ $\epsilon$ & dissipation of sub-grid scale turbulent kinetic energy & \\
+ $\varepsilon\textnormal{\textuparrow}$ & upward effective cloud emissivity  & \\
+ $\varepsilon\textnormal{\textdownarrow}$ & downward effective cloud emissivity  & \\
+ $\kappa$ &$R/c_{p}$  & 0.286 \\
+ $\rho$ & air density  & \\
+ $\tau$ & time scale for the Kessler scheme & \\
+ $\theta$ & potential temperature & \\
+ $\theta_{l}$ & liquid water potential temperature & \\
+ $\theta_{v}$ & virtual potential temperature &  \\
+ $\theta_{0}$ & reference value for the potential temperature & \\
+ $\overline\psi$ & resolved scale variable & \\
+ $\psi^{'}$ & sub-grid scale variable & \\
+ $\psi^{\ast}$ & departure from the basic state (Boussinesq approximation) &  \\
+ $\langle\psi\rangle$ & horizontal mean \\
+\addlinespace
+\bottomrule
+\end{longtable}
+
+\setlength\labelsep{0pt} 
+\begin{bibliographie}{}
+ \bibitem[Betts (1973)]{betts73}
+   \textbf{Betts, A. K., 1973:} Non-precipitating cumulus convection and its parameterization.
+   \textit{Quart. J. R. Meteorol. Soc.}, \textbf{99}, 178-196.
+ \bibitem[Bougeault (1982)]{bougeault82}
+   \textbf{Bougeault, P., 1982:} Modeling the trade-wind cumulus boundary layer. Part I: Testing the ensemble cloud relations 
+   against numerical data. \textit{J. Atmos. Sci.}, \textbf{38}, 2414-2428.
+ \bibitem[Cox (1976)]{cox76}
+   \textbf{Cox, S. K., 1976:} Observations of cloud infrared effective emissivity.
+   \textit{J. Atmos. Sci.}, \textbf{33}, 287-289.
+ \bibitem[Cuijpers and Duynkerke (1993)]{cuijpers93}
+   \textbf{Cuijpers, J. W. M. and P. G. Duynkerke, 1993:} Large eddy simulation of trade wind cumulus clouds.
+   \textit{J. Atmos. Sci.}, \textbf{50}, 3894-3908.
+ \bibitem[Deardorff (1976)]{deardorff76}
+   \textbf{Deardorff, J. W., 1976:} Usefulness of liquid-water potential temperature in a shallow-cloud model. 
+   \textit{J. Appl. Meteor.}, \textbf{15}, 98-102.
+ \bibitem[Deardorff (1980)]{deardorff80}
+   \textbf{Deardorff, J. W., 1980:} Stratocumulus-capped mixed layers derived from a three-dimensional model. 
+   \textit{Boundary-Layer Meteorol.}, \textbf{18}, 495-527.
+ \bibitem[Kessler (1969)]{kessler69}
+   \textbf{Kessler, E., 1969:} On the distribution and continuity of water substance in atmospheric circulations. 
+   \textit{Met. Monogr.}, \textbf{32}, 84 pp.
+ \bibitem[M\"{u}ller and Chlond (1996)]{chlond96}
+   \textbf{M\"{u}ller, G. A. and A. Chlond, 1996:} Three-dimensional numerical study of cell broadening during cold-air outbreaks. 
+   \textit{Boundary-Layer Meteorol.}, \textbf{81}, 289-323.
+ \bibitem[Ogura (1963)]{ogura63}
+   \textbf{Ogura, Y., 1963:} The evolution of a moist convective element in a shallow, conditionally unstable atmosphere: 
+   A numerical calculation. \textit{J. Atmos. Sci.}, \textbf{20}, 407-424.
+ \bibitem[Orville (1965)]{orville65}
+   \textbf{Orville, J. D., 1965:} A numerical study of the initiation of cumulus clouds over mountainous terrain. 
+   \textit{J. Atmos. Sci.}, \textbf{22}, 684-699.
+ \bibitem[Sommeria and Deardorff (1977)]{sommeria77}
+   \textbf{Sommeria, G. and J. W. Deardorff, 1977:} Subgrid-scale condensation in models of nonprecipitating clouds.
+   \textit{J. Atmos. Sci.}, \textbf{34}, 344-355.
+ \bibitem[Stephans (1978)]{stephans78}
+   \textbf{Stephans, G. L., 1978:} Radiation profiles in extended water clouds. II: Parameterization schemes. 
+   \textit{J. Atmos. Sci.}, \textbf{35}, 2123-2132.
+\end{bibliographie}
+
+\end {document}

@@ -1,0 +1,539 @@
+!> @file palm.f90
+!------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the
+! terms of the GNU General Public License as published by the Free Software
+! Foundation, either version 3 of the License, or (at your option) any later
+! version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2016 Leibniz Universitaet Hannover
+!------------------------------------------------------------------------------!
+!
+! Current revisions:
+! -----------------
+! kk: Added call to chemistry model
+! 
+! Former revisions:
+! -----------------
+! $Id$
+!
+! 2011 2016-09-19 17:29:57Z kanani
+! Flag urban_surface is now defined in module control_parameters.
+! 
+! 2007 2016-08-24 15:47:17Z kanani
+! Temporarily added CALL for writing of restart data for urban surface model
+! 
+! 2000 2016-08-20 18:09:15Z knoop
+! Forced header and separation lines into 80 columns
+! 
+! 1976 2016-07-27 13:28:04Z maronga
+! Added call to radiation_last_actions for binary output of land surface model 
+! data
+! 
+! 1972 2016-07-26 07:52:02Z maronga
+! Added call to lsm_last_actions for binary output of land surface model data
+! 
+! 1960 2016-07-12 16:34:24Z suehring
+! Separate humidity and passive scalar
+! 
+! 1834 2016-04-07 14:34:20Z raasch
+! Initial version of purely vertical nesting introduced. 
+! 
+! 1833 2016-04-07 14:23:03Z raasch
+! required user interface version changed
+!
+! 1808 2016-04-05 19:44:00Z raasch
+! routine local_flush replaced by FORTRAN statement
+!
+! 1783 2016-03-06 18:36:17Z raasch
+! required user interface version changed
+!
+! 1781 2016-03-03 15:12:23Z raasch
+! pmc initialization moved from time_integration to here
+!
+! 1779 2016-03-03 08:01:28Z raasch
+! setting of nest_domain and coupling_char moved to the pmci
+!
+! 1764 2016-02-28 12:45:19Z raasch
+! cpp-statements for nesting removed, communicator settings cleaned up
+!
+! 1762 2016-02-25 12:31:13Z hellstea
+! Introduction of nested domain feature
+!
+! 1747 2016-02-08 12:25:53Z raasch
+! OpenACC-adjustment for new surface layer parameterization
+!
+! 1682 2015-10-07 23:56:08Z knoop
+! Code annotations made doxygen readable 
+!
+! 1668 2015-09-23 13:45:36Z raasch
+! warning replaced by abort in case of failed user interface check
+!
+! 1666 2015-09-23 07:31:10Z raasch
+! check for user's interface version added
+!
+! 1482 2014-10-18 12:34:45Z raasch
+! adjustments for using CUDA-aware OpenMPI
+!
+! 1468 2014-09-24 14:06:57Z maronga
+! Adapted for use on up to 6-digit processor cores
+! 
+! 1402 2014-05-09 14:25:13Z raasch
+! location messages added
+! 
+! 1374 2014-04-25 12:55:07Z raasch
+! bugfix: various modules added
+!
+! 1320 2014-03-20 08:40:49Z raasch
+! ONLY-attribute added to USE-statements,
+! kind-parameters added to all INTEGER and REAL declaration statements,
+! kinds are defined in new module kinds,
+! old module precision_kind is removed,
+! revision history before 2012 removed,
+! comment fields (!:) to be used for variable explanations added to
+! all variable declaration statements
+!
+! 1318 2014-03-17 13:35:16Z raasch
+! module interfaces removed
+!
+! 1241 2013-10-30 11:36:58Z heinze
+! initialization of nuding and large scale forcing from external file
+!
+! 1221 2013-09-10 08:59:13Z raasch
+! +wall_flags_00, rflags_invers, rflags_s_inner in copyin statement
+!
+! 1212 2013-08-15 08:46:27Z raasch
+! +tri in copyin statement
+!
+! 1179 2013-06-14 05:57:58Z raasch
+! ref_state added to copyin-list
+!
+! 1113 2013-03-10 02:48:14Z raasch
+! openACC statements modified
+!
+! 1111 2013-03-08 23:54:10Z raasch
+! openACC statements updated
+!
+! 1092 2013-02-02 11:24:22Z raasch
+! unused variables removed
+!
+! 1036 2012-10-22 13:43:42Z raasch
+! code put under GPL (PALM 3.9)
+!
+! 1015 2012-09-27 09:23:24Z raasch
+! Version number changed from 3.8 to 3.8a.
+! OpenACC statements added + code changes required for GPU optimization
+!
+! 849 2012-03-15 10:35:09Z raasch
+! write_particles renamed lpm_write_restart_file
+!
+! Revision 1.1  1997/07/24 11:23:35  raasch
+! Initial revision
+!
+!
+! Description:
+! ------------
+!> Large-Eddy Simulation (LES) model for the convective boundary layer, 
+!> optimized for use on parallel machines (implementation realized using the
+!> Message Passing Interface (MPI)). The model can also be run on vector machines
+!> (less well optimized) and workstations. Versions for the different types of 
+!> machines are controlled via cpp-directives.
+!> Model runs are only feasible using the ksh-script mrun.
+!>
+!> @todo create routine last_actions instead of calling lsm_last_actions etc.
+!> @todo eventually move CALL usm_write_restart_data to suitable location
+!------------------------------------------------------------------------------!
+ PROGRAM palm
+ 
+
+    USE arrays_3d
+
+    USE control_parameters,                                                    &
+        ONLY:  constant_diffusion, coupling_char, coupling_mode,               &
+               do2d_at_begin, do3d_at_begin, humidity, io_blocks, io_group,    &
+               large_scale_forcing, message_string, nest_domain, neutral,      &
+               nudging, passive_scalar, simulated_time, simulated_time_chr,    &
+               urban_surface,                                                  &
+               user_interface_current_revision,                                &
+               user_interface_required_revision, version, wall_heatflux,       &
+               write_binary
+
+    USE cpulog,                                                                &
+        ONLY:  cpu_log, log_point, cpu_statistics
+
+    USE grid_variables,                                                        &
+        ONLY:  fxm, fxp, fym, fyp, fwxm, fwxp, fwym, fwyp, wall_e_x, wall_e_y, &
+               wall_u, wall_v, wall_w_x, wall_w_y
+
+    USE indices,                                                               &
+        ONLY:  nbgp, ngp_2dh, ngp_2dh_s_inner, nzb_diff_s_inner, nzb_diff_s_outer,   &
+               nzb_diff_u, nzb_diff_v, nzb_s_inner, nzb_s_outer, nzb_u_inner,  &
+               nzb_u_outer, nzb_v_inner, nzb_v_outer, nzb_w_inner,             &
+               nzb_w_outer, rflags_invers, rflags_s_inner, wall_flags_0,       &
+               wall_flags_00
+
+#ifdef KPP_CHEM
+    USE kchem_driver,                                                          &
+        ONLY:  kchem_initialize, use_kpp_chemistry
+#endif
+
+    USE kinds
+
+    USE land_surface_model_mod,                                                &
+        ONLY:  land_surface, lsm_last_actions
+
+    USE ls_forcing_mod,                                                        &
+        ONLY:  init_ls_forcing
+
+    USE nudge_mod,                                                             &
+        ONLY:  init_nudge
+
+    USE particle_attributes,                                                   &
+        ONLY:  particle_advection
+
+    USE pegrid
+
+    USE pmc_interface,                                                         &
+        ONLY:  cpl_id, nested_run, pmci_child_initialize, pmci_init,           &
+               pmci_modelconfiguration, pmci_parent_initialize
+
+    USE radiation_model_mod,                                                   &
+        ONLY:  radiation, radiation_last_actions
+
+    USE statistics,                                                            &
+        ONLY:  hom, rmask, weight_pres, weight_substep
+
+    USE surface_layer_fluxes_mod,                                              &
+        ONLY:  pt1, qv1, uv_total
+        
+    USE urban_surface_mod,                                                     &
+        ONLY:  usm_write_restart_data
+
+#if defined( __openacc )
+    USE OPENACC
+#endif
+
+    IMPLICIT NONE
+
+!
+!-- Local variables
+    CHARACTER(LEN=9)  ::  time_to_string  !<
+    CHARACTER(LEN=10) ::  env_string      !< to store string of environment var
+    INTEGER(iwp)      ::  env_stat        !< to hold status of GET_ENV
+    INTEGER(iwp)      ::  i               !<
+    INTEGER(iwp)      ::  myid_openmpi    !< OpenMPI local rank for CUDA aware MPI
+#if defined( __openacc )
+    REAL(wp), DIMENSION(100) ::  acc_dum     !<
+#endif
+
+    version = 'PALM 4.0'
+    user_interface_required_revision = 'r1819'
+
+#if defined( __parallel )
+!
+!-- MPI initialisation. comm2d is preliminary set, because
+!-- it will be defined in init_pegrid but is used before in cpu_log.
+    CALL MPI_INIT( ierr )
+
+!
+!-- Initialize the coupling for nested-domain runs
+!-- comm_palm is the communicator which includes all PEs (MPI processes)
+!-- available for this (nested) model. If it is not a nested run, comm_palm
+!-- is returned as MPI_COMM_WORLD
+    CALL pmci_init( comm_palm )
+    comm2d = comm_palm
+!
+!-- Get the (preliminary) number of MPI processes and the local PE-id (in case
+!-- of a further communicator splitting in init_coupling, these numbers will
+!-- be changed in init_pegrid).
+    IF ( nested_run )  THEN
+
+       CALL MPI_COMM_SIZE( comm_palm, numprocs, ierr )
+       CALL MPI_COMM_RANK( comm_palm, myid, ierr )
+
+    ELSE
+
+       CALL MPI_COMM_SIZE( MPI_COMM_WORLD, numprocs, ierr )
+       CALL MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
+!
+!--    Initialize PE topology in case of coupled atmosphere-ocean runs (comm_palm
+!--    will be splitted in init_coupling)
+       CALL init_coupling
+    ENDIF
+#endif
+
+#if defined( __openacc )
+!
+!-- Get the local MPI rank in case of CUDA aware OpenMPI. Important, if there
+!-- is more than one accelerator board on the node
+    CALL GET_ENVIRONMENT_VARIABLE('OMPI_COMM_WORLD_LOCAL_RANK',                &
+         VALUE=env_string, STATUS=env_stat )
+    READ( env_string, '(I1)' )  myid_openmpi
+    PRINT*, '### local_rank = ', myid_openmpi, '  status=',env_stat
+!
+!-- Get the number of accelerator boards per node and assign the MPI processes
+!-- to these boards
+    PRINT*, '*** ACC_DEVICE_NVIDIA = ', ACC_DEVICE_NVIDIA
+    num_acc_per_node  = ACC_GET_NUM_DEVICES( ACC_DEVICE_NVIDIA )
+    IF ( numprocs == 1  .AND.  num_acc_per_node > 0 )  num_acc_per_node = 1
+    PRINT*, '*** myid = ', myid_openmpi, ' num_acc_per_node = ', num_acc_per_node
+    acc_rank = MOD( myid_openmpi, num_acc_per_node )
+    CALL ACC_SET_DEVICE_NUM ( acc_rank, ACC_DEVICE_NVIDIA )
+!
+!-- Test output (to be removed later)
+    WRITE (*,'(A,I6,A,I3,A,I3,A,I3)') '*** Connect MPI-Task ', myid_openmpi,   &
+                                      ' to CPU ', acc_rank, ' Devices: ',      &
+                                      num_acc_per_node, ' connected to:',      &
+                                      ACC_GET_DEVICE_NUM( ACC_DEVICE_NVIDIA )
+#endif
+
+!
+!-- Ensure that OpenACC first attaches the GPU devices by copying a dummy data
+!-- region
+    !$acc data copyin( acc_dum )
+
+!
+!-- Initialize measuring of the CPU-time remaining to the run
+    CALL local_tremain_ini
+
+!
+!-- Start of total CPU time measuring.
+    CALL cpu_log( log_point(1), 'total', 'start' )
+    CALL cpu_log( log_point(2), 'initialisation', 'start' )
+
+!
+!-- Open a file for debug output
+    WRITE (myid_char,'(''_'',I6.6)')  myid
+    OPEN( 9, FILE='DEBUG'//TRIM( coupling_char )//myid_char, FORM='FORMATTED' )
+
+!
+!-- Initialize dvrp logging. Also, one PE maybe split from the global
+!-- communicator for doing the dvrp output. In that case, the number of
+!-- PEs available for PALM is reduced by one and communicator comm_palm
+!-- is changed respectively.
+#if defined( __parallel )
+    CALL MPI_COMM_RANK( comm_palm, myid, ierr )
+!
+!-- TEST OUTPUT (TO BE REMOVED)
+    WRITE(9,*) '*** coupling_mode = "', TRIM( coupling_mode ), '"'
+    FLUSH( 9 )
+    IF ( TRIM( coupling_mode ) /= 'uncoupled' )  THEN
+       PRINT*, '*** PE', myid, ' Global target PE:', target_id, &
+               TRIM( coupling_mode )
+    ENDIF
+#endif
+
+    CALL init_dvrp_logging
+
+!
+!-- Read control parameters from NAMELIST files and read environment-variables
+    CALL parin
+
+!
+!-- Check for the user's interface version
+    IF ( user_interface_current_revision /= user_interface_required_revision )  &
+    THEN
+       message_string = 'current user-interface revision "' //                  &
+                        TRIM( user_interface_current_revision ) // '" does ' // &
+                        'not match the required revision ' //                   &
+                        TRIM( user_interface_required_revision )
+        CALL message( 'palm', 'PA0169', 1, 2, 0, 6, 0 )
+    ENDIF
+
+!
+!-- Determine processor topology and local array indices
+    CALL init_pegrid
+
+!
+!-- Generate grid parameters
+    CALL init_grid
+
+!
+!-- Initialize nudging if required
+    IF ( nudging )  THEN
+       CALL init_nudge
+    ENDIF
+
+!
+!-- Initialize reading of large scale forcing from external file - if required
+    IF ( large_scale_forcing )  THEN
+       CALL init_ls_forcing
+    ENDIF
+
+!
+!-- Initialize chemistry (called before check_parameters due to dependencies)
+#ifdef KPP_CHEM
+    IF ( use_kpp_chemistry )  CALL kchem_initialize
+#endif
+!
+!-- Check control parameters and deduce further quantities
+    CALL check_parameters
+
+!
+!-- Initialize all necessary variables
+    CALL init_3d_model
+
+!
+!-- Coupling protocol setup for nested-domain runs
+    IF ( nested_run )  THEN
+       CALL pmci_modelconfiguration
+!
+!--    Receive and interpolate initial data on children.
+!--    Child initialization must be made first if the model is both child and
+!--    parent
+       CALL pmci_child_initialize
+!
+!--    Send initial condition data from parent to children
+       CALL pmci_parent_initialize
+!
+!--    Exchange_horiz is needed after the nest initialization
+       IF ( nest_domain )  THEN
+          CALL exchange_horiz( u, nbgp )
+          CALL exchange_horiz( v, nbgp )
+          CALL exchange_horiz( w, nbgp )
+          IF ( .NOT. neutral )  THEN
+             CALL exchange_horiz( pt, nbgp )
+          ENDIF
+          IF ( .NOT. constant_diffusion )  CALL exchange_horiz( e, nbgp )
+          IF ( humidity       )  CALL exchange_horiz( q, nbgp )
+          IF ( passive_scalar )  CALL exchange_horiz( s, nbgp )
+       ENDIF
+
+    ENDIF
+
+
+!
+!-- Output of program header
+    IF ( myid == 0 )  CALL header
+
+    CALL cpu_log( log_point(2), 'initialisation', 'stop' )
+
+!
+!-- Set start time in format hh:mm:ss
+    simulated_time_chr = time_to_string( simulated_time )
+
+!
+!-- If required, output of initial arrays
+    IF ( do2d_at_begin )  THEN
+       CALL data_output_2d( 'xy', 0 )
+       CALL data_output_2d( 'xz', 0 )
+       CALL data_output_2d( 'yz', 0 )
+    ENDIF
+
+    IF ( do3d_at_begin )  THEN
+       CALL data_output_3d( 0 )
+    ENDIF
+
+!
+!-- Declare and initialize variables in the accelerator memory with their
+!-- host values
+    !$acc  data copyin( d, diss, e, e_p, kh, km, p, pt, pt_p, q, ql, tend, te_m, tpt_m, tu_m, tv_m, tw_m, u, u_p, v, vpt, v_p, w, w_p )          &
+    !$acc       copyin( tri, tric, dzu, ddzu, ddzw, dd2zu, l_grid, l_wall, ptdf_x, ptdf_y, pt_init, rdf, rdf_sc, ref_state, ug, u_init, vg, v_init, zu, zw )   &
+    !$acc       copyin( hom, ol, pt1, qs, qsws, qswst, qv1, rif_wall, shf, ts, tswst, us, usws, uswst, uv_total, vsws, vswst, z0, z0h )      &
+    !$acc       copyin( fxm, fxp, fym, fyp, fwxm, fwxp, fwym, fwyp, nzb_diff_s_inner, nzb_diff_s_outer, nzb_diff_u )       &
+    !$acc       copyin( nzb_diff_v, nzb_s_inner, nzb_s_outer, nzb_u_inner )    &
+    !$acc       copyin( nzb_u_outer, nzb_v_inner, nzb_v_outer, nzb_w_inner )   &
+    !$acc       copyin( nzb_w_outer, rflags_invers, rflags_s_inner, rmask, wall_heatflux, wall_e_x, wall_e_y, wall_u, wall_v, wall_w_x, wall_w_y, wall_flags_0, wall_flags_00 )  &
+    !$acc       copyin( ngp_2dh, ngp_2dh_s_inner )  &
+    !$acc       copyin( weight_pres, weight_substep )
+!
+!-- Integration of the model equations using timestep-scheme
+    CALL time_integration
+
+!
+!-- If required, write binary data for restart runs
+    IF ( write_binary(1:4) == 'true' )  THEN
+
+       CALL cpu_log( log_point(22), 'write_3d_binary', 'start' )
+
+       CALL location_message( 'writing restart data', .FALSE. )
+
+       CALL check_open( 14 )
+
+       DO  i = 0, io_blocks-1
+          IF ( i == io_group )  THEN
+!
+!--          Write flow field data
+             CALL write_3d_binary
+          ENDIF
+#if defined( __parallel )
+          CALL MPI_BARRIER( comm2d, ierr )
+#endif
+       ENDDO
+
+       CALL location_message( 'finished', .TRUE. )
+
+       CALL cpu_log( log_point(22), 'write_3d_binary', 'stop' )
+
+!
+!--    If required, write particle data
+       IF ( particle_advection )  CALL lpm_write_restart_file
+!
+!--    If required, write urban surface data
+       IF (urban_surface)  CALL usm_write_restart_data
+       
+    ENDIF
+
+!
+!-- If required, repeat output of header including the required CPU-time
+    IF ( myid == 0 )  CALL header
+!
+!-- If required, final land surface and user-defined actions, and
+!-- last actions on the open files and close files. Unit 14 was opened
+!-- in write_3d_binary but it is closed here, to allow writing on this
+!-- unit in routine user_last_actions.
+    CALL cpu_log( log_point(4), 'last actions', 'start' )
+    DO  i = 0, io_blocks-1
+       IF ( i == io_group )  THEN
+          IF ( land_surface )  THEN
+             CALL lsm_last_actions
+          ENDIF
+          IF ( radiation )  THEN
+             CALL radiation_last_actions
+          ENDIF
+          CALL user_last_actions
+          IF ( write_binary(1:4) == 'true' )  CALL close_file( 14 )
+       ENDIF
+#if defined( __parallel )
+       CALL MPI_BARRIER( comm2d, ierr )
+#endif
+    ENDDO
+    CALL close_file( 0 )
+    CALL close_dvrp
+    CALL cpu_log( log_point(4), 'last actions', 'stop' )
+
+#if defined( __mpi2 )
+!
+!-- Test exchange via intercommunicator in case of a MPI-2 coupling
+    IF ( coupling_mode == 'atmosphere_to_ocean' )  THEN
+       i = 12345 + myid
+       CALL MPI_SEND( i, 1, MPI_INTEGER, myid, 11, comm_inter, ierr )
+    ELSEIF ( coupling_mode == 'ocean_to_atmosphere' )  THEN
+       CALL MPI_RECV( i, 1, MPI_INTEGER, myid, 11, comm_inter, status, ierr )
+       PRINT*, '### myid: ', myid, '   received from atmosphere:  i = ', i
+    ENDIF
+#endif
+
+!
+!-- Close the OpenACC dummy data region
+    !$acc end data
+    !$acc end data
+
+!
+!-- Take final CPU-time for CPU-time analysis
+    CALL cpu_log( log_point(1), 'total', 'stop' )
+    CALL cpu_statistics
+
+#if defined( __parallel )
+    CALL MPI_FINALIZE( ierr )
+#endif
+
+ END PROGRAM palm

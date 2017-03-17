@@ -1,0 +1,368 @@
+ PROGRAM find_palm_config
+
+!------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the terms
+! of the GNU General Public License as published by the Free Software Foundation,
+! either version 3 of the License, or (at your option) any later version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2014  Leibniz Universitaet Hannover
+!--------------------------------------------------------------------------------!
+!
+! Current revisions:
+! ------------------
+! 
+!
+! Former revisions:
+! -----------------
+! $Id: find_palm_config.f90 1674 2015-09-25 04:55:05Z raasch $
+!
+! 1673 2015-09-25 04:53:10Z raasch
+! informative message about definition of tolerance added
+!
+! 1046 2012-11-09 14:38:45Z maronga
+! code put under GPL (PALM 3.9)
+! 
+!
+! Description:
+! -------------
+! Find possible configurations for given processor and grid point numbers
+!------------------------------------------------------------------------------!
+
+    IMPLICIT NONE
+
+    CHARACTER (LEN=1) ::  char = ''
+    INTEGER ::  count = 0, i, ii(1), j, k, maximum_grid_level, mg_levels_x, &
+                mg_levels_y, mg_levels_z, n, numprocs, numprocs_max,        &
+                numprocs_min, nx, nxanz, nx_max, nx_min, ny, nyanz, ny_max, &
+                ny_min, nz, nz_max, nz_min, pdims(2)
+    INTEGER ::  numnx(10000), numpr(10000)
+    LOGICAL ::  cubic_domain = .FALSE., found, found_once = .FALSE., &
+                one_d_decomp = .FALSE., quadratic_domain_xy = .FALSE.
+    REAL    ::  grid_ratio, grid_ratio_new, maximum_grid_ratio, tolerance, &
+                tolerance_nx, tolerance_ny, tolerance_nz
+    REAL    ::  gridratio(10000)
+
+    TYPE configuration
+       REAL               ::  grid_ratio
+       INTEGER            ::  numprocs, pdims_1, pdims_2, nx, ny, nz, nxanz, &
+                              nyanz, grid_levels, nx_mg, ny_mg, nz_mg
+    END TYPE configuration
+
+    TYPE(configuration), DIMENSION(10000) ::  config
+
+!
+!-- Ask number of processors available
+    PRINT*, '*** number of PEs available + allowed tolerance:'
+    PRINT*, '    (tolerance is defined in %, e.g. 0.1 means 10%)'
+    READ (*,*)  numprocs, tolerance
+    IF ( tolerance < 0.0 )  THEN
+       numprocs_max = numprocs
+       numprocs_min = numprocs * ( 1.0 + tolerance )
+    ELSE
+       numprocs_max = numprocs * ( 1.0 + tolerance )
+       numprocs_min = numprocs * ( 1.0 - tolerance )
+    ENDIF
+
+!
+!-- Ask for 1D-decomposition
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** shall a 1d-decomposition along x be used (y/n)?'
+    READ (*,*)  char
+    IF ( char == 'y' )  one_d_decomp = .TRUE.
+
+!
+!-- Ask for quadratic domain
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** shall a quadratic domain along x and y be used (y/n)?'
+    READ (*,*)  char
+    IF ( char == 'y' )  THEN
+       quadratic_domain_xy = .TRUE.
+       PRINT*, ' '
+       PRINT*, ' '
+       PRINT*, '*** shall also grid points along z be equal to x and y (y/n)?'
+       READ (*,*)  char
+       IF ( char == 'y' )  cubic_domain = .TRUE.
+    ENDIF
+
+!
+!-- Read number of gridpoints in each direction
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** please type nx + allowed tolerance:'
+    READ (*,*)  nx, tolerance_nx
+    IF ( tolerance_nx < 0.0 )  THEN
+       nx_max = nx
+       nx_min = nx * ( 1.0 + tolerance_nx )
+    ELSE
+       nx_max = nx * ( 1.0 + tolerance_nx )
+       nx_min = nx * ( 1.0 - tolerance_nx )
+    ENDIF
+    IF ( quadratic_domain_xy )  THEN
+       ny           = nx
+       tolerance_ny = tolerance_nx
+    ELSE
+       PRINT*, '*** please type ny + allowed tolerance:'
+       READ (*,*)  ny, tolerance_ny
+    ENDIF
+    IF ( tolerance_ny < 0.0 )  THEN
+       ny_max = ny
+       ny_min = ny * ( 1.0 + tolerance_ny )
+    ELSE
+       ny_max = ny * ( 1.0 + tolerance_ny )
+       ny_min = ny * ( 1.0 - tolerance_ny )
+    ENDIF
+    IF ( cubic_domain )  THEN
+       nz           = nx
+       tolerance_nz = tolerance_nx
+    ELSE
+       PRINT*, '*** please type nz + allowed tolerance:'
+       READ (*,*)  nz, tolerance_nz
+    ENDIF
+    IF ( tolerance_nz < 0.0 )  THEN
+       nz_max = nz
+       nz_min = nz * ( 1.0 + tolerance_nz )
+    ELSE
+       nz_max = nz * ( 1.0 + tolerance_nz )
+       nz_min = nz * ( 1.0 - tolerance_nz )
+    ENDIF
+
+!
+!-- Read maximum gridpoint-ratio for which results shall be printed
+    PRINT*, ' '
+    PRINT*, '*** please type maximum subdomain gridpoint-ratio'
+    PRINT*, '    ( ABS( nx_sub / ny_sub - 1.0 ) ) for which results shall be'
+    PRINT*, '    printed'
+    READ (*,*)  maximum_grid_ratio
+
+!
+!-- Loop over allowed numbers of processors
+g:  DO  n = numprocs_max, numprocs_min, -1
+
+!
+!--    Set initial configuration
+       numprocs   = n
+       pdims(1)   = numprocs + 1
+       pdims(2)   = 1
+
+!
+!--    Looking for practicable virtual processor grids
+p:     DO  WHILE ( pdims(1) > 1 )
+
+          pdims(1) = pdims(1) - 1
+
+!
+!--       Create the virtual PE-grid topology
+          IF ( MOD( numprocs , pdims(1) ) /= 0 )  THEN
+             CYCLE p
+          ELSE
+             IF ( one_d_decomp  .AND.  pdims(1) < numprocs )  CYCLE g
+          ENDIF
+          pdims(2) = numprocs / pdims(1)
+
+      xn: DO  nx = nx_min, nx_max
+!
+!--          Proof, if grid points in x-direction can be distributed without
+!--          rest to the processors in x- and y-direction
+             IF ( MOD(nx+1, pdims(1)) /= 0 .OR. &
+                  MOD(nx+1, pdims(2)) /= 0 )  CYCLE xn
+             nxanz  = ( nx + 1 ) / pdims(1)
+
+         yn: DO  ny = ny_min, ny_max
+!
+!--             Eventually exit in case of non quadratic domains
+                IF ( quadratic_domain_xy  .AND.  ny /= nx )  CYCLE yn
+!
+!--             Proof, if grid points in y-direction can be distributed without
+!--             rest to the processors in x- and y-direction
+                IF ( MOD( ny+1 , pdims(2) ) /= 0 .OR. &
+                     MOD( ny+1, pdims(1) ) /= 0 )  CYCLE yn
+                nyanz  = ( ny + 1 ) / pdims(2)
+
+                grid_ratio = ABS( REAL( nxanz ) / REAL( nyanz ) - 1.0 )
+
+            zn: DO  nz = nz_min, nz_max
+!
+!--                Eventually exit in case of non cubic domains
+                   IF ( cubic_domain  .AND.  nz /= nx )  CYCLE zn
+!
+!--                Proof, if grid points in z-direction can be distributed
+!--                without rest to the processors in x-direction
+                   IF ( MOD( nz, pdims(1) ) /= 0  .AND.  .NOT. one_d_decomp ) &
+                   THEN
+                      CYCLE zn
+                   ENDIF
+
+!
+!--                Store configuration found
+                   IF ( grid_ratio < maximum_grid_ratio )  THEN
+                      found = .TRUE.
+                      count = count + 1
+                      config(count)%grid_ratio = grid_ratio
+                      config(count)%numprocs   = numprocs
+                      config(count)%pdims_1    = pdims(1)
+                      config(count)%pdims_2    = pdims(2)
+                      config(count)%nx         = nx
+                      config(count)%ny         = ny
+                      config(count)%nz         = nz
+                      config(count)%nxanz      = nxanz
+                      config(count)%nyanz      = nyanz
+                      IF ( count == 10000 )  THEN
+                         PRINT*, '+++ more than 10000 configurations'
+                         EXIT g
+                      ENDIF
+                   ENDIF
+
+                   IF ( one_d_decomp )  CYCLE yn
+
+                ENDDO zn
+
+             ENDDO yn
+
+          ENDDO xn
+
+       ENDDO p
+
+    ENDDO g
+
+    IF ( .NOT. found )  THEN
+       PRINT*, ' '
+       PRINT*, '+++ No valid processor grid found for the given number of'
+       PRINT*, '    processors and gridpoints'
+       STOP 'bye'
+    ENDIF
+
+!
+!-- Calculate number of possible grid levels and gridpoints of the coarsest grid
+!-- used by the multigrid method
+    DO  n = 1, count
+       mg_levels_x = 1
+       mg_levels_y = 1
+       mg_levels_z = 1
+
+       i =  config(n)%nxanz
+       DO WHILE ( MOD( i, 2 ) == 0  .AND.  i /= 2 )
+          i = i / 2
+          mg_levels_x = mg_levels_x + 1
+       ENDDO
+
+       j =  config(n)%nyanz
+       DO WHILE ( MOD( j, 2 ) == 0  .AND.  j /= 2 )
+          j = j / 2
+          mg_levels_y = mg_levels_y + 1
+       ENDDO
+
+       k =  config(n)%nz
+       DO WHILE ( MOD( k, 2 ) == 0  .AND.  k /= 2 )
+          k = k / 2
+          mg_levels_z = mg_levels_z + 1
+       ENDDO
+
+       maximum_grid_level = MIN( mg_levels_x, mg_levels_y, mg_levels_z )
+       config(n)%grid_levels = maximum_grid_level
+       config(n)%nx_mg = config(n)%nxanz / 2**(maximum_grid_level-1) 
+       config(n)%ny_mg = config(n)%nyanz / 2**(maximum_grid_level-1)
+       config(n)%nz_mg = config(n)%nz    / 2**(maximum_grid_level-1)
+    ENDDO
+
+!
+!-- Print the configurations computed above
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** print out results in ascending grid-ratio order (y/n)?'
+    READ (*,*)  char
+    IF ( char == 'y' )  THEN
+       gridratio = 10000.0
+       gridratio(1:count) = config(1:count)%grid_ratio
+       WRITE ( *, * )  ' '
+       WRITE ( *, * )  'Possible configurations found:'
+       WRITE ( *, * )  'sorted in ascending grid-ratio order'
+       WRITE ( *, 100 )
+       DO
+          ii = MINLOC( gridratio )
+          i = ii(1)
+          IF ( gridratio(i) /= 10000.0 )  THEN
+             WRITE ( *, 101 ) &
+                config(i)%grid_ratio, config(i)%numprocs, config(i)%pdims_1, &
+                config(i)%pdims_2, config(i)%nx, config(i)%ny, config(i)%nz, &
+                config(i)%nxanz, config(i)%nyanz, config(i)%grid_levels,     &
+                config(i)%nx_mg, config(i)%ny_mg, config(i)%nz_mg
+             gridratio(i) = 10000.0
+          ELSE
+             EXIT 
+          ENDIF
+       ENDDO
+    ENDIF
+
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** print out results in descending PE order (y/n)?'
+    READ (*,*)  char
+    IF ( char == 'y' )  THEN
+       numpr = 0
+       numpr(1:count) = config(1:count)%numprocs
+       WRITE ( *, * )  ' '
+       WRITE ( *, * )  'Possible configurations found:'
+       WRITE ( *, * )  'sorted after number of PEs'
+       WRITE ( *, 100 )
+       DO
+          ii = MAXLOC( numpr )
+          i = ii(1)
+          IF ( numpr(i) /= 0 )  THEN
+             WRITE ( *, 101 ) &
+                config(i)%grid_ratio, config(i)%numprocs, config(i)%pdims_1, &
+                config(i)%pdims_2, config(i)%nx, config(i)%ny, config(i)%nz, &
+                config(i)%nxanz, config(i)%nyanz, config(i)%grid_levels,     &
+                config(i)%nx_mg, config(i)%ny_mg, config(i)%nz_mg
+             numpr(i) = 0
+          ELSE
+             EXIT 
+          ENDIF
+       ENDDO
+    ENDIF
+
+    PRINT*, ' '
+    PRINT*, ' '
+    PRINT*, '*** print out results in descending grid size order (y/n)?'
+    READ (*,*)  char
+    IF ( char == 'y' )  THEN
+       numnx = 0
+       DO  i = 1, count
+          numnx(i) = config(i)%nx * config(i)%ny * config(i)%nz
+       ENDDO
+       WRITE ( *, * )  ' '
+       WRITE ( *, * )  'Possible configurations found:'
+       WRITE ( *, * )  'sorted after grid size'
+       WRITE ( *, 100 )
+       DO
+          ii = MAXLOC( numnx )
+          i = ii(1)
+          IF ( numnx(i) /= 0 )  THEN
+             WRITE ( *, 101 ) &
+                config(i)%grid_ratio, config(i)%numprocs, config(i)%pdims_1, &
+                config(i)%pdims_2, config(i)%nx, config(i)%ny, config(i)%nz, &
+                config(i)%nxanz, config(i)%nyanz, config(i)%grid_levels,     &
+                config(i)%nx_mg, config(i)%ny_mg, config(i)%nz_mg
+             numnx(i) = 0
+          ELSE
+             EXIT 
+          ENDIF
+       ENDDO
+    ENDIF
+
+100 FORMAT('ratio  PEs   PE-grid      nx   ny   nz   subdomain  grid_levels  ', &
+           'coarsest subd.')
+101 FORMAT(F4.2,2X,I4,' (',I4,',',I4,')',2X,I4,1X,I4,1X,I4,'  (',I4,',',I4,')', &
+           5X,I2,7X,'(',I3,',',I3,',',I3,')')
+
+ END PROGRAM find_palm_config

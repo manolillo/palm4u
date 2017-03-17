@@ -1,0 +1,22 @@
+#-- Script zur Erstellung der Beschreibung des
+#-- Upstream-Spline-Advektionsverfahrens und des
+#-- Long-Filters
+
+rm *.log *.aux *.bbl *.blg *.ps *.dvi 
+
+#-- 1. Latex-Durchlauf
+latex ups
+
+#-- Literaturverzeichnis erzeugen
+bibtex ups
+
+#-- 2. Latex-Durchlauf
+#-- Literaturverzeichnis einbinden
+latex ups
+
+#-- 3. Latex-Durchlauf
+#-- Referenzen aufnehmen
+latex ups
+
+#-- Postscriptdatei erzeugen
+dvips ups

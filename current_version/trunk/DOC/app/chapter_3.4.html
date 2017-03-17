@@ -1,0 +1,4061 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+
+  
+  <title>PALM chapter 3.4</title></head>
+<body>
+
+
+<h3 style="line-height: 100%;"><font color="#000000">3.4
+Input and
+output files</font></h3>
+
+
+<p style="line-height: 100%;"></p>
+
+
+<p style="line-height: 100%;"><font color="#000000">The
+model works
+with a set of files, which are all located in the temporary working
+directory and which are either expected at the beginning of the run
+(the so-called input files) or which are
+produced during the run and/or at the end of the simulation (output
+files).</font><font color="#800000">
+<font color="#000000">The following table lists all
+default files
+addressed by the model. They are arranged according to the
+associated FORTRAN unit (unit number).</font> </font><font color="#000000">The
+unit 90 is used for different files, which are opened only briefly
+and uniquely in the model and closed directly afterwards.
+Unit numbers 101 - 109, 111 - 113, and 116&nbsp;refer to data files
+which have NetCDF format.
+These are not opened by a FORTRAN-OPEN-statement but by a corresponding
+NetCDF call (NF90_CREATE or NF90_OPEN). These files are only created on
+machines where a NetCDF library is available.<br>
+
+
+</font></p>
+
+
+<p style="line-height: 100%;"><font color="#000000">The
+file
+names described in the list correspond to the names indicated in the
+respective OPEN instruction, i.e. the files are expected and saved
+under these names in the temporary working directory of the model. By
+default, file names are always written in capital letters. The
+third column indicates whether it is an input or output file (I
+and/or O). The NetCDF files can be both input and output files (I/O).
+If restart jobs shall append data to an existing NetCDF file (created
+by a previous job of the job chain), the respective file has to be
+given as an input file (see also <a href="../app/chapter_4.5.1.html">chapter
+4.5.1</a> which gives more details about the PALM-NetCDF-output).</font>
+</p>
+
+
+<p style="line-height: 100%;"> </p>
+
+
+<p style="line-height: 100%;"><font color="#000000">On
+parallel
+computers many of the files are read and/or written by the central
+processing element 0 (PE0) only. These files have processor-independent
+content (and therefore they can be read or written by other
+PEs just as well). However, certain files have processor-dependent
+content. For the binary output of data for restart runs (local file
+<a href="#BINOUT">BINOUT</a>),
+for example, <font color="#000000">each PE outputs only
+the data of
+its subdomain. So each processing element writes
+into its own file with its own file name. These files lie in a
+subdirectory of the temporary working directory. Their names are build
+off from the underline ("_ ") and the four digit
+processor ID. The data written for restart runs would be e.g. on the
+files BINOUT/_0000 (PE0), BINOUT/_0001 (PE1), BINOUT/_0002 (PE2) etc.
+Such files, which have processor-dependent content on parallel
+computers, are marked in the following list by the fact, that to the
+file name a line (&rdquo;/&ldquo;) is attached. If appropriate
+output
+files are to be copied through <b>mrun</b> to permanent
+files, and/or
+files with processor-dependent content are supposed to be copied as
+input files into the temporary working directory of the model, you have
+to indicate a special file attribute in the appropriate file
+connection statement </font>(see <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#arpe">arpe</a>,
+<a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#flpe">flpe</a>
+<font color="#000000">in the <b>mrun </b>description).</font><font color="#800000">
+</font><font color="#000000">Then the permanent file
+name will be
+interpreted as a directory name, in which the input files are
+expected and/or to which output files are written. The file names in
+these directories are always named _0000, _0001, _0002 etc. </font>
+</font></p>
+
+
+<p><font color="#000000"><font color="#000000">For
+internal use,
+the model may open a set of further files, which are not
+defined by the user but contain no usable information and
+therefore are not included in this list.</font></font></p>
+<p><font color="#000000"><font color="#000000">
+
+<a name="coupled"></a>In case of <a href="chapter_3.8.html">coupled</a> atmosphere-ocean
+runs (see <a href="chapter_3.8.html">chapter 3.8</a>),
+both the atmosphere and the </font></font><font color="#000000"><font color="#000000"><a href="chapter_4.1.html#ocean">ocean</a> executable use
+the same temporary working directory. However, each executable requires its own, unique set of files for I/O. In order to
+distinguish between atmosphere and ocean files, coupled </font></font><font color="#000000"><font color="#000000">atmosphere-ocean
+</font></font><font color="#000000"><font color="#000000">runs use the </font></font><font color="#000000"><font color="#000000">following
+filename convention</font></font><font color="#000000"><font color="#000000">. </font></font><font color="#000000"><font color="#000000">The
+atmosphere executable uses the set of normal filenames given in the
+table below. The ocean executable uses a set of modified filenames that
+have the string '_O' added to their normal name. The coupled
+ocean filenames are given in brackets in the table below where
+applicable. The string '_O' is simply appended </font></font><font color="#000000"><font color="#000000">to most
+filenames</font></font><font color="#000000"><font color="#000000">; exceptions are highlighted in bold face. (<span style="font-weight: bold;">Note:</span> uncoupled
+ocean runs use the normal set of filenames without '_O'.)</font></font></p>
+<p></p>
+<font color="#000000"><font color="#000000">
+
+<br>
+
+
+</font>
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+
+
+    <tr valign="top">
+
+
+      <td width="8%">
+      
+      <p><font size="4"><b>Unit</b></font></p>
+
+
+      </td>
+
+
+      <td width="12%">
+      
+      <p><font size="4"><b>Name</b></font></p>
+
+
+      </td>
+
+
+      <td width="4%">
+      
+      <p><font size="4"><b>I/O</b></font></p>
+
+
+      </td>
+
+
+      <td width="9%">
+      
+      <p><font size="4"><b>Format</b></font></p>
+
+
+      </td>
+
+
+      <td colspan="1" width="67%">
+      
+      <p><font size="4"><b>Description/contents</b></font></p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr valign="top">
+
+
+      <td style="text-align: center;" width="8%"> 11<br>
+
+
+      </td>
+
+
+      <td width="12%">
+      
+      <p><a name="PARIN"></a>PARIN<br>
+
+
+(PARIN_O)</p>
+
+
+      </td>
+
+
+      <td width="4%">
+      
+      <p align="center">I</p>
+
+
+      </td>
+
+
+      <td style="width: 9%;">
+      
+      <p>ASCII/&nbsp; <br>
+
+
+NAMELIST</p>
+
+
+      </td>
+
+
+      <td colspan="1" width="67%">
+      
+      <p><font color="#000000">Parameter
+for model steering. This file
+is needed by the model in each case. Its content and structure is
+described in detail in</font> <a href="chapter_4.0.html">chapter
+4.0</a>. <a href="chapter_4.4.1.html">Chapter
+4.4.1</a> <font color="#000000">shows a simple
+example. </font> </p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr valign="top">
+
+
+      <td style="text-align: center;" width="8%">
+      
+      <p align="center">13</p>
+
+
+      </td>
+
+
+      <td width="12%">
+      
+      <p><a name="BININ"></a>BININ/<br>
+
+
+(BININ<span style="font-weight: bold;">_O</span>/)</p>
+
+
+      </td>
+
+
+      <td width="4%">
+      
+      <p align="center">I</p>
+
+
+      </td>
+
+
+      <td width="9%">
+      
+      <p>Binary</p>
+
+
+      </td>
+
+
+      <td colspan="1" width="67%">
+      
+      <p>Binary data,
+which are read in by the model at the beginning
+of a restart run (see <a href="chapter_3.3.html">chapter
+3.3</a>). The appropriate file must have been written by the
+preceding
+job of the job chain (see <a href="#BINOUT">BINOUT</a>).
+This file contains the initial parameters (see <a href="chapter_4.1.html">chapter
+4.1</a>) of the job chain, arrays of the prognostic and
+diagnostic
+variables as well as those parameters and variables for plots of
+horizontally averaged vertical profiles (see <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>),
+which have been determined by the job chain so far. Concerning runs on
+several processors it has to be noted that each processing element
+reads its own file and the file content is processor-dependent. The
+number of processors which can be used must not be changed during a job
+chain and/or if a job chain is continued.&nbsp; </p>
+
+
+      
+      <p>Knowledge
+of the file structure is usually not necessary,
+because the file is produced and also read again by the model, but it
+can be useful for error determination in case of read errors .
+Therefore the file structure is described in the following.&nbsp; </p>
+
+
+      
+      <p>The first record of this file contains a version number
+(ten
+character string) of the subroutine, which, which output the data that
+follows (write_var_list.f90). This number has to
+agree with the version number subroutine which is reading the file
+(read_var_list.f90) in case of a restart run. Otherwise the model run
+is aborted. Version numbers are changed whenever new code revisions
+require a change of the file format.&nbsp; </p>
+
+
+      
+      <p>Starting
+from the second record, all initial parameters follow
+(exception: <a href="chapter_4.1.html#initializing_actions">initializing_actions</a>),
+whereby each parameter fills two records. In the first record the name
+of the parameter is saved as a character string (30 characters long,
+short names are filled by trailing blanks, longer names are cut off at
+the end), in the second record the value (or the values) of the
+parameter follow. The sequence of parameters on the file may be
+arbitrary, however the first and second variable must be <a href="chapter_4.1.html#nz">nz</a>
+and <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>.
+If a variable with unknown name is found the model run is
+aborted.&nbsp; </p>
+
+
+      
+      <p>At the end of the initial
+parameters a record with the string "<i>***
+end ***</i>"follows (filled up with trailing blanks up to a
+length of
+30 characters).&nbsp; </p>
+
+
+      
+      <p>Afterwards the fields
+of the prognostic and diagnostic
+variables follow. This part of the file also begins with a record
+consisting of a character string of length 10, which contains the
+version number of the subroutine that wrote the arrays that follow
+(write_3d_binary.f90). It must agree with the number of the reading
+subroutine (read_3d_binary.f90).&nbsp; </p>
+
+
+      
+      <p>The
+following record contains the number of processors which
+were used in the model run producing this file, the processor ID of the
+special processor, which creates the file, as well as the lower and
+upper array indices of the subdomain belonging to this processing
+element. If no complete agreement with the values of the current model
+run exists, then this is aborted. This examination must be made in
+particular on parallel computers, because the jobs of a job chain
+always have to use the same number of processors and the same virtual
+processor grid.&nbsp; </p>
+
+
+      
+      <p>After these tests the
+individual arrays as well as parameters
+and variables for plots of horizontally averaged vertical profiles
+follow. Like the initialization parameters, they consist of two
+records. In the first record, the name of the array or the variable
+(character string, consisting of 20 characters, filled with trailing
+blanks) is located, in the second one its values follow. The sequence
+of the individual variables may be arbitrary again. The parameters for
+the plot and the respective variables are only read in if for the run
+parameter <a href="chapter_4.2.html#use_prior_plot1d_parameters">use_prior_plot1d_parameters</a>
+= <i>.TRUE</i> is selected, otherwise they will be
+skipped.&nbsp; </p>
+
+
+      
+      <p>At the end of the file there
+has to be a record with the
+character string "<span style="font-style: italic;"></span><i>***
+end
+***</i>"(filled up with trailing blanks up to a length of 20
+characters).</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr valign="top">
+
+
+      <td style="text-align: center;" width="8%">
+      
+      <p align="center">14</p>
+
+
+      </td>
+
+
+      <td width="12%">
+      
+      <p><a name="BINOUT"></a>BINOUT/<br>
+
+
+(BINOUT<span style="font-weight: bold;">_O</span>/)</p>
+
+
+      </td>
+
+
+      <td width="4%">
+      
+      <p align="center">O</p>
+
+
+      </td>
+
+
+      <td width="9%">
+      
+      <p>Binary</p>
+
+
+      </td>
+
+
+      <td colspan="1" width="67%">
+      
+      <p>Binary data,
+which are written by the model at the end of the
+run and possibly needed by restart runs (see <a href="chapter_3.3.html">chapter
+3.3</a>) for the initialization. This output file is then read in
+as
+file <a href="#BININ">BININ</a>.
+It contains the initial parameters (see <a href="chapter_4.1.html">chapter
+4.1</a>) of the model run, arrays of the prognostic and
+diagnostic
+variables as well as those parameters determined so far during a job
+chain and variables for plots of horizontally averaged vertical
+profiles (see <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>).
+With runs on several processors it has to be noted that each processing
+element writes its own file and the file content is
+processor-dependent. A specification of the file format can be found in
+the
+description of the file <a href="#BININ">BININ</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The file BINOUT is written by the model only if,
+with the help
+of the <b>mrun</b>-configuration file, the <font face="Thorndale, serif">value</font> <span style="font-family: monospace;">true</span> is
+assigned for the
+environment
+variable <span style="font-size: 10pt; font-family: monospace;">write_binary</span>
+(see <a href="chapter_3.3.html">chapter
+3.3</a>).&nbsp; </p>
+
+
+      
+      <p>With large grid point
+numbers the file BINOUT (or the
+files residing in directory BINOUT/) will be very large and should
+be stored (if available) on the archive system of the remote computer.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">15<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="RUN_CONTROL"></a>RUN_CONTROL<br>
+
+
+(RUN_CONTROL_O)</td>
+
+
+      <td style="vertical-align: top;">O</td>
+
+
+      <td style="vertical-align: top;">Ascii</td>
+
+
+      <td colspan="1" width="67%">
+      
+      <p>This file contains
+the so-called time step control output of
+the model. At certain temporal intervals, which are described by the
+run
+parameter <a href="chapter_4.1.html#dt_run_control">dt_run_control</a>,
+a line with the values of certain control parameters is written into
+this
+file. Additionally, such a control line is always written, whenever the
+time step of the model changes. All data and quantities always refer to
+the entire model domain.&nbsp; </p>
+
+
+      
+      <p>If the
+1D-model is switched on for the initialization of the
+3D-models, then control lines are likewise written into this file at
+certain temporal intervals (see <a href="chapter_4.1.html#dt_run_control_1d">dt_run_control_1d</a>).&nbsp;
+      </p>
+
+
+      
+      <p>By default, the file RUN_CONTROL only lists
+information
+about the selected model parameters at the beginning of the
+initial run. These informations are written at the beginnning of a run.
+They correspond to those of the file <a href="#HEADER">HEADER</a>
+(however without data concerning the consumed CPU time, because these
+are
+only known at the end of a run). With the run parameter <a href="chapter_4.2.html#force_print_header">force_print_header</a>
+it can be achieved that this information is also written at the
+beginning of the file RUN_CONTROL at restart runs.&nbsp; </p>
+
+
+      
+      <p>The individual columns of the 1D - time step control
+output
+have the following meaning (listed by the respective heading of the
+appropriate
+column in the file):&nbsp; <br>
+
+
+      </p>
+
+
+      
+      <table style="text-align: left; width: 100%;" cellpadding="2">
+
+
+        <tbody>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">ITER.</td>
+
+
+            <td style="vertical-align: top;">Number of
+time steps
+accomplished so far</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">HH:MM:SS</td>
+
+
+            <td style="vertical-align: top;">Time (in
+hours: minutes:
+seconds)</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">DT</td>
+
+
+            <td style="vertical-align: top;">Time step (in
+s)</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">UMAX</td>
+
+
+            <td style="vertical-align: top;">Maximum
+absolute wind
+velocity
+(u-component) (in m/s)</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">VMAX</td>
+
+
+            <td style="vertical-align: top;">Maximum
+absolute wind
+velocity
+(v-component) (in m/s)</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">U *</td>
+
+
+            <td style="vertical-align: top;">Friction
+velocity (<font color="#000000">in </font>m/s)</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">ALPHA</td>
+
+
+            <td style="vertical-align: top;">Angle of the
+wind vector
+(to the x-axis) at the top of the
+Prandtl layer (k=1) (<font color="#000000">in </font>degrees)</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">ENERG.</td>
+
+
+            <td style="vertical-align: top;">Kinetic
+energy of the
+1D-model (<font color="#000000">in </font>m<sup>2</sup>/s<sup>2</sup>),
+averaged over all grid points</td>
+
+
+          </tr>
+
+
+        
+        </tbody>
+      
+      </table>
+
+
+      
+      <p>&nbsp;
+The individual columns of the 3D - time step control output
+have the following meaning (listed by the respective heading of the
+appropriate
+column in the file):<br>
+
+
+      </p>
+
+
+      
+      <table style="text-align: left; width: 100%;" cellpadding="2">
+
+
+        <tbody>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">RUN</td>
+
+
+            <td style="vertical-align: top;">Serial-number
+of the job
+in the job chain. The initial
+run has the number 0, restart runs accordingly have larger numbers.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">ITER.</td>
+
+
+            <td style="vertical-align: top;">Number of
+time steps
+accomplished since starting time t=0 of
+the initial run.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">HH:MM:SS</td>
+
+
+            <td style="vertical-align: top;">Time (<font color="#000000">in </font>hours: minutes:
+seconds) since starting time t=0 of the
+initial run.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">DT (E)</td>
+
+
+            <td style="vertical-align: top;">Time step (<font color="#000000">in </font>s). The
+following character indicates whether the
+time
+step is limited by the advection criterion (A) or the diffusion
+criterion (D). After changes of the time step a further character
+follows,
+which indicates with which time step procedure the changed time step
+was accomplished (<span style="font-family: monospace;">L:</span>
+Leapfrog, <span style="font-family: monospace;">E:</span>
+Euler). This
+does
+not apply for the default Runge-Kutta timestep scheme.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">UMAX</td>
+
+
+            <td style="vertical-align: top;">Maximum
+absolute wind
+velocity (u-component) (<font color="#000000">in </font>m/s).
+If at
+the
+appropriate output time a random disturbance was added to the
+horizontal velocity field (see <a href="chapter_4.2.html#create_disturbances">create_disturbances</a>),
+the character D will appear directly after the velocity value.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">VMAX</td>
+
+
+            <td style="vertical-align: top;">Maximum
+absolute wind
+velocity (v-component) (<font color="#000000">in </font>m/s).
+If at
+the
+appropriate output time a random disturbance was added to the
+horizontal velocity field (see <a href="chapter_4.2.html#create_disturbances">create_disturbances</a>),
+the character D will appear directly after the velocity value.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">WMAX</td>
+
+
+            <td style="vertical-align: top;">Maximum
+absolute wind
+velocity (w-component) (<font color="#000000">in </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">U
+*</td>
+
+
+            <td style="vertical-align: top;">Horizontal
+average of the
+friction velocity (<font color="#000000">in </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">W
+*</td>
+
+
+            <td style="vertical-align: top;">Convective
+velocity scale
+(<font color="#000000">in </font>m/s). The assumed
+boundary layer
+height is determined via the heat flux minimum criterion.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">THETA *</td>
+
+
+            <td style="vertical-align: top;">Characteristic
+temperature
+of the Prandtl - layer (<font color="#000000">in </font>K).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">Z_I</td>
+
+
+            <td style="vertical-align: top;">Height of the
+convective
+boundary layer (<font color="#000000">in </font>m),
+determined via
+the criterion of the heat flux minimum.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">ENERG.</td>
+
+
+            <td style="vertical-align: top;">Average
+resolved total
+energy of the flow field (<font color="#000000">in </font>m<sup>2</sup>/s<sup>2</sup>),
+normalized with the total number of grid points.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">DISTENERG</td>
+
+
+            <td style="vertical-align: top;">Average
+resolved
+disturbance energy of flow field (<font color="#000000">in
+            </font>m<sup>2</sup>/s<sup>2</sup>),
+normalized with the total number of grid points.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">DIVOLD</td>
+
+
+            <td style="vertical-align: top;"><font color="#000000">Divergence
+of the velocity field (sum of
+the absolute values) (</font><font color="#000000">in
+            </font><font color="#000000">1/s) before
+call of the
+pressure solver,
+normalized with the total number of grid points.</font></td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">DIVNEW</td>
+
+
+            <td style="vertical-align: top;"><font color="#000000">Divergence
+of the velocity field (sum of
+the absolute values) (</font><font color="#000000">in
+            </font><font color="#000000">1/s) after
+call of the
+pressure solver, normalized</font>
+with the total number of grid points.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">UMAX (KJI)</td>
+
+
+            <td style="vertical-align: top;">Indices of
+the grid point
+with the maximum absolute
+u-component of the wind velocity (sequence: k, j, i).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">VMAX (KJI)</td>
+
+
+            <td style="vertical-align: top;">Indices of
+the grid point
+with the maximum absolute
+v-component of the wind velocity (sequence: k, j, i).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">WMAX (KJI)</td>
+
+
+            <td style="vertical-align: top;">Indices of
+the grid point
+with the maximum absolute
+w-component of the wind velocity (sequence: k, j, i).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">ADVECX</td>
+
+
+            <td style="vertical-align: top;">Distance (<font color="#000000">in </font>km) the
+coordinate system has been moved in
+x-direction with Galilei-Transformation switched on (see <a href="chapter_4.1.html#galilei_transformation">galilei_transformation</a>).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;">ADVECY</td>
+
+
+            <td style="vertical-align: top;">Distance (<font color="#000000">in </font>km) the
+coordinate system has been moved in
+y-direction with Galilei-Transformation switched on (see <a href="chapter_4.1.html#galilei_transformation">galilei_transformation</a>).</td>
+
+
+          </tr>
+
+
+        
+        </tbody>
+      
+      </table>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">16<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="LIST_PROFIL"></a>LIST_PROFIL<br>
+
+
+(LIST_PROFIL_O) </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">This file contains
+horizontally
+(and possibly temporally)
+averaged vertical profiles of some model variables. The quantities
+saved are set model-internally and can not be determined by the user.
+At each output time (see <a href="chapter_4.2.html#dt_dopr_listing">dt_dopr_listing</a>)
+two tables are written to the file consecutively. The first contains
+variables which are defined on the scalar / u-v-grid-levels, the
+second table contains variables which are defined on the w-grid-levels.
+If subdomains were defined with the initialization parameter <a href="chapter_4.1.html#statistic_regions">statistic_regions </a>for
+additional statistic evaluation, then the tables
+described above are written for each individual subdomain. The name of
+the respective subdomain (see <a href="chapter_4.3.html#region">region</a>)
+appears in the header of the respective table. <br>
+
+
+In each case the tables consist of a header, followed by the
+profiles arranged next to each other in columns. The header contains
+some basic information of the respective run (model version, run
+identifier consisting of
+basic file name and number of the job in the job chain, executing
+computer, date, time of the beginning of the run, name of the
+subdomain, output time, kind of averaging). On the u-v-level the
+following columns are written: <br>
+
+
+      
+      <table style="text-align: left; width: 100%;" cellpadding="2">
+
+
+        <tbody>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">k<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Vertical
+grid point index.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">zu<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Height
+of the grid point
+level (<font color="#000000">in </font>m).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">u<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">u-component
+of the wind
+velocity (<font color="#000000">in </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">du<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Deviation
+of the
+u-component from the initial profile at the
+time t=0 (initialization profile) (<font color="#000000">in
+            </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">v<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">v-component
+of the wind
+velocity (<font color="#000000">in </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">dv<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Deviation
+of the
+v-component from the initial profile at the
+time t=0 (initialization profile) (<font color="#000000">in
+            </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">pt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Potential
+temperature (<font color="#000000">in </font>K).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">dpt<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Deviation
+of potential
+temperature from the initial profile at
+the time t=0 (initialization profile) (<font color="#000000">in
+            </font>K).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">e<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Turbulent
+kinetic energy
+(subgrid-scale) (<font color="#000000">in </font>m<sup>2</sup>/s<sup>2</sup>).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">Km<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Turbulent
+diffusion
+coefficient for momentum (<font color="#000000">in </font>m<sup>2</sup>/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">Kh<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Turbulent
+diffusion
+coefficient for heat (<font color="#000000">in </font>m<sup>2</sup>/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">l<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Mixing
+length (<font color="#000000">in </font>m).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: top;"><br>
+
+
+            </td>
+
+
+            <td style="vertical-align: top;"><br>
+
+
+            </td>
+
+
+          </tr>
+
+
+        
+        </tbody>
+      
+      </table>
+
+
+On the w-level the following columns are written:<br>
+
+
+      <br>
+
+
+      
+      <table style="text-align: left; width: 100%;" cellpadding="2">
+
+
+        <tbody>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">k<br>
+
+
+            </td>
+
+
+            <td style="vertical-align: middle;">Vertical
+grid point
+index.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">zw<br>
+
+
+            </td>
+
+
+            <td style="vertical-align: middle;">Height of
+the grid
+point
+level (<font color="#000000">in </font>m).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">w'pt'</td>
+
+
+            <td style="vertical-align: middle;">Vertical
+subgrid-scale
+kinematic heat flux (<font color="#000000">in </font>K
+m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">wpt</td>
+
+
+            <td style="vertical-align: middle;">Vertical
+total (
+subgrid-scale + resolved)
+kinematic heat flux (<font color="#000000">in </font>K
+m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">w'u'</td>
+
+
+            <td style="vertical-align: middle;">u-component
+of the
+vertical subgrid-scale momentum flux (<font color="#000000">in
+            </font>m<sup>2</sup>/s<sup>2</sup>).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">wu</td>
+
+
+            <td style="vertical-align: middle;">u-component
+of the
+total
+vertical momentum flux (
+subgrid-scale + resolved) (<font color="#000000">in </font>m<sup>2</sup>/s<sup>2</sup>).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">w'v'</td>
+
+
+            <td style="vertical-align: middle;">v-component
+of the
+vertical subgrid-scale momentum flux (<font color="#000000">in
+            </font>m<sup>2</sup>/s<sup>2</sup>).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="vertical-align: middle;">wv</td>
+
+
+            <td style="vertical-align: middle;">v-component
+of the
+total
+vertical momentum flux (
+subgrid-scale + resolved) (<font color="#000000">in </font>m<sup>2</sup>/s<sup>2</sup>).</td>
+
+
+          </tr>
+
+
+        
+        </tbody>
+      
+      </table>
+
+
+      <br>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">17
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="LIST_PROFIL_1D"></a>LIST_PROFIL_1D<br>
+
+
+(LIST_PROFIL_1D_O)</td>
+
+
+      <td style="vertical-align: top;">O </td>
+
+
+      <td style="vertical-align: top;">Ascii </td>
+
+
+      <td style="vertical-align: top;">This file contains
+the vertical
+profiles calculated by the
+1D-model within initial runs. The quantities saved are set
+model-internally and cannot be determined by the user. At the
+respective output times (see <a href="chapter_4.1.html#dt_pr_1d">dt_pr_1d</a>)
+a table with the following information is written to the file: The
+table header contains some basic information of the respective run
+(model version, run identifier consisting of basic file name and number
+of the job in the
+job chain (this number should always be 00, because the 1D-model is
+only switched on at initial runs), executing computer, date,
+time of the beginning of the run, output time). Afterwards the
+following columns appear:<br>
+
+
+      
+      <table style="text-align: left; width: 100%;" cellpadding="2">
+
+
+        <tbody>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">k<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Vertical
+grid point index.</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">zu<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Height
+of the grid point
+level (<font color="#000000">in </font>m).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">u<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">u-component
+of the wind
+velocity (<font color="#000000">in </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">v<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">v-component
+of the wind
+velocity (<font color="#000000">in </font>m/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">pt<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Potential
+temperature (<font color="#000000">in </font>K).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">e<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Turbulent
+kinetic energy (<font color="#000000">in </font>m<sup>2</sup>/s<sup>2</sup>).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">rif<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Flux
+Richardson number</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">Km<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Turbulent
+diffusion
+coefficient for momentum (<font color="#000000">in </font>m<sup>2</sup>/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">Kh<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;">Turbulent
+diffusion
+coefficient for heat (<font color="#000000">in </font>m<sup>2</sup>/s).</td>
+
+
+          </tr>
+
+
+          <tr>
+
+
+            <td style="text-align: left; vertical-align: middle;">l<br>
+
+
+            </td>
+
+
+            <td style="text-align: left; vertical-align: middle;"><font color="#000000">Mixing
+length (</font><font color="#000000">in </font><font color="#000000">m).</font></td>
+
+
+          </tr>
+
+
+        
+        </tbody>
+      
+      </table>
+
+
+      <br>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">18
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="CPU_MEASURES"></a>CPU_MEASURES<br>
+
+
+(CPU_MEASURES_O)</td>
+
+
+      <td style="vertical-align: top;">O </td>
+
+
+      <td style="vertical-align: top;">Ascii </td>
+
+
+      <td style="vertical-align: top;">Time measurements
+are
+accomplished through the subroutine <span style="font-family: monospace;">cpu_log.f90.</span><span style="font-size: 10pt;"></span> The file
+CPU_MEASURES contains a header with some basic information of the
+respective run
+(model version, run identifier consisting of basic file name and
+number of the job in the job chain, executing computer, date, time of
+the beginning of the run) and afterwards two tables with data of CPU
+times which have been consumed by certain model parts. The model parts
+analyzed in the first table do not overlap and the CPU times needed for
+them therefore approximately add up to the &ldquo;total&rdquo;
+value given in the
+first line of this table. In the second table (heading: special
+measures) overlaps (in particular with the parts described in the first
+table) are possible.&nbsp; <br>
+
+
+For each model part it is indicated in the following columns how much
+CPU time was needed (absolutely and relative), and how often it was
+called.&nbsp; With runs on several processors the average values of
+all
+processors are indicated. In the case of parallel runs information for
+those processors with the largest and smallest CPU time follow as
+well as the standard deviation of all PEs from the average value. With
+good
+parallelization the CPU times on the individual processors should
+differ only little from each other and the standard deviation should be
+small.&nbsp; </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">19
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="HEADER"></a>HEADER<br>
+
+
+(HEADER_O) </td>
+
+
+      <td style="vertical-align: top;">O </td>
+
+
+      <td style="vertical-align: top;">Ascii </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>Information about
+the selected model parameters (physical and
+numerical values) as well as general information about the
+run.&nbsp; </p>
+
+
+      
+      <p>This file contains the values of
+all important steering
+parameters
+(numerical procedures, computing grid and model dimensions, boundary
+conditions, physical dimension, turbulence quantities, actions during
+the simulation, 1D-model-parameters) as well as data concerning the
+selected plot and list outputs. The headlines of the file list the
+program version used, date and time of the beginning of the run, the
+name of the executing computer, the run identifier (corresponds to the
+selected base file name) and the number of the run (number of the
+restart run). With parallel runs the number of processors as well as
+the assigned virtual processor net also appear. After these headlines
+run time and time step information appear (point of starting time,
+related to t=0 of the initial run, end-time, time actually reached, CPU
+time, etc.). If a model run is incorrectly terminated (e.g.
+run time error or excess of the permitted CPU time), information over
+the time reached and the necessary CPU time is missing (to understand:
+the file HEADER is written twice by the model; once briefly after
+beginning of the simulation (naturally here the information over the
+time reached is missing etc.) and then briefly before the normal end of
+the simulation. The second, now complete output overwrites the first
+output.).&nbsp; </p>
+
+
+      
+      <p>At the end of the file,
+information about the values of user
+parameters (see <a href="chapter_3.7.html">chapter
+3.7</a> and <a href="targetliste:chapter_1.0.html#chapter%204.3">chapter
+4.3</a>) can be output by the user with the help of the
+subroutine <tt><font style="font-size: 11pt;" size="2">user_header</font></tt>
+(located in
+the file <tt><font style="font-size: 10pt;" size="2">user_interface.f90</font></tt>).
+If no user parameters were found, the string &ldquo;<tt><font style="font-size: 10pt;" size="2">*** no user-defined
+variables found</font></tt>&rdquo;
+appears at the end of the file.
+If user parameters were indicated, the string &ldquo;<tt><font style="font-size: 11pt;" size="2">user-defined
+variables and actions</font></tt>&rdquo;
+is printed, followed by informations about the user-defined subdomains
+for which
+profiles and time series are output. All further information to appear
+here, must be provided by the user (by appropriate
+WRITE statements in <tt><font style="font-size: 10pt;" size="2">user_header</font></tt>).</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">21
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_XY"></a>PLOT2D_XY<br>
+
+
+(PLOT2D_XY_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>This file
+contains data of the two-dimensional horizontal
+cross sections written by the model (see <a href="chapter_4.2.html#data_output">data_output</a>)
+in a format readable by <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">ISO2D</a>
+(the first record contains the coordinate information <tt><font style="font-size: 11pt;" size="2">dx</font></tt><font style="font-size: 11pt;" size="2">, </font><tt><font style="font-size: 11pt;" size="2">eta</font></tt><font style="font-size: 11pt;" size="2">, </font><tt><font style="font-size: 11pt;" size="2">hu</font></tt><font style="font-size: 11pt;" size="2">, <tt>ho</tt></font>,
+then
+the individual arrays follow). The data are visualized with the help of
+ISO2D using
+NAMELIST - parameter sets, which are directly written by the model to
+the
+local files <a href="#PLOT2D_XY_GLOBAL">PLOT2D_XY_GLOBAL</a>
+and <a href="#PLOT2D_XY_LOCAL">PLOT2D_XY_LOCAL</a>.&nbsp;
+      </p>
+
+
+      
+      <p>With parallel runs and choice of <a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>
+= <i>.T.</i> each processing element writes the data of
+its subdomain
+to a separate file with the name
+PLOT2D_XY_&lt;processor-Id&gt;,
+whereby &lt;processor-Id&gt; is a four digit number (e.g.
+PLOT2D_XY_0000). These files are not suitable for ISO2D, but after the
+end
+of the model run they can be combined to one file readable by ISO2D
+with
+the help of the program <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>.
+This tool expects the files of the individual processing
+elements under the names described above and outputs the combined file
+under the name PLOT2D_XY. Usually it is called by an appropriate OUTPUT
+- command (OC:) in the MRUN-configuration file. The tool writes
+informative messages about the actions accomplished into the job
+protocol (e.g., even if no files were found).
+By the call of <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>
+possibly existing files of the other cross sections (xz and/or yz)
+and three-dimensional arrays (see <a href="#PLOT3D_DATA">PLOT3D_DATA</a>)
+are also combined.&nbsp; </p>
+
+
+      
+      <p>Further information
+about the output of plots of
+two-dimensional cross sections is found in the description of the run
+parameter <a href="chapter_4.2.html#data_output">data_output</a>.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">22<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_XZ"></a>PLOT2D_XZ<br>
+
+
+(PLOT2D_XZ_O) </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>This file contains
+the data of the xz
+cross sections written by the model.&nbsp; </p>
+
+
+The description of the local file <a href="#PLOT2D_XY">PLOT2D_XY</a>
+applies to this file, respectively </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">23<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_YZ"></a>PLOT2D_YZ<br>
+
+
+      <font color="#000000">(PLOT2D_YZ_O)</font></td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>This file contains
+the data of the xz
+cross sections written by the model.&nbsp; </p>
+
+
+The description of the local file <a href="#PLOT2D_XY">PLOT2D_XY</a>
+applies to this file, respectively </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">27<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_XY_LOCAL"></a>PLOT2D_XY_LOCAL<br>
+
+
+(PLOT2D_XY_LOCAL_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/ NAMELIST<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST -
+parameter sets, with which the plot layout of the
+data in the local file <a href="#PLOT2D_XY">PLOT2D_XY</a>
+can be steered, if they are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">ISO2D</a>.
+This file contains the so-called local parameter set (NAMELIST - group
+name: &amp;LOCAL) required by ISO2D (one parameter set for each
+field
+present at the file PLOT2D_XY). After the model run these parameter
+sets can be edited by the user, if neccessary.&nbsp; </p>
+
+
+      
+      <p>Additionally
+ISO2D still needs another so-called global
+parameter set. This is saved by the model to the local file <a href="#PLOT2D_XY_GLOBAL">PLOT2D_XY_GLOBAL</a>.
+Due to the fact that ISO2D expects global and local parameter sets on
+one and the same
+file, in fact the global parameter set first, the user has to append
+the
+contents of the file PLOT2D_XY_LOCAL to the file PLOT2D_XY_GLOBAL
+before the call of ISO2D (e.g. by an OUTPUT-command in the
+MRUN-configuration file: &ldquo;PLOT2D_XY_LOCAL &gt;&gt;
+PLOT2D_XY_GLOBAL&rdquo;).
+This relatively pedantic proceeding is due to the fact that the model
+can produce the file PLOT2D_XY_GLOBAL only at the end of the simulation
+(only then e.g. when the final value of the global ISO2D - parameter <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html#PLANZ">planz</a>
+is known), while the local parameter sets are written continuously
+to the file PLOT2D_XY_LOCAL during the run.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">28<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_XZ_LOCAL"></a>PLOT2D_XZ_LOCAL<br>
+
+
+      <font color="#000000">(PLOT2D_XZ_LOCAL_O)</font>
+      </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/ NAMELIST<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST -
+parameter sets, with which the plot layout of the
+data in the local file <a href="#PLOT2D_XZ">PLOT2D_XZ</a>
+can be steered, if they are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">ISO2D</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The description of the local file <a href="#PLOT2D_XY_LOCAL">PLOT2D_XY_LOCAL</a>
+applies to this file, respectively. </p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">29<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_YZ_LOCAL"></a>PLOT2D_YZ_LOCAL<br>
+
+
+      <font color="#000000">(PLOT2D_YZ_LOCAL_O)</font></td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/ NAMELIST<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST -
+parameter sets, with which the plot layout of the
+data in the local file <a href="#PLOT2D_YZ">PLOT2D_YZ</a>
+can be steered, if they are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">ISO2D</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The description of the local file <a href="#PLOT2D_XY_LOCAL">PLOT2D_XY_LOCAL</a>
+applies to this file, respectively. </p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">30<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT3D_DATA"></a>PLOT3D_DATA<br>
+
+
+(PLOT3D_DATA_O) </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>This file contains
+the data of the three-dimensional arrays
+(see <a href="chapter_4.2.html#data_output">data_output</a>)
+written by the model in a format readable for the visualization
+software AVS. Beyond that AVS
+needs coordinate information, which are output into the
+local file <a href="#PLOT3D_COOR">PLOT3D_COOR</a>,
+as well as the local files <a href="#PLOT3D_FLD">PLOT3D_FLD</a>
+and <a href="#PLOT3D_FLD_COOR">PLOT3D_FLD_COOR</a>,
+which describe the structure of the files PLOT3D_DATA and PLOT3D_COOR
+in the so-called AVS-FLD-format. Due to
+the fact that AVS expects these information in only one (so-called FLD
+-) file, the content of the file PLOT3D_FLD_COOR must be appended to
+the file PLOT3D_FLD by the user after the end of the model run (e.g.
+with an appropriate OUTPUT - command in the MRUN - configuration file: "<span style="font-family: monospace;">cat PLOT3D_FLD_COOR
+&gt;&gt; PLOT3D_FLD</span>").&nbsp; </p>
+
+
+      
+      <p>With
+parallel runs each processing element writes the data of
+its subdomain to a separate file with the name
+PLOT3D_DATA_&lt;Processor-Id&gt;, where
+&lt;Processor-Id&gt; is a
+four digit number (e.g. PLOT3D_DATA_0000). These files are not suitable
+for AVS, but after the end of the model run they can be combined to one
+file readable for AVS with the help of the program <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>.
+This tool expects the files of the individual processing
+elements under the names described above and outputs the combined file
+into a new file PLOT3D_DATA. Usually it is called by an appropriate
+OUTPUT - command in the MRUN-configuration file. The tool
+writes informative messages about the accomplished actions into
+the job protocol (e.g., even if no files were
+found). By the call of <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>
+also possibly existing files with two-dimensional plot data (see e.g. <a href="#PLOT2D_XY">PLOT2D_XY</a>)
+are combined.&nbsp; </p>
+
+
+      
+      <p>With parallel runs the
+output of data of large volume is also
+possible in compressed form. For this purpose the initialization
+parameter&nbsp; <a href="chapter_4.2.html#do3d_compress">do3d_compress</a>
+= <i>.TRUE.</i> must be set and the desired output
+accuracy has to be
+indicated
+with the help of <a href="chapter_4.2.html#do3d_comp_prec">do3d_comp_prec</a>.
+In favorable cases the file size can be reduced by
+a factor of up to 5. For the visualization of compressed data a special
+AVS module (<tt><font style="font-size: 11pt;" size="2">read_compressed_field</font></tt>)
+and a further entry in the MRUN-configuration file are needed. More
+details can be found in <a href="chapter_4.5.6.html">chapter
+4.5.6</a>.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">31<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT3D_COOR"></a>PLOT3D_COOR </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>Coordinate
+information concerning
+the three-dimensional arrays (see <a href="#PLOT3D_DATA">PLOT3D_DATA</a>)
+needed by the visualization software AVS.&nbsp; </p>
+
+
+      
+      <p>The
+file PLOT3D_COOR should be saved by the user into the same
+permanent directory as the file PLOT3D_DATA.&nbsp; </p>
+
+
+      
+      <p>For
+parallel runs PLOT3D_COOR is written by PE0 only.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">32<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT3D_FLD"></a>PLOT3D_FLD </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/&nbsp; <br>
+
+
+AVS-Fld </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>AVS-fld-file
+describing the three-dimensional
+array data, saved by the model into the local file <a href="#PLOT3D_DATA">PLOT3D_DATA</a>,
+needed by the visualization software AVS.&nbsp; </p>
+
+
+      
+      <p>This
+file describes the structure of the file PLOT3D_DATA
+(e.g. number of arrays, array dimensions, data type etc.). It uses the
+so-called AVS-Fld-format. It also contains the name of the file
+(inclusive cycle number, but without path) under which the local file
+PLOT3D_DATA is saved (this is the file name given in the file
+connection statement of the MRUN &ndash; configuration) in the
+permanent
+directory of the user (possibly on remote computers). Under this name
+AVS expects the data which are to be visualized. If there is no file
+connection statement for PLOT3D_DATA indicated in the configuration
+file, that file (filename) is registered &ldquo;unknown&rdquo;
+in the file
+PLOT3D_FLD and the
+actual name must be inserted later by hand. The file PLOT3D_FLD should
+be saved by the user in the same permanent directory as PLOT3D_DATA, so
+that AVS can find the file PLOT3D_DATA without any problems. If the two
+files lie in different directories, then the path name of the file
+PLOT3D_DATA must be added.&nbsp; </p>
+
+
+      
+      <p>AVS-fld-files
+are expected by AVS to have the
+suffix "<span style="font-family: monospace;">.fld</span>"<font face="Cumberland, monospace">.</font>
+Cycle numbers must not be attached behind this "<span style="font-family: monospace;">.fld</span>" suffix.
+This suffix is
+attached to the permanent file names (still after
+possible cycle numbers) by <span style="font-weight: bold;">mrun</span>
+if&nbsp;"<span style="font-family: monospace;">fld</span>"
+is indicated in the <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#Spalte6">column
+6 </a>of the file connection statement.&nbsp; </p>
+
+
+      
+      <p>Likewise,
+AVS expects information about the coordinate
+system underlying the arrays on this file. This information is output
+by the model
+into the local file <a href="#PLOT3D_FLD_COOR">PLOT3D_FLD_COOR</a>,
+whose content the user has to append to the file PLOT3D_FLD after the
+end of the model run (e.g. with an appropriate OUTPUT-command in the
+MRUN-configuration file: &ldquo;cat PLOT3D_FLD_COOR
+&gt;&gt;
+PLOT3D_FLD&rdquo;).&nbsp; </p>
+
+
+      
+      <p>For parallel
+runs, PLOT3D_FLD is produced by PE0 only.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">33
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT3D_FLD_COOR"></a>PLOT3D_FLD_COOR </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/&nbsp; <br>
+
+
+AVS-Fld </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>File
+for the description of the coordinate information output
+by the model into the local file <a href="#PLOT3D_COOR">PLOT3D_COOR</a>,
+which is needed for the visualization of three-dimensional array data
+by visualization-software AVS.&nbsp; </p>
+
+
+      
+      <p>This
+file describes the structure of the file PLOT3D_COOR
+(e.g. grid spacing, data type etc.) using the so-called AVS-Fld-format.
+It also contains the name of the file (inclusive cycle number, but
+without path) into which the local file PLOT3D_COOR (this is the file
+name described in the file connection statement of the MRUN -
+configuration file) is output in the permanent directory of the user
+(possibly on remote computers). Under this name AVS expects the data
+which are to be visualized. If there is no file connection statement
+for
+PLOT3D_COOR indicated in the configuration file, that file is
+registered as "unknown" in the file
+PLOT3D_FLD_COOR and the actual name
+must be inserted later by hand.&nbsp; </p>
+
+
+      
+      <p>AVS
+expects the information contained in the file
+PLOT3D_FLD_COOR, as well as the remaining information about the
+three-dimensional arrays output by the model (see <a href="#PLOT3D_FLD">PLOT3D_FLD</a>)
+in one and the same file. This is satisfied by appending the file
+PLOT3D_FLD_COOR after the end of a run are to the
+file PLOT3D_FLD (e.g. with an appropriate OUTPUT-command in the
+MRUN-configuration file: &ldquo;cat PLOT3D_FLD_COOR
+&gt;&gt;
+PLOT3D_FLD&rdquo;).&nbsp; </p>
+
+
+      
+      <p>For parallel
+runs, PLOT3D_FLD_COOR is written by PE0 only.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">
+      
+      <p align="center">40&nbsp; </p>
+
+
+      
+      <p align="center">and/or&nbsp; <br>
+
+
+possibly&nbsp; </p>
+
+
+      
+      <p align="center">40-49</p>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p><a name="PLOT1D_DATA"></a>PLOT1D_DATA<br>
+
+
+(PLOT1D_DATA_O) </p>
+
+
+      
+      <p>and/or&nbsp; <br>
+
+
+possibly&nbsp; </p>
+
+
+PLOT1D_DATA_0&nbsp; <br>
+
+
+PLOT1D_DATA_1<br>
+
+
+...<br>
+
+
+      <br>
+
+
+(PLOT1D_DATA<span style="font-weight: bold;">_O</span>_0&nbsp;<br>
+
+
+      <font color="#000000">PLOT1D_DATA<span style="font-weight: bold;">_O</span>_1 <br>
+
+
+      </font><font color="#000000">...)<span style="font-weight: bold;"></span>&nbsp;</font></td>
+
+
+      <td style="vertical-align: top;">O </td>
+
+
+      <td style="vertical-align: top;">Ascii </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>This file contains
+data (possibly horizontally and/or
+temporally averaged) of the vertical profiles (see <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>)
+written by the model in a format readable by <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.
+It is created only if <a href="chapter_4.2.html#data_output_format">data_output_format</a>
+= <span style="font-style: italic;">'profil'</span>
+is assigned. This file's format is suitable to be read by the plot
+software <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.
+Each data point of the profiles is output in one single line (1st
+column: height in m, 2nd column: value of the respective quantity).
+Within the file, data
+of the individual profiles are located one behind the other. The order
+of the data in the file follows the order used in the assignment for <b>data_output_pr</b>
+(<b>data_output_pr</b> = <span style="font-style: italic;">'u'</span>, <span style="font-style: italic;">'v'</span>,&hellip;
+means that the file starts with the data of the u-component profile,
+followed by the v-component profile, etc.).&nbsp;</p>
+
+
+      
+      <p><br>
+
+
+The data can only be visualized with <span style="font-weight: bold;">profil</span>
+using NAMELIST-parameter sets, which are saved by the
+model into the local file <a href="#PLOT1D_PAR">PLOT1D_PAR</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The profile data written to the file are described
+with the
+run parameter <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>.
+Plots produced with these data using the parameter file PLOT1D_PAR do
+not have to contain all these profiles. The profiles which can be drawn
+in the plot are described with run parameter <a href="chapter_4.2.html#cross_profiles">cross_profiles</a>.
+By subsequent editing of the file PLOT1D_PAR all profiles can be
+plotted (also the basic layout of the plots can be
+changed). For orientation, each profile existing on the file
+PLOT1D_DATA, starts with a comment line, which indicates the
+presented variable and the output time. The text of these comment
+lines is used as a legend in the plot. The very first line of the file
+is a
+comment line, containing information about the used model version, the
+run identifier (base file name + number of the respective restart
+run), the name of the executing computer, as well as the date and time
+of the beginning of the run. At the end of this comment line is the
+name
+of the subdomain, to which the profiles belong (see <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>).
+By default, the profiles present averages of the total model domain. If
+the model has to produce profiles for other subdomains beyond that, up
+to 9 further files (units No. 41-49) are created, whereby the number of
+the respective subdomain is attached
+to the file name (e.g. PLOT1D_DATA_1). The name of the file with the
+data of the total
+domain in this case reads PLOT1D_DATA_0.&nbsp; </p>
+
+
+      
+      <p>For
+presentation in the same plot, profile data of the restart
+runs can be attached to existing data of preceding runs of a job chain.
+One can do this with the file attribute <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#tra">tra</a>
+in the file connection statement. The model produces a parameter file
+(PLOT1D_PAR) for these combined data, if the run parameter is set <a href="chapter_4.2.html#use_prior_plot1d_parameters">use_prior_plot1d_parameters</a>
+= <i>.T</i>. If this is omitted, then the parameter file
+gives
+wrong plots (i.e. <span style="font-family: monospace;">use_prior_plot1d_parameters
+= .T.</span> and "<span style="font-family: monospace;">tra</span>"
+must be specified together)!&nbsp; </p>
+
+
+      
+      <p>Further
+information about output of
+vertical profile data is given in the description of the run parameter <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">80
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PARTICLE_INFOS"></a>PARTICLE_INFOS/<br>
+
+
+(PARTICLE_INFOS<span style="font-weight: bold;">_O</span>/)
+      </td>
+
+
+      <td style="vertical-align: top;">O </td>
+
+
+      <td style="vertical-align: top;">Ascii </td>
+
+
+      <td style="vertical-align: top;">This
+file is created in case of particle transport (see the <a href="chapter_4.2.html#particles_package">particles
+package</a>). It contains statistical informations about the
+number of
+particles used and about the number of particles exchanged between each
+single PE. These informations are output after every timestep if
+switched on by parameter <a href="chapter_4.2.html#write_particle_statistics">write_particle_statistics</a>.
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">81
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOTSP_X_PAR"></a>PLOTSP_X_PAR<br>
+
+
+(PLOTSP_X_PAR_O)</td>
+
+
+      <td style="vertical-align: top;">O </td>
+
+
+      <td style="vertical-align: top;">Ascii/<br>
+
+
+NAMELIST </td>
+
+
+      <td style="vertical-align: top;">This
+file is created if spectra along x are calculated and output (see the <a href="chapter_4.2.html#particles_package">spectra
+package</a>). It contains the NAMELIST parameter set, with which
+the
+layout of a plot
+of the data in the local file <a href="#PLOTSP_X_DATA">PLOTSP_X_DATA</a>
+can be steered, if these data are plotted with the plot software <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.<br>
+
+
+      
+      <p>It contains the so-called RAHMEN (frame)- and
+CROSS-parameter sets (NAMELIST- group names <span style="font-style: normal;">&amp;RAHMEN and/or
+&amp;CROSS</span>)
+needed by <span style="font-weight: bold;">profil</span>.
+The user can edit these parameter sets (and thus all details of the
+plot layout) after the run.<br>
+
+
+      </p>
+
+
+      
+      <p>By default,
+for one quantity, all spectra at different heights
+are plotted into a single panel. Different colors and line styles are
+used for each height. Panels of up to four quantities are arranged on
+one page in two lines (and two columns). More quantities are plotted on
+additional page(s). If there is more than one output time (see <a href="chapter_4.2.html#dt_dosp">dt_dosp</a>),
+additional pages will be plotted for each single output time. </p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">82<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOTSP_X_DATA"></a>PLOTSP_X_DATA<br>
+
+
+(PLOTSP_X_DATA_O) </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">This
+file is created if spectra along x are calculated and output (see the <a href="chapter_4.2.html#particles_package">spectra
+package</a>). It contains the spectral data along x (see <a href="chapter_4.2.html#data_output_sp">data_output_sp</a>)
+in a format readable by <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.
+The data can only be visualized with <span style="font-weight: bold;">profil</span>
+using NAMELIST parameter sets, which are written by
+the model to the local file <a href="#PLOTSP_X_PAR">PLOTSP_X_PAR</a>.<br>
+
+
+      <br>
+
+
+Regardless of the (sub)set of spectra specified by <a href="chapter_4.2.html#plot_spectra_level">plot_spectra_level</a>
+for actual plotting, this file contains all data of spectra specified
+by <a href="chapter_4.2.html#comp_spectra_level">comp_spectra_level</a>.<br>
+
+
+      <br>
+
+
+      <font>Each data point of a spectrum is output in a
+single line
+(1st column:
+wavenumber, 2nd column: spectral coefficient). If spectra are to be
+calculated and output for more than one height (see </font><font><a href="chapter_4.2.html#comp_spectra_level"><span lang="en-GB"><font face="Thorndale">comp_spectra_level</font></span></a></font><font>),
+the spectral coefficients for the further heights can be found in the
+subsequent columns. </font>The order
+of the data in the file follows the order used in the assignment for <span style="font-style: italic;"></span><span style="font-style: italic;"></span><a href="chapter_4.2.html#data_output_sp">data_output_sp</a>.<br>
+
+
+      <br>
+
+
+For orientation, a header of comment lines (one for each height level)
+is placed in front of the spectral data of each quantity. They indicate
+the respective quantity and the output time. The text of these comment
+lines is used as a legend in the plot. </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">83<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOTSP_Y_PAR"></a>PLOTSP_Y_PAR<br>
+
+
+(PLOTSP_Y_PAR_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">This
+file is created if spectra along y are calculated and output (see the <a href="chapter_4.2.html#particles_package">spectra
+package</a>). It contains the NAMELIST parameter set, with which
+the
+layout of a plot
+of the data in the local file <a href="#PLOTSP_Y_DATA">PLOTSP_Y_DATA</a>
+can be steered, if these data are plotted with the plot software <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.<br>
+
+
+      <br>
+
+
+For more details see <a href="#PLOTSP_X_PAR">PLOTSP_X_PAR</a>.<br>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">84<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOTSP_Y_DATA"></a>PLOTSP_Y_DATA<br>
+
+
+(PLOTSP_Y_DATA_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">This
+file is created if spectra along x are calculated and output (see the <a href="chapter_4.2.html#particles_package">spectra
+package</a>). It contains the spectral data along y (see <a href="chapter_4.2.html#data_output_sp">data_output_sp</a>)
+in a format readable by <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.
+The data can only be visualized with <span style="font-weight: bold;">profil</span>
+using NAMELIST parameter sets, which are written by
+the model to the local file <a href="#PLOTSP_Y_PAR">PLOTSP_Y_PAR</a>.<br>
+
+
+      <br>
+
+
+For more details see <a href="#PLOTSP_X_DATA">PLOTSP_X_DATA</a>.</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">85<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PARTICLE_DATA"></a>PARTICLE_DATA/<br>
+
+
+(PARTICLE_DATA<span style="font-weight: bold;">_O</span>/)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">This
+file is created if particle transport is switched on (see the <a href="chapter_4.2.html#particles_package">particles
+package</a>) and contains all particle data for one or several
+output
+times (see <a href="chapter_4.2.html#dt_write_particle_data">dt_write_particle_data</a>).<br>
+
+
+      <br>
+
+
+The first record of this file contains an identification string (PALM
+version number, run identifier, etc., 80 characters long). The second
+record also contains a version string (80 characters long) followed by
+two records with particle group informations (see file <span style="font-family: monospace;">check_open.f90</span>).
+Then, for each
+output time, two records follow, where the first one gives some general
+information (numbers of particles, etc.) and the second one contains
+the actual particle data. A FORTRAN TYPE structure is used for storing
+the particle attributes. See file <span style="font-family: monospace;">advec_particles.f90</span>
+for the detailed format.</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90</td>
+
+
+      <td style="vertical-align: top;"><a name="PARTICLE_RESTART_DATA_IN"></a>PARTICLE_RESTART_<br>
+
+
+DATA_IN/</td>
+
+
+      <td style="vertical-align: top;">I<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary
+data, which are read in by the model at the beginning
+of a restart run (see <a href="chapter_3.3.html">chapter
+3.3</a>). The appropriate file must have been written by the
+preceding
+job of the job chain (see <a href="#PARTICLE_RESTART_DATA_OUT">PARTICLE_RESTART_DATA_OUT</a>).
+This file is needed if particle transport is switched on (see the <a href="chapter_4.2.html#particles_package">particles
+package</a>) and contains all particle informations (particle
+positions, velocities, etc.) from the end of the preceding run.
+Concerning runs on
+several processors it has to be noted that each processing element
+reads its own file and that the file content is processor-dependent.
+The
+number of processors which can be used must not be changed during a job
+chain and/or if a job chain is continued. <br>
+
+
+      <br>
+
+
+The first record of this file contains a version number (four character
+string) of the subroutine, which output the data that follows (<span style="font-family: monospace;">write_particles</span>,
+see end of
+file <span style="font-family: monospace;">advec_particles.f90</span>).
+This number has to
+agree with the version number of the subroutine which is reading the
+file
+(<span style="font-family: monospace;">init_parrticles.f90</span>)
+in
+case of a restart run. Otherwise the model run
+is aborted. Version numbers are changed whenever new code revisions
+require a change of the file format. Some general informations like the
+number of particles stored in the file, the number of particle groups,
+etc.. are stored in the second record. The third record includes the
+particles to be released at the source and the fourth record contains
+all current particles. In case that particle tails are used (see <a href="chapter_4.2.html#maximum_number_of_tailpoints">maximum_number_of_tailpoints</a>),
+a further record may follow, which contains the particle tail
+informations. A FORTRAN TYPE structure is used for storing the particle
+attributes. For detailed informations about the file format see the
+corresponding READ statements in file <span style="font-family: monospace;">init_particles.f90</span>
+.<br>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PARTICLE_RESTART_DATA_IN"></a>PARTICLE_RESTART_<br>
+
+
+DATA_OUT/</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Binary
+data, which are output at the end of the
+run and possibly needed by restart runs (see <a href="chapter_3.3.html">chapter
+3.3</a>) for the initialization. This output file is then read as
+file <a href="#PARTICLE_RESTART_DATA_IN">PARTICLE_RESTART_DATA_IN</a>.
+The file is only written if particle transport is switched on (see the <a href="chapter_4.2.html#particles_package">particles
+package</a>). For a more detailed description of the file
+structure see <a href="#PARTICLE_RESTART_DATA_IN">PARTICLE_RESTART_DATA_IN</a>.</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p><a name="PLOT1D_PAR"></a>PLOT1D_PAR<br>
+
+
+(PLOT1D_PAR_O) </p>
+
+
+      
+      <p>and/or&nbsp; <br>
+
+
+possibly&nbsp; </p>
+
+
+      
+      <p>PLOT1D_PAR_0&nbsp; <br>
+
+
+PLOT1D_PAR_1&nbsp; <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&nbsp; <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&nbsp; <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&nbsp; <br>
+
+
+PLOT1D_PAR_9</p>
+
+
+      
+      <p></p>
+
+
+      
+      <p>(PLOT1D_PAR<span style="font-weight: bold;">_O</span>_0&nbsp;
+      <br>
+
+
+PLOT1D_PAR<font color="#000000"><span style="font-weight: bold;">_O</span></font>_1&nbsp;
+      <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&nbsp; <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&nbsp; <br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.&nbsp; <br>
+
+
+PLOT1D_PAR<font color="#000000"><span style="font-weight: bold;">_O</span></font>_9)</p>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/
+NAMELIST<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST parameter set, with which the layout of a plot
+of the data in the local file <a href="#PLOT1D_DATA">PLOT1D_DATA</a>
+can be steered, if these data are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/profil_beschreibung.html">profil</a>.&nbsp;
+      </p>
+
+
+      
+      <p>This file contains the so-called RAHMEN (frame)-
+and
+CROSS-parameter sets (NAMELIST- group names <span style="font-style: normal;">&amp;RAHMEN and/or
+&amp;CROSS</span>)
+needed by <span style="font-weight: bold;">profil</span>.
+These parameter sets (and thus all details of the plot layout) can be
+edited after the model run by the user. By default, all profiles of one
+variable saved at different times are drawn into one panel. Different
+colors are used for each output time. Which profiles are drawn
+into which plane and how these planes are arranged on the
+plot, is determined with the parameters <a href="chapter_4.2.html#cross_profiles">cross_profiles</a>,
+      <a href="chapter_4.2.html#profile_columns">profile_columns</a>
+and <a href="chapter_4.2.html#profile_rows">profile_rows</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The file PLOT1D_PAR is created by the model
+briefly before
+the end of a run. If a model run crashes uncontrolled (run time
+errors or CPU - time exceeded), this file is usually missing, although
+profile data were saved to the file PLOT1D_DATA.&nbsp; </p>
+
+
+      
+      <p>If
+the model has to create profiles for different subdomains
+(see <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>),
+further files are created, whereby the file name includes the number of
+the respective subdomain (e.g. PLOT1D_PAR_1). In this case the name of
+the file with NAMELIST parameters of the total domain is
+PLOT1D_PAR_0.&nbsp; </p>
+
+
+      
+      <p>For presentation in the
+same plot, profile data of the restart
+runs can be appended to existing data of preceding runs of a job chain.
+One can do this with the file attribute <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#tra">tra</a>
+in the file connection statement for PLOT1D_DATA. The model produces
+a parameter file PLOT1D_PAR for these combined data, if the run
+parameter is set <a href="chapter_4.2.html#use_prior_plot1d_parameters">use_prior_plot1d_parameters</a>
+= <i>.T</i>. If this is omitted, then the parameter file
+gives
+wrong plots (i.e. <span style="font-family: monospace;">use_prior_plot1d_parameters
+= .T.</span> and "<span style="font-family: monospace;">tra</span>"
+must be specified together)!</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_XY_GLOBAL"></a>PLOT2D_XY_GLOBAL<br>
+
+
+(PLOT2D_XY_GLOBAL_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/&nbsp; <br>
+
+
+NAMELIST</td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST
+parameter set, with which the plot layout
+of the data in local file <a href="#PLOT2D_XY">PLOT2D_XY</a>
+can be steered, if they are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">iso2d</a>.
+This file contains the so-called global parameter set (NAMELIST - group
+name: &amp;GLOBAL) needed by <span style="font-weight: bold;">iso2d</span>.
+This parameter set can be edited
+after the model run by the user. By default, the arrays are drawn using
+isolines and each array
+will be drawn onto a separate page (thus no color shading
+presentation, no vector arrows, streamlines etc.).&nbsp; </p>
+
+
+      
+      <p>Additionally <span style="font-weight: bold;">iso2d</span>
+needs the so-called local parameter
+sets. These are saved by the model to the local file <a href="#PLOT2D_XY_LOCAL">PLOT2D_XY_LOCAL</a>.
+Due to the fact that <span style="font-weight: bold;">iso2d</span>
+expects global and local parameter sets on one and the same
+file, in fact the global parameter set first, the user has to append
+the contents of the file PLOT2D_XY_LOCAL to the file PLOT2D_XY_GLOBAL
+before call of <span style="font-weight: bold;">iso2d</span>
+(e.g. by
+an OUTPUT - command in the MRUN -
+configuration file: &ldquo;cat PLOT2D_XY_LOCAL &gt;&gt;
+PLOT2D_XY_GLOBAL&rdquo;).
+This
+relatively pedantic proceedure is due to the fact that the model can
+create the file PLOT2D_XY_GLOBAL only at the end of the simulation
+(only then, when the final value of the global <span style="font-weight: bold;">iso2d</span>-parameter <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html#PLANZ">planz</a>
+is known), while the local parameter sets are written continuously
+to the file PLOT2D_XY_LOCAL during the run. Since the file
+PLOT2D_XY_GLOBAL needs to be addressed only briefly once, output-unit
+90 is used, which is also used for other files.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_XZ_GLOBAL"></a>PLOT2D_XZ_GLOBAL<br>
+
+
+(PLOT2D_XZ_GLOBAL_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/&nbsp; <br>
+
+
+NAMELIST</td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST
+parameter set, with which the plot layout of the data
+in the local file <a href="#PLOT2D_XZ">PLOT2D_XZ</a>
+can be steered, if they are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">iso2d</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The description of the local file <a href="#PLOT2D_XY_GLOBAL">PLOT2D_XY_GLOBAL</a>
+applies to this file, respectively.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;"><a name="PLOT2D_YZ_GLOBAL"></a>PLOT2D_YZ_GLOBAL<br>
+
+
+(PLOT2D_YZ_GLOBAL_O)</td>
+
+
+      <td style="vertical-align: top;">O<br>
+
+
+      </td>
+
+
+      <td style="vertical-align: top;">Ascii/&nbsp; <br>
+
+
+NAMELIST</td>
+
+
+      <td style="vertical-align: top;">
+      
+      <p>NAMELIST
+parameter set, with which the plot layout of the data
+in the local file <a href="#PLOT2D_YZ">PLOT2D_YZ</a>
+can be steered, if they are visualized with the plot program <a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">iso2d</a>.&nbsp;
+      </p>
+
+
+      
+      <p>The description of the local file <a href="#PLOT2D_XY_GLOBAL">PLOT2D_XY_GLOBAL</a>
+applies to this file, respectively.</p>
+
+
+      </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">90</td>
+
+
+      <td style="vertical-align: top;"><a name="TOPOGRAPHY_DATA"></a>TOPOGRAPHY_DATA</td>
+
+
+      <td style="vertical-align: top;">I</td>
+
+
+      <td style="vertical-align: top;">Ascii</td>
+
+
+      <td>Two-dimensional rastered <font color="#000000">topography
+height information</font>
+(in m above ground).<br><br>
+
+
+In case of &nbsp;<a href="chapter_4.1.html#topography">topography</a>
+= <span style="font-style: italic;">'read_from_file'</span>
+the&nbsp;subroutine <span style="font-family: Cumberland AMT;">init_grid</span>&nbsp;reads
+the topography height information (in m above ground) for each grid point in
+a free floating point format. <font color="#000000">The ascii file format is <a href="http://en.wikipedia.org/wiki/ESRI_grid#ASCII" target="_blank">ESRI grid</a> - also known as <a href="http://en.wikipedia.org/wiki/ESRI_grid#ASCII" target="_blank">ARC/INFO ASCII GRID</a> <span style="font-style: italic;">- without the header</span>. </font>The data on file are laid out naturally,
+i.e. in W-E orientation horizontally and in S-N orientation vertically,
+they must thus be organized as follows:<br>
+
+
+      
+      <ul>
+
+
+        <li>each
+line contains height information in m from <span style="font-style: italic;">i = 0, ..., nx</span>,</li>
+
+
+        <li>the top line contains height information in m for <span style="font-style: italic;">j = ny</span> (North), the
+bottom line for <span style="font-style: italic;">j = 0</span>
+(South),</li>
+
+
+        <li>individual data must be separated by at
+least one blank.</li>
+
+
+      
+      </ul>Layout sketch:<br>
+
+
+      <big><span style="font-family: monospace;">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;N<br>
+
+
+&nbsp; &nbsp; (0,ny) &nbsp;&nbsp;</span><font style="font-family: monospace;" color="#000000">(1,ny)
+&nbsp;&nbsp;</font><font style="font-family: monospace;" color="#000000">(2,ny) &nbsp;
+...&nbsp;</font><font style="font-family: monospace;" color="#000000">(nx,ny) &nbsp;
+&nbsp; &nbsp;</font><font style="font-family: monospace;" color="#000000">&nbsp;</font><small><font style="font-family: Helvetica,Arial,sans-serif;" color="#000000">top of file</font></small><br style="font-family: monospace;"><font style="font-family: monospace;" color="#000000"><font color="#000000">&nbsp; &nbsp;
+(0,ny-1)&nbsp;<font color="#000000">(1,ny-1)&nbsp;</font><font color="#000000">(2,ny-1)
+...&nbsp;</font><font color="#000000">(nx,ny-1) &nbsp;<br>
+
+
+      </font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000">W &nbsp;
+(0,ny-2)&nbsp;<font color="#000000">(1,ny-2)&nbsp;</font><font color="#000000">(2,ny-2)
+...&nbsp;</font><font color="#000000">(nx,ny-2) &nbsp; E<br>
+
+
+      </font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000">&nbsp;
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;:<br>
+
+
+&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;:<br>
+
+
+      </font></font><font style="font-family: monospace;" color="#000000"><font color="#000000">&nbsp;
+&nbsp;
+(0,0) &nbsp;&nbsp;&nbsp;<font color="#000000">(1,0)
+&nbsp;&nbsp;&nbsp;</font><font color="#000000">(2,0)
+&nbsp; &nbsp;...&nbsp;</font><font color="#000000">(nx,0)
+&nbsp; &nbsp; &nbsp;&nbsp;</font></font></font><font style="font-family: monospace;" color="#000000">&nbsp;</font><small><font style="font-family: Helvetica,Arial,sans-serif;" color="#000000">bottom of file</font></small><br style="font-family: monospace;"><font style="font-family: monospace;" color="#000000">&nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;S<br></font><br style="font-family: monospace;"><span style="font-family: monospace;"></span><small><font style="font-family: Helvetica,Arial,sans-serif;" color="#000000">Example for a 50m tall building surrounded by a 12.5m tall podium on flat ground:</font></small><font style="font-family: monospace;" color="#000000"><br>
+
+
+      <font color="#000000"><font color="#000000">&nbsp;
+&nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0
+&nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp;
+&nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0<br></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> &nbsp; &nbsp;0 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+</font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><br></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> </font></font></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> &nbsp; &nbsp;0 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+</font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><br></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> </font></font></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">&nbsp;
+&nbsp;0 12.5 12.5 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50
+&nbsp; 50 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+<br></font></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">
+&nbsp; &nbsp;0 12.5 12.5 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp;
+50 &nbsp; 50 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+<br></font></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">
+&nbsp; &nbsp;0 12.5 12.5 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp;
+50 &nbsp; 50 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+</font></font></font></font><br style="font-family: monospace;"><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">&nbsp; &nbsp;0 12.5 12.5 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0 <br>
+</font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">
+&nbsp; &nbsp;0 12.5 12.5 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp;
+50 &nbsp; 50 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+</font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><br></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">
+&nbsp; &nbsp;0 12.5 12.5 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp; 50 &nbsp;
+50 &nbsp; 50 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+<br></font></font></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> &nbsp; &nbsp;0 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+</font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><br></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> </font></font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> &nbsp; &nbsp;0 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 12.5 &nbsp; &nbsp;0 &nbsp; &nbsp;0&nbsp;
+</font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><br></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> </font></font></font></font></font></font><font style="font-family: monospace;" color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">&nbsp;
+&nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0
+&nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp;
+&nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp;0<br></font></font></font></font></big>
+
+
+      
+
+
+      
+
+
+      <br>
+
+
+These data must exactly match the horizontal grid. <font color="#000000">Due to the staggered grid the topography may be displaced by -0.5 <a href="chapter_4.1.html#dx">dx</a> in x-direction and -0.5 <a href="chapter_4.1.html#dy">dy</a> in y-direction depending on the parameter <a href="chapter_4.1.html#topography_grid_convention">topography_grid_convention</a>. See </font>also the example in <big><code>trunk/EXAMPLES/topo_file/</code></big>.<br><br>Alternatively, the user may add code to the user interface subroutine <a href="chapter_3.5.1.html#user_init_grid">user_init_grid</a>
+to allow different data formats.</td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">101</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_2D_XY_NETCDF"></a>DATA_2D_XY_NETCDF<br>
+
+
+(DATA_2D_XY_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">This file
+contains data of the two-dimensional horizontal
+cross sections (see <a href="../app/chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">102</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_2D_XZ_NETCDF"></a>DATA_2D_XZ_NETCDF<br>
+
+
+(DATA_2D_XZ_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the two-dimensional vertical (xz)
+cross sections (see <a href="../app/chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">103</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_2D_YZ_NETCDF"></a>DATA_2D_YZ_NETCDF<br>
+
+
+(DATA_2D_YZ_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the two-dimensional vertical
+(yz) cross sections (see <a href="../app/chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">104</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_1D_PR_NETCDF"></a>DATA_1D_PR_NETCDF<br>
+
+
+(DATA_1D_PR_NETCFD_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the horizontally averaged vertical profiles (see <a href="../app/chapter_4.2.html#data_output_pr">data_output_pr</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">105</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_1D_TS_NETCDF"></a>DATA_1D_TS_NETCDF<br>
+
+
+(DATA_1D_TS_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the timeseries (see <a href="chapter_4.2.html#dt_dots">dt_dots</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">106</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_3D_NETCDF"></a>DATA_3D_NETCDF<br>
+
+
+(DATA_3D_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the 3d-volume data (see <a href="../app/chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">107</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_1D_SP_NETCDF"></a>DATA_1D_SP_NETCDF<br>
+
+
+(DATA_1D_SP_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the horizontal spectra (see <a href="../app/chapter_4.2.html#data_output_sp">data_output_sp</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;"><font color="#000000">108</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_PRT_NETCDF"></a>DATA_PRT_NETCDF/<br>
+
+
+(DATA_PRT_NETCDF<span style="font-weight: bold;">_O</span>/)</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000">I/O</font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains particle data (see <a href="../app/chapter_4.2.html#dt_prel">dt_prel</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="../app/chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="vertical-align: top; text-align: center;">109</td>
+
+
+      <td align="left" valign="top"><a name="DATA_1D_PTS_NETCDF"></a>DATA_1D_PTS_NETCDF<br>
+
+
+(DATA_1D_PTS_NETCDF_O)</td>
+
+
+      <td align="left" valign="top">I/O</td>
+
+
+      <td align="left" valign="top">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</td>
+
+
+      <td align="left" valign="top">This
+file contains data of the timeseries of particle quantities (<font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">see <a href="chapter_4.2.html#dt_prel">dt_prel</a>)
+in NetCDF format.&nbsp;</font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">The data
+in this file can be visualized by any graphic software which provides a
+NetCDF interface (e.g. <span style="font-weight: bold;">NCL
+      </span>or<span style="font-weight: bold;">
+ferret</span>).
+For a list of available output quantities see </font></font></font></font><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"> <a href="chapter_4.2.html#dt_dopts">dt_dopts</a>.</font></font></font></font></font><br>
+
+
+      <font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000"><br>
+
+
+      </font></font></font></font><span lang="en-GB"><font face="Thorndale">In case of
+using more than one particle group (see <a href="chapter_4.2.html#number_of_particle_groups">number_of_particle_groups</a>),
+seperate time series are output for each of the groups. The long names
+of the variables in the NetCDF file containing the respective
+timeseries all end with the string</font><span style="font-style: italic; font-family: monospace;">' PG ##'</span><font face="Thorndale">, where ## is the number of the particle
+group (<span style="font-style: italic;">01</span>, <span style="font-style: italic;">02</span>, etc.). <br>
+
+
+      <br>
+
+
+      </font></span><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">More detailed informations about the
+PALM-NetCDF-output are given in <a href="chapter_4.5.1.html">chapter&nbsp;
+4.5.1</a>.</font></font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: top;">111</td>
+
+
+      <td style="vertical-align: top;"><a name="DATA_2D_XY_AV_NETCDF"></a>DATA_2D_XY_AV_NETCDF<br>
+
+
+(DATA_2D_XY_AV_NETCDF_O)</td>
+
+
+      <td style="vertical-align: top;">I/O</td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the temporally averaged two-dimensional horizontal
+cross sections (see <a href="chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: top;">112</td>
+
+
+      <td style="vertical-align: top;"><a name="DATA_2D_XZ_AV_NETCDF"></a>DATA_2D_XZ_AV_NETCDF<br>
+
+
+(DATA_2D_XZ_AV_NETCDF_O)</td>
+
+
+      <td style="vertical-align: top;">I/O</td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the temporally
+averaged two-dimensional vertical (xz)
+cross sections (see <a href="chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: top;">113</td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_2D_YZ_AV_NETCDF"></a>DATA_2D_YZ_AV_NETCDF<br>
+
+
+(DATA_2D_YZ_AV_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;">I/O</td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the temporally
+averaged two-dimensional vertical
+(yz) cross sections (see <a href="chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td style="text-align: center; vertical-align: top;">116</td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><a name="DATA_3D_AV_NETCDF"></a>DATA_3D_AV_NETCDF<br>
+
+
+(DATA_3D_AV_NETCDF_O)</font></td>
+
+
+      <td style="vertical-align: top;">I/O</td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000">Binary/<br>
+
+
+NetCDF-<br>
+
+
+format</font></font></font></td>
+
+
+      <td style="vertical-align: top;"><font color="#000000"><font color="#000000"><font color="#000000"><font color="#000000">This file
+contains data of the temporally
+averaged 3d-volume data (see <a href="chapter_4.2.html#data_output">data_output</a>)
+in NetCDF format. The data in this file can be visualized by any
+graphic software which provides a NetCDF interface (e.g. <span style="font-weight: bold;">NCL </span>or<span style="font-weight: bold;"> ferret</span>).<br>
+
+
+      <br>
+
+
+More detailed informations about the PALM-NetCDF-output are given in <a href="chapter_4.5.1.html">chapter&nbsp; 4.5.1</a>.</font></font></font></font></td>
+
+
+      
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<font color="#000000"><br>
+
+
+</font><br>
+
+
+<font color="#000080"><font color="#000080"><a href="chapter_3.3.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.5.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font><br>
+
+
+&nbsp;
+<br>
+
+
+&nbsp;
+<span style="font-style: italic;">Last change:</span>
+$Id: chapter_3.4.html 359 2009-08-19 16:56:44Z letzel $<br>
+
+
+</font><br>
+
+
+</body></html>

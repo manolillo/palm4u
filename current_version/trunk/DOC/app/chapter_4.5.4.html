@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM
+chapter 4.5.4</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041027;10130843"> <meta name="CHANGED" content="20041117;11420847"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+
+<body style="direction: ltr;" lang="en-US"><h4 style="line-height: 100%;"><font size="4">4.5.4
+Plots of 2d cross
+sections with iso2d</font></h4>
+<p style="line-height: 100%;">PALM permits simultaneous
+output xy, xz
+and&nbsp;
+yz cross sections. Since the output of all three cross section plots is
+steered in the same way, only the creation of xy plots is described.</p>
+<p style="line-height: 100%;">Output of xy cross
+sections requires to set at least two parameters: first, the temporal
+interval of the output time (run parameter <a href="chapter_4.2.html#dt_do2d_xy"><u>dt_do2d_xy)</u></a><span style="text-decoration: none;">
+and second<span style="text-decoration: none;"></span>
+the names of the quantities for which cross section output is wanted</span><span style="text-decoration: none;"><span style="text-decoration: none;"> (<a href="chapter_4.2.html#data_output">data_output</a></span></span>).
+The string <span style="font-style: italic;">'_xy'</span>
+must be appended to these name strings in either case. Output times
+cannot be defined
+directly but only via the output time interval, starting from the
+beginning of the initial 3d run (t=0, but no cross sections are
+written at the time t=0; exceptions see <a href="chapter_4.2.html#do2d_at_begin">do2d_at_begin</a>).
+The exact location (height level) of the cross
+section(s) can be defined with run parameter <a href="chapter_4.2.html#section_xy">section_xy</a>.
+If no values have been assigned to <b>data_output</b> and <b>section_xy</b>
+or
+if the value given for <b>dt_do2d_xy </b>is
+larger than the simulated time (see <a href="chapter_4.1.html#end_time">end_time</a>),
+<b>then there will be no output!</b><br>
+</p><p style="line-height: 100%;">Data is output in
+binary format
+into the
+local file <a href="chapter_3.4.html#PLOT2D_XY">PLOT2D_XY</a>.
+This file must be linked with a permanent file by
+using a file connection statement in the <b>mrun</b>
+configuration
+file (see e.g. <a href="chapter_3.2.html">chapter
+3.2</a>). At the end of the run the local file is copied to this
+file. Such a statement can look like this: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">PLOT2D_XY out:loc:tr pxy ~/PLOT/$fname _pxy_in.</font></pre></ul>
+<p style="line-height: 100%;">If the respective <b>mrun</b>
+call is
+like </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun -d test -r &ldquo;pxy&rdquo;&hellip;</font></pre></ul>
+<p style="line-height: 100%;">then the local file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY</font></tt>
+is copied to the permanent file <tt><font style="font-size: 10pt;" size="2">~/PLOT/test/test_pxy_in</font>
+</tt>. However, the character string <font style="font-size: 10pt;" size="2">&ldquo;</font><tt><font style="font-size: 10pt;" size="2">pxy</font></tt><font style="font-size: 10pt;" size="2">&rdquo;</font>
+activating the file connection statement (see third column of the
+statement) must be given in the <b>mrun</b> call as
+argument of the
+option -r (and/or -o)<b>.</b> <span style="text-decoration: none;">If
+t</span>his is forgotten by mistake, the model outputs the data
+to
+the local file, but this is not copied to the permanent file and thus
+the data are not available for the user after the run has finished.</p>
+<p style="line-height: 100%;">The created data file can be
+directly used as input file for the plot software <b>iso2d</b>.
+However, this requires the user to assign <a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>
+= <i>.FALSE. </i>(see also at the end of this chapter) . <b>iso2d</b>
+needs another file, the so-called parameter file, which specifies the
+plot
+layout. This file contains a
+so-called global parameter set which applies to all plots as well as
+a local parameter set which is valid for each individual plot. These
+global and
+local parameter sets are also created by PALM and output into two
+different local files named <a href="chapter_3.4.html#PLOT2D_XY_GLOBAL">PLOT2D_XY_GLOBAL</a>
+and <a href="chapter_3.4.html#PLOT2D_XY_LOCAL">PLOT2D_XY_LOCAL</a>.
+These must be combined to one file via a so-called <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#chapter6.2">output
+command</a> in the configuration file. The resulting file also
+needs a
+file connection statement: </p>
+<ul> <pre style="line-height: 100%;"><font style="font-size: 10pt;" size="2">OC: [[ -f PLOT2D_XY_GLOBAL]] &amp;&amp; cat PLOT2D_XY_LOCAL &gt;&gt; PLOT2D_XY_GLOBAL</font><br><br><font style="font-size: 10pt;" size="2">PLOT2D_XY_GLOBAL out:loc:tr pxy ~/PLOT/$fname _pxy_par.</font></pre></ul>
+<p style="line-height: 100%;">The output command (corn
+shell syntax)
+tests whether the file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY_GLOBAL</font></tt>
+exists and if so the file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY_LOCAL</font></tt>
+is appended via the "cat" command to the file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY_GLOBAL</font></tt>
+which then contains all parameters needed by <b>iso2d</b>.&nbsp;
+This
+relatively pedantic proceeding is due to the fact that PALM
+can produce the file PLOT2D_XY_GLOBAL only at the end of the simulation
+(when the final value of the global <span style="font-weight: bold;">iso2d</span>-parameter
+<a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html#PLANZ">planz</a>
+is known), while the local parameter sets are written continuously
+to the file PLOT2D_XY_LOCAL during the run. A consequence is, that in
+case of aborts of a run the file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY_GLOBAL</font></tt>
+has possibly not been created and thus a visualization of the data -
+although they may be available - is
+not possible (in such a case, the user may create the parameter file
+manually). </p>
+<p style="line-height: 100%;">If you are in the directory <tt><font style="font-size: 10pt;" size="2">~/PLOT/test</font></tt>,
+the data
+can be plotted by entering
+</p><ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">iso2d -d test _pxy_in -p test_pxy_par</font></pre>
+</ul><p style="line-height: 100%;">By default plot
+layout as specified in
+the parameter file is as follows: for each cross section of each
+individual quantity a seperate plot is created using isolines. Isolines
+with negative values are displayed in
+red color. The axes do not have labels and the units are [m]. For
+identification, each plot is
+provided with a title, which contains the model version number, the
+run identifier (base file name + number of the restart run), the name
+of the host where the run was executed, and the date and time of the
+beginning
+of the run. Furthermore each plot carries a
+caption where the name of the displayed quantity, the output time
+(starting from
+beginning of the 3d simulation, t=0) and the location of the cross
+sections (as height level and grid point number) is noted. </p>
+<p style="line-height: 100%;">The layout of the plots can
+be
+varied by editing the parameter file (according to the
+various features of <b>iso2d</b>: color shading,
+vector plots, streamlines, etc.). For a detailed description of the <span style="font-weight: bold;">iso2d</span> parameters see
+the
+<a href="http://www.muk.uni-hannover.de/institut/software/iso2d_beschreibung.html">iso2d</a>
+manual (only in German). </p>
+<p style="line-height: 100%;">With parallel runs and
+choice of <a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a>
+= <i>.T.</i> each PE outputs the data of its subdomain
+to a separate file with the name
+PLOT2D_XY_&lt;processor-Id&gt;,
+whereby &lt;processor-Id&gt; is a four digit number (e.g.
+PLOT2D_XY_0000). These files are not suitable for <span style="font-weight: bold;">iso2d</span>, but after the
+end
+of a run they can be combined to one file readable by <span style="font-weight: bold;">iso2d</span>. This is done
+via a
+further output command in the configuration file: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">OC:[[$ ( echo $localhost | cut -c1-3 ) = imbh ]] &amp;&amp; combine_plot_fields.x</font></pre></ul>
+<p style="line-height: 100%;">The program <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>
+collects the data from the individual processor files and outputs it
+into the local file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY</font></tt>
+which can be processed by <span style="font-weight: bold;">iso2d</span>.
+Using this call, possibly existing
+files of the other cross sections (xz, yz) and of 3d volume data are
+also combined.&nbsp;The tool writes
+informative messages about the actions accomplished into the job
+protocol, even if no files were found (i.e. the output command
+may remain in the configuration file, even if no appropriate files
+are created during the simulation). <br>
+<b><br>Note:</b> due to internal
+restrictions of <b>iso2d </b>the file <tt><font style="font-size: 10pt;" size="2">PLOT2D_XY</font></tt>
+may not contain more than 99 cross sections. This restriction does not
+apply
+for the production of video clips via <b>iso2d</b>.
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_4.5.3.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.5.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;">&nbsp;<i>Last
+change:&nbsp;&nbsp;</i>
+$Id: chapter_4.5.4.html 62 2007-03-13 02:52:40Z raasch $</p>
+</body></html>

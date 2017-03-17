@@ -1,0 +1,899 @@
+MODULE pmc_child
+
+!------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the
+! terms of the GNU General Public License as published by the Free Software
+! Foundation, either version 3 of the License, or (at your option) any later
+! version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2016 Leibniz Universitaet Hannover
+!------------------------------------------------------------------------------!
+!
+! Current revisions:
+! ------------------
+! 
+! 
+! Former revisions:
+! -----------------
+! $Id: pmc_child_mod.f90 2001 2016-08-20 18:41:22Z knoop $
+!
+! 2000 2016-08-20 18:09:15Z knoop
+! Forced header and separation lines into 80 columns
+! 
+! 1897 2016-05-03 08:10:23Z raasch
+! Module renamed. Code clean up. The words server/client changed to parent/child.
+!
+! 1896 2016-05-03 08:06:41Z raasch
+! re-formatted to match PALM style
+!
+! 1850 2016-04-08 13:29:27Z maronga
+! Module renamed
+! 
+! 
+! 1833 2016-04-07 14:23:03Z raasch
+! gfortran requires pointer attributes for some array declarations,
+! long line wrapped
+!
+! 1808 2016-04-05 19:44:00Z raasch
+! MPI module used by default on all machines
+!
+! 1797 2016-03-21 16:50:28Z raasch
+! introduction of different datatransfer modes
+!
+! 1791 2016-03-11 10:41:25Z raasch
+! Debug write-statement commented out
+!
+! 1786 2016-03-08 05:49:27Z raasch
+! change in child-parent data transfer: parent now gets data from child
+! instead of that child puts it to the parent
+!
+! 1783 2016-03-06 18:36:17Z raasch
+! Bugfix: wrong data-type in MPI_WIN_CREATE replaced
+!
+! 1779 2016-03-03 08:01:28Z raasch
+! kind=dp replaced by wp, dim_order removed
+! array management changed from linked list to sequential loop
+!
+! 1764 2016-02-28 12:45:19Z raasch
+! cpp-statement added (nesting can only be used in parallel mode),
+! all kinds given in PALM style
+!
+! 1762 2016-02-25 12:31:13Z hellstea
+! Initial revision by K. Ketelsen
+!
+! Description:
+! ------------
+!
+! Child part of Palm Model Coupler
+!-------------------------------------------------------------------------------!
+
+#if defined( __parallel )
+
+    USE, INTRINSIC ::  iso_c_binding
+
+#if defined( __mpifh )
+    INCLUDE "mpif.h"
+#else
+    USE MPI
+#endif
+
+    USE kinds
+    USE pmc_general,                                                            &
+        ONLY:  arraydef, childdef, da_desclen, da_namedef, da_namelen, pedef,   &
+               pmc_da_name_err,  pmc_g_setname, pmc_max_array, pmc_status_ok
+
+    USE pmc_handle_communicator,                                                &
+        ONLY:  m_model_comm, m_model_npes, m_model_rank, m_to_parent_comm
+
+    USE pmc_mpi_wrapper,                                                        &
+        ONLY:  pmc_alloc_mem, pmc_bcast, pmc_inter_bcast, pmc_time
+
+    IMPLICIT NONE
+
+    PRIVATE
+    SAVE
+
+    TYPE(childdef) ::  me   !<
+
+    INTEGER ::  myindex = 0         !< counter and unique number for data arrays
+    INTEGER ::  next_array_in_list = 0   !<
+
+
+    INTERFACE pmc_childinit
+        MODULE PROCEDURE pmc_childinit
+    END INTERFACE pmc_childinit
+
+    INTERFACE pmc_c_clear_next_array_list
+        MODULE PROCEDURE pmc_c_clear_next_array_list
+    END INTERFACE pmc_c_clear_next_array_list
+
+    INTERFACE pmc_c_getbuffer
+        MODULE PROCEDURE pmc_c_getbuffer
+    END INTERFACE pmc_c_getbuffer
+
+    INTERFACE pmc_c_getnextarray
+        MODULE PROCEDURE pmc_c_getnextarray
+    END INTERFACE pmc_c_getnextarray
+
+    INTERFACE pmc_c_get_2d_index_list
+        MODULE PROCEDURE pmc_c_get_2d_index_list
+    END INTERFACE pmc_c_get_2d_index_list
+
+    INTERFACE pmc_c_putbuffer
+        MODULE PROCEDURE pmc_c_putbuffer
+    END INTERFACE pmc_c_putbuffer
+
+    INTERFACE pmc_c_setind_and_allocmem
+        MODULE PROCEDURE pmc_c_setind_and_allocmem
+    END INTERFACE pmc_c_setind_and_allocmem
+
+    INTERFACE pmc_c_set_dataarray
+        MODULE PROCEDURE pmc_c_set_dataarray_2d
+        MODULE PROCEDURE pmc_c_set_dataarray_3d
+    END INTERFACE pmc_c_set_dataarray
+
+    INTERFACE pmc_set_dataarray_name
+        MODULE PROCEDURE pmc_set_dataarray_name
+        MODULE PROCEDURE pmc_set_dataarray_name_lastentry
+    END INTERFACE pmc_set_dataarray_name
+
+
+    PUBLIC pmc_childinit, pmc_c_clear_next_array_list, pmc_c_getbuffer,         &
+           pmc_c_getnextarray, pmc_c_putbuffer, pmc_c_setind_and_allocmem,      &
+           pmc_c_set_dataarray, pmc_set_dataarray_name, pmc_c_get_2d_index_list
+
+ CONTAINS
+
+
+
+ SUBROUTINE pmc_childinit
+
+     IMPLICIT NONE
+
+     INTEGER ::  i        !<
+     INTEGER ::  istat    !<
+
+!
+!--  Get / define the MPI environment
+     me%model_comm = m_model_comm
+     me%inter_comm = m_to_parent_comm
+
+     CALL MPI_COMM_RANK( me%model_comm, me%model_rank, istat )
+     CALL MPI_COMM_SIZE( me%model_comm, me%model_npes, istat )
+     CALL MPI_COMM_REMOTE_SIZE( me%inter_comm, me%inter_npes, istat )
+
+!
+!--  Intra-communicater is used for MPI_GET
+     CALL MPI_INTERCOMM_MERGE( me%inter_comm, .TRUE., me%intra_comm, istat )
+     CALL MPI_COMM_RANK( me%intra_comm, me%intra_rank, istat )
+
+     ALLOCATE( me%pes(me%inter_npes) )
+
+!
+!--  Allocate an array of type arraydef for all parent PEs to store information
+!--  of then transfer array
+     DO  i = 1, me%inter_npes
+        ALLOCATE( me%pes(i)%array_list(pmc_max_array) )
+     ENDDO
+
+ END SUBROUTINE pmc_childinit
+
+
+
+ SUBROUTINE pmc_set_dataarray_name( parentarraydesc, parentarrayname,           &
+                                    childarraydesc, childarrayname, istat )
+
+    IMPLICIT NONE
+
+    CHARACTER(LEN=*), INTENT(IN) ::  parentarrayname  !<
+    CHARACTER(LEN=*), INTENT(IN) ::  parentarraydesc  !<
+    CHARACTER(LEN=*), INTENT(IN) ::  childarrayname   !<
+    CHARACTER(LEN=*), INTENT(IN) ::  childarraydesc   !<
+
+    INTEGER, INTENT(OUT) ::  istat  !<
+
+!
+!-- Local variables
+    TYPE(da_namedef) ::  myname  !<
+
+    INTEGER ::  mype  !<
+    INTEGER ::  my_addiarray = 0  !<
+
+
+    istat = pmc_status_ok
+
+!
+!-- Check length of array names
+    IF ( LEN( TRIM( parentarrayname) ) > da_namelen  .OR.                       &
+         LEN( TRIM( childarrayname) ) > da_namelen )  THEN
+       istat = pmc_da_name_err
+    ENDIF
+
+    IF ( m_model_rank == 0 )  THEN
+       myindex = myindex + 1
+       myname%couple_index = myIndex
+       myname%parentdesc   = TRIM( parentarraydesc )
+       myname%nameonparent = TRIM( parentarrayname )
+       myname%childdesc    = TRIM( childarraydesc )
+       myname%nameonchild  = TRIM( childarrayname )
+    ENDIF
+
+!
+!-- Broadcat to all child PEs
+!-- TODO: describe what is broadcast here and why it is done
+    CALL pmc_bcast( myname%couple_index, 0, comm=m_model_comm )
+    CALL pmc_bcast( myname%parentdesc,   0, comm=m_model_comm )
+    CALL pmc_bcast( myname%nameonparent, 0, comm=m_model_comm )
+    CALL pmc_bcast( myname%childdesc,    0, comm=m_model_comm )
+    CALL pmc_bcast( myname%nameonchild,  0, comm=m_model_comm )
+
+!
+!-- Broadcat to all parent PEs
+!-- TODO: describe what is broadcast here and why it is done
+    IF ( m_model_rank == 0 )  THEN
+        mype = MPI_ROOT
+    ELSE
+        mype = MPI_PROC_NULL
+    ENDIF
+
+    CALL pmc_bcast( myname%couple_index, mype, comm=m_to_parent_comm )
+    CALL pmc_bcast( myname%parentdesc,   mype, comm=m_to_parent_comm )
+    CALL pmc_bcast( myname%nameonparent, mype, comm=m_to_parent_comm )
+    CALL pmc_bcast( myname%childdesc,    mype, comm=m_to_parent_comm )
+    CALL pmc_bcast( myname%nameonchild,  mype, comm=m_to_parent_comm )
+
+    CALL pmc_g_setname( me, myname%couple_index, myname%nameonchild )
+
+ END SUBROUTINE pmc_set_dataarray_name
+
+
+
+ SUBROUTINE pmc_set_dataarray_name_lastentry( lastentry )
+
+    IMPLICIT NONE
+
+    LOGICAL, INTENT(IN), OPTIONAL ::  lastentry  !<
+
+!
+!-- Local variables
+    INTEGER ::  mype  !<
+    TYPE(dA_namedef) ::  myname  !<
+
+    myname%couple_index = -1
+
+    IF ( m_model_rank == 0 )  THEN
+       mype = MPI_ROOT
+    ELSE
+       mype = MPI_PROC_NULL
+    ENDIF
+
+    CALL pmc_bcast( myname%couple_index, mype, comm=m_to_parent_comm )
+
+ END SUBROUTINE pmc_set_dataarray_name_lastentry
+
+
+
+ SUBROUTINE pmc_c_get_2d_index_list
+
+    IMPLICIT NONE
+
+    INTEGER :: dummy               !<
+    INTEGER :: i, ierr, i2, j, nr  !<
+    INTEGER :: indwin              !< MPI window object
+    INTEGER :: indwin2  !          < MPI window object
+
+    INTEGER(KIND=MPI_ADDRESS_KIND) :: win_size !< Size of MPI window 1 (in bytes)
+    INTEGER(KIND=MPI_ADDRESS_KIND) :: disp     !< Displacement unit (Integer = 4, floating poit = 8
+    INTEGER(KIND=MPI_ADDRESS_KIND) :: winsize  !< Size of MPI window 2 (in bytes)
+
+    INTEGER, DIMENSION(me%inter_npes*2) :: nrele  !< Number of Elements of a
+                                                  !< horizontal slice
+    INTEGER, DIMENSION(:), POINTER ::  myind  !<
+
+    TYPE(pedef), POINTER ::  ape  !> Pointer to pedef structure
+
+
+    win_size = C_SIZEOF( dummy )
+    CALL MPI_WIN_CREATE( dummy, win_size, iwp, MPI_INFO_NULL, me%intra_comm,    &
+                         indwin, ierr )
+
+!
+!-- Open window on parent side
+!-- TODO: why is the next MPI routine called twice??
+    CALL MPI_WIN_FENCE( 0, indwin, ierr )
+
+!
+!-- Close window on parent side and open on child side
+    CALL MPI_WIN_FENCE( 0, indwin, ierr )
+
+    DO  i = 1, me%inter_npes
+       disp = me%model_rank * 2
+       CALL MPI_GET( nrele((i-1)*2+1), 2, MPI_INTEGER, i-1, disp, 2,            &
+                     MPI_INTEGER, indwin, ierr )
+    ENDDO
+
+!
+!-- MPI_GET is non-blocking -> data in nrele is not available until MPI_FENCE is
+!-- called
+    CALL MPI_WIN_FENCE( 0, indwin, ierr )
+
+!
+!-- Allocate memory for index array
+    winsize = 0
+    DO  i = 1, me%inter_npes
+       ape => me%pes(i)
+       i2 = ( i-1 ) * 2 + 1
+       nr = nrele(i2+1)
+       IF ( nr > 0 )  THEN
+          ALLOCATE( ape%locind(nr) )
+       ELSE
+          NULLIFY( ape%locind )
+       ENDIF
+       winsize = MAX( nr, winsize )
+    ENDDO
+
+    ALLOCATE( myind(2*winsize) )
+    winsize = 1
+
+!
+!-- Local buffer used in MPI_GET can but must not be inside the MPI Window.
+!-- Here, we use a dummy for the MPI window because the parent PEs do not access
+!-- the RMA window via MPI_GET or MPI_PUT
+    CALL MPI_WIN_CREATE( dummy, winsize, iwp, MPI_INFO_NULL, me%intra_comm,     &
+                         indwin2, ierr )
+
+!
+!-- MPI_GET is non-blocking -> data in nrele is not available until MPI_FENCE is
+!-- called
+!-- TODO: as before: why is this called twice??
+    CALL MPI_WIN_FENCE( 0, indwin2, ierr )
+    CALL MPI_WIN_FENCE( 0, indwin2, ierr )
+
+    DO  i = 1, me%inter_npes
+       ape => me%pes(i)
+       nr = nrele(i*2)
+       IF ( nr > 0 )  THEN
+          disp = nrele(2*(i-1)+1)
+          CALL MPI_WIN_LOCK( MPI_LOCK_SHARED , i-1, 0, indwin2, ierr )
+          CALL MPI_GET( myind, 2*nr, MPI_INTEGER, i-1, disp, 2*nr,              &
+                        MPI_INTEGER, indwin2, ierr )
+          CALL MPI_WIN_UNLOCK( i-1, indwin2, ierr )
+          DO  j = 1, nr
+             ape%locind(j)%i = myind(2*j-1)
+             ape%locind(j)%j = myind(2*j)
+          ENDDO
+          ape%nrele = nr
+       ELSE
+          ape%nrele = -1
+       ENDIF
+    ENDDO
+
+!
+!-- Don't know why, but this barrier is necessary before we can free the windows
+    CALL MPI_BARRIER( me%intra_comm, ierr )
+
+    CALL MPI_WIN_FREE( indWin,  ierr )
+    CALL MPI_WIN_FREE( indwin2, ierr )
+    DEALLOCATE( myind )
+
+ END SUBROUTINE pmc_c_get_2d_index_list
+
+
+
+ SUBROUTINE pmc_c_clear_next_array_list
+
+    IMPLICIT NONE
+
+    next_array_in_list = 0
+
+ END SUBROUTINE pmc_c_clear_next_array_list
+
+
+
+ LOGICAL FUNCTION pmc_c_getnextarray( myname )
+
+!
+!--  List handling is still required to get minimal interaction with
+!--  pmc_interface
+     CHARACTER(LEN=*), INTENT(OUT) ::  myname  !<
+
+!
+!-- Local variables
+    TYPE(pedef), POINTER    :: ape
+    TYPE(arraydef), POINTER :: ar
+
+
+    next_array_in_list = next_array_in_list + 1
+
+!
+!-- Array names are the same on all child PEs, so take first PE to get the name
+    ape => me%pes(1)
+
+!
+!-- Check if all arrays have been processed
+    IF ( next_array_in_list > ape%nr_arrays )  THEN
+       pmc_c_getnextarray = .FALSE.
+       RETURN
+    ENDIF
+
+    ar => ape%array_list( next_array_in_list )
+
+    myname = ar%name
+
+!
+!-- Return true if legal array
+!-- TODO: the case of a non-legal array does not seem to appear, so why is this
+!-- setting required at all?
+    pmc_c_getnextarray = .TRUE.
+
+ END function pmc_c_getnextarray
+
+
+
+ SUBROUTINE pmc_c_set_dataarray_2d( array )
+
+    IMPLICIT NONE
+
+    REAL(wp), INTENT(IN) , DIMENSION(:,:), POINTER ::  array  !<
+
+    INTEGER                 ::  i       !<
+    INTEGER                 ::  nrdims  !<
+    INTEGER, DIMENSION(4)   ::  dims    !<
+
+    TYPE(C_PTR)             ::  array_adr
+    TYPE(arraydef), POINTER ::  ar
+    TYPE(pedef), POINTER    ::  ape
+
+
+    dims    = 1
+    nrdims  = 2
+    dims(1) = SIZE( array, 1 )
+    dims(2) = SIZE( array, 2 )
+
+    array_adr = C_LOC( array )
+
+    DO  i = 1, me%inter_npes
+       ape => me%pes(i)
+       ar  => ape%array_list(next_array_in_list)
+       ar%nrdims = nrdims
+       ar%a_dim  = dims
+       ar%data   = array_adr
+    ENDDO
+
+ END SUBROUTINE pmc_c_set_dataarray_2d
+
+
+
+ SUBROUTINE pmc_c_set_dataarray_3d (array)
+
+    IMPLICIT NONE
+
+    REAL(wp), INTENT(IN), DIMENSION(:,:,:), POINTER ::  array  !<
+
+    INTEGER                 ::  i
+    INTEGER                 ::  nrdims
+    INTEGER, DIMENSION (4)  ::  dims
+    TYPE(C_PTR)             ::  array_adr
+    TYPE(pedef), POINTER    ::  ape
+    TYPE(arraydef), POINTER ::  ar
+
+
+    dims    = 1
+    nrdims  = 3
+    dims(1) = SIZE( array, 1 )
+    dims(2) = SIZE( array, 2 )
+    dims(3) = SIZE( array, 3 )
+
+    array_adr = C_LOC( array )
+
+    DO  i = 1, me%inter_npes
+       ape => me%pes(i)
+       ar  => ape%array_list(next_array_in_list)
+       ar%nrdims = nrdims
+       ar%a_dim  = dims
+       ar%data   = array_adr
+    ENDDO
+
+ END SUBROUTINE pmc_c_set_dataarray_3d
+
+
+
+ SUBROUTINE pmc_c_setind_and_allocmem
+
+    IMPLICIT NONE
+
+!
+!-- Naming convention for appendices:  _pc  -> parent to child transfer
+!--                                    _cp  -> child to parent transfer
+!--                                    recv -> parent to child transfer
+!--                                    send -> child to parent transfer
+    CHARACTER(LEN=da_namelen) ::  myname  !<
+
+    INTEGER ::  arlen    !<
+    INTEGER ::  myindex  !<
+    INTEGER ::  i        !<
+    INTEGER ::  ierr     !<
+    INTEGER ::  istat    !<
+    INTEGER ::  j        !<
+    INTEGER ::  rcount   !<
+    INTEGER ::  tag      !<
+
+    INTEGER, PARAMETER ::  noindex = -1  !<
+
+    INTEGER(idp)                   ::  bufsize  !< size of MPI data window
+    INTEGER(KIND=MPI_ADDRESS_KIND) ::  winsize  !<
+
+    INTEGER,DIMENSION(1024) ::  req  !<
+
+    REAL(wp), DIMENSION(:), POINTER, SAVE ::  base_array_pc  !< base array
+    REAL(wp), DIMENSION(:), POINTER, SAVE ::  base_array_cp  !< base array
+
+    TYPE(pedef), POINTER    ::  ape       !<
+    TYPE(arraydef), POINTER ::  ar        !<
+    Type(C_PTR)             ::  base_ptr  !<
+
+
+    myindex = 0
+    bufsize = 8
+
+!
+!-- Parent to child direction.
+!-- First stride: compute size and set index
+    DO  i = 1, me%inter_npes
+
+       ape => me%pes(i)
+       tag = 200
+
+       DO  j = 1, ape%nr_arrays
+
+          ar => ape%array_list(j)
+
+!
+!--       Receive index from child
+          tag = tag + 1
+          CALL MPI_RECV( myindex, 1, MPI_INTEGER, i-1, tag, me%inter_comm,      &
+                         MPI_STATUS_IGNORE, ierr )
+          ar%recvindex = myindex
+
+!
+!--       Determine max, because child buffer is allocated only once
+!--       TODO: give a more meaningful comment
+          IF( ar%nrdims == 3 )  THEN
+             bufsize = MAX( bufsize, ar%a_dim(1)*ar%a_dim(2)*ar%a_dim(3) )
+          ELSE
+             bufsize = MAX( bufsize, ar%a_dim(1)*ar%a_dim(2) )
+          ENDIF
+
+       ENDDO
+
+    ENDDO
+
+!
+!-- Create RMA (one sided communication) data buffer.
+!-- The buffer for MPI_GET can be PE local, i.e. it can but must not be part of
+!-- the MPI RMA window
+    CALL pmc_alloc_mem( base_array_pc, bufsize, base_ptr )
+    me%totalbuffersize = bufsize*wp  ! total buffer size in byte
+
+!
+!-- Second stride: set buffer pointer
+    DO  i = 1, me%inter_npes
+
+       ape => me%pes(i)
+
+       DO  j = 1, ape%nr_arrays
+          ar => ape%array_list(j)
+          ar%recvbuf = base_ptr
+       ENDDO
+
+    ENDDO
+
+!
+!-- Child to parent direction
+    myindex = 1
+    rcount  = 0
+    bufsize = 8
+
+    DO  i = 1, me%inter_npes
+
+       ape => me%pes(i)
+       tag = 300
+
+       DO  j = 1, ape%nr_arrays
+
+          ar => ape%array_list(j)
+          IF( ar%nrdims == 2 )  THEN
+             arlen = ape%nrele
+          ELSEIF( ar%nrdims == 3 )  THEN
+             arlen = ape%nrele*ar%a_dim(1)
+          ENDIF
+
+          tag    = tag + 1
+          rcount = rcount + 1
+          IF ( ape%nrele > 0 )  THEN
+             CALL MPI_ISEND( myindex, 1, MPI_INTEGER, i-1, tag, me%inter_comm,  &
+                             req(rcount), ierr )
+             ar%sendindex = myindex
+          ELSE
+             CALL MPI_ISEND( noindex, 1, MPI_INTEGER, i-1, tag, me%inter_comm,  &
+                             req(rcount), ierr )
+             ar%sendindex = noindex
+          ENDIF
+
+!
+!--       Maximum of 1024 outstanding requests
+!--       TODO: explain where this maximum comes from (arbitrary?)
+          IF ( rcount == 1024 )  THEN
+             CALL MPI_WAITALL( rcount, req, MPI_STATUSES_IGNORE, ierr )
+             rcount = 0
+          ENDIF
+
+          IF ( ape%nrele > 0 )  THEN
+             ar%sendsize = arlen
+             myindex     = myindex + arlen
+             bufsize     = bufsize + arlen
+          ENDIF
+
+       ENDDO
+
+       IF ( rcount > 0 )  THEN
+          CALL MPI_WAITALL( rcount, req, MPI_STATUSES_IGNORE, ierr )
+       ENDIF
+
+    ENDDO
+
+!
+!-- Create RMA (one sided communication) window for data buffer child to parent
+!-- transfer.
+!-- The buffer of MPI_GET (counter part of transfer) can be PE-local, i.e. it
+!-- can but must not be part of the MPI RMA window. Only one RMA window is
+!-- required to prepare the data
+!--        for parent -> child transfer on the parent side
+!-- and
+!--        for child -> parent transfer on the child side
+    CALL pmc_alloc_mem( base_array_cp, bufsize )
+    me%totalbuffersize = bufsize * wp  ! total buffer size in byte
+
+    winSize = me%totalbuffersize
+
+    CALL MPI_WIN_CREATE( base_array_cp, winsize, wp, MPI_INFO_NULL,             &
+                         me%intra_comm, me%win_parent_child, ierr )
+    CALL MPI_WIN_FENCE( 0, me%win_parent_child, ierr )
+    CALL MPI_BARRIER( me%intra_comm, ierr )
+
+!
+!-- Second stride: set buffer pointer
+    DO  i = 1, me%inter_npes
+
+       ape => me%pes(i)
+
+       DO  j = 1, ape%nr_arrays
+
+          ar => ape%array_list(j)
+
+          IF ( ape%nrele > 0 )  THEN
+             ar%sendbuf = C_LOC( base_array_cp(ar%sendindex) )
+
+!
+!--          TODO: if this is an error to be really expected, replace the
+!--                following message by a meaningful standard PALM message using
+!--                the message-routine
+             IF ( ar%sendindex+ar%sendsize > bufsize )  THEN
+                WRITE( 0,'(a,i4,4i7,1x,a)') 'Child buffer too small ', i,       &
+                          ar%sendindex, ar%sendsize, ar%sendindex+ar%sendsize,  &
+                          bufsize, TRIM( ar%name )
+                CALL MPI_ABORT( MPI_COMM_WORLD, istat, ierr )
+             ENDIF
+          ENDIF
+
+       ENDDO
+
+    ENDDO
+
+ END SUBROUTINE pmc_c_setind_and_allocmem
+
+
+
+ SUBROUTINE pmc_c_getbuffer( waittime )
+
+    IMPLICIT NONE
+
+    REAL(wp), INTENT(OUT), OPTIONAL ::  waittime  !<
+
+    CHARACTER(LEN=da_namelen) ::  myname  !<
+
+    INTEGER                        ::  ierr     !<
+    INTEGER                        ::  ij       !<
+    INTEGER                        ::  ip       !<
+    INTEGER                        ::  j        !<
+    INTEGER                        ::  myindex  !<
+    INTEGER                        ::  nr       !< number of elements to get
+                                                !< from parent
+    INTEGER(KIND=MPI_ADDRESS_KIND) ::  target_disp
+    INTEGER,DIMENSION(1)           ::  buf_shape
+
+    REAL(wp)                            ::  t1
+    REAL(wp)                            ::  t2
+
+    REAL(wp), POINTER, DIMENSION(:)     ::  buf
+    REAL(wp), POINTER, DIMENSION(:,:)   ::  data_2d
+    REAL(wp), POINTER, DIMENSION(:,:,:) ::  data_3d
+    TYPE(pedef), POINTER                ::  ape
+    TYPE(arraydef), POINTER             ::  ar
+
+!
+!-- Synchronization of the model is done in pmci_synchronize. 
+!-- Therefore the RMA window can be filled without
+!-- sychronization at this point and a barrier is not necessary.
+!-- Please note that waittime has to be set in pmc_s_fillbuffer AND
+!-- pmc_c_getbuffer
+    IF ( PRESENT( waittime ) )  THEN
+       t1 = pmc_time()
+       CALL MPI_BARRIER( me%intra_comm, ierr )
+       t2 = pmc_time()
+       waittime = t2 - t1
+    ENDIF
+
+!
+!-- Wait for buffer is filled.
+!-- TODO: explain in more detail what is happening here. The barrier seems to
+!-- contradict what is said a few lines before (i.e. that no barrier is necessary)
+!-- TODO: In case of PRESENT( waittime ) the barrrier would be calles twice. Why?
+!-- Shouldn't it be done the same way as in pmc_putbuffer?
+    CALL MPI_BARRIER( me%intra_comm, ierr )
+
+    DO  ip = 1, me%inter_npes
+
+       ape => me%pes(ip)
+
+       DO  j = 1, ape%nr_arrays
+
+          ar => ape%array_list(j)
+
+          IF ( ar%nrdims == 2 )  THEN
+             nr = ape%nrele
+          ELSEIF ( ar%nrdims == 3 )  THEN
+             nr = ape%nrele * ar%a_dim(1)
+          ENDIF
+
+          buf_shape(1) = nr
+          CALL C_F_POINTER( ar%recvbuf, buf, buf_shape )
+
+!
+!--       MPI passive target RMA
+!--       TODO: explain the above comment
+          IF ( nr > 0 )  THEN
+             target_disp = ar%recvindex - 1
+             CALL MPI_WIN_LOCK( MPI_LOCK_SHARED , ip-1, 0,                      &
+                                me%win_parent_child, ierr )
+             CALL MPI_GET( buf, nr, MPI_REAL, ip-1, target_disp, nr, MPI_REAL,  &
+                                me%win_parent_child, ierr )
+             CALL MPI_WIN_UNLOCK( ip-1, me%win_parent_child, ierr )
+          ENDIF
+
+          myindex = 1
+          IF ( ar%nrdims == 2 )  THEN
+
+             CALL C_F_POINTER( ar%data, data_2d, ar%a_dim(1:2) )
+
+             DO  ij = 1, ape%nrele
+                data_2d(ape%locind(ij)%j,ape%locind(ij)%i) = buf(myindex)
+                myindex = myindex + 1
+             ENDDO
+
+          ELSEIF ( ar%nrdims == 3 )  THEN
+
+             CALL C_F_POINTER( ar%data, data_3d, ar%a_dim(1:3) )
+
+             DO  ij = 1, ape%nrele
+                data_3d(:,ape%locind(ij)%j,ape%locind(ij)%i) =                  &
+                                              buf(myindex:myindex+ar%a_dim(1)-1)
+                myindex = myindex+ar%a_dim(1)
+             ENDDO
+
+          ENDIF
+
+       ENDDO
+
+    ENDDO
+
+ END SUBROUTINE pmc_c_getbuffer
+
+
+
+ SUBROUTINE pmc_c_putbuffer( waittime )
+
+    IMPLICIT NONE
+
+    REAL(wp), INTENT(OUT), OPTIONAL ::  waittime  !<
+
+    CHARACTER(LEN=da_namelen) ::  myname  !<
+
+    INTEGER                        ::  ierr         !<
+    INTEGER                        ::  ij           !<
+    INTEGER                        ::  ip           !<
+    INTEGER                        ::  j            !<
+    INTEGER                        ::  myindex      !<
+    INTEGER                        ::  nr           !< number of elements to get
+                                                    !< from parent
+    INTEGER(KIND=MPI_ADDRESS_KIND) ::  target_disp  !<
+
+    INTEGER, DIMENSION(1)          ::  buf_shape    !<
+
+    REAL(wp) ::  t1  !<
+    REAL(wp) ::  t2  !<
+
+    REAL(wp), POINTER, DIMENSION(:)     ::  buf      !<
+    REAL(wp), POINTER, DIMENSION(:,:)   ::  data_2d  !<
+    REAL(wp), POINTER, DIMENSION(:,:,:) ::  data_3d  !<
+
+    TYPE(pedef), POINTER               ::  ape  !<
+    TYPE(arraydef), POINTER            ::  ar   !<
+
+!
+!-- Wait for empty buffer
+!-- TODO: explain what is done here
+    t1 = pmc_time()
+    CALL MPI_BARRIER( me%intra_comm, ierr )
+    t2 = pmc_time()
+    IF ( PRESENT( waittime ) )  waittime = t2 - t1
+
+    DO  ip = 1, me%inter_npes
+
+       ape => me%pes(ip)
+
+       DO  j = 1, ape%nr_arrays
+
+          ar => aPE%array_list(j)
+          myindex = 1
+
+          IF ( ar%nrdims == 2 )  THEN
+
+             buf_shape(1) = ape%nrele
+             CALL C_F_POINTER( ar%sendbuf, buf,     buf_shape     )
+             CALL C_F_POINTER( ar%data,    data_2d, ar%a_dim(1:2) )
+
+             DO  ij = 1, ape%nrele
+                buf(myindex) = data_2d(ape%locind(ij)%j,ape%locind(ij)%i)
+                myindex = myindex + 1
+             ENDDO
+
+          ELSEIF ( ar%nrdims == 3 )  THEN
+
+             buf_shape(1) = ape%nrele*ar%a_dim(1)
+             CALL C_F_POINTER( ar%sendbuf, buf,     buf_shape     )
+             CALL C_F_POINTER( ar%data,    data_3d, ar%a_dim(1:3) )
+
+             DO  ij = 1, ape%nrele
+                buf(myindex:myindex+ar%a_dim(1)-1) =                            &
+                                    data_3d(:,ape%locind(ij)%j,ape%locind(ij)%i)
+                myindex = myindex + ar%a_dim(1)
+             ENDDO
+
+          ENDIF
+
+       ENDDO
+
+    ENDDO
+
+!
+!-- TODO: Fence might do it, test later
+!-- Call MPI_WIN_FENCE( 0, me%win_parent_child, ierr)      !
+!
+!-- Buffer is filled
+!-- TODO: explain in more detail what is happening here
+    CALL MPI_Barrier(me%intra_comm, ierr)
+
+ END SUBROUTINE pmc_c_putbuffer
+
+#endif
+ END MODULE pmc_child

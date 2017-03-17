@@ -1,0 +1,127 @@
+%     plei.tex  =  sed-definitions  +  blei.tex   
+%
+%     abgeschlossene Wurzeln  \wu  ,  genau dann wenn  \gdw
+%       = mit Doppelpunkt     \gll  \glr 
+%     Halbpfeil ueber         \vc  ,  Punkt(e) ueber   \p \pp  
+%     Punkt ueber Halbpfeil ueber  \pvc  
+%     Zwei Punkte ueber Halbpfeil  \ppvc 
+%     Halbpfeil-Buchstaben "small"        \vcsm
+%     Halbpfeil ueber Schlange, kleine    \vcts   
+%              bzw. grosse Buchstabem     \vctl
+%     Gabel-Psi  \gps ,  Kurzer downarrow ueber  \apf
+%     Lange Doppelpfeile  \lpfr \lpfl \lpfu \lpfd
+%     Integral mit Kringel  \klint (in $ $)  \grint (in $$ $$)  
+%     Anfuehrungsstriche unten und oben      \anfu \anfo
+%     Stilisiertes Gross-A  \biga  \smala  , \ende . 
+%
+%     Abkuerzungen vorhandener Befehle :
+%
+\typeout{sqrt.sty --> (c) by H. Schulz (verbessert von Michael Schroeter)}
+\def\nz{\par \noindent}  % 'neue Zeile' (ohne Einrueckung)
+\def\schl#1{ \widetilde{#1} }
+%  Klammern :
+   \def\({\left(} \def\){\right)}  
+   \def\lk{\,\left[ \,} \def\rk{\,\right] \,}
+   \def\lb{\left\{} \def\rb{\right\}}  
+   \def\lw{\left\langle} \def\rw{\right\rangle}
+%  
+\def\dis{ \displaystyle }    
+\def\lsim{\,\lower 4pt\hbox{$\sim\!\!\!\!\!$}\raise 2pt\hbox{$<$}\,}
+\def\gsim{\,\lower 4pt\hbox{$\sim\!\!\!\!\!$}\raise 2pt\hbox{$>$}\,}
+\def\be{ \begin{equation} }  \def\bea{ \begin{eqnarray} }
+\def\ee{ \end{equation} }    \def\eea{ \end{eqnarray} }
+\def\sgn{\,\mbox{sgn}\,}    
+%  ! !  :
+\def\6{\partial }
+%
+%    das alte blei.tex  : 
+%
+   \def\wu#1{\sqrt{{#1} \,}^{ \hbox to0.19pt{\hss$ 
+          \vrule height 2.7pt width 0.4pt depth -0.1pt $} \;\! } }
+   \def\gdw{\leftharpoonup \hbox to-1pt{\hss $\rightharpoondown$} \;}
+          \font\dick=cmbx10  \font\duenn=cmbx8
+   \def\dop{\duenn \raise0.9pt\hbox to 0.2pt{: \hss}}
+   \def\dep{\duenn \raise0.9pt\hbox to 0.3pt{\hss :}}
+   \def\gll{\; \dop =}   \def\glr{= \dep \;}
+   \def\pbox{\dick _{\hbox{.}} }  \def\ppbox{\dick _{\hbox{..}} }
+   \def\pfeil{_\rightharpoonup}  \def\leer{\phantom{a}}
+   \def\opf{\buildrel \pfeil \over \leer}
+   \def\jvv{j \lower0.4pt\hbox to 2pt{\hss $\opf$}} 
+   \def\jv{j \lower0.2pt\hbox to 1.4pt{\hss $\opf$}} 
+   \def\ivv{i \lower0.4pt\hbox to 2pt{\hss $\opf$}} 
+   \def\iv{i \lower0.2pt\hbox to 1.4pt{\hss $\opf$}} 
+   \def\hq{h \raise0.2pt\hbox to 0.4pt{\hss $^-$}}   
+   \def\vk#1{\hbox{$\buildrel           \pfeil \over #1$}}
+   \def\vkk#1{\hbox{$\buildrel   \;     \pfeil \over #1$}}
+   \def\vkkk#1{\hbox{$\buildrel  \, \;  \pfeil \over #1$}}
+   \def\grpf{\displaystyle  _\rightharpoonup}
+   \def\vg#1{\hbox{$\buildrel       \grpf \over #1$}}
+   \def\vgg#1{\hbox{$\buildrel  \;  \grpf \over #1$}}
+\def\fzz{f} \def\bzz{b} \def\dzz{d} \def\gzz{g} \def\hzz{h} \def\jzz{j} 
+\def\kzz{k} \def\lzz{l} \def\mzz{m} \def\wzz{w} \def\tzz{t} \def\izz{i} 
+\def\bezz{\beta} \def\dezz{\delta} \def\xizz{\xi} \def\pszz{\psi} 
+\def\vthzz{\vartheta}
+\def\uph{ \! \mathop{\vphantom{a}} } \def\dph{ \vphantom{a} }
+\def\vc#1{\def\tast{\noexpand#1} \def\test{#1}
+\ifcat\tast\bzz 
+\ifx\test\fzz \vkkk f \uph \else   \ifx\test\bzz \vkk b \uph \else
+\ifx\test\dzz \vkkk d \uph \else   \ifx\test\gzz \vkk g \dph \else
+\ifx\test\hzz \vkk h \uph \else    \ifx\test\izz \ivv \dph \else 
+\ifx\test\jzz \jvv \dph \else      \ifx\test\kzz \vkk k \uph \else
+\ifx\test\lzz \vkk l \uph \else    \ifx\test\tzz \vkk t \uph \else
+\ifx\test\mzz \vg m \dph \else     \ifx\test\wzz \vg w \dph \else 
+\ifnum \lq#1<91 \vgg #1 \uph \else \vk #1 \dph 
+  \fi \fi \fi \fi \fi \fi \fi \fi \fi \fi \fi \fi \fi   \else
+\ifx\test\bezz \vkk \beta \uph \else  \ifx\test\pszz \vkk \psi \dph \else 
+\ifx\test\dezz \vkk \delta \uph \else \ifx\test\xizz \vkk \xi \uph \else
+\ifx\test\vthzz \vkk \vartheta \uph \else \vk #1 \dph
+  \fi \fi \fi \fi \fi \fi }
+\def\abst#1{\def\tast{\noexpand#1} \ifcat\tast\bzz 
+    \ifnum \lq#1<91 \; \else \, \fi      \else \, \fi}
+\def\absv#1{\def\tast{\noexpand#1} \def\test{#1}
+\ifcat\tast\bzz \ifx\test\fzz \, \; \else  \ifx\test\dzz \, \; \else
+\ifx\test\bzz \, \else \ifx\test\gzz \, \else \ifx\test\hzz \, \else
+\ifx\test\kzz \, \else \ifx\test\lzz \, \else \ifx\test\tzz \, \else 
+\ifnum \lq#1<91 \; \else   
+  \fi \fi \fi \fi \fi \fi \fi \fi \fi \else
+\ifx\test\bezz \, \else \ifx\test\pszz \, \else \ifx\test\dezz \, \else
+\ifx\test\xizz \, \else \ifx\test\vthzz \, \else 
+   \fi \fi \fi \fi \fi \fi }
+\def\vphan#1{\def\tast{\noexpand#1} \def\test{#1}
+\ifcat\tast\bzz \ifx\test\fzz  \uph \else \ifx\test\bzz  \uph \else
+\ifx\test\dzz  \uph \else   \ifx\test\hzz  \uph \else
+\ifx\test\kzz  \uph \else   \ifx\test\lzz  \uph \else
+\ifx\test\tzz  \uph \else   \ifnum \lq#1<91  \uph \else \dph 
+  \fi \fi \fi \fi \fi \fi \fi \fi \else
+\ifx\test\bezz  \uph \else  \ifx\test\dezz  \uph \else
+\ifx\test\xizz  \uph \else  \ifx\test\vthzz  \uph \else \dph
+  \fi \fi \fi \fi \fi }
+\def\p#1{{\buildrel \abst #1 \pbox \over #1} \vphan #1 }
+\def\pp#1{{\buildrel \abst #1 \ppbox \over #1} \vphan #1 }
+\def\pvc#1{{\buildrel \absv #1 \pbox \over {\vc #1}} \vphan #1 }
+\def\ppvc#1{{\buildrel \absv #1 \ppbox \over {\vc #1}} \vphan #1 }
+\def\vcsm#1{ \def\sm{\raise 1.6pt\hbox to 5pt{\hss $_#1$}} 
+             {\buildrel \pfeil \over \sm} \>\!\! }
+\def\vcts#1{\buildrel \absv #1 \pfeil \over {\schl #1} }
+\def\vctl#1{\buildrel \absv #1 \grpf \over {\schl #1} }
+\def\sinh{ {\rm sh} } \def\cosh{ {\rm ch} } \def\tanh{ {\rm th} } 
+\def\cotanh{ {\rm cth} } \def\coth{ {\rm cth} } \def\sh{ {\rm sh} } 
+\def\ch{ {\rm ch} }  \def\th{ {\rm th} }  \def\cth{ {\rm cth} } 
+\def\gps{ \; \lower 2.6pt\hbox{$^\vert$} % 2.6
+           \raise 1.4pt\hbox to 2.2pt{\hss $\cup$} \,} %1.6
+\def\abpfeil{ \raise 1pt\hbox{ $_\vee$ \hskip -7.6pt
+           \vrule depth 0.7pt height 4.7pt width 0.3pt} \;\; }
+\def\apf#1{ \buildrel \abpfeil \over {#1} }
+\def\lpfr{\hbox{$\, =\!\!\!=\!\!\!=\!\!\!\Longrightarrow \,$} }
+\def\lpfl{\hbox{$\, \Longleftarrow\!\!\!=\!\!\!=\!\!\!= \,$} } 
+\def\lpfu{\vbox to 15pt{\hbox{$\, \,\Uparrow \,$} \vss 
+                        \hbox{$\, \>\Vert \,$} \vss}}
+\def\lpfd{\vbox to 15pt{\vss \hbox{$\, \>\Vert \,$} \vss
+                             \hbox{$\, \,\Downarrow \,$}}}
+\def\biga{ \raise 2pt\hbox{$ \bigcap \!\!\!\!\!\!\> $} \hbox{$-$}  } 
+\def\smala{ \hbox{$ \cap \!\!\!\!\!\!\; $} \lower 0.7pt\hbox{$-$}  } 
+\font\gital=cmti10 scaled \magstep4   \def\Vau{\hbox{{\gital v$\!\>$}}}
+\def\ende{ \hskip 5.64cm \vrule depth -2pt width 3cm height 2.5pt  
+           \hskip -1.55cm $\bullet$ \nz }
+%  ENDE           -1.55               -2               height 2.1
+

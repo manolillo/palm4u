@@ -1,0 +1,503 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 5.0</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041103;12380720"> <meta name="CHANGED" content="20041123;15532356"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head><body style="direction: ltr;" lang="en-US"><h2 style="line-height: 100%;"><font size="4">5.0
+Code installation<br>
+</font></h2>
+<font color="#000000">This chapter
+describes the installation of PALM on a Linux workstation (local host). There are two methods to install and run PALM. With the <span style="font-style: italic;">simple method</span>, you can run PALM interactively on the local computer. This method is using the scripts <span style="font-weight: bold;">palm_simple_install</span> and <span style="font-weight: bold;">palm_simple_run</span>.&nbsp;
+The simple method cannot create batch jobs itself, and cannot be used
+to create restart runs. Also file handling and most other features of
+the <span style="font-style: italic;">advanced method</span> are not available. This method is only recommended for those who like to test PALM quickly.<br>
+<br>
+The <span style="font-style: italic;">advanced method</span> is for running PALM in batch mode on a suitable remote computer. The installation procedure is using the script <span style="font-weight: bold;">mbuild</span>. All jobs are started on the local host using the script <b>mrun</b>. The PALM output is automatically sent back from the remote host to the
+local host. Alternatively, <span style="font-weight: bold;">mrun</span>
+can also be used to start PALM in interactive mode on the local host, or
+as a batch job on the local host (if a queueing system like NQS, PBS, or LoadLeveler is
+available).<br>
+<br>
+Only the <span style="font-style: italic;">advanced method</span> gives full access to all PALM features.<br>
+<br>
+</font><p style="line-height: 100%;"></p><p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold; text-decoration: underline;">Requirements</span></font></p><p style="line-height: 100%;"><font color="#000000">The
+installation and operation of PALM requires at mimimum (for the <span style="font-style: italic;">advanced method</span> on both, the
+local and the remote host, unless stated otherwise):</font></p><ol><li><font color="#000000">A Korn-shell (AT&amp;T ksh or public
+domain ksh); must be
+available under<span style="font-family: Courier New,Courier,monospace;"> </span></font><font style="font-family: Courier New,Courier,monospace;" color="#000000">/bin/ksh</font><font color="#000000">.<span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-family: Courier New,Courier,monospace;"></span></font><font color="#000000"><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span></font></li><li><font color="#000000">A NetCDF-library with version number not earlier than 3.6.2 (for
+NetCDF, see under <a href="http://www.unidata.ucar.edu/software/netcdf/">www.unidata.ucar.edu</a>).</font></li><li><font color="#000000">A FORTRAN90/95 compiler.</font></li><li><font color="#000000">The Message Passing Interface (MPI), at
+least on the remote host, if the parallel version of PALM shall be used.</font></li><li><font color="#000000">On the local host, the revision control
+system <span style="font-weight: bold;">subversion</span>
+(see <a href="http://subversion.tigris.org/">subversion.tigris.org</a>).
+This is already included in many Linux distributions (e.g. SuSe). <span style="font-weight: bold;">subversion requires port 3690 to
+be open for tcp/udp.</span> <span style="font-weight: bold;">If
+there are firewall restrictions concerning this port, the PALM code
+cannot be accessed.</span> The
+user needs a permit to access the PALM repository. For getting a permit
+please contact the PALM group (<a href="mailto:raasch@muk.uni-hannover.de">raasch@muk.uni-hannover.de</a>)
+and define a username under which you like to access the repository.
+You will then receive a password which allows access under this
+name.<br>
+    <br>
+The <span style="font-style: italic;">advanced method</span> additionally requires:<br>
+</font></li><li><font color="#000000">A
+job queueing system on the remote host. Currently, <span style="font-weight: bold;">mrun</span> can handle
+LoadLeveler (IBM-AIX) and NQS/PBS (Linux-Clusters, NEC-SX).</font></li><li><font color="#000000">ssh/scp-connections to and from the remote
+host must not be blocked by a firewall.<br></font></li></ol><font color="#000000"><span style="font-weight: bold;"></span></font><font color="#000000"> Currently, <span style="font-weight: bold;">mrun</span> is configured
+to be used on a limited number of selected machines. These are SGI-ICE
+systems at computing center HLRN in Hannover (<span style="font-style: italic;">lcsgih</span>), Berlin (<span style="font-style: italic;">lcsgib</span>),
+IBM-Regatta systems<span style="font-style: italic;"></span>
+at Yonsei University (<span style="font-style: italic;">ibmy</span>), <span style="font-style: italic;"></span> and at DKRZ, Hamburg (<span style="font-style: italic;">ibmh</span>), an NEC-SX8 system at RIAM,
+Kyushu University, Fukuoka (<span style="font-style: italic;">necriam</span>),
+as well as on the Linux cluster of IMUK (<span style="font-style: italic;">lcmuk</span>), Tokyo
+Institute of Technology (<span style="font-style: italic;">lctit</span>),
+Kyoto computing center (<span style="font-style: italic;">lckyoto</span>), and Cray-XT4/5 systems at the Bergen Center for Computational Science (<span style="font-style: italic;">lcxt4</span>) and at the Finish Meteorological Institute (<span style="font-style: italic;">lcxt5m</span>).
+The strings given in brackets are the systems names (host identifiers)
+under which <span style="font-weight: bold;">mrun</span>
+identifies the
+different hosts.<br><br>You can also use <span style="font-weight: bold;">mrun</span>/PALM on other
+Linux-Cluster, IBM-AIX, or NEC-SX machines. See <a href="#configuration_for_other_machines">below</a> on
+how to configure <span style="font-weight: bold;">mrun</span>for
+other machines. However, these configurations currently (version
+3.7a) allow to run PALM in interactive mode only. Batch mode requires
+manual adjustments for the respective queing system and MPI
+installation in scripts <span style="font-weight: bold;">mrun</span>, <span style="font-weight: bold;">mbuild</span>, and <span style="font-weight: bold;">subjob</span>.<br><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span></font><p style="line-height: 100%;"><font color="#000000">The
+examples given in this chapter refer to an
+installation of PALM on an IMUK Linux workstation and (for the <span style="font-style: italic;">advanced method</span>) the SGI-ICE
+system of HLRN, used as&nbsp;remote host. They are just referred to as local and
+remote host from now on. </font></p><p style="line-height: 100%;">
+</p><p style="line-height: 100%;">The installation
+process for the <span style="font-style: italic;">advanced method</span> requires a valid
+account on the local and on the remote host as well.</p>
+<p style="line-height: 100%;">The <span style="font-style: italic;">advanced installation method</span> is described below. For the <span style="font-style: italic;">simple  method</span> see the <a href="#simple_installation_method">end of this chapter</a>.<br>
+&nbsp; </p>
+
+<ul>
+ All hosts (local as well as remote) are
+accessed via the secure shell (ssh). The user must establish
+passwordless login using the private/public-key mechanism (see e.g. the
+<a href="http://www2.hlrn.de/doc/ssh/index.html">HLRN
+documentation</a>). <b>To ensure proper function of mrun,
+passwordless login must be
+established in both directions, from the local to the remote host as
+well as from the remote to the local host!</b> Test this by
+carrying
+out e.g. on the local host: <p style="line-height: 100%;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+</span><span style="font-family: Courier New,Courier,monospace;">ssh&nbsp;
+&lt;username on remote host&gt;@&lt;remote
+IP-address&gt;</span><br> </p> <p style="line-height: 100%;">and on the remote host:<br>
+</p> <p style="line-height: 100%;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+</span><span style="font-family: Courier New,Courier,monospace;">ssh&nbsp;
+&lt;username on local host&gt;@&lt;local IP-adddress&gt;</span><br>
+</p> In both cases you should&nbsp;not be
+prompted for a password. <b>Before continuing the further
+installation
+process, this must be absolutely guaranteed!</b> It must also
+be
+guaranteed for <b>all</b> other remote hosts, on which
+PALM shall run.<br><br>Please
+note that on many remote hosts, passwordless login must also work <b>within the remote host</b>, i.e. for ssh connections from the
+remote host to itself. Test this by executing on the remote host:<br>
+  <br>
+  <span style="font-family: Courier New,Courier,monospace;">&nbsp;&nbsp; ssh
+&lt;username on remote host&gt;@&lt;remote IP-address&gt;</span>&nbsp;&nbsp;&nbsp;&nbsp; .<br>
+  <br>
+You should not be prompted
+for a password.<br><br>
+</ul>
+<p style="line-height: 100%;"><span style="font-weight: bold; text-decoration: underline;">Package
+Installation</span></p><p style="line-height: 100%;">The <b>first installation step</b> requires creating a
+set of directories on the local and, for the <span style="font-style: italic;">advanced method</span>, on the
+remote host<span style="font-style: italic;"></span>. These are:</p><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">~/job_queue<br></div><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">~/palm<br></div><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">~/palm/current_version<br></div><div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">~/palm/current_version/JOBS</span><br></div><p style="line-height: 100%;">The names of these directories can be
+freely selected (except <big><tt><font size="2"><big>~/job_queue</big></font></tt></big>),
+however new users should choose them as suggested, since many
+examples in this documentation as well as all example files are based on these settings. The directory <big><span style="font-family: monospace;">~/palm/current_version</span></big>
+on the local host will be called the working directory from now on. </p>
+<p style="line-height: 100%;"><font color="#000000">In
+the <b>second
+step</b>
+a working copy of the recent PALM version,
+including the source code, scripts, documentation, etc.&nbsp; must
+be
+copied to the working directory (</font><font color="#000000">local
+host!) by executing the following
+commands. Replace &lt;your username&gt; by the name that you have chosen to
+access the repository, and &lt;#&gt; by any of the available
+PALM
+releases, e.g. "<span style="font-style: italic;">3.7a</span>"
+(new releases will be announced to members of the PALM mailing list).</font></p><div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">cd
+~/palm/current_version</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">svn
+checkout --username &lt;your username&gt;
+svn://130.75.105.2/palm/tags/release-&lt;#&gt; trunk</span><br></div><p style="line-height: 100%;"><font color="#000000">You
+will then be prompted for your password. After completion, there should be a subdirectory</font><font style="font-family: Courier New,Courier,monospace;" color="#000000"> trunk </font><font color="#000000">in your working directory. It contains a number of further
+subdirectories, which contain e.g. the PALM source code (</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">SOURCE</font><font color="#000000">)
+and the scripts for running PALM (</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">SCRIPTS</font><font color="#000000">).</font></p><p style="line-height: 100%;">Alternatively,&nbsp;executing</p><pre style="line-height: 100%; margin-left: 40px; font-family: Courier New,Courier,monospace;">svn checkout --username &lt;your username&gt; svn://130.75.105.2/palm/tags/release-&lt;#&gt; abcde</pre><p style="line-height: 100%;">will place your working copy in a
+directory named<span style="font-family: Courier New,Courier,monospace;"> abcde </span>(instead
+of a directory named<span style="font-family: Courier New,Courier,monospace;"> trunk</span>).
+But keep in mind that you will have to adjust several paths given
+below, if you do not use the default directory<span style="font-family: Courier New,Courier,monospace;"> trunk</span>.</p><p style="line-height: 100%;">Please never touch any file in
+your working copy of PALM, unless you&nbsp;know what you
+are doing.</p><p style="line-height: 100%; font-weight: bold;"><span style="font-weight: normal;">You can also get a copy of the
+most recent developer code by executing</span></p><pre style="line-height: 100%; margin-left: 40px; font-family: Courier New,Courier,monospace;">svn checkout --username &lt;your username&gt; svn://130.75.105.2/palm/trunk trunk</pre>This version may contain new features (they might not be documented well), but it may also contain bugs.<span style="font-weight: bold;"><br>
+</span><br>
+<p style="line-height: 100%;"></p><p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold; text-decoration: underline;">Package
+Configuration</span></font></p><p style="line-height: 100%;"><font color="#000000">To
+use the PALM scripts, the <span style="font-family: Courier New,Courier,monospace;">PATH</span>-variable
+has to be extended and the
+environment variable<span style="font-family: Courier New,Courier,monospace;">
+PALM_BIN </span>has to be set (on local and remote host)
+in the respective profile of the users default shell (e.g. in<span style="font-family: Courier New,Courier,monospace;"> .profile</span>,
+if<span style="font-family: Courier New,Courier,monospace;">
+ksh </span>is used):</font></p><p style="line-height: 100%; margin-left: 40px;"><font style="font-family: Courier New,Courier,monospace;" color="#000000">export
+PATH=$HOME/palm/current_version/trunk/SCRIPTS:$PATH</font><font color="#000000"><br><span style="font-family: Courier New,Courier,monospace;">export
+PALM_BIN=</span></font><font style="font-family: Courier New,Courier,monospace;" color="#000000">$HOME/palm/current_version/trunk/SCRIPTS</font></p><p style="line-height: 100%;"><font color="#000000">You
+may have to login again in order to activate these settings.</font></p><font color="#000000">On the local and on the remote host, some
+small helper/utility programs have to be installed, which
+are&nbsp;later used by <span style="font-weight: bold;">mrun</span>&nbsp;e.g.
+for PALM data postprocessing. The installation is done by <span style="font-weight: bold;">mbuild</span>. This script
+requires a configuration file<span style="font-family: Courier New,Courier,monospace;">
+.mrun.config</span>, which will be also used by <span style="font-weight: bold;">mrun</span> in the
+following. A copy has to be put into the working directory under the
+name<span style="font-family: Courier New,Courier,monospace;">
+.mrun.config </span>by</font><p style="line-height: 100%; margin-left: 40px;"><font color="#000000"><span style="font-family: Courier New,Courier,monospace;">cp
+trunk/SCRIPTS/.mrun.config.default .mrun.config</span></font></p><font color="#000000">Beside many other things, this file contains
+typical installation parameters
+like compiler name, compiler options, etc.
+for a set of different (remote) hosts. Please edit this file, uncomment
+lines like</font><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">#%remote_username
+&nbsp;&lt;replace by your ... username&gt; &nbsp;
+&lt;host identifier&gt;</div><p style="line-height: 100%;"><font color="#000000">by
+removing the first hash (<span style="font-family: Courier New,Courier,monospace;">#</span>)
+character and replace the string "<span style="font-family: Courier New,Courier,monospace;">&lt;replace
+by ...&gt;</span>" by your username on the respective host
+given in the <span style="font-family: Courier New,Courier,monospace;">&lt;host
+identifier&gt;</span>.
+You only have to uncomment lines for those hosts on which you intend to
+use PALM.</font></p><p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold;">Warning:
+When editing the configuration file, please NEVER use the TAB key.
+Otherwise, very confusing errors may occur when mrun is executing.</span></font></p><p style="line-height: 100%;"><font color="#000000">Beside the default configuration file</font><font style="font-family: Courier New,Courier,monospace;" color="#000000"> .mrun.config.default</font><font color="#000000">, the directory<span style="font-family: Courier New,Courier,monospace;">
+trunk/SCRIPTS </span>contains additional configuration files
+which are already adjusted for special hosts</font><font color="#000000">, e.g.</font><font color="#000000"><span style="font-family: Courier New,Courier,monospace;">
+.mrun.config.imuk </span>can be used at Hannover University</font><font color="#000000">, etc.. </font><font color="#000000">These files have to be edited in the same way as described
+above.</font></p><p style="line-height: 100%;"><font color="#000000">After modifying the configuration file, the
+respective executables are generated by executing</font></p><p style="line-height: 100%; margin-left: 40px; font-family: Courier New,Courier,monospace;"><font color="#000000">mbuild -u -h lcmuk<br>mbuild -u -h
+lcsgih</font></p><p style="line-height: 100%;"><font color="#000000">The
+second call also copies the PALM scripts (like <span style="font-weight: bold;">mrun</span> and <span style="font-weight: bold;">mbuild</span>) to the
+remote
+host.<br>
+<br>
+</font></p><p style="line-height: 100%;"></p><p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold; text-decoration: underline;">Pre-Compilation
+of PALM Code</span></font></p><font color="#000000">
+</font><br><font color="#000000">To avoid the
+re-compilation of the complete source code for each model run, PALM
+willl be pre-compiled once on the remote host by again using the script
+<span style="font-weight: bold;">mbuild</span>. Due
+to the use of
+FORTRAN modules in the source code, the subroutines must be compiled
+in a certain order. Therefore the so-called <i>make</i>
+mechanism
+is used (see the respective man-page of the Unix operating system),
+requiring a<span style="font-family: Courier New,Courier,monospace;">
+</span></font><font style="font-family: Courier New,Courier,monospace;" color="#000000">Makefile</font><font color="#000000">,
+in which the dependencies are described. This file is found in
+subdirectory <span style="font-family: Courier New,Courier,monospace;">trunk/SOURCE</span></font><font color="#000000">, where
+also the PALM code is stored.</font><font color="#000000"> The compiled
+sources (object
+files) are
+stored&nbsp;on the remote computer in the default directory
+</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">~/palm/current_version/MAKE_DEPOSITORY</font>_<span style="font-family: Courier New,Courier,monospace;">&lt;block_descriptor&gt;</span>, where<font color="#000000"> <span style="font-family: Courier New,Courier,monospace;">&lt;block_descriptor&gt;</span> is composed of the third (and fourth, if existing) column of the respective block in the configuration file (e.g. <span style="font-family: Courier New,Courier,monospace;">lcsgih_parallel</span> for HLRN).<span style="font-weight: bold;"></span></font><p style="line-height: 100%;"><font color="#000000">The
+pre-compilation for the remote host (here the SGI-ICE system of HLRN)
+is
+done by</font><span style="font-family: monospace;"></span></p><div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">mbuild
+-h lcsgih &nbsp;</span></div><p style="line-height: 100%;"><span style="font-family: Courier New,Courier,monospace;">mbuild
+</span>will prompt some queries<font color="#000000">,
+which must all be
+answered "y" by the user. The compiling process </font><font color="#000000">will take some time.<span style="font-family: Courier New,Courier,monospace;"> </span></font><font style="font-family: Courier New,Courier,monospace;" color="#000000">mbuild</font><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"> </span>transfers
+the respective compiler calls to the remote
+host where they are carried out interactively. You can follow the
+progress at the terminal window, where also error messages
+are displayed (hopefully not for this standard installation). By just
+entering </font></p><p style="line-height: 100%;">
+</p><blockquote style="line-height: 100%; font-family: Courier New,Courier,monospace;"><font color="#000000">mbuild</font></blockquote>
+<p style="line-height: 100%;"><font color="#000000">PALM
+will
+be (consecutively) pre-compiled for all remote hosts listed in
+the configuration file. If you want to compile for the local host only,
+please enter</font></p><p style="line-height: 100%; margin-left: 40px;"><font color="#000000"><span style="font-family: Courier New,Courier,monospace;">mbuild
+-h lcmuk</span> </font>
+</p><p style="line-height: 100%;"></p><p style="line-height: 100%; font-weight: bold; text-decoration: underline;"><font color="#000000">Installation Verification</font></p><font color="#000000">As a last step,
+after the compilation has been finished, the PALM installation has to
+be verified. For this
+purpose a simple test run is carried out. This once again requires the <b>mrun
+</b>configuration file (described in </font><a href="chapter_3.2.html"><font color="#000080">chapter
+3.2</font></a><font color="#000000">), as well
+as the </font><a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/example_cbl_p3d"><font color="#000080">parameter
+file</font></a><font color="#000000">
+(described in </font><a href="chapter_4.4.1.html"><font color="#000080">chapter
+4.4.1</font></a>)<font color="#000000">. The
+parameter file must be
+copied from the PALM working copy by<br>
+</font><div style="margin-left: 40px;"><span style="font-family: monospace;"></span><font style="font-family: Courier New,Courier,monospace;" color="#000000">mkdir -p JOBS/example_cbl/INPUT<br>cp
+trunk/INSTALL/example_cbl_p3d&nbsp;JOBS/example_cbl/INPUT/example_cbl_p3d</font><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"></span></font></div>
+<p style="line-height: 100%;"><font color="#000000">The
+test run can
+now be started by executing the command </font>
+</p><pre style="margin-left: 1cm; margin-right: 1cm; margin-bottom: 0.5cm; line-height: 100%; font-family: Courier New,Courier,monospace;"><font color="#000000">mrun -d example_cbl -h lcsgih -K parallel -X 8 -T 8 -t 500 -q testq -r “d3# pr#”</font></pre><font color="#000000">This specific run
+will be carried out on 8 PEs and is allowed to use up to 500 seconds
+CPU time. After pressing &lt;return&gt;, the most important
+settings of
+the job are displayed at the terminal window
+and the user is prompted for o.k. (“</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">y</font><font color="#000000">”).
+Next, a message of the queuing system like “<i>Request</i>
+…
+<i>Submitted to queue… by…” </i>should
+be displayed. Now the job is
+queued and either started immediately or at a later time, depending on
+the
+current workload of the remote host. Provided that it is executed
+immediately and that all things work as designed, the job protocol of
+this run will appear under the file name<span style="font-family: Courier New,Courier,monospace;"> </span></font><font style="font-family: Courier New,Courier,monospace;" color="#000000">~/job_queue/lcsgih_example</font><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"> </span>no
+more than a few minutes later. The content of this
+file should be carefully examined for any error messages.</font><p style="line-height: 100%;">
+</p><p style="line-height: 100%;">Beside the job
+protocol and according to
+the configuration file and arguments given for <b>mrun</b>
+options<span style="font-family: Courier New,Courier,monospace;">
+-d </span>and<span style="font-family: Courier New,Courier,monospace;"> -r</span><tt>,</tt>further
+files should be found in
+the
+directories</p><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">~/palm/current_version/JOBS/example_cbl/MONITORING</div><p style="line-height: 100%;">and</p>
+<p style="line-height: 100%;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+</span><span style="font-family: Courier New,Courier,monospace;">~/palm/current_version/JOBS/example_cbl/OUTPUT</span><span style="font-family: monospace;"></span><br>
+</p><p style="line-height: 100%;">Please compare the
+contents of file</p>
+<p style="line-height: 100%;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+</span><span style="font-family: Courier New,Courier,monospace;">~/palm/current_version/JOBS/example_cbl/MONITORING/lcsgih_example_rc</span><br>
+</p><p style="line-height: 100%;">with those of the
+example result file which can be found under<span style="font-family: Courier New,Courier,monospace;">
+trunk/INSTALL/example_cbl_rc</span>., e.g. by using the<span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;"> standard</span>
+diff </span>command:</p><p style="line-height: 100%; margin-left: 40px; font-family: Courier New,Courier,monospace;">diff
+&nbsp;JOBS/example_cbl/MONITORING/lcsgih_example_cbl_rc
+trunk/INSTALL/example_cbl_rc</p><p style="line-height: 100%;">where
+it is assumed that your working directory is<span style="font-family: Courier New,Courier,monospace;">
+~/palm/current_version</span>.</p><span style="font-weight: bold;">You should not find any
+difference between these two files</span>, except of the run date
+and time displayed at the top of the file header. <font color="#000000">If
+the file contents are identical, the installation is successfully
+completed.<br><br></font><p style="line-height: 100%;"></p><p style="line-height: 100%; font-weight: bold; text-decoration: underline;"><font color="#000000"><a name="configuration_for_other_machines"></a>Configuration
+for other machines</font></p><font color="#000000">Starting
+from version 3.2a, beside the default hosts (HLRN, etc.), PALM can also
+be installed and run on other Linux-Cluster-, IBM-AIX, or
+NEC-SX-systems. To configure PALM for a non-default host only requires
+to add some lines to the configuration file<span style="font-family: Courier New,Courier,monospace;">
+.mrun.config</span>.<br><br>First,
+you have to define the host identifier (a string of arbitrary length)
+under which your local host shall be identified by adding a line<br><br></font><div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">%host_identifier
+&nbsp;&lt;hostname&gt; &nbsp;&lt;host
+identifier&gt;</span><br></div><br>to the
+configuration file (best to do this in the section where the other
+default host identifiers are defined). Here<span style="font-family: Courier New,Courier,monospace;">
+&lt;hostname&gt; </span>must be the name of your local
+host as provided by the unix-command "<span style="font-family: Courier New,Courier,monospace;">hostname</span>".
+The first characters of<span style="font-family: Courier New,Courier,monospace;">
+&lt;host identifier&gt; </span>have to be "<span style="font-family: Courier New,Courier,monospace;">lc</span>",
+if your system is (part of) a linux-cluster, "<span style="font-family: Courier New,Courier,monospace;">ibm</span>",
+or "<span style="font-family: Courier New,Courier,monospace;">nec</span>"
+in case of an IBM-AIX- or NEC-SX-system, respectively. For example, if
+you want to install on a linux-cluster, the line may read as<br><br><div style="margin-left: 40px;">%host_identifier &nbsp;foo
+&nbsp;lc_bar<br></div><br>In
+the second step, you have to give all informations neccessary to
+compile and run PALM on your local host by adding an additional section
+to the configuration file:<br><br><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">%remote_username&nbsp;&nbsp;
+&lt;1&gt;&nbsp; &nbsp; &nbsp; &lt;host
+identifier&gt; parallel<br>%tmp_user_catalog&nbsp;
+&lt;2&gt; &nbsp;&nbsp;&nbsp;&nbsp; &lt;host
+identifier&gt; parallel<br>%compiler_name&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;3&gt; &nbsp;&nbsp;&nbsp;&nbsp; &lt;host
+identifier&gt; parallel<br>%compiler_name_ser
+&lt;4&gt; &nbsp;&nbsp;&nbsp;&nbsp; &lt;host
+identifier&gt; parallel<br>%cpp_options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;5&gt; &nbsp; &nbsp; &nbsp;&lt;host
+identifier&gt;&nbsp;parallel<br>%netcdf_inc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;6&gt; &nbsp;&nbsp;&nbsp;&nbsp; &lt;host
+identifier&gt; parallel<br>%netcdf_lib&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;7&gt; &nbsp;&nbsp;&nbsp;&nbsp; &lt;host
+identifier&gt; parallel<br>%fopts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;8&gt; &nbsp;&nbsp;&nbsp; &nbsp;&lt;host
+identifier&gt; parallel<br>%lopts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&lt;9&gt; &nbsp; &nbsp;
+&nbsp;&lt;host identifier&gt; parallel<br></div><br>The
+section consists of four columns each separated by one or more blanks.
+The first column gives the name of the respective environment variable
+used by <span style="font-weight: bold;">mrun</span>
+and <span style="font-weight: bold;">mbuild</span>,
+while the second column defines its value. The third column has to be
+the host identifier as defined above, and the last column in each line
+must contain the string "<span style="font-family: Courier New,Courier,monospace;">parallel</span>".
+Otherwise, the respective line(s) will be interpreted as belonging to
+the setup for compiling and running a serial (non-parallel) version of
+PALM.<br><br>All brackets have to be replaced by the
+appropriate settings for your local host:<br><ul><li><span style="font-family: Courier New,Courier,monospace;">&lt;1&gt;
+</span>is the username on your LOCAL host</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;2&gt;
+</span>is the temporary directory in which PALM runs will be
+carried out</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;3&gt;
+</span>is the compiler name which generates parallel code</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;4&gt;
+</span>is the compiler name for generating serial code</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;5&gt;
+</span>are
+the preprocessor options to be invoked. In most of the cases, it will
+be neccessary to adjust the MPI data types to double precision by
+giving <span style="font-family: Courier New,Courier,monospace;">-DMPI_REAL=MPI_DOUBLE_PRECISION
+-DMPI_2REAL=MPI_2DOUBLE_PRECISION</span>. To switch on the NetCDF
+support, you also have to give <span style="font-family: Courier New,Courier,monospace;">-D__netcdf</span>
+and <span style="font-family: Courier New,Courier,monospace;">-D__netcdf4</span>
+(if you like to have NetCDF4/HDF5 data format; this requires a NetCDF4 library!).</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;6&gt;
+</span>is the compiler option for specifying the include path to
+search for the NetCDF module/include files</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;7&gt;
+</span>are the linker options to search for the NetCDF library</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;8&gt;
+</span>are the general compiler options to be used. You should
+allways switch on double precision (e.g. <span style="font-family: Courier New,Courier,monospace;">-r8</span>)
+and code optimization (e.g. <span style="font-family: Courier New,Courier,monospace;">-O2</span>).</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;9&gt;
+</span>are the linker options</li><li><span style="font-family: Courier New,Courier,monospace;">&lt;host
+identifier&gt; </span>is the host identifier as defined
+before</li></ul><br>A typical example may be:<br><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">%remote_username&nbsp;&nbsp;
+raasch &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;lc_bar parallel<br>%tmp_user_catalog&nbsp;
+/tmp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lc_bar
+parallel<br>%compiler_name&nbsp;&nbsp;&nbsp;&nbsp;
+mpif90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lc_bar
+parallel<br>%compiler_name_ser
+ifort&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lc_bar
+parallel<br>%cpp_options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-DMPI_REAL=MPI_DOUBLE_PRECISION:-DMPI_2REAL=MPI_2DOUBLE_PRECISION:-D__netcdf&nbsp; lc_bar parallel<br>%netcdf_inc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-I:/usr/local/netcdf/include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+lc_bar parallel<br>%netcdf_lib&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-L/usr/local/netcdf/lib:-lnetcdf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+lc_bar parallel<br>%fopts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-axW:-cpp:-openmp:-r8:-nbs &nbsp; &nbsp; &nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; lc_bar parallel<br>%lopts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-axW:-cpp:-openmp:-r8:-nbs:-Vaxlib&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lc_bar
+parallel<br></div><br>Currently (version 3.7a),
+depending on the MPI
+version which is running on your local host, the options for the
+execution command (which may be <span style="font-family: Courier New,Courier,monospace;">mpirun</span>
+or <span style="font-family: Courier New,Courier,monospace;">mpiexec</span>)
+may have to be adjusted manually in the <span style="font-weight: bold;">mrun</span>-script. A future version
+will allow to give the respective settings in the configuration file.
+<p style="line-height: 100%;">If you have any problems
+with the PALM
+installation, the members of the PALM working group are pleased to
+help you.<br>
+</p>
+<p style="line-height: 100%;"><br>
+<span style="font-weight: bold; text-decoration: underline;"><a name="simple_installation_method"></a>Simple installation method</span><br>
+</p>
+<p style="line-height: 100%;">The simple installation method is using the scripts <span style="font-weight: bold;">palm_simple_install</span> and <span style="font-weight: bold;">palm_simple_run</span> for installing and running PALM.<br>
+<br>
+<span style="font-weight: bold; text-decoration: underline;">Package
+Installation</span></p>
+<p style="line-height: 100%;"><span style="font-weight: bold;">First step:</span> Create a directory<span style="font-style: italic;"></span>:</p>
+<div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">mkdir -p ~/palm/current_version/</div>
+<p style="line-height: 100%;">You can freely choose the directory name, but if you intend to switch to the <span style="font-style: italic;">advanced method</span> of running PALM later, you should use<span style="font-family: Courier New,Courier,monospace;"> ~/palm/current_version</span>. This directory <big><span style="font-family: monospace;"></span></big>will be called working directory from now on. </p>
+
+<p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold;">S</span><b>econd
+step</b>:
+Check out a working copy of the recent PALM version from the svn-repository</font><font color="#000000">. Replace<span style="font-family: Courier New,Courier,monospace;"> &lt;your username&gt; </span>by your valid repository username, and<span style="font-family: Courier New,Courier,monospace;"> &lt;#&gt; </span>by any of the available
+PALM
+releases, e.g. "<span style="font-style: italic;">3.7a</span>"
+(new releases will be announced to members of the PALM mailing list).</font></p>
+<div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">cd
+~/palm/current_version</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">svn
+checkout --username &lt;your username&gt;
+svn://130.75.105.2/palm/tags/release-&lt;#&gt; trunk</span><br></div>
+<p style="line-height: 100%;"><font color="#000000">You
+will be prompted for your password. After completion, a subdirectory</font><font style="font-family: Courier New,Courier,monospace;" color="#000000"> trunk <span style="font-family: Times New Roman,Times,serif;">will appear </span></font><font color="#000000">in your working directory. It contains a number of further
+subdirectories, which contain e.g. the PALM source code (</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">SOURCE</font><font color="#000000">)
+and the scripts for running PALM (</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">SCRIPTS</font><font color="#000000">). For checking out the most recent PALM version (developer version), see the <span style="font-style: italic;">advanced installation method</span> described above.<br>
+</font></p>
+<p style="line-height: 100%;">Please never touch any file in
+your working copy of PALM, unless you really know what you
+are doing.</p>
+<br>
+
+<p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold; text-decoration: underline;">Configuration and compilation<br>
+</span></font></p>
+<p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold;">Third step:</span> To
+use the PALM scripts, the <span style="font-family: Courier New,Courier,monospace;">PATH</span>-variable
+has to be extended and the
+environment variable<span style="font-family: Courier New,Courier,monospace;">
+PALM_BIN </span>has to be set. For convenience, setting should be done
+in the respective profile of the users default shell (e.g. in<span style="font-family: Courier New,Courier,monospace;"> .profile</span>,
+if<span style="font-family: Courier New,Courier,monospace;">
+ksh </span>is used):</font></p>
+<p style="line-height: 100%; margin-left: 40px;"><font color="#000000"><span style="font-family: Courier New,Courier,monospace;">export
+PALM_BIN=</span></font><font style="font-family: Courier New,Courier,monospace;" color="#000000">$HOME/palm/current_version/trunk/SCRIPTS<br>
+</font><font style="font-family: Courier New,Courier,monospace;" color="#000000">export
+PATH=$PALM_BIN:$PATH</font><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"><br>
+</span></font></p>
+<p style="line-height: 100%;"><font color="#000000">You
+may have to login again in order to activate the profile settings.<br>
+</font></p>
+<p style="line-height: 100%;"><font color="#000000"><span style="font-weight: bold;">Fourth step:</span> Call the installation script:<br>
+</font></p>
+<p style="line-height: 100%; margin-left: 40px;"><font style="font-family: Courier New,Courier,monospace;" color="#000000">palm_simple_install -i MAKE.inc.ifort.imuk</font><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"><br>
+</span></font></p>
+
+<p style="line-height: 100%;"><font color="#000000">The script copies the PALM source code into a new subdirectory <span style="font-family: Courier New,Courier,monospace;">MAKE_DEPOSITORY_simple</span>. This directory also will contain a <span style="font-family: Courier New,Courier,monospace;">Makefile</span> and an include file <span style="font-family: Courier New,Courier,monospace;">MAKE.inc</span>
+to be used for compiling the code in the next step. The include file
+contains compiler name, compiler options, library path for NetCDF, etc.
+<span style="font-weight: bold;">Please adjust these settings as required by your system, before you proceed with the next step.</span> The default settings in <span style="font-family: Courier New,Courier,monospace;">MAKE.inc</span>
+are for the Intel-FORTRAN compiler in the IMUK environment. You may
+find default settings for other compilers and environments in <span style="font-family: Courier New,Courier,monospace;">.../trunk/INSTALL/</span> See for files<span style="font-family: Courier New,Courier,monospace;"> MAKE.inc.*</span>.<br>
+</font></p>
+<p style="line-height: 100%; margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">cd MAKE_DEPOSITORY_simple<br>
+</span><font color="#000000"><span style="font-family: Courier New,Courier,monospace;">make<br>
+cd ..<br>
+</span></font></p>
+
+
+<p style="line-height: 100%;">In order to shorten compilation time, you can run make in parallel, e.g.<span style="font-family: Courier New,Courier,monospace;"> make -j 4 </span>runs 4 compile threads simultaneously.<br>
+<br>
+<span style="font-weight: bold;">Fifth step:</span> Carry out a test
+run in order to check the installation. The test run (as every PALM
+run) requires a parameter file for steering PALM, which is in
+FORTRAN-NAMELIST format. This file has been already generated by the
+installation script <span style="font-family: Courier New,Courier,monospace;">palm_simple_install</span> under <span style="font-family: Courier New,Courier,monospace;">JOBS/example_cbl/INPUT/example_cbl_p3d</span><span style="font-family: Courier New,Courier,monospace;"></span>. PALM is started with script <span style="font-family: Courier New,Courier,monospace;">palm_simple_run</span>. <span style="font-weight: bold;">Before</span> the first run, it may be necessary to change the MPI-execution command (<span style="font-family: Courier New,Courier,monospace;">mpiexec</span>, <span style="font-family: Courier New,Courier,monospace;">mpirun</span>, etc.) and options in this script, depending on the MPI-library that you are using. The script can be found in directory <span style="font-family: Courier New,Courier,monospace;">.../trunk/SCRIPTS</span>.
+Default settings in this script are for the SGI-mpt-library installed
+on HLRN. You will find the execution command almost at the end of this
+script. After having adjusted the MPI-execution command, start the run
+with:<br>
+</p>
+<p style="line-height: 100%; margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">palm_simple_run -p 4 -n 4 -c example_cbl</span><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"><br>
+</span></font></p>
+
+
+
+<p style="line-height: 100%;">where option <span style="font-family: Courier New,Courier,monospace;">-p</span> gives the total number of MPI tasks, <span style="font-family: Courier New,Courier,monospace;">-n</span> gives the number of MPI tasks per node, and <span style="font-family: Courier New,Courier,monospace;">-c</span> gives the parameter file to be used.<br>
+After the run has finished, all OUTPUT files can be found in directory <span style="font-family: Courier New,Courier,monospace;">OUTPUT....</span> Names and contents of PALM output files are described in <a href="chapter_3.4.html">chapter 3.4</a>.
+The directory name is composed of the parameter file name, the number
+of cores that have been used, and the current data and time. For every
+run a unique directory is created.<br>
+</p>
+<p style="line-height: 100%;"><span style="font-weight: bold;">Sixth step:</span> To verify the results of this example run, compare it with the default result:<br>
+<span style="font-weight: bold;"></span></p>
+<p style="line-height: 100%; margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">diff&nbsp; OUTPUT..../RUN_CONTROL&nbsp;&nbsp; trunk/INSTALL/example_cbl_rc</span><font color="#000000"><span style="font-family: Courier New,Courier,monospace;"><br>
+</span></font></p>
+
+
+
+
+<span style="font-weight: bold;">You should not find any
+difference between these two files</span>, except of the run date
+and time displayed at the top of the file header, and, maybe, the number of cores that have been used. <font color="#000000">If
+the file contents are identical, the installation is successfully
+completed.</font><hr><p style="line-height: 100%;"><font color="#000080"><font color="#000080"><a href="chapter_4.6.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="up" src="up.gif" name="Grafik2"></font></a><a href="chapter_5.1.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last
+change:&nbsp;</i> $Id: chapter_5.0.html 287 2009-04-09
+08:59:36Z raasch $</p>
+</body></html>

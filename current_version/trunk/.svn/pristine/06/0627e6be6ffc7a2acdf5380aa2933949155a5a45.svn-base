@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.2</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Marcus Oliver Letzel"> <meta name="CREATED" content="20040726;13164873"> <meta name="CHANGED" content="20050119;9245042"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">3.2 Example of a minimum
+configuration
+file</h3>
+<p style="line-height: 100%;">In this chapter a sample
+configuration
+file is described. It contains only instructions which are really
+necessary for the execution of a simple model run (configuration
+files can be much more complex). The example presented here is stored
+in an appropriate <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/.mrun.config">example
+file</a> (containing more than the configuration data presented
+here)
+and can be used, together with the <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/example_p3d">parameter
+file</a> presented in <a href="chapter_4.4.1.html">chapter
+4.4.1</a>, for the execution of a simple model run. In chapter 4.4.1
+the
+complete <b>mrun</b> options which are necessary for the
+appropriate
+parameter file are described. Furthermore not all details of the
+configuration file are described here. Therefore you should take a
+look at the <a href="http://www.muk.uni-hannover.de/%7Eraasch/Software/mrun_beschreibung.html">mrun</a>
+documentation (sorry: this is only available in German, so far. If you
+think that you
+would profit from an English version, please give a message to the PALM
+group). </p>
+<p style="line-height: 100%;">The following configuration
+data
+exclusively applies to model runs on the SGI ICE system of the
+HLRN when using several processing elements (i.e. for the parallel
+version of the model). The proper installation of the model is
+presumed (see <a href="chapter_5.0.html">chapter
+5.0</a>). Furthermore it is supposed that the user is located in
+the
+directory <tt><font style="font-size: 10pt;" size="2">$HOME/palm/current_version</font></tt>
+&nbsp;on its local computer, where the configuration file (<tt><font style="font-size: 10pt;" size="2">.mrun.config</font></tt>) should reside.
+The configuration file has the following contents (among other things):
+<br>&nbsp;
+</p><pre style="line-height: 100%;"><font style="font-size: 10pt;" size="2">%mainprog          palm.f90<br>%base_directory    $HOME/palm/current_version<br>%base_data         ~/palm/current_version/JOBS<br>%source_path       $base_directory/trunk/SOURCE<br>#<br></font><font style="font-size: 10pt;" size="2">%fopts      -g:-w:-xT:-O3:-cpp:-r8:-ftz:-fno-alias:-no-prec-div:-no-prec-sqrt:-ip:-nbs:-convert:little_endian  lcsgih parallel<br></font><font style="font-size: 10pt;" size="2">%lopts      -g:-w:-xT:-O3:-cpp:-r8:-ftz:-fno-alias:-no-prec-div:-no-prec-sqrt:-ip:-nbs:-Vaxlib                 lcsgih parallel</font><font style="font-size: 10pt;" size="2"><br>#</font><br><font style="font-size: 10pt;" size="2">EC:[[ \$locat = execution]] &amp; &amp; <i>cat </i>RUN_CONTROL </font><br><font style="font-size: 10pt;" size="2">#</font><br><a href="chapter_3.4.html#PARIN"><font style="font-size: 10pt;" size="2">PARIN</font></a><font style="font-size: 10pt;" size="2"> in:job  d3#  $base_data/$fname/INPUT _p3d</font><br><font style="font-size: 10pt;" size="2">#</font><br><a href="chapter_3.4.html#RUN_CONTROL"><font style="font-size: 10pt;" size="2">RUN_CONTROL</font></a><font style="font-size: 10pt;" size="2"> out:loc:tr d3#   $base_data/$fname/MONITORING _rc</font><br><a href="chapter_3.4.html#HEADER"><font style="font-size: 10pt;" size="2">HEADER</font></a><font style="font-size: 10pt;" size="2">      out:loc:tr d3#   $base_data/$fname/MONITORING _header</font><span style="font-family: mon;"><span style="text-decoration: underline;"><br></span><a href="chapter_3.4.html#DATA_1D_PR_NETCDF">DATA_1D_PR_NETCDF</a></span><font style="font-size: 10pt;" size="2">   out:loc:tr pr# ~/palm/current_version/JOBS/$fname/OUTPUT _pr  nc</font></pre>
+<p style="line-height: 100%;"><font face="Thorndale, serif">The first
+five lines specify values of
+so-called environment variables. Such lines begin with a
+&ldquo;%&rdquo;-
+sign. After at least one blank the name of the variable</font> <font face="Thorndale, serif">(e.g.
+</font><tt><i><font face="Thorndale, serif">source_path</font></i></tt><font face="Thorndale, serif">)
+follows and then seperated by at least one blank the value of the
+variable. Again separated by blank t<font face="Thorndale, serif">he
+so-called validity domain</font> can be indicated (later more).
+With the first four variables <b>mrun</b> gets to know in
+which
+directory the source code lies (</font><tt><i><font face="Thorndale, serif">source_path</font></i></tt><font face="Thorndale, serif">),
+the file name of the main program (</font><tt><i><font face="Thorndale, serif">mainprog</font></i></tt><font face="Thorndale, serif">)</font><font face="Thorndale, serif">. Also, two variables are defined which contain path informations used later in the file (<span style="font-style: italic;">base_directory</span>, <span style="font-style: italic;">base_data</span>).&nbsp; <b>mrun
+</b>needs these information, <font color="#000000">because
+for each
+model run the executable is created by compiling the respective source file.</font>
+Normally, only the main program (palm.f90) will be compiled while all
+other object files are just linked. These object files have already
+been created from the source code files during the installation of the
+model
+(see </font><a href="chapter_5.0.html"><font face="Thorndale, serif">chapter
+5.0</font></a><font face="Thorndale, serif">).
+<b>mrun</b> uses
+certain standard options for the compilation process. Beyond that you
+can
+declare additional options with the environment variable </font><tt><i><font face="Thorndale, serif">fopts</font></i></tt><font face="Thorndale, serif">.
+Within the value assignment of an environment variable in the
+configuration file no blanks must be
+used. If blanks are necessary they must <font face="Thorndale, serif">be
+replaced </font>by colons (&ldquo;:&rdquo;). <b>mrun</b>
+will
+interpret these colons as blanks (2 colons written one behind the
+other will be interpreted as a colon). Thus in the example above</font> fopts
+has the value<tt><font face="Thorndale, serif"> </font></tt>&ldquo;<tt>-g -w -xT -O3 -cpp -r8 -ftz -fno-alias -no-prec-div -no-prec-sqrt -ip -nbs -convert little_endian<i><font face="Thorndale, serif"><font color="#000000">&rdquo;</font></font></i></tt><font face="Thorndale, serif"><font color="#000000">.
+Thus a PALM executable is generated using high level optimization (</font></font><font color="#000000"><span style="font-family: monospace;">-O3</span></font><font face="Thorndale, serif"><font color="#000000">).</font></font><font color="#000000"><font face="Thorndale, serif">
+For all other options
+see the compiler manual on the SGI (</font><font size="2"><font face="Cumberland, monospace">man</font></font></font><tt><font color="#000000"> <span style="font-family: Cumberland,monospace;">ifort</span></font></tt><font face="Thorndale, serif"><font color="#000000">).
+Additional libraries
+which the compiler should use may have to be given by
+the environment variable </font></font><tt><font size="2"><font face="Cumberland, monospace"><font color="#000000">lopts</font></font></font></tt><font color="#000000">
+<font face="Thorndale, serif">(loader options).</font></font><font color="#000000"><font face="Thorndale, serif"> </font></font>
+</p><p style="line-height: 100%;"><font color="#000000">Compiler and
+loader options usually differ from computer to computer. In the
+configuration file therefore several value assignments for the
+variables </font><tt><font style="font-size: 10pt;" size="2"><font color="#000000">fopts</font></font></tt><font color="#000000">
+and </font><tt><font style="font-size: 10pt;" size="2"><font color="#000000">lopts</font></font></tt><font color="#000000">
+exist which become active for different computers.</font><font color="#800000">
+<font color="#000000">Which value assignment is used is
+described by
+the so-called validity domain which follows in the appropriate
+variable lines after the value of variables.</font></font><font color="#000000">
+In the example above the entry &ldquo;</font><font color="#000000"><font style="font-size: 11pt; font-style: italic; font-family: monospace;" size="2">lcsgih</font></font><tt><font color="#000000"><span style="font-style: italic; font-family: monospace;">
+</span></font><font color="#000000"><i><font style="font-size: 11pt;" size="2">parallel</font></i></font></tt><font color="#000000">&rdquo;
+stands for </font><tt><font style="font-size: 10pt;" size="2"><font color="#000000">fopts</font></font></tt><font color="#000000">
+and </font><tt><font style="font-size: 10pt;" size="2"><font color="#000000">lopts</font></font></tt><font color="#000000">.
+These lines only become active if a run on the parallel computer of
+the HLRN (</font><tt><i><font style="font-size: 10pt;" size="2">lcsgih</font></i></tt><font color="#000000">)
+on several <font color="#000000">(</font><tt><i><font style="font-size: 10pt;" size="2"><font color="#000000">parallel</font></font></i></tt><font color="#000000">)
+</font>processors is started. The activation takes place when you
+appropriately specify the <span style="font-weight: bold;">mrun</span>
+options </font><tt><font color="#000000">-h</font></tt><font color="#000000">
+and </font><tt><font color="#000000">-K</font></tt><font color="#000000">
+(see below). This way, the validity domain can be limited also for all
+other environment-variables. If no validity domain
+is indicated then the given values of variables are valid for all
+computers. </font>
+</p><p style="line-height: 100%;">After the value
+assignment for the
+variables the so-called error commands follow which have to begin with
+&ldquo;<tt><font style="font-size: 11pt;" size="2">EC:</font></tt>&rdquo;
+in the first column (comment lines begin with &ldquo;<tt>#</tt>&rdquo;).
+Directly
+after the colon Unix commands follow (korn shell syntax) which are
+processed by <b>mrun</b> if errors arise during
+the model run. The command described in the example (<tt><font style="font-size: 10pt;" size="2">cat
+RUN_CONTROL</font></tt>) is executed thereby only on the
+condition that errors during the execution of the model (<tt><font style="font-size: 10pt;" size="2">execution</font></tt>)
+arise. An <b>mrun </b>internal environment variable which
+indicates
+the
+respective abort place in case of errors is <tt><a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#locat">locat</a></tt>.
+In order to determine the actual value of this variable at the
+execution of <b>mrun</b> the &ldquo;<tt>$</tt>&rdquo;
+- prefix
+must be protected by a &ldquo;\&rdquo; since the configuration
+file has been
+already interpreted once when reading in through <b>mrun</b>
+and the
+value from
+<tt>locat</tt> would then supply the empty character
+string. If
+errors arise during the model run this command
+copies the data written by the model up to then to the local file
+<a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a>
+on the standard output where they can be checked after
+job end.<font color="#000000"> RUN_CONTROL is an output
+file of the
+model which has to be copied according to the default configuration
+file
+(see below) after the end of the model run to a permanent file of the
+user but this action would not be performed in case of errors
+in the model run, so that the file content would be lost.</font>
+With
+the help of the error command one can secure it nevertheless. </p>
+<p style="line-height: 100%;">Before and/or after
+the error commands in the example file you can find the so-called input
+and/or output commands which are implemented before and/or after the
+model run. </p>
+<p style="line-height: 100%;">After the output commands<font color="#000000">
+<font color="#000000">in the example file t</font>he
+so-called file
+connection statements</font> <font color="#000000">follow
+</font>via
+which tell <span style="font-weight: bold;">mrun</span>
+how to connect
+the local files in the temporary working
+directory of the model with the respective permanent files of the user.
+<b>mrun</b> copies the input and output files in accordance
+with the
+data in these connection statements. The file connection statements are
+explained in detail in the <b>mrun</b>
+description (<a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#chapter6.3">chapter
+6.3</a>, in German) and are described here only as far as
+necessary. A
+file connection statement usually consists of entries in 5 columns
+whereby all columns are separated from each other by one or more blanks
+(the blanks define the individual columns). In the
+first column the local file name (e.g. <tt><font size="2">PARIN</font></tt>)
+is given as it is addressed by the model. It must begin directly at
+the start of the line. In the second column the so-called file
+attributes
+are given. These determine whether the file is an input file (<tt><font style="font-size: 10pt;" size="2">in</font></tt>)
+or an output file (<tt><font size="2">out</font></tt>),
+whether output
+files are to be transferred to the local computer of the user (<tt><font style="font-size: 10pt;" size="2">tr</font></tt>)
+or whether they are to be archived (<font size="2"><font face="Cumberland, monospace">fl</font></font>).
+If a file has several attributes then they are separated by a <font color="#000000">colon
+in each case .</font> </p>
+<p style="line-height: 100%;">With the entries in the
+third column one
+specifies the conditions under which a file connection statement
+becomes active i.e. under
+which circumstances it is executed by <b>mrun</b>. Then <b>mrun</b>
+copies the appropriate in or output files only if at least one of the
+character strings registered in column 3 (again two or more character
+strings have to be separated from each other by a colon) is
+indicated within the mrun <b>call</b> by the option <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#Opt-r">-r</a>.
+Thus a call of the form </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun - h lcsgih -d abcde -r "d3#"</font></pre></ul>
+<p style="line-height: 100%;">would lead to the fact that
+the input
+file with the local name PARIN is made available and the output files
+RUN_CONTROL and HEADER are copied to permanent files. The output
+files PLOT1D_PAR and PLOT1D_DATA are not copied so that their
+contents are not available to the user after the end of the job. If
+these files are to be copied of <b>mrun</b> then the call
+must be</p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun -h lcsgih -d abcde -r "d3# pr#"</font></pre></ul>
+<p style="line-height: 100%;">Instead of the option -r you
+can
+separately address the file connection statements for input and/or
+output files with the options -i and -o. If one likes to make sure with
+these two options that in the example configuration
+file all file connection statements are actually executed then
+the call must be: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun -h lcsgih -d abcde -i "d3#" -o "d3# pr#"</font></pre></ul>
+<p style="line-height: 100%;"><font color="#000000">The
+names of the
+local files assigned permanent files are build from the entries in
+the 4th and 5th column of the file connection statements and the
+value of the <span style="font-weight: bold;">mrun</span>
+option </font><tt><font style="font-size: 10pt;" size="2"><font color="#000000">-d</font></font></tt><font color="#000000">
+in the following way:</font><font color="#800000"> </font>
+</p><ul> <p style="line-height: 100%;">File
+name (inclusive path) = &ldquo;value of
+the 4th column&rdquo; + &ldquo;value of the option <tt><font size="2">-d</font></tt>&rdquo;
++ &ldquo;value of the 5th column&rdquo;.</p>
+</ul><p style="line-height: 100%;">The 4th column
+contains the path name
+whereby <tt><a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#fname">$fname</a></tt>
+is replaced by the value indicated for the option <tt><font size="2">-d</font></tt>.
+The 5th column contains the so-called file name extension. The name
+of the permanent file which was copied by <b>mrun</b> to
+the local
+file <tt>PARIN</tt> thereby reads: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">~/palm/current_version/JOBS/abcde/INPUT/abcde_p3d.</font></pre></ul>
+<p style="line-height: 100%;">In the same way the names of
+the
+permanent files of the remaining <font color="#000000">file
+connection statements </font>can be formed. </p>
+<p style="line-height: 100%;">With this example
+configuration file
+exactly one input file is copied into the temporary working directory
+of the model. This file has the local name <a href="chapter_3.4.html#PARIN">PARIN</a>
+and contains the steering parameters for the model and has to be
+provided by the user for each model run. </p>
+<p style="line-height: 100%;">The example configuration
+file also
+instructs <b>mrun</b> to copy three output files of the
+model to
+appropriate permanent files of the user at the end of the run.
+There are timestep information (local file name <tt><a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a></tt>),
+the so-called header file, in which the values of the most selected
+parameters for this run (<tt><a href="chapter_3.4.html#HEADER">HEADER</a></tt>)
+are located, as well as a file with data of horizontally averaged
+vertical profiles
+(<tt><a href="chapter_3.4.html#DATA_1D_PR_NETCDF">DATA_1D_PR_NETCDF</a></tt>).
+A model run does not presuppose neither the file connection statements
+for
+output files nor their activation. But without declaring AND activating
+them usually the data produced by the model
+are lost after the end of the model run! </p>
+<p style="line-height: 100%;">As already mentioned the
+configuration
+file offers a variety of further possibilities to steer the
+execution of the model run. Some of them are described in the next
+chapter. Same applies to possible other options of the <b>mrun</b>
+call. For these please refer to the <a href="http://www.muk.uni-hannover.de/%7Eraasch/Software/mrun_beschreibung.html">mrun</a>
+documentation (in German). An <b>mrun </b>call for the
+execution of a
+model run
+on several processors on the SGI ICE of the HLRN must be
+supplemented by the following options in each case: </p>
+<ul style="font-family: monospace;"> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun - K parallel -X ... -T ... -t ... -m ---</font></pre></ul>
+<p style="line-height: 100%;">Only the indication of <tt><font style="font-size: 11pt;" size="2">-K
+parallel</font></tt> causes the parallel execution of the
+run on
+several processors (otherwise a scalar execution on one processor is
+accomplished). In addition to this the number of the
+processing elements which shall be used has to be pre-scribed with the
+option <tt><font style="font-size: 10pt;" size="2">-X</font>
+</tt><font size="2">(</font><font style="font-size: 10pt;" size="2">e.g.
+</font><tt><font style="font-size: 10pt;" size="2">-X 32</font></tt><font size="2">) and the number of tasks (processors) on onde node have to be given by option -T.</font>
+In each case the permitted CPU time in seconds and the required memory
+size in MB must be indicated by the options <tt><font style="font-size: 11pt;" size="2">-t</font></tt>
+and <tt><font style="font-size: 11pt;" size="2">-m</font></tt>,
+respectively<font face="Thorndale, serif">.</font>
+Alternatively, memory and cpu-time demands can be set by the appropriate environment
+variables in the configuration file: </p>
+<blockquote style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">%memory&nbsp; <i>1500</i> lcsgih parallel</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">%cputime <i>1000</i> lcsgih parallel</font></font></tt></blockquote>
+<p style="line-height: 100%;">The values indicated there
+can be
+overridden with the values of the options <tt><font style="font-size: 10pt;" size="2">-t</font></tt>
+and/or <tt><font style="font-size: 10pt;" size="2">-m</font></tt>,
+respectivly.</p><p style="line-height: 100%;"><span style="font-weight: bold;">Warning: When changing the coniguration file, please never use the TAB key!</span> </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.1.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.3.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;</i>
+$Id$</p>
+</body></html>

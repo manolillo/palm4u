@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.0</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Marcus Oliver Letzel"> <meta name="CREATED" content="20040723;15213734"> <meta name="CHANGED" content="20041112;13170538"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h2 style="font-style: normal; line-height: 100%;"><font size="4">3.0
+Execution of model runs</font></h2>
+<p style="line-height: 100%;">Given that the model was
+installed by the user (look at <a href="chapter_5.0.html">chapter
+5.0</a>) and that it is clear, which phenomenon is to be
+simulated,
+there is a whole set of questions which must be answered before
+executing
+the actual application run, e.g.: </p>
+<ul> <li> <p style="margin-bottom: 0cm; font-style: normal; line-height: 100%;">How
+large does the model domain have to be and what grid size does
+phenomenon to be simulated require? </p> </li> <li>
+<p style="margin-bottom: 0cm; font-style: normal; line-height: 100%;">How
+long is the time which should be simulated, i.e. which typical time
+scale does the phenomenon have? </p> </li> <li> <p style="margin-bottom: 0cm; font-style: normal; line-height: 100%;">Which
+boundary conditions and initial conditions are to be selected? </p>
+</li> <li> <p style="font-style: normal; line-height: 100%;">Which model
+output data are necessary at which points in time, in order to be able
+to analyze the phenomenon afterwards? </p> </li>
+</ul><p style="line-height: 100%;">The answers to
+these questions
+substantially determine the choice of values for the most important
+model parameters, with which the model run is steered. All possible
+parameters are described in chapters <a href="chapter_4.1.html">4.1</a>,
+<a href="chapter_4.2.html">4.2</a>
+and <a href="chapter_4.3.html">4.3</a>.
+The basic steering of the model with these parameters is explained in
+the introduction to <a href="chapter_4.0.html">chapter
+4</a>. The user will rarely use all model parameters, since many
+are
+preset with consistent default values and therefore do not have to be
+changed by the user. Some of the most important parameters are not
+preset with default values and must be adjusted by the user in each
+case. Such a typical, minimum parameter set is described in <a href="chapter_4.4.1.html">chapter
+4.4.1</a>. For the subsequent analysis of model runs, graphical
+visualization of model data is particularly important. <a href="chapter_4.5.html">Chapter
+4.5</a> describes, how such outputs are produced with the model. </p>
+<p style="line-height: 100%;">The selected parameters and
+their values
+have to be supplied to the model as an input file. The
+structure of this file is described in the introduction to <a href="chapter_4.0.html">chapter
+4</a>. The data, produced by the model, are located in a number
+of
+different output files. The model works with relative file names
+(i.e. without absolute path information). Thus all input and output
+files are
+expected and put in the directory, in which the actual model (the
+executable program created from the FORTRAN source code) is started
+(but also see next paragraph).
+All user-relevant input and output files are described in <a href="chapter_3.4.html">chapter
+3.4</a>. </p>
+<p style="line-height: 100%;">The actual model (the
+executable
+program) is not started directly via the user, but with the help of
+the shell script <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html">mrun</a>,which
+can be called by the user. This script takes over the entire pre- and
+postprocessing work, which is necessary for a model run. In addition
+to this, it generates e.g. automatically batch jobs for model runs on
+remote computers, provides for the appropriate file transfers of the
+input and output files to these computers, secures data on existing
+archives systems, starts if necessary restart jobs, and much more.
+<span style="font-weight: bold;">mrun</span> allows
+to specify
+individual path names for each simulation and
+for the different types of input/output files. The start of model runs
+with <b>mrun</b> is described in <a href="chapter_3.1.html">chapter
+3.1</a>. </p>
+<p style="line-height: 100%;">The implementation of user
+code
+extensions in
+the model is made possible by a set of defined interfaces. You will
+find references to the programming of such extensions in <a href="chapter_3.5.html">chapter
+3.5</a>. Frequently errors arise during the execution of the
+model
+after such changes, which can often be found only by interactive
+model steering and error tracing (debugging), which are described in
+<a href="chapter_3.6.html">chapter
+3.6</a>. </p>
+<hr><p style="font-style: normal; line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_2.0.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.1.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font><br>
+</p><p style="font-style: normal; line-height: 100%;"><span style="font-style: italic;">Last change:</span>
+$Id$<br>
+</p></body></html>

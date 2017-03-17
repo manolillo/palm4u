@@ -1,0 +1,15478 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  
+  
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 4.6</title>
+
+
+
+  
+ 
+  
+  
+  
+  
+  
+  
+  <meta name="GENERATOR" content="StarOffice 7 (Win32)">
+
+
+
+ 
+  
+  
+  
+  <meta name="AUTHOR" content="Marcus Oliver Letzel">
+
+
+
+ 
+  
+  
+  
+  <meta name="CREATED" content="20041103;9554421">
+
+
+
+ 
+  
+  
+  
+  <meta name="CHANGED" content="20041117;12591937">
+
+
+
+ 
+  
+  
+  
+  <meta name="KEYWORDS" content="parallel LES model">
+
+
+
+ 
+  
+  
+  
+  <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+  </style></head><body style="direction: ltr;" lang="en-US">
+
+
+
+<h3>4.6
+Listing of the steering parameters in alphabetical order<br>
+
+
+
+
+</h3>
+
+
+
+<p style="margin-bottom: 0cm;">Initialization
+parameters
+(class = I),
+run parameters (R), package parameters (P) as well as user-defined
+parameters (U) are alphabetically listed in the following table. <br>
+
+
+
+
+&nbsp;
+</p>
+
+
+
+<p style="margin-bottom: 0cm;" align="center"><br>
+
+
+
+
+</p>
+
+
+
+<table style="width: 100%;" border="1" cellpadding="2" cellspacing="4">
+
+
+
+ <col width="38*">
+  <col width="12*"> <col width="18*"> <col width="42*"> <col width="146*"> <tbody>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <h3><b>Parameter name</b></h3>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%"> 
+      
+      
+      
+      <h3>Class</h3>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%">
+      
+      
+      
+      <h3>Type</h3>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <h3>Default<br>
+
+
+
+
+value</h3>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <h3>Explanation</h3>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#adjust_mixing_length"><b>adjust_mixing_length</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Near-surface
+adjustment of the
+mixing length to the Prandtl-layer law.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#alpha_surface"><b>alpha_surface</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Inclination
+of the model domain
+with respect to the horizontal (in degrees).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#averaging_interval"><span style="font-weight: bold;">averaging_interval</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">0.0</span></td>
+
+
+
+ <td>Averaging
+interval for all&nbsp;output of temporally averaged data (in s).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#averaging_interval_pr"><b>averaging_interval_pr</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><span style="font-style: italic;">value of <a href="chapter_4.2.html#averaging_interval">averaging_<br>
+
+
+
+
+interval</a></span></td>
+
+
+
+ <td style="width: 57%; text-align: left; vertical-align: middle;">
+Averaging interval for vertical profiles&nbsp;output to local
+file <font color="#000000"><font color="#000000"><a href="chapter_3.4.html#DATA_1D_PR_NETCDF">DATA_1D_PR_NETCDF</a>
+      </font></font>and/or&nbsp; <a href="chapter_3.4.html#PLOT1D_DATA">PLOT1D_DATA</a>
+(in s).&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#averaging_interval_sp"><b>averaging_interval_sp</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><span style="font-style: italic;">value of <a href="chapter_4.2.html#averaging_interval">averaging_<br>
+
+
+
+
+interval</a></span></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">Averaging
+interval for spectra output to local
+file <font color="#000000"><font color="#000000"><a href="chapter_3.4.html#DATA_1D_SP_NETCDF">DATA_1D_SP_NETCDF</a>
+      </font></font>and/or&nbsp; <a href="chapter_3.4.html#PLOTSP_X_DATA">PLOTSP_X_DATA</a>
+/ &nbsp;&nbsp; <a href="chapter_3.4.html#PLOTSP_Y_DATA">PLOTSP_Y_DATA</a>
+(in s).&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_e_b"><b>bc_e_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'neumann'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom boundary condition of the
+TKE. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.1.html#bc_lr"><b>bc_lr</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">C * 20<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">´cyclic´</span><br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;">Boundary
+condition along x (for all quantities).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;"><b><b><a href="chapter_4.1.html#bc_ns"><b>bc_ns</b></a></b></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">C * 20</td>
+
+
+
+ <td style="vertical-align: middle;"><span style="font-style: italic;">'cyclic'</span></td>
+
+
+
+
+      <td style="vertical-align: middle;">Boundary
+condition along y (for all quantities).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_p_b"><b>bc_p_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'neumann'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom boundary condition of the
+perturbation pressure. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_p_t"><b>bc_p_t</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'dirichlet'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Top boundary condition of the
+perturbation pressure. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#bc_par_b"><b>bc_par_b</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">C*15</td>
+
+
+
+ <td style="vertical-align: middle;"><i>´reflect´</i></td>
+
+
+
+
+      <td style="vertical-align: middle;"> 
+      
+      
+      
+      <p>Bottom
+boundary condition for particle transport. </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#bc_par_lr"><b>bc_par_lr</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">C*15</td>
+
+
+
+ <td style="vertical-align: middle;"><i>´cyclic´</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Lateral boundary
+condition
+(x-direction) for particle
+transport.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#bc_par_ns"><b>bc_par_ns</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">C*15</td>
+
+
+
+ <td style="vertical-align: middle;"><i>´cyclic´</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Lateral boundary
+condition
+(y-direction) for particle
+transport.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#bc_par_t"><b>bc_par_t</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">C*15</td>
+
+
+
+ <td style="vertical-align: middle;"><i>´absorb´</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Top boundary
+condition for
+particle transport.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_pt_b"><b>bc_pt_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'dirichlet'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom boundary condition of the
+potential temperature. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#pc_pt_t"><b>bc_pt_t</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'initial_gradient'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Top boundary condition of the
+potential temperature. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_q_b"><b>bc_q_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'dirichlet'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom boundary condition of the
+specific humidity / total water content. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_q_t"><b>bc_q_t</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'neumann'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Top boundary condition of the
+specific humidity / total water content. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_s_b"><b>bc_s_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'dirichlet'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom boundary condition of the
+scalar concentration. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_s_t"><b>bc_s_t</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>´neumann´</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Top boundary condition of the
+scalar concentration. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#bc_sa_t"><span style="font-weight: bold;">bc_sa_t</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">C * 20</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">'neumann'</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Top boundary condition of the salinity.&nbsp;</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_uv_b"><b>bc_uv_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'dirichlet'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom boundary condition of the horizontal wind
+components u
+and v.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#bc_uv_t"><b>bc_uv_t</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'dirichlet'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Top boundary condition of the
+horizontal velocity components u and v.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#bottom_salinityflux"><span style="font-weight: bold;">bottom_salinityflux</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">0.0</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Kinematic salinity flux near the surface (in psu m/s).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td style="font-weight: bold;"><a href="chapter_4.1.html#building_height">building_height</a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td style="font-style: italic;">50.0</td>
+
+
+
+ <td>Height
+of a single building in m.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="font-weight: bold;"><a href="chapter_4.1.html#building_length_x">building_length_x</a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td style="font-style: italic;">50.0</td>
+
+
+
+ <td>Width
+of a single building in m.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="font-weight: bold;"><a href="chapter_4.1.html#building_length_y">building_length_y</a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td style="font-style: italic;">50.0</td>
+
+
+
+ <td>Depth
+of a single building in m.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="font-weight: bold; vertical-align: middle;"><a href="chapter_4.1.html#building_wall_left">building_wall_left</a></td>
+
+
+
+
+      <td style="vertical-align: middle;">I</td>
+
+
+
+ <td style="vertical-align: middle;">R</td>
+
+
+
+ <td style="font-style: italic;"><span style="font-style: italic;">building centered in x-direction</span></td>
+
+
+
+
+      <td style="vertical-align: middle;">x-coordinate of the
+left building wall in m.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="font-weight: bold; vertical-align: middle;"><a href="chapter_4.1.html#building_wall_south">building_wall_south</a></td>
+
+
+
+
+      <td style="vertical-align: middle;">I</td>
+
+
+
+ <td style="vertical-align: middle;">R</td>
+
+
+
+ <td style="font-style: italic;"><span style="font-style: italic;">building centered in y-direction</span></td>
+
+
+
+
+      <td style="vertical-align: middle;">y-coordinate of the
+South building wall&nbsp;in m.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#call_psolver_at_all_substeps"><b>call_psolver_at_all_substeps</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">L<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">.T..</span><br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">Switch
+to steer the call of the pressure solver.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td><b><b><a href="chapter_4.2.html#fcl_factor"><b>canopy_mode</b></a></b></b></td>
+      <td>I</td>
+      <td>C * 20</td>
+      <td><span style="font-style: italic;">'block'</span></td>
+      <td>Canopy mode</td>
+    </tr>
+    <tr><td style="font-weight: bold;"><a href="chapter_4.1.html#canyon_height">canyon_height</a></td><td>I</td><td>R</td><td style="font-style: italic;">50.0</td><td>Street canyon height
+in m.</td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#canyon_width_x">canyon_width_x</a></td><td>I</td><td>R</td><td style="font-style: italic;">9999999.9</td><td>Street canyon width in x-direction in m.</td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#canyon_width_y">canyon_width_y</a></td><td>I</td><td>R</td><td style="font-style: italic;">9999999.9</td><td>Street canyon width in y-direction in m.</td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#canyon_wall_left">canyon_wall_left</a></td><td>I</td><td>R</td><td style="font-style: italic;">canyon centered in x-direction</td><td>x-coordinate of the left canyon wall&nbsp;in m.</td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#canyon_wall_south">canyon_wall_south</a></td><td>I</td><td>R</td><td style="font-style: italic;">canyon centered in y-direction</td><td>y-coordinate of the South canyon wall&nbsp;in m.</td></tr><tr>
+
+
+
+
+      <td><b><a href="chapter_4.2.html#fcl_factor"><b>cfl_factor</b></a></b></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><i>0.1,
+0.8&nbsp;or 0.9 </i>(see parameter description)</td>
+
+
+
+ <td>Time
+step limiting factor.</td>
+
+
+
+ </tr>
+
+
+
+ <tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#clip_dvrp_l"><span style="font-weight: bold;">clip_dvrp_l</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.0</span></td><td align="undefined" valign="undefined">Left boundary of the displayed domain (in m).</td></tr><tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#clip_dvrp_n"><span style="font-weight: bold;">clip_dvrp_n</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R</td><td align="undefined" valign="undefined"><span style="font-style: italic;">(ny+1)*dy</span></td><td align="undefined" valign="undefined">North boundary of the displayed domain (in m).</td></tr><tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#clip_dvrp_r"><span style="font-weight: bold;">clip_dvrp_r</span></a></td><td align="undefined" valign="undefined">P</td><td style="font-style: italic;" align="undefined" valign="undefined">R</td><td style="font-style: italic;" align="undefined" valign="undefined">(nx+1)*dx</td><td align="undefined" valign="undefined">Right boundary of the displayed domain (in m).</td></tr><tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#clip_dvrp_s"><span style="font-weight: bold;">clip_dvrp_s</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R</td><td align="undefined" valign="undefined">0.0</td><td align="undefined" valign="undefined">South boundary of the displayed domain (in m).</td></tr><tr>
+
+
+
+ <td style="vertical-align: top;"><a href="chapter_4.1.html#cloud_droplets"><span style="font-weight: bold;">cloud_droplets</span></a><br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: top;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: top;">L<br>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: top;"><span style="font-style: italic;">.F.</span><br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: top;">Parameter to switch
+on usage of cloud droplets.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#cloud_physics"><b>cloud_physics</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to switch on the condensation scheme. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr><td><a href="chapter_4.2.html#cluster_size"><span style="font-weight: bold;">cluster_size</span></a></td><td>P</td><td>I</td><td><span style="font-style: italic;">1</span></td><td>Vertex cluster size for polygon reduction of topography.</td></tr><tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#color_interval"><span style="font-weight: bold;">color_interval</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R(2)</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.0</span>, <span style="font-style: italic;">1.0</span></td><td align="undefined" valign="undefined">Interval of values used for determining the particle color displayed in the animation.</td></tr><tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#comp_spectra_level"><b>comp_spectra_level</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I
+(100)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>no level</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Vertical level for which horizontal spectra are to be
+calculated and output (gridpoints).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.1.html#conserve_volume_flow"><span style="font-weight: bold;">conserve_volume_flow</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>L</td>
+
+
+
+ <td><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td>Conservation
+of volume flow in x- and y-direction.</td>
+
+
+
+ </tr>
+
+
+
+ <tr><td><a href="chapter_4.1.html#conserve_volume_flow_mode"><span style="font-weight: bold;">conserve_volume_flow_mode</span></a></td><td>I</td><td>C * 16</td><td><span style="font-style: italic;">'default'</span></td><td>Modus of volume flow conservation.</td></tr><tr>
+
+      <td><b><b><a href="chapter_4.1.html#coupling_start_time"><b>coupling_start_time</b></a></b></b></td>
+      <td>I</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Simulation time of a precursor run..</td>
+    </tr>
+
+
+      <tr><td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#create_disturbances"><b>create_disturbances</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.T.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Switch
+to impose random perturbations to the horizontal
+velocity field. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#cross_normalized_x"><b>cross_normalized_x</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 10 (100)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>100
+* ' '</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Type
+of normalization applied to the x-coordinate of
+vertical
+profiles to be plotted with <span style="font-weight: bold;">profil</span>.</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#cross_normalized_y"><b>cross_normalized_y</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 10&nbsp; <br>
+
+
+
+
+(100)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>100 * ' '</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Type of normalization applied to the y-coordinate of
+vertical
+profiles to be plotted with <span style="font-weight: bold;">profil</span>.
+      <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#cross_profiles"><b>cross_profiles</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 100 (100)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p>see
+parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Determines
+which vertical profiles are to be presented
+in
+which coordinate system if the plot software <span style="font-weight: bold;">profil</span> is
+used.&nbsp; <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#cross_xtext"><b>cross_xtext</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 40&nbsp; <br>
+
+
+
+
+&nbsp;(100)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p>see
+parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>x-axis
+labels of vertical profile coordinate systems to
+be
+plotted with <span style="font-weight: bold;">profil</span>.
+      <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td><b><b><a href="chapter_4.1.html#cthf"><b>cthf</b></a></b></b></td>
+      <td>R</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Average heat flux that is prescribed at the top of the plant canopy (in K m/s).</td>
+    </tr>
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#cut_spline_overshoot"><b>cut_spline_overshoot</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.T.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Cut
+off of so-called overshoots, which can occur with
+the upstream-spline-scheme.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#cycle_mg"><b>cycle_mg</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 1</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'w'</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%">Type
+of cycle to
+be used with the multi-grid
+method.&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#damp_level_1d"><b>damp_level_1d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>zu(nz+1)</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Height
+where the damping layer begins in the 1d-model
+(in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#data_output"><span style="font-weight: bold;">data_output</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>C * 10 (100)</td>
+
+
+
+ <td><span style="font-style: italic;">100 * ´ ´</span></td>
+
+
+
+
+      <td>Quantities for which 2d cross section and/or 3d volume data
+are to be output.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#data_output_format"><span style="font-weight: bold;">data_output_format</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>C * 10 (10)</td>
+
+
+
+ <td><span style="font-style: italic;">'netcdf'</span></td>
+
+
+
+
+      <td>Format of output data.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#data_output_pr"><span style="font-weight: bold;">data_output_pr</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>C * 10 (100)</td>
+
+
+
+ <td><span style="font-style: italic;">100 * ' '</span></td>
+
+
+
+
+      <td>Quantities for which vertical profiles (horizontally
+averaged)
+are to be output.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+      <td><a href="chapter_4.3.html#data_output_pr_user"><span style="font-weight: bold;">data_output_pr_user</span></a></td>
+
+
+
+      <td>U</td>
+
+
+
+      <td>C * 10<br>
+
+
+
+(200)</td>
+
+
+
+      <td><span style="font-style: italic;">200 * ' '</span></td>
+
+
+
+      <td>User defined quantities for which horizontally averaged profile data is to be output.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#data_output_sp"><span style="font-weight: bold;">data_output_sp</span></a></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>C * 10 (10)</td>
+
+
+
+ <td><span style="font-style: italic;">10 * ' '</span></td>
+
+
+
+
+      <td>Quantities for which horizontal spectra are to be calculated
+and output.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.3.html#data_output_user"><span style="font-weight: bold;">data_output_user</span></a></td>
+
+
+
+
+      <td>U</td>
+
+
+
+ <td>C * 10 (100)</td>
+
+
+
+ <td><span style="font-style: italic;">100 * ' '</span></td>
+
+
+
+
+      <td>User defined quantities for which 2d cross section and/or 3d
+volume data are to be output.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#data_output_2d_on_each_pe"><span style="font-weight: bold;">data_output_2d_on_each_pe</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>L</td>
+
+
+
+ <td><span style="font-style: italic;">.T.</span></td>
+
+
+
+ <td>Output
+2d cross section data by one or
+all processors.&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#density_ratio"><b>density_ratio</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>0.0, 9</i> * <i>9999999.9</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Ratio of the density of the fluid and the density of the
+particles.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#dissipation_1d"><span style="font-weight: bold;">dissipation_1d</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>C * 20</td>
+
+
+
+ <td><span style="font-style: italic;">'as_in_3d_model'</span></td>
+
+
+
+
+      <td>Calculation method for the energy dissipation term in the TKE
+equation of the 1d-model.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#disturbance_amplitude"><b>disturbance</b></a>&nbsp;&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#disturbance_amplitude">&nbsp;<b>_amplitude</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.25</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Maximum
+perturbation amplitude of the random
+perturbations
+imposed to the horizontal velocity field (in m/s). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#disturbance_energy_limit"><b>disturbance_energy</b></a>&nbsp;&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#disturbance_energy_limit">&nbsp;<b>_limit</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.01</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB">Upper limit value of the
+perturbation energy of
+the velocity field used as a criterion for imposing random
+perturbations (in m<sup>2</sup>/s<sup>2</sup>).&nbsp;</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#disturbance_level_b"><b>disturbance_level_b</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>zu(3) or zu(nz*2/3)</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale, serif"><font size="3">Lower
+limit of the vertical range for which random perturbations are to be
+imposed on the horizontal wind field (</font></font>in <font face="Thorndale, serif"><font size="3">m).&nbsp;
+      </font></font> </p>
+
+
+
+ <span lang="en-GB"></span></td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#disturbance_level_t"><b>disturbance_level_t</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>zu(nz/3) or zu(nzt-3)</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale, serif"><font size="3">Upper
+limit of the vertical range for which random perturbations are to be
+imposed on the horizontal wind field (</font></font>in <font face="Thorndale, serif"><font size="3">m). <br>
+
+
+
+
+      </font></font></p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td><a href="chapter_4.2.html#do2d_at_begin"><span style="font-weight: bold;">do2d_at_begin</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>L</td>
+
+
+
+ <td><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td>Output
+2d cross section data by one or
+all processors.&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#do3d_at_begin"><span style="font-weight: bold;">do3d_at_begin</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>L</td>
+
+
+
+ <td><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td>Output
+of 3d volume data at the beginning
+of a run.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#do3d_compress"><span style="font-weight: bold;">do3d_compress</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>L</td>
+
+
+
+ <td><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td>Output
+of data for 3d plots in compressed form.&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#do3d_comp_prec"><span style="font-weight: bold;">do3d_comp_prec</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>C * 7 (100)</td>
+
+
+
+ <td>see
+parameter description</td>
+
+
+
+ <td>Significant digits in case
+of compressed data output.&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr><td style="font-weight: bold;"><a href="chapter_4.1.html#dp_external">dp_external</a></td><td>R</td><td>L</td><td style="font-style: italic;">.F.</td><td>External pressure gradient switch.</td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#dp_smooth">dp_smooth</a></td><td>R</td><td>L</td><td style="font-style: italic;">.F.</td><td>Vertically smooth the external pressure gradient using a sinusoidal smoothing function.</td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#dp_level_b">dp_level_b</a></td><td>R</td><td>R</td><td style="font-style: italic;">0.0</td><td><font size="3">Lower
+limit of the vertical range for which the external pressure gradient is applied (</font>in <font size="3">m).</font></td></tr><tr><td style="font-weight: bold;"><a href="chapter_4.1.html#dpdxy">dpdxy</a></td><td>R</td><td>R (2)</td><td style="font-style: italic;">2 * 0.0</td><td>Values of the external pressure gradient applied in x- and y-direction, respectively (in Pa/m).<br></td></tr><tr>
+      <td><a href="chapter_4.1.html#drag_coefficient"><span style="font-weight: bold;">drag_coefficient</span></a></td>
+      <td>I</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Drag coefficient used in the plant canopy model.</td>
+    </tr>
+    <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dt"><b>dt</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I/R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>variable</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p><font face="Thorndale, serif"><font size="3">Time
+step for the 3d-model (</font></font>in <font face="Thorndale, serif"><font size="3">s). <br>
+
+
+
+
+      </font></font></p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td><a href="chapter_4.2.html#dt_averaging_input"><span style="font-weight: bold;">dt_averaging_input</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">0.0</span></td>
+
+
+
+ <td>Temporal
+interval of&nbsp;data which are subject to temporal averaging (in
+s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_averaging_input_pr"><b>dt_averaging_input_pr</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><span style="font-style: italic;">value of <a href="chapter_4.2.html#dt_averaging_input">dt_<br>
+
+
+
+
+averaging_<br>
+
+
+
+
+input</a></span></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">Temporal
+interval of&nbsp;data which are subject to temporal averaging of <font face="Thorndale, serif"><font size="3">vertical
+profiles and/or spectra&nbsp;(</font></font>in <font face="Thorndale, serif"><font size="3">s).&nbsp;</font></font></td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a style="font-weight: bold;" href="chapter_4.2.html#dt_coupling">dt_coupling</a></td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined">9999999.9</td>
+
+
+
+      <td align="undefined" valign="undefined">Temporal interval for the data exchange in case of runs with coupled models (e.g. atmosphere - ocean) (in s).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#dt_data_output"><span style="font-weight: bold;">dt_data_output</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">9999999.9</span></td>
+
+
+
+
+      <td> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font>
+at which&nbsp;data (3d volume data (instantaneous or time
+averaged),
+cross sections (instantaneous or time averaged), vertical profiles,
+spectra) shall be output (</font>in <font face="Thorndale">s).&nbsp;</font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#dt_data_output_av"><span style="font-weight: bold;">dt_data_output_av</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal
+interval</font>
+at which time averaged 3d volume data and/or 2d cross section data
+shall be output (</font>in <font face="Thorndale">s).&nbsp;</font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_disturb"><b>dt_disturb</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>9999999.9</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which random
+perturbations are to be imposed on the horizontal velocity field
+(</font>in <font face="Thorndale">s). <br>
+
+
+
+ </font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#dt_dopr"><span style="font-weight: bold;">dt_dopr</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td><span lang="en-GB"><font face="Thorndale">Temporal interval at
+which data&nbsp;of vertical profiles shall be output (to local
+file <a href="chapter_3.4.html#DATA_1D_PR_NETCDF">DATA_1D_PR_NETCDF</a>
+or/and </font></span><a href="chapter_3.4.html#PLOT1D_DATA"><span lang="en-GB"><font face="Thorndale">PLOT1D_DATA</font></span></a><span lang="en-GB"><font face="Thorndale">) (</font></span>in
+      <span lang="en-GB"><font face="Thorndale">s).&nbsp;</font></span></td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#dt_dopr_listing"><span style="font-weight: bold;">dt_dopr_listing</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">9999999.9</span></td>
+
+
+
+
+      <td> 
+      
+      
+      
+      <p><span lang="en-GB"><font face="Thorndale, serif">Temporal
+interval</font> at which data <font face="Thorndale">of
+vertical
+profiles shall be output (output for printouts, local file </font></span><a href="chapter_3.4.html#LIST_PROFIL"><span lang="en-GB"><font face="Thorndale">LIST_PROFIL</font></span></a><span lang="en-GB"><font face="Thorndale">) (</font></span>in
+      <span lang="en-GB"><font face="Thorndale">s).&nbsp;</font></span>
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td align="undefined" valign="undefined"><a href="chapter_4.2.html#dt_dopts"><span style="font-weight: bold;">dt_dopts</span></a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">P</td>
+
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td align="undefined" valign="undefined"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal
+interval</font> at which time series data of particle quantities
+shall be output (</font>in <font face="Thorndale">s).&nbsp;</font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_dosp"><b>dt_dosp</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">Temporal
+interval at which&nbsp;spectra data shall be output
+(in s).&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_dots"><b>dt_dots</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>see parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which&nbsp;time series data shall be output (</font>in <font face="Thorndale">s). <br>
+
+
+
+ </font></p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_do2d_xy"><b>dt_do2d_xy</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which horizontal cross section data shall be output (</font>in <font face="Thorndale">s). <br>
+
+
+
+ </font></p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_do2d_xz"><b>dt_do2d_xz</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which vertical cross section data (xz) shall be output&nbsp;(</font>in
+      <font face="Thorndale">s). <br>
+
+
+
+ </font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_do2d_yz"><b>dt_do2d_yz</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which vertical cross section data (yz)&nbsp;shall be
+output&nbsp;(</font>in s<font face="Thorndale">).</font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_do3d"><b>dt_do3d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_data_output">dt_data_<br>
+
+
+
+
+output</a></i></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which 3d volume data shall be output (</font>in <font face="Thorndale">s). <br>
+
+
+
+ </font></p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td><b><a href="chapter_4.2.html#dt_dvrp"><b>dt_dvrp</b></a></b></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">9999999.9</span></td>
+
+
+
+
+      <td>Temporal interval of scenes to be displayed with the <span style="font-weight: bold;">dvrp</span> software (in
+s). </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+      <td><a style="font-weight: bold;" href="chapter_4.2.html#dt_max">dt_max</a></td>
+
+
+
+      <td>R</td>
+
+
+
+      <td>R</td>
+
+
+
+      <td><span style="font-style: italic;">20.0</span></td>
+
+
+
+      <td>Maximum
+allowed value of the timestep (in s).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td align="undefined" valign="undefined"><a href="chapter_4.2.html#dt_min_part"><span style="font-weight: bold;">dt_min_part</span></a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">P</td>
+
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">0.0002</span></td>
+
+
+
+ <td align="undefined" valign="undefined">Minimum value
+for the particle timestep when SGS velocities are used (in s).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_prel"><b>dt_prel</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>9999999.9</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p><font face="Thorndale, serif"><span lang="en-GB">Temporal
+interval at
+which particles are to be released <span lang="en-GB">from
+a particle
+source </span>(</span></font>in <font face="Thorndale, serif"><span lang="en-GB">s).</span>&nbsp;</font></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dt_pr_1d"><b>dt_pr_1d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>9999999.9</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Temporal
+interval of vertical profile output of the
+1D-model
+(in s).&nbsp;</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#dt_restart"><b>dt_restart</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">9999999.9<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><font face="Thorndale"><font face="Thorndale, serif">Temporal
+interval</font> at which a new
+restart run is to be carried out (</font>in <font face="Thorndale">s).</font></td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dt_run_control"><b>dt_run_control</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>60.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale"><font face="Thorndale, serif">Temporal interval</font> at
+which run control
+output is to be made (</font>in <font face="Thorndale">s).
+      <br>
+
+
+
+ </font></p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dt_run_control_1d"><b>dt_run_control_1d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>60.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Temporal
+interval of runtime control output of the
+1d-model
+(in s).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td><a href="chapter_4.2.html#dt_sort_particles"><span style="font-weight: bold;">dt_sort_particles</span></a></td>
+      <td>P</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Temporal interval for sorting particles (in s).</td>
+    </tr>
+    <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#dt_write_particle_data"><b>dt_write_particle_data</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><i>9999999.9</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Temporal
+interval for output
+of particle data (in s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_directory"><b>dvrp_directory</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 80</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'default'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Name of the directory into which data created by the <span style="font-weight: bold;">dvrp</span>
+software shall be saved. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_file"><b>dvrp_file</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 80</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'default'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Name of the file into which data created by the <span style="font-weight: bold;">dvrp</span> software shall
+be output.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_host"><b>dvrp_host</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 80</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'origin.rvs. <br>
+
+
+
+
+uni- hanover.de'</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Name
+of the computer to which data created by the <span style="font-weight: bold;">dvrp</span> software shall
+be
+transferred. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_output"><b>dvrp_output</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 10</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'rtsp'</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Output
+mode for the <span style="font-weight: bold;">dvrp</span>
+software. </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_password"><b>dvrp_password</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 80</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'********'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">Password
+for the
+computer to which data created
+by the <span style="font-weight: bold;">dvrp</span>
+software is to be
+transferred.</td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_psize"><b>dvrp_psize</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.2</i> * <i>dx</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Diameter
+that the particles is given in visualizations
+with
+the <span style="font-weight: bold;">dvrp</span>
+software (in
+m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#dvrpsize_interval"><span style="font-weight: bold;">dvrpsize_interval</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R(2)</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.0</span>, <span style="font-style: italic;">1.0</span></td><td align="undefined" valign="undefined">Interval of values used for determining the particle size displayed in the animation.</td></tr><tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#dvrp_username"><b>dvrp_username</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 80</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p>no default value </p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>User
+name of a valid account on the computer to which
+data
+created by the <span style="font-weight: bold;">dvrp</span>
+software
+is to be
+transferred. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dx"><b>dx</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Horizontal
+grid spacing along the x-direction (in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dy"><b>dy</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Horizontal
+grid spacing along the y-direction (in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dz"><b>dz</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>no default, see parameter description </p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Vertical
+grid spacing (in m).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td align="undefined" valign="undefined"><a style="font-weight: bold;" href="chapter_4.1.html#dz_max">dz_max</a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">9999999.9</span></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Allowed
+maximum vertical grid spacing (in m).<br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#dz_stretch_factor"><b>dz_stretch_factor</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.08</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Stretch
+factor for a vertically stretched grid (see <a href="chapter_4.1.html#dz_stretch_level">dz_stretch_level</a>).</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#dz_stretch_level"><b>dz_stretch_level</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>100000.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Height
+level above/below which the grid is to be stretched
+vertically (in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+      <td><a href="chapter_4.1.html#e_init"><span style="font-weight: bold;">e_init</span></a></td>
+
+
+
+      <td>I</td>
+
+
+
+      <td>R</td>
+
+
+
+      <td style="font-style: italic;">0.0</td>
+
+
+
+      <td>Initial TKE in m<sup>2</sup>s<sup>-2</sup>.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td><a href="chapter_4.1.html#e_min"><b>e_min</b></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td style="font-style: italic;">0.0</td>
+
+
+
+
+      <td>Minimum TKE in m<sup>2</sup>s<sup>-2</sup>.</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#end_time"><b>end_time</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p lang="en-GB"><font face="Thorndale">Simulation
+time of the 3D
+model (</font>in <font face="Thorndale">s)</font><font face="Thorndale">.</font></p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td align="undefined" valign="undefined"><a href="chapter_4.2.html#end_time_prel"><span style="font-weight: bold;">end_time_prel</span></a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">P</td>
+
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">9999999.9</span></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Time of
+the last release of particles (in s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#end_time_1d"><b>end_time_1d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>864000.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Time
+to be simulated for the 1D-model (in s).&nbsp;</p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#fft_method"><b>fft_method</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'system specific'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>FFT-method to be used.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#force_print_header"><b>force_print_header</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="width: 57%; vertical-align: middle;"> 
+      
+      
+      
+      <p>Steering
+of header output to the local file <a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a>. </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#galilei_transformation"><b>galilei_transformation</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Application
+of a Galilei-transformation to the
+coordinate
+system of the model.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#grid_matching"><b>grid_matching</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 6</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'strict'</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Variable
+to adjust the subdomain sizes in parallel runs.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#groundplate_color"><span style="font-weight: bold;">groundplate_color</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R(3)</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.0, 0.6, 0.0</span></td><td align="undefined" valign="undefined">Color of the ground plate</td></tr><tr>
+
+
+
+      <td><b><a href="chapter_4.1.html#humidity"><b>humidity</b></a></b></td>
+
+
+
+      <td>I</td>
+
+
+
+      <td>L</td>
+
+
+
+      <td><span style="font-style: italic;">.F.</span></td>
+
+
+
+      <td>Parameter
+to switch on the prognostic equation for
+specific
+humidity q.</td>
+
+
+
+    </tr>
+
+
+
+    <tr><td align="undefined" valign="undefined"><a href="chapter_4.1.html#inflow_damping_height"><span style="font-weight: bold;">inflow_damping_height</span></a></td><td align="undefined" valign="undefined">I</td><td align="undefined" valign="undefined">R</td><td align="undefined" valign="undefined"><span style="font-style: italic;">from precursor run</span></td><td align="undefined" valign="undefined">Height below which the turbulence signal is used for turbulence recycling (in m).</td></tr><tr><td align="undefined" valign="undefined"><a href="chapter_4.1.html#inflow_damping_width"><span style="font-weight: bold;">inflow_damping_width</span></a></td><td align="undefined" valign="undefined">I</td><td align="undefined" valign="undefined">R</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.1 * <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#inflow_damping_height">inflow_damping</a></span><a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#inflow_damping_height"><span style="font-style: italic;">_height</span></a></td><td align="undefined" valign="undefined">Transition range within which the turbulance signal is damped to zero (in m).</td></tr><tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.1.html#inflow_disturbance_begin"><b>inflow_disturbance_begin</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">MIN(10,</span><br style="font-style: italic;">
+
+
+
+ <span style="font-style: italic;">nx/2 or ny/2)</span></td>
+
+
+
+
+      <td style="vertical-align: middle;">Lower
+limit of the horizontal range for which random perturbations are to be
+imposed on the horizontal velocity field (gridpoints).</td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><b><a href="chapter_4.1.html#inflow_disturbance_end"><b>inflow_disturbance_end</b></a></b></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">MIN(100,</span><br style="font-style: italic;">
+
+
+
+ <span style="font-style: italic;">3/4*nx or</span><br style="font-style: italic;">
+
+
+
+ <span style="font-style: italic;">3/4*ny)</span></td>
+
+
+
+ <td style="vertical-align: middle;">Upper
+limit of the horizontal range for which random perturbations are
+to be imposed on the horizontal velocity field (gridpoints).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#initializing_actions"><b>initializing_actions</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 100</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p>no default, see parameter description</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p style="font-style: normal;">Initialization
+actions
+to be carried out. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: top;"><a href="chapter_4.2.html#initial_weighting_factor"><span style="font-weight: bold;">initial_weighting_factor</span></a><br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: top;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: top;">R<br>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: top;"><span style="font-style: italic;">1.0</span><br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: top;">Factor to define
+the real number of initial droplets in a grid cell.</td>
+
+
+
+ </tr>
+
+
+
+
+    <tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#isosurface_color"><span style="font-weight: bold;">isosurface_color</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R(3,10)</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.9, 0.9, 0.9</span><br style="font-style: italic;"><span style="font-style: italic;">0.8, 0.1, 0.1</span><br style="font-style: italic;"><span style="font-style: italic;">......</span></td><td align="undefined" valign="undefined">Color of the isosurface(s).</td></tr><tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#km_constant"><b>km_constant</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>variable (computed from TKE)</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Constant
+eddy diffusivities are used (laminar
+simulations).&nbsp;</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;"><b><a href="chapter_4.1.html#km_damp_max"><b>km_damp_max</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">0.5*(dx
+or dy)</span></td>
+
+
+
+ <td style="vertical-align: middle;">Maximum
+diffusivity used for filtering the velocity field in the vicinity of
+the outflow (in m<sup>2</sup>/s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td><b><a href="chapter_4.1.html#lad_surface"><b>lad_surface</b></a></b></td>
+      <td>I</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Surface value of the leaf area density (in m<sup>2</sup>/m<sup>3</sup>)</td>
+    </tr>
+    <tr>
+      <td><b><a href="chapter_4.1.html#lad_vertical_gradient"><b>lad_vertical_gradient</b></a></b></td>
+      <td>I</td>
+      <td>R (10)</td>
+      <td><span style="font-style: italic;">10 * 0.0</span></td>
+      <td>Gradient(s) of the leaf area density (in&nbsp;m<sup>2</sup>/m<sup>4</sup>)</td>
+    </tr>
+    <tr>
+      <td><b><b><a href="chapter_4.1.html#lad_vertical_gradient_level"><b>lad_vertical_gradient_level</b></a></b></b></td>
+      <td>I</td>
+      <td>R (10)</td>
+      <td><span style="font-style: italic;">10 * 0.0</span></td>
+      <td>Height level from which on the&nbsp;gradient
+of the leaf area density defined by <a href="chapter_4.1.html#lad_vertical_gradient">lad_vertical_gradient_level</a>
+is effective (in m).</td>
+    </tr>
+    <tr>
+      <td><b><b><b><b><a href="chapter_4.1.html#leaf_surface_concentration"><b>leaf_surface_concentration</b></a></b></b></b></b></td>
+      <td>R</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Concentration of a passive
+scalar at the surface of a leaf (in kg/m<sup>3</sup>).</td>
+    </tr>
+    <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#long_filter_factor"><b>long_filter_factor</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Filter
+factor for the so-called Long-filter.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td><a style="font-weight: bold;" href="chapter_4.1.html#loop_optimization">loop_optimization</a></td>
+
+
+
+      <td>I</td>
+
+
+
+      <td>C * 16</td>
+
+
+
+      <td>see parameter description</td>
+
+
+
+      <td>Method used to optimize loops for solving the prognostic equations .</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#maximum_number_of_particles"><b>maximum_number_</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.2.html#maximum_number_of_particles"><b>of_particles</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1000</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Maximum
+number of particles (on a PE). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#maximum_number_of_tailpoints"><b>maximum_number_</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.2.html#maximum_number_of_tailpoints"><b>of_tailpoints</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>100</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Maximum
+number of tailpoints that a particle tail can
+have. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#maximum_tailpoint_age"><b>maximum_tailpoint_</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.2.html#maximum_tailpoint_age"><b>age</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>100000.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Maximum
+age that the end point of a particle tail is allowed to have (in s). <br>
+
+
+
+
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><b><a href="chapter_4.2.html#mg_cycles"><b>mg_cycles</b></a></b></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>I</td>
+
+
+
+ <td><i>- 1</i></td>
+
+
+
+
+      <td>Number of cycles to be used with the multi-grid scheme.</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td><b><b><a href="chapter_4.2.html#mg_switch_to_pe0_level"><b>mg_switch_to_pe0_level</b></a></b></b></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>I</td>
+
+
+
+ <td>see parameter
+description</td>
+
+
+
+ <td>Grid
+level at which data shall be gathered on PE0.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#minimum_tailpoint_distance"><b>minimum_tailpoint_</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.2.html#minimum_tailpoint_distance"><b>distance</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Minimum
+distance allowed between two adjacent points of
+a
+particle tail (in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.1.html#mixing_length_1d"><span style="font-weight: bold;">mixing_length_1d</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>C * 20</td>
+
+
+
+ <td><span style="font-style: italic;">'as_in_3d_model'</span></td>
+
+
+
+
+      <td>Mixing length used in the 1d-model.</td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#mode_dvrp"><b>mode_dvrp</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20 (10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * ' '</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Graphical objects (isosurfaces, slicers, particles)
+which are
+to be created by the <span style="font-weight: bold;">dvrp</span>
+software. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+  <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#momentum_advec"><b>momentum_advec</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 10</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'pw-scheme</i>'</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Advection scheme to be used for the momentum equations.</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td style="vertical-align: top;"><a href="chapter_4.2.html#netcdf_data_format"><span style="font-weight: bold;">netcdf_data_format</span></a><br>
+      </td>
+      <td style="vertical-align: top;">R<br>
+      </td>
+      <td style="vertical-align: top;">I<br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-style: italic;">2</span><br>
+      </td>
+      <td style="vertical-align: top;">Data format for NetCDF files.<br>
+      </td>
+    </tr>
+<tr>
+
+
+
+ <td><a href="chapter_4.1.html#netcdf_precision"><span style="font-weight: bold;">netcdf_precision</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>C * 20 (10)</td>
+
+
+
+ <td><span style="font-style: italic;">single preci</span><span style="font-style: italic;">sion for all</span><br style="font-style: italic;">
+
+
+
+ <span style="font-style: italic;">output quan</span><span style="font-style: italic;">tities</span></td>
+
+
+
+ <td>Defines
+the accuracy of the NetCDF output.<br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ 
+
+
+
+ 
+
+
+
+    <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#ngsrb"><b>ngsrb</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>2</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Grid
+level at which data shall be gathered on PE0.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#normalizing_region"><b>normalizing_region</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Determines
+the subdomain from which the normalization
+quantities are calculated. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#npex"><b>npex</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>no default, see parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of processors along x-direction of the virtual
+processor
+net. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#npey"><b>npey</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>no default, see parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of processors along y-direction of the virtual
+processor
+net. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#nsor"><b>nsor</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>20</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of iterations to be used with the SOR-scheme. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#nsor_ini"><b>nsor_ini</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>100</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Initial
+number of iterations with the SOR algorithm</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#number_of_particle_groups"><span style="font-weight: bold;">number_of_particle_groups</span></a></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>I</td>
+
+
+
+ <td><span style="font-style: italic;">1</span></td>
+
+
+
+ <td>Number
+of particle groups to be used.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#nx"><b>nx</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>no default, see parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of grid points in x-direction. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#ny"><b>ny</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>no default, see parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of grid points in y-direction.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#nz"><b>nz</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p>no default, see parameter description</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of grid points in z-direction.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#nz_do3d"><b>nz_do3d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>nz+1</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> Limits
+the output of 3d volume data along the vertical direction (grid point
+index k).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#ocean"><span style="font-weight: bold;">ocean</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">L</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">.F.</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Parameter to switch on&nbsp;ocean runs.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#omega"><b>omega</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>7.29212E-5</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Angular
+velocity of the rotating system (in rad s<sup>-1</sup>).&nbsp;</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#omega_sor"><b>omega_sor</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.8</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Convergence
+factor to be used with the the SOR-scheme. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#outflow_damping_width"><b>outflow_damping_width</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">MIN(20,
+nx/2</span> or <span style="font-style: italic;">ny/2)</span></td>
+
+
+
+
+      <td style="vertical-align: middle;">Width of
+the damping range in the vicinity of the outflow (gridpoints).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#overshoot_limit_e"><b>overshoot_limit_e</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Allowed
+limit for the overshooting of subgrid-scale TKE
+in
+case that the upstream-spline scheme is switched on (in m<sup>2</sup>/s<sup>2</sup>).</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#overshoot_limit_pt"><b>overshoot_limit_pt</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Allowed
+limit for the overshooting of potential
+temperature in
+case that the upstream-spline scheme is switched on (in K). <br>
+
+
+
+
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#overshoot_limit_u"><b>overshoot_limit_u</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Allowed
+limit for the
+overshooting of
+the u-component of velocity in case that the upstream-spline scheme is
+switched on (in m/s).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#overshoot_limit_v"><b>overshoot_limit_v</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Allowed
+limit for the overshooting of the v-component of
+velocity in case that the upstream-spline scheme is switched on
+(in m/s). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#overshoot_limit_w"><b>overshoot_limit_w</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Allowed
+limit for the overshooting of the w-component of
+velocity in case that the upstream-spline scheme is switched on
+(in m/s). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.2.html#particles_per_point"><span style="font-weight: bold;">particles_per_point</span></a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">P</td>
+
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">1</span></td>
+
+
+
+ <td align="undefined" valign="undefined">Number of
+particles to be started per point.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: top;"><b><a href="chapter_4.2.html#particle_advection_start"><b>particle_advection_start</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: top;">P<br>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: top;">R<br>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: top;"><span style="font-style: italic;">0.0</span><br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: top;">Time of the first
+release of
+particles (in s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#particle_color"><span style="font-weight: bold;">particle_color</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">C*10</td><td align="undefined" valign="undefined"><span style="font-style: italic;">'none'</span></td><td align="undefined" valign="undefined">Parameter, which allows to bind the displayed particle color to certain flow quantities.</td></tr><tr><td align="undefined" valign="undefined"><a style="font-weight: bold;" href="chapter_4.2.html#particle_dvrpsize">particle_dvrpsize</a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">C*10</td><td align="undefined" valign="undefined"><span style="font-style: italic;">'none'</span></td><td align="undefined" valign="undefined">Parameter, which allows to bind the displayed particle size to certain flow quantities.</td></tr><tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#particle_maximum_age"><b>particle_maximum_age</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>9999999.9</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Maximum
+allowed age of particles (in s). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#passive_scalar"><b>passive_scalar</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to switch on the prognostic equation for a
+passive
+scalar. </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td><b><a href="chapter_4.1.html#pch_index"><b>pch_index</b></a></b></td>
+      <td>I</td>
+      <td>I</td>
+      <td><code></code><i>0 </i></td>
+      <td>Grid point index (scalar) of the upper boundary of the plant canopy layer</td>
+    </tr>
+    <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#pdx"><b>pdx</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * dx</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Distance
+along x between particles within a particle
+source
+(in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#pdy"><b>pdy</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * dy</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Distance
+along y between
+particles within a
+particle source (in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#pdz"><b>pdz</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * ( zu(2) - zu(1) )</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Distance along z between
+particles within a particle source
+(in m).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#phi"><b>phi</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>55.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Geographical
+latitude (in degrees). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+      <td><b><a href="chapter_4.1.html#plant_canopy"><b>plant_canopy</b></a></b></td>
+      <td>I</td>
+      <td>L</td>
+      <td><i>.F.</i></td>
+      <td>Parameter to switch on the plant canopy model</td>
+    </tr>
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#plot_spectra_level"><b>plot_spectra_level</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I
+(100)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>No level</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Vertical level(s) for which horizontal spectra are to be
+plotted (in gridpoints). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#prandtl_layer"><b>prandtl_layer</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.T.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to switch on a Prandtl layer. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.2.html#prandtl_number"><b>prandtl_number</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Ratio
+of the eddy diffusivities for momentum and heat (K<sub>m</sub>/K<sub>h</sub>).
+      <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.1.html#precipitation"><b>precipitation</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">L<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td style="vertical-align: middle;">Parameter to
+switch on the
+precipitation scheme.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+      <td><a style="font-weight: bold;" href="chapter_4.2.html#precipitation_amount_interval">precipitation_amount_<br>
+
+
+
+interval</a></td>
+
+
+
+      <td>R</td>
+
+
+
+      <td>R</td>
+
+
+
+      <td><i>value
+of &nbsp;<a href="chapter_4.2.html#dt_do2d_xy">dt_do2d_<br>
+
+
+
+
+xy</a></i></td>
+
+
+
+      <td><font face="Thorndale"><font face="Thorndale, serif">Temporal
+interval</font> for which the precipitation amount (in mm) shall be calculated and output (</font>in <font face="Thorndale">s).&nbsp;</font></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#profile_columns"><b>profile_columns</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>3</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of coordinate systems to be plotted<span style="font-weight: bold;"></span>
+in one row by <span style="font-weight: bold;">profil</span>.
+      <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#profile_rows"><b>profile_rows</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>2</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of rows of coordinate systems to be plotted on
+one page
+by <span style="font-weight: bold;">profil</span>. <br>
+
+
+
+
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#psb"><b>psb</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * zu(nz/2)</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Bottom edge of a particle
+source (in m).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#psl"><b>psl</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * 0.0</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Left edge of a particle source
+(in m). </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#psn"><b>psn</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * ( ny * dy )</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Rear (“north”) edge of a particle
+source (in m).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#psolver"><b>psolver</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 10</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'poisfft'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Scheme to be used to solve the Poisson equation for the
+perturbation pressure. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#psr"><b>psr</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * ( nx * dx )</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Right edge of a particle source (in m).</p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#pss"><b>pss</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * 0.0</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Front (“south”) edge of a particle
+source (in m).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#pst"><b>pst</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * zu(nz/2)</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Top edge of a particle source (in m).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td><a style="font-weight: bold;" href="chapter_4.1.html#pt_reference">pt_reference</a></td>
+
+
+
+      <td>I</td>
+
+
+
+      <td>R</td>
+
+
+
+      <td><span style="font-style: italic;">use horizontal average as
+reference</span></td>
+
+
+
+      <td>Reference temperature to be
+used in all buoyancy terms (in K).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#pt_surface"><b>pt_surface</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>300.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Surface
+potential temperature (in K). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#pt_surface_initial_change"><b>pt_surface_initial</b></a>&nbsp;&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.1.html#pt_surface_initial_change">&nbsp;<b>_change</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">Change
+in surface
+temperature to be made at the
+beginning of
+the 3d run
+(in K).&nbsp;</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#pt_vertical_gradient"><b>pt_vertical_gradient</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * 0.0</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Temperature gradient(s) of the initial temperature
+profile (in
+K
+/ 100 m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#pt_vertical_gradient_level"><b>pt_vertical_gradient</b></a>&nbsp;&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.1.html#pt_vertical_gradient_level">&nbsp;<b>_level</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 *</i>&nbsp; <i>0.0</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Height level from which on the temperature gradient
+defined by <a href="chapter_4.1.html#pt_vertical_gradient">pt_vertical_gradient</a>
+is effective (in m).&nbsp;</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#q_surface"><b>q_surface</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Surface
+specific humidity / total water content (kg/kg). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#q_surface_initial_change"><b>q_surface_initial</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.1.html#q_surface_initial_change">&nbsp;<b>_change</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Change
+in surface specific humidity / total water
+content to
+be made at the beginning
+of the 3d run (kg/kg). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#q_vertical_gradient"><b>q_vertical_gradient</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * 0.0</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="width: 57%; vertical-align: middle;">
+      
+      
+      
+      <p>Humidity gradient(s) of the initial humidity profile
+(in 1/100 m). </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#q_vertical_gradient_level"><b>q_vertical_gradient</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.1.html#q_vertical_gradient_level">&nbsp;<b>_level</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 *</i>&nbsp; <i>0.0</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Height level from which on the humidity gradient defined
+by <a href="chapter_4.1.html#q_vertical_gradient">q_vertical_gradient</a>
+is effective (in m).&nbsp;</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#radiation"><b>radiation</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to switch on longwave radiation cooling at
+cloud-tops. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td><a href="chapter_4.2.html#radius"><span style="font-weight: bold;">radius</span></a></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>R (10)</td>
+
+
+
+ <td><i>0.0,
+9</i>*<br>
+
+
+
+ <i>9999999.9</i></td>
+
+
+
+ <td>Particle
+radius (in m).</td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#random_generator"><b>random_generator</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'numerical recipes'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Random number generator to be used for creating
+uniformly
+distributed random numbers. </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#random_heatflux"><b>random_heatflux</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to impose random perturbations on the internal two-dimensional near
+surface heat flux field <span style="font-style: italic;">shf</span>.
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#random_start_position"><b>random_start_position</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;"><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;"><font color="#000000">Initial position of the</font></span>
+particles is
+varied randomly within certain limits.&nbsp;</span></p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#rayleigh_damping_factor"><b>rayleigh_damping</b></a>&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#rayleigh_damping_factor">&nbsp;<b>_factor</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><span style="font-style: italic;">0.0</span>
+and/or <span style="font-style: italic;">0.01</span>
+(see parameter description)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Factor
+for Rayleigh damping.&nbsp;</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#rayleigh_damping_height"><b>rayleigh_damping</b></a>&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#rayleigh_damping_height">&nbsp;<b>_height</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle; font-style: italic;" width="16%"> 
+      
+      
+      
+      <p>2/3 * zu(nz)</p>
+
+
+
+ </td>
+
+
+
+ <td style="width: 57%; text-align: left; vertical-align: middle;">
+      
+      
+      
+      <p>Height where the Rayleigh damping starts (in
+m).&nbsp; </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#read_particles_from_restartfile"><b>read_particles_from_</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.2.html#read_particles_from_restartfile"><b>restartfile</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.T.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Read
+particle data from the previous run. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr><td align="undefined" valign="undefined"><a href="chapter_4.1.html#recycling_width"><span style="font-weight: bold;">recycling_width</span></a></td><td align="undefined" valign="undefined">I</td><td align="undefined" valign="undefined">R</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.1 * <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#nx">nx</a> * <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.1.html#dx">dx</a></span></td><td align="undefined" valign="undefined">Distance of the recycling plane from the inflow boundary (in m).<br></td></tr><tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.3.html#region"><b>region</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>U</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 40 (0:9)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p>&nbsp;</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Name(s) of the subdomain(s) defined by the user.</p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#residual_limit"><b>residual_limit</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0E-6</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Largest
+residual permitted for the multi-grid scheme (in
+s<sup>-2</sup>m<sup>-3</sup>). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.2.html#restart_time"><b>restart_time</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">9999999.9<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">Simulated time
+after which a
+restart run is to be carried out
+(in s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#rif_max"><b>rif_max</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Upper
+limit of the flux-Richardson number. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#rif_min"><b>rif_min</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>- 5.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Lower
+limit of the flux-Richardson number. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#roughness_length"><b>roughness_length</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.1</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Roughness
+length (in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#sa_surface"><span style="font-weight: bold;">sa_surface</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">35.0</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Surface salinity (in psu).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#sa_vertical_gradient"><span style="font-weight: bold;">sa_vertical_gradient</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R(10)</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Salinity gradient(s) of the initial salinity profile (in psu
+/ 100 m).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#sa_vertical_gradient_level"><span style="font-weight: bold;">sa_vertical_gradient_level</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R(10)</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Height level from which on the salinity gradient defined by <a href="chapter_4.1.html#sa_vertical_gradient">sa_vertical_gradient</a>
+is effective (in m).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#scalar_advec"><b>scalar_advec</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 10</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'pw-scheme'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Advection scheme to be used for the scalar quantities. <br>
+
+
+
+
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+      <td><b><b><a href="../../../../../DEVELOPER_VERSION/chapter_4.1.html#scalar_exchange_coefficient"><b>scalar_exchange_coefficient</b></a></b></b></td>
+      <td>R</td>
+      <td>R</td>
+      <td><span style="font-style: italic;">0.0</span></td>
+      <td>Scalar exchange coefficient for a leaf (dimensionless).</td>
+    </tr>
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#section_xy"><span style="font-weight: bold;">section_xy</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>I (100)</td>
+
+
+
+ <td><span style="font-style: italic;">no section</span></td>
+
+
+
+
+      <td><font face="Thorndale">Position
+of&nbsp;cross section(s) for&nbsp;output of 2d horizontal cross
+sections (grid point index k).&nbsp;</font></td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#section_xz"><span style="font-weight: bold;">section_xz</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>I (100)</td>
+
+
+
+ <td><span style="font-style: italic;">no section</span></td>
+
+
+
+
+      <td><font face="Thorndale">Position
+of&nbsp;cross section(s) for&nbsp;output of 2d (xz) vertical
+cross sections (grid point index j).&nbsp;</font></td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#section_yz"><span style="font-weight: bold;">section_yz</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>I (100)</td>
+
+
+
+ <td><span style="font-style: italic;">no section</span></td>
+
+
+
+
+      <td><font face="Thorndale">Position
+of&nbsp;cross section(s) for&nbsp;output of 2d (yz) vertical
+cross sections (grid point index i).&nbsp;</font></td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_particles_for_tail"><span style="font-weight: bold;">skip_particles_for_tail</span></a></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>I</td>
+
+
+
+ <td><span style="font-style: italic;">100</span></td>
+
+
+
+ <td>Limit
+the number of particle tails.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_data_output"><span style="font-weight: bold;">skip_time_data_output</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">0.0</span></td>
+
+
+
+ <td>No
+data output before this interval has passed (in s).</td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_data_output_av"><span style="font-weight: bold;">skip_time_data_output_av</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+temporally averaged 2d/3d data before this interval has passed (in s).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_dopr"><span style="font-weight: bold;">skip_time_dopr</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+vertical profile data before this interval has passed (in s).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_dosp"><span style="font-weight: bold;">skip_time_dosp</span></a></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+spectra data before this interval has passed (in s).</td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_do2d_xy"><span style="font-weight: bold;">skip_time_do2d_xy</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+instantaneous horizontal cross section data before this interval has
+passed (in s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_do2d_xz"><span style="font-weight: bold;">skip_time_do2d_xz</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+instantaneous vertical (xz) cross section data before this interval has
+passed (in s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_do2d_yz"><span style="font-weight: bold;">skip_time_do2d_yz</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+instantaneous vertical (yz) cross section data before this interval has
+passed (in s).<br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#skip_time_do3d"><span style="font-weight: bold;">skip_time_do3d</span></a></td>
+
+
+
+
+      <td>R</td>
+
+
+
+ <td>R</td>
+
+
+
+ <td><span style="font-style: italic;">value of <a href="chapter_4.2.html#skip_time_data_output">skip_time_<br>
+
+
+
+
+data_output</a></span></td>
+
+
+
+ <td>No output of
+instantaneous 3d volume data before this interval has passed (in s).</td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="file:///home/raasch/public_html/PALM_group/doc/app/chapter_4.2.html#spectra_direction"><b>slicer_range_limits_dvrp</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">P<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R(2,10)<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><span style="font-style: italic;">10
+* (-1,1)</span></td>
+
+
+
+ <td style="vertical-align: middle;">Ranges
+of values to which a color table has to be mapped (units of the
+respective quantity).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#spectra_direction"><b>spectra_direction</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 2 (10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>10 * ' '</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Direction(s) along which spectra are to be calculated. <br>
+
+
+
+
+      </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#statistic_regions"><b>statistic_regions</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>I</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Number
+of additional user-defined subdomains for which
+statistical analysis
+and corresponding output (profiles, time series) shall be made.</p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#superelevation"><b>superelevation</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Superelevation
+factor for the vertical coordinate. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#superelevation_x"><b>superelevation_x</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Superelevation
+factor for the horizontal (x) coordinate. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#superelevation_y"><b>superelevation_y</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Superelevation
+factor for the
+horizontal (y) coordinate. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#surface_heatflux"><b>surface_heatflux</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><span style="font-style: italic;">no prescribed
+heatflux</span></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Kinematic
+sensible heat flux at the bottom surface (in K m/s).</p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#surface_pressure"><b>surface_pressure</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>1013.25</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Atmospheric
+pressure at the surface (in hPa)</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;"><b><a href="chapter_4.1.html#surface_scalarflux"><b>surface_scalarflux</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><i>0.0</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Scalar flux at
+the surface
+(in kg/(m<sup>2</sup> s)). <br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#surface_waterflux"><b>surface_waterflux</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Kinematic
+water flux near the surface (in m/s). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><a href="chapter_4.1.html#s_surface"><b>s_surface</b></a></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><i>0.0</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Surface value of
+the passive
+scalar (in kg/m<sup>3</sup>). <br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><b><a href="chapter_4.1.html#s_surface_initial_change"><b>s_surface_initial_change</b></a></b></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><i>0.0</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Change in
+surface scalar
+concentration to be made at the
+beginning of the 3d run (in kg/m<sup>3</sup>). <br>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"><b><b><a href="chapter_4.1.html#s_vertical_gradient"><b>s_vertical_gradient</b></a></b></b></td>
+
+
+
+
+      <td style="vertical-align: middle;">I<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;">R(10)<br>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;"><i>10 * 0</i><i>.0</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Scalar
+concentration
+gradient(s) of the initial scalar
+concentration profile (in kg/m<sup>3 </sup>/
+100 m). <br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#s_vertical_gradient_level"><span style="font-weight: bold;">s_vertical_gradient_level</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(10)</td>
+
+
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+
+      <td>Height level from which on the scalar gradient defined by <a href="chapter_4.1.html#s_vertical_gradient">s_vertical_gradient</a>
+is effective (in m).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#termination_time_needed"><b>termination_time</b></a>&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#termination_time_needed">&nbsp;<b>_needed</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>35.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>CPU
+time needed for terminal actions at the end of a run
+in
+batch mode (in s).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#threshold"><b>threshold</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>P</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R
+(10)</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+
+      <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Threshold
+value for which an isosurface is to be created
+by
+the <span style="font-weight: bold;">dvrp</span>
+software. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#timestep_scheme"><b>timestep_scheme</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>C
+* 20</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"> 
+      
+      
+      
+      <p><i>'runge-kutta-3'</i></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%">
+      
+      
+      
+      <p>Time step scheme to be used for integration of the prognostic
+variables. <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td><a href="chapter_4.1.html#topography"><span style="font-weight: bold;">topography</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>C * 40</td>
+
+
+
+ <td><span style="font-style: italic;">'flat'</span></td>
+
+
+
+ <td>Topography
+mode.</td>
+
+
+
+ </tr>
+
+
+
+ <tr><td align="undefined" valign="undefined"><a href="chapter_4.2.html#topography_color"><span style="font-weight: bold;">topography_color</span></a></td><td align="undefined" valign="undefined">P</td><td align="undefined" valign="undefined">R(3)</td><td align="undefined" valign="undefined"><span style="font-style: italic;">0.8, 0.7, 0.6</span></td><td align="undefined" valign="undefined">Color of the topography.</td></tr><tr><td style="vertical-align: top;"><a style="font-weight: bold;" href="chapter_4.1.html#topography_grid_convention">topography_grid_convention</a></td><td style="vertical-align: top;">I</td><td style="vertical-align: top;">C * 11</td><td><span style="font-style: italic;">default depends on value of <a href="chapter_4.1.html#topography">topography</a>; see text for details</span><span style="font-style: italic;"></span></td><td style="vertical-align: top;">Convention for defining the&nbsp;topography grid.</td></tr><tr>
+
+
+
+      <td><a style="font-weight: bold;" href="chapter_4.1.html#top_heatflux">top_heatflux</a></td>
+
+
+
+      <td>I</td>
+
+
+
+      <td>R</td>
+
+
+
+      <td><span style="font-style: italic;">no prescribed heatflux</span></td>
+
+
+
+      <td>Kinematic
+sensible heat flux at the top surface (in K m/s).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#top_momentumflux_u"><span style="font-weight: bold;">top_momentumflux_u</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">no prescribed momentumflux</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Momentum flux along x at the top boundary (in m2/s2).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a style="font-weight: bold;" href="chapter_4.1.html#top_momentumflux_v">top_momentumflux_v</a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">no prescribed momentumflux</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Momentum flux along y at the top boundary (in m2/s2).</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#top_salinityflux"><span style="font-weight: bold;">top_salinityflux</span></a></td>
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+      <td align="undefined" valign="undefined">R</td>
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">no prescribed</span><br style="font-style: italic;">
+
+
+
+      <span style="font-style: italic;">salinityflux</span></td>
+
+
+
+      <td align="undefined" valign="undefined">Kinematic
+salinity flux at the top boundary, i.e. the sea surface (in psu m/s).</td>
+
+
+
+    </tr>
+
+
+
+    <tr><td align="undefined" valign="undefined"><a href="chapter_4.1.html#turbulent_inflow"><span style="font-weight: bold;">turbulent_inflow</span></a></td><td align="undefined" valign="undefined">I</td><td align="undefined" valign="undefined">L</td><td align="undefined" valign="undefined"><span style="font-style: italic;">.F.</span></td><td align="undefined" valign="undefined">Generates a turbulent inflow at side boundaries using a turbulence recycling method.</td></tr><tr><td><a href="chapter_4.1.html#u_bulk"><span style="font-weight: bold;">u_bulk</span></a></td><td>I</td><td>R</td><td><span style="font-style: italic;">0.0</span></td><td>u-component of the predefined bulk velocity (in m/s).</td></tr><tr>
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#ug_surface"><b>ug_surface</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>u-component
+of the geostrophic wind at the surface (in m/s). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#ug_vertical_gradient"><span style="font-weight: bold;">ug_vertical_gradient</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(10)</td>
+
+
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+
+      <td>Gradient(s) of the initial
+profile of the&nbsp; u-component of the geostrophic wind (in
+1/100s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#ug_vertical_gradient_level"><span style="font-weight: bold;">ug_vertical_gradient_level</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(10)</td>
+
+
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+
+      <td>Height level from which on the
+gradient defined by <a href="chapter_4.1.html#ug_vertical_gradient">ug_vertical_gradient</a>
+is effective (in m).<br>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#ups_limit_e"><b>ups_limit_e</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Subgrid-scale
+turbulent kinetic energy difference used
+as
+criterion for applying the upstream scheme when upstream-spline
+advection is switched on (in m<sup>2</sup>/s<sup>2</sup>).
+&nbsp;</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#ups_limit_pt"><b>ups_limit_pt</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Temperature
+difference used as criterion for
+applying&nbsp;
+the upstream scheme when upstream-spline advection&nbsp; is
+switched on
+(in K). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#ups_limit_u"><b>ups_limit_u</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Velocity
+difference (u-component) used as criterion for
+applying the upstream scheme
+when upstream-spline advection is switched on (in m/s). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#ups_limit_v"><b>ups_limit_v</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Velocity
+difference (v-component) used as criterion for
+applying the upstream scheme
+when upstream-spline advection is switched on (in m/s). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#ups_limit_w"><b>ups_limit_w</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Velocity
+difference (w-component) used as criterion for
+applying the upstream scheme
+when upstream-spline advection is switched on (in m/s). <br>
+
+
+
+ </p>
+
+
+
+
+      </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.2.html#use_particle_tails"><span style="font-weight: bold;">use_particle_tails</span></a></td>
+
+
+
+
+      <td>P</td>
+
+
+
+ <td>L</td>
+
+
+
+ <td style="font-style: italic;">.F.</td>
+
+
+
+
+      <td>Give particles a tail.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#use_prior_plot1d_parameters"><b>use_prior_plot1d</b></a>&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#use_prior_plot1d_parameters">&nbsp;<b>_parameters</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="width: 57%; text-align: left; vertical-align: middle;">
+      
+      
+      
+      <p>Additional plot of vertical profile data with <span style="font-weight: bold;">profil</span> from
+preceding runs of the
+job chain.&nbsp; </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td align="undefined" valign="undefined"><a href="chapter_4.2.html#use_sgs_for_particles"><span style="font-weight: bold;">use_sgs_for_particles</span></a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">P</td>
+
+
+
+
+      <td align="undefined" valign="undefined">L</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td align="undefined" valign="undefined">Use
+subgrid-scale velocities for particle advection.</td>
+
+
+
+ </tr>
+
+
+
+
+    <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%">
+      
+      
+      
+      <p><a href="chapter_4.1.html#use_surface_fluxes"><b>use_surface_fluxes</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.F.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to steer the treatment of the subgrid-scale
+vertical
+fluxes within the diffusion terms at k=1 (bottom boundary).</p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+      <td><a style="font-weight: bold;" href="chapter_4.1.html#use_top_fluxes">use_top_fluxes</a></td>
+
+
+
+      <td>I</td>
+
+
+
+      <td>L</td>
+
+
+
+      <td><span style="font-style: italic;">.F.</span></td>
+
+
+
+      <td>Parameter
+to steer the treatment of the subgrid-scale
+vertical
+fluxes within the diffusion terms at k=nz (top boundary).</td>
+
+
+
+    </tr>
+
+
+
+    <tr valign="top">
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#use_ug_for_galilei_tr"><b>use_ug_for_galilei_tr</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.T.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Switch
+to determine the translation velocity in case
+that a
+Galilean transformation is used.</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"><a href="chapter_4.1.html#use_upstream_for_tke"><span style="font-weight: bold;">use_upstream_for_tke</span></a></td>
+
+
+
+
+      <td align="undefined" valign="undefined">I</td>
+
+
+
+
+      <td align="undefined" valign="undefined">L</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><span style="font-style: italic;">.F.</span></td>
+
+
+
+ <td align="undefined" valign="undefined">Parameter to
+choose the advection/timestep scheme to be used for the subgrid-scale
+TKE.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#vertical_particle_advection"><b>vertical_particle_advection</b></a><br>
+
+
+
+
+      </p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;">P<br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;">L<br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;"><i>.T.</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Switch on/off
+vertical
+particle transport.</td>
+
+
+
+ </tr>
+
+
+
+ <tr><td><a href="chapter_4.1.html#v_bulk"><span style="font-weight: bold;">v_bulk</span></a></td><td>I</td><td>R</td><td><span style="font-style: italic;">0.0</span></td><td>v-component of the predefined bulk velocity (in m/s).</td></tr><tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#vg_surface"><b>vg_surface</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>0.0</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>v-component
+of the geostrophic wind at the surface (in m/s).</p>
+
+
+
+ </td>
+
+
+
+
+    </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#vg_vertical_gradient"><span style="font-weight: bold;">vg_vertical_gradient</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(10)</td>
+
+
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+
+      <td>Gradient(s) of the initial
+profile of the&nbsp; v-component of the geostrophic wind (in
+1/100s).</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#vg_vertical_gradient_level"><span style="font-weight: bold;">vg_vertical_gradient_level</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(10)</td>
+
+
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+
+
+
+      <td>Height level from which on the
+gradient defined by <a href="chapter_4.1.html#vg_vertical_gradient">vg_vertical_gradient</a>
+is effective (in m).</td>
+
+
+
+ </tr>
+
+
+
+ <tr valign="top">
+
+
+
+
+      <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.1.html#wall_adjustment"><b>wall_adjustment</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>I</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>L</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>.T.</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Parameter
+to restrict the mixing length in the vicinity
+of the
+bottom
+boundary  (and near vertical walls of a non-flat <a href="chapter_4.1.html#topography">topography</a>).</p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#wall_heatflux"><span style="font-weight: bold;">wall_heatflux</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(5)</td>
+
+
+
+ <td><span style="font-style: italic;">5 * 0.0</span></td>
+
+
+
+ <td>Prescribed
+kinematic sensible heat flux in K m/s&nbsp;at
+the five topography faces.</td>
+
+
+
+ </tr>
+
+
+ <tr>
+
+
+
+ <td><a href="chapter_4.1.html#wall_humidityflux"><span style="font-weight: bold;">wall_humidityflux</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(5)</td>
+
+
+
+ <td><span style="font-style: italic;">5 * 0.0</span></td>
+
+
+
+ <td>Prescribed
+kinematic humidtiy flux in m/s&nbsp;at
+the five topography faces.</td>
+
+
+
+ </tr>
+ 
+  <tr>
+
+
+
+ <td><a href="chapter_4.1.html#wall_scalarflux"><span style="font-weight: bold;">wall_scalarflux</span></a></td>
+
+
+
+
+      <td>I</td>
+
+
+
+ <td>R(5)</td>
+
+
+
+ <td><span style="font-style: italic;">5 * 0.0</span></td>
+
+
+
+ <td>Prescribed
+scalar flux in kg/(m<sup>2</sup> s) at
+the five topography faces.</td>
+
+
+
+ </tr>
+
+  <tr>
+
+ <td><a href="chapter_4.1.html#ws_vertical_gradient"><span style="font-weight: bold;">ws_vertical_gradient</span></a></td>
+
+ <td>I</td>
+
+ <td>R(10)</td>
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+ <td>Gradient(s) of the profile for the large scale subsidence/ascent velocity in ((m/s) / 100 m)</td>
+
+ </tr>
+
+  <tr>
+
+ <td><a href="chapter_4.1.html#ws_vertical_gradient_level"><span style="font-weight: bold;">ws_vertical_gradient_level</span></a></td>
+
+ <td>I</td>
+
+ <td>R(10)</td>
+
+ <td><span style="font-style: italic;">10 * 0.0</span></td>
+
+ <td>Height level from which on the gradient for the subsidence/ascent velocity defined by 
+     ws_vertical_gradient is effective (in m).</td>
+
+ </tr>
+ 
+ <tr>
+
+
+
+ <td style="vertical-align: middle;"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#write_particle_statistics"><b>write_particle_</b></a>
+      <br>
+
+
+
+ <a href="chapter_4.2.html#write_particle_statistics"><b>statistics</b></a>
+      </p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;">P<br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;">L<br>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;"><i>.F.</i></td>
+
+
+
+
+      <td style="vertical-align: middle;">Switch on/off
+output of
+particle informations.</td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#z_max_do1d"><b>z_max_do1d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%"><i>zu(nzt+1)
+(model top)</i></td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Height level up to which horizontally
+averaged profiles
+are to
+be
+plotted with <span style="font-weight: bold;">profil</span>
+(in
+m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#z_max_do1d_normalized"><b>z_max_do1d</b></a>&nbsp;&nbsp;
+      <br>
+
+
+
+ <a href="chapter_4.2.html#z_max_do1d_normalized">&nbsp;<b>_normalized</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>determined by plot <br>
+
+
+
+
+data</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Normalized
+height level up to which horizontally
+averaged
+profiles are to be plotted with <span style="font-weight: bold;">profil</span>.
+      <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ <tr>
+
+
+
+ <td style="vertical-align: middle;" width="15%"> 
+      
+      
+      
+      <p><a href="chapter_4.2.html#z_max_do2d"><b>z_max_do2d</b></a></p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="5%">
+      
+      
+      
+      <p>R</p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="7%"> 
+      
+      
+      
+      <p>R</p>
+
+
+
+
+      </td>
+
+
+
+ <td style="vertical-align: middle;" width="16%">
+      
+      
+      
+      <p><i>zu(nz)</i></p>
+
+
+
+ </td>
+
+
+
+ <td style="vertical-align: middle;" width="57%"> 
+      
+      
+      
+      <p>Height
+level up to which 2d cross sections are to be
+plotted
+with <span style="font-weight: bold;">iso2d</span>
+(in m). <br>
+
+
+
+ </p>
+
+
+
+ </td>
+
+
+
+ </tr>
+
+
+
+ 
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+<hr>
+<p><br>
+
+
+
+<font color="#000080"><a href="chapter_4.5.6.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_5.0.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></p>
+
+
+
+
+<p>&nbsp;<i>Last change:&nbsp;&nbsp;</i>
+$Id: chapter_4.6.html 493 2010-03-01 08:30:24Z raasch $ </p>
+
+
+
+
+<p><br>
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+</p>
+
+
+
+
+</body></html>

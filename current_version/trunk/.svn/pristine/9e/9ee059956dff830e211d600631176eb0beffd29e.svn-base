@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>PALM chapter 3.8</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Unix)">
+	<META NAME="AUTHOR" CONTENT="Siegfried Raasch">
+	<META NAME="CREATED" CONTENT="20040809;13461000">
+	<META NAME="CHANGED" CONTENT="20090624;16024200">
+	<META NAME="KEYWORDS" CONTENT="parallel LES model">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 8.27in 11.69in }
+		P { color: #000000 }
+		H3 { color: #000000 }
+		PRE { color: #000000 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" DIR="LTR">
+<H3 STYLE="line-height: 100%">3.8 Coupled model runs</H3>
+<P STYLE="line-height: 100%">Starting from version 3.4 PALM allows
+coupled atmosphere-ocean model runs. If MPI-2 support is available, <B>mrun</B> starts the coupled model as two
+concurrent executables, the atmosphere version and&nbsp;the ocean
+version in analogy with the modular structure of PALM.</P>
+<P STYLE="line-height: 100%">Currently, the coupler is at an
+experimental stage using either a MPI2 (more flexible) or a MPI1
+intercommunicator that matches the atmosphere and ocean processors
+one-to-one. This approach has&nbsp;limited flexibility and
+performance, because it requires identical horizontal numerical grids
+and it uses the same number of atmosphere and ocean processors, which
+does not necessarily guarrantee a good load balancing.</P>
+<P STYLE="line-height: 100%">The coupler establishes a one-way
+interaction between the atmosphere and the ocean. The atmosphere
+sends its bottom surface fluxes (temperature, humidity, momentum) to
+the ocean. The ocean sends its top surface temperature to the
+atmosphere. The atmosphere assumes saturation of humidity and zero
+wind speed at its bottom surface. For calculations with <A HREF="chapter_4.1.html#humidity">humidity</A>
+= .T. the atmospheric evaporation leads to a salinity flux in the
+ocean (see e.g. Steinhorn 1991, JPO 21, p. 1681).</P>
+<P STYLE="line-height: 100%">If the full MPI-2 standard is available,
+it can be activated by adding the preprocessor directive <TT><FONT SIZE=2>-D__mpi2</FONT></TT>
+to <TT><FONT SIZE=2>cpp_options</FONT></TT> in the .mrun.config
+configuration file. Otherwise, PALM will use a coupling via MPI1. To
+start a coupled&nbsp;model run, this must be requested with the <B>mrun</B>
+option <TT><FONT SIZE=2>-Y “#1 #2”</FONT></TT>,
+where </TT><TT><FONT FACE="Andale Mono"><FONT SIZE=2>#1</FONT></FONT></TT>
+is the number of processors for the atmospheric and </FONT></FONT></TT><FONT FACE="Andale Mono"><FONT SIZE=2>#2</FONT></FONT></TT>
+the number of processors for the oceanic version of PALM (Please note
+that currently only one-to-one topologies are supported and </FONT></FONT></TT><TT><FONT FACE="Andale Mono"><FONT SIZE=2>#1</FONT></FONT></TT>
+must be equal to </FONT></FONT></TT><TT><FONT FACE="Andale Mono"><FONT SIZE=2>#2</FONT></FONT></TT><FONT FACE="Times New Roman, serif"><FONT SIZE=3>).
+</FONT></FONT></TT><FONT FACE="Times New Roman, serif"><FONT SIZE=3></FONT></FONT>This
+tells <B>mrun</B> to start two PALM executables. Coupled runs are
+only possible in parallel mode, which means that the <B>mrun</B>
+option <TT><FONT SIZE=2>-K parallel</FONT></TT> must also be set.&nbsp;The
+<B>mrun</B> call for coupled runs has to include the following
+coupling-related options: 
+</P>
+<UL>
+	<P STYLE="line-height: 100%"><TT><FONT SIZE=2>mrun </FONT></TT><FONT SIZE=2>...</FONT><TT>
+	</TT><TT><FONT SIZE=2>-K parallel -r “d3# d3o# </FONT></TT><FONT SIZE=2>...</FONT><TT>”
+	</TT><TT><FONT SIZE=2>-X </FONT></TT><FONT SIZE=2>...</FONT><TT> </TT><TT><FONT SIZE=2>-Y
+	“#1 #2”</FONT></TT><TT>.</TT></P>
+</UL>
+<P STYLE="line-height: 100%">The <TT><FONT SIZE=2>-X </FONT></TT><FONT SIZE=2>...</FONT><TT>&nbsp;</TT>option
+here specifies the total number of processors assigned to the coupled
+model. Currently, half of them are assigned to each of the two
+coupled executables. Therefore it is advisable to specify an even
+number with&nbsp;<TT><FONT SIZE=2>-X </FONT></TT><FONT SIZE=2>...</FONT><TT>
+</TT>. Otherwise, in case of an odd total number of processors, one
+processor remains idle.</P>
+<P STYLE="line-height: 100%">Each coupled executable has its own,
+unique set of I/O filenames; <A HREF="chapter_3.4.html#coupled">chapter
+3.4</A> gives information on file name conventions of coupled runs.
+The configuration file .mrun.config has to be extended for coupled
+runs. It is recommended to duplicate existing file connection
+identifiers such as &quot;d3#&quot;, &quot;pr#&quot; etc. using the
+coupled ocean filenames accordingly. For example,&nbsp;the example of
+the previous chapters could be duplicated as follows:</P>
+<PRE STYLE="line-height: 100%"><A HREF="chapter_3.4.html#PARIN"><FONT SIZE=2>PARIN</FONT></A> <FONT SIZE=2>in:job:npe d3# ~/palm/current_version/JOBS/$fname/INPUT _p3d</FONT>
+<FONT SIZE=2>PARIN in:job:npe d3f ~/palm/current_version/JOBS/$fname/INPUT _p3df</FONT>
+<A HREF="chapter_3.4.html#BININ"><FONT SIZE=2>BININ</FONT></A> <FONT SIZE=2>in:loc d3f ~/palm/current_version/JOBS/$fname/OUTPUT _d3d</FONT>
+<FONT SIZE=2>#</FONT>
+<A HREF="chapter_3.4.html#BINOUT"><FONT SIZE=2>BINOUT</FONT></A> <FONT SIZE=2>out:loc restart ~/palm/current_version/JOBS/$fname/OUTPUT _d3d</FONT>
+<FONT SIZE=2>#</FONT>
+<A HREF="chapter_3.4.html#RUN_CONTROL"><FONT SIZE=2>RUN_CONTROL</FONT></A> <FONT SIZE=2>out:loc:tr d3# ~/palm/current_version/JOBS/$fname/MONITORING _rc</FONT>
+<A HREF="chapter_3.4.html#HEADER"><FONT SIZE=2>HEADER</FONT></A> <FONT SIZE=2>out:loc:tr d3# ~/palm/current_version/JOBS/$fname/MONITORING _header</FONT>
+<A HREF="chapter_3.4.html#PLOT1D_PAR"><FONT SIZE=2>PLOT1D_PAR</FONT></A> <FONT SIZE=2>out:loc:tr pr# ~/palm/current_version/JOBS/$fname/OUTPUT _pr_par</FONT>
+<A HREF="chapter_3.4.html#PLOT1D_DATA"><FONT SIZE=2>PLOT1D_DATA</FONT></A> <FONT SIZE=2>out:loc:tr pr# ~/palm/current_version/JOBS/$fname/OUTPUT _pr_in</FONT>
+<FONT SIZE=2>#</FONT>
+<FONT SIZE=2>PARIN</FONT><FONT SIZE=2><B>_O</B></FONT><FONT SIZE=2> in:job:npe d3</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2># ~/palm/current_version/JOBS/$fname/INPUT </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_p3d</FONT>
+<FONT SIZE=2>PARIN</FONT><FONT SIZE=2><B>_O</B></FONT><FONT SIZE=2> in:job:npe d3</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2>f ~/palm/current_version/JOBS/$fname/INPUT </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_p3df</FONT>
+<FONT SIZE=2>BININ</FONT><FONT SIZE=2><B>_O</B></FONT><FONT SIZE=2> in:loc d3</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2>f ~/palm/current_version/JOBS/$fname/OUTPUT </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_d3d</FONT>
+<FONT SIZE=2>#</FONT>
+<FONT SIZE=2>BINOUT</FONT><FONT SIZE=2><B>_O</B></FONT><FONT SIZE=2> out:loc restart ~/palm/current_version/JOBS/$fname/OUTPUT </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_d3d</FONT>
+<FONT SIZE=2>#</FONT>
+<FONT SIZE=2>RUN_CONTROL</FONT><FONT SIZE=2><B>_O</B></FONT> <FONT SIZE=2>out:loc:tr d3</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2># ~/palm/current_version/JOBS/$fname/MONITORING </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_rc</FONT>
+<FONT SIZE=2>HEADER</FONT><FONT SIZE=2><B>_O</B></FONT><FONT SIZE=2> out:loc:tr d3</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2># ~/palm/current_version/JOBS/$fname/MONITORING </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_header</FONT>
+<FONT SIZE=2>PLOT1D_PAR</FONT><FONT SIZE=2><B>_O</B></FONT> <FONT SIZE=2>out:loc:tr pr</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2># ~/palm/current_version/JOBS/$fname/OUTPUT </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_pr_par</FONT>
+<FONT SIZE=2>PLOT1D_DATA</FONT><FONT SIZE=2><B>_O</B></FONT><FONT SIZE=2> out:loc:tr pr</FONT><FONT SIZE=2><B>o</B></FONT><FONT SIZE=2># ~/palm/current_version/JOBS/$fname/OUTPUT </FONT><FONT SIZE=2><B>_o</B></FONT><FONT SIZE=2>_pr_in</FONT></PRE><P STYLE="line-height: 100%">
+The coupled ocean model filenames in the first column (e.g.
+<A HREF="chapter_3.4.html#PARIN"><FONT SIZE=2>PARIN_O</FONT></A>)&nbsp;must
+be specified as given in <A HREF="chapter_3.4.html#coupled">chapter
+3.4</A>; the file connection identifiers (e.g.&nbsp; <FONT SIZE=2>d3o#</FONT>)
+and the file name extension (e.g. &nbsp;<FONT SIZE=2>_o_p3d</FONT>)
+may be changed at the user's discretion.</P>
+<P STYLE="line-height: 100%">The coupler requires the following
+parameters to be equal in both <A HREF="chapter_3.4.html#PARIN"><FONT SIZE=2>PARIN</FONT></A>
+and&nbsp;<A HREF="chapter_3.4.html#PARIN"><FONT SIZE=2>PARIN_O</FONT></A>:
+<A HREF="chapter_4.1.html#dx">dx</A>, <A HREF="chapter_4.1.html#dy">dy</A>,
+<A HREF="chapter_4.1.html#nx">nx</A>, <A HREF="chapter_4.1.html#ny">ny</A>,
+<A HREF="chapter_4.2.html#dt_coupling">dt_coupling</A>, <A HREF="chapter_4.2.html#end_time">end_time</A>,
+<A HREF="chapter_4.2.html#restart_time">restart_time</A>, <A HREF="chapter_4.2.html#dt_restart">dt_restart</A>.
+In the coupled atmosphere executable,&nbsp;<A HREF="chapter_4.2.html#bc_pt_b">bc_pt_b</A>
+is internally set and does not need to be prescribed; in the coupled
+ocean executable, <A HREF="chapter_4.2.html#bc_uv_t">bc_uv_t</A>&nbsp;is
+internally set ('neumann') and does not need to be prescribed. The
+coupled ocean parameter file&nbsp;<A HREF="chapter_3.4.html#PARIN"><FONT SIZE=2>PARIN_O</FONT></A>
+should include dummy REAL value assignments to both
+<A HREF="chapter_4.1.html#top_momentumflux_u">top_momentumflux_u</A>
+and&nbsp;<A HREF="chapter_4.1.html#top_momentumflux_v">top_momentumflux_v</A>
+(e.g.&nbsp;top_momentumflux_u = 0.0, top_momentumflux_v = 0.0) to
+enable the momentum flux coupling.</P>
+<P STYLE="line-height: 100%">The coupling interval <A HREF="chapter_4.2.html#dt_coupling">dt_coupling</A>
+must be explicity set. In order to ensure synchronous coupling
+throughout the simulation, <A HREF="chapter_4.2.html#dt_coupling">dt_coupling</A>
+should be chosen larger than <A HREF="chapter_4.2.html#dt_max">dt_max</A>.</P>
+<P STYLE="line-height: 100%">It's also possible to perform precursor
+runs (one atmospheric and one oceanic) followed by a coupled restart
+run. In order to achieve this, the parameter <A HREF="chapter_4.1.html#coupling_start_time">coupling_start_time</A>
+must be set according to the <A HREF="../misc/precursor_run_control.pdf">documentation.</A></P>
+<HR>
+<P STYLE="line-height: 100%"><BR><FONT COLOR="#000080"><A HREF="chapter_3.7.html"><FONT COLOR="#000000"><IMG SRC="left.gif" NAME="Grafik1" ALIGN=BOTTOM WIDTH=32 HEIGHT=32 BORDER=1></FONT></A><A HREF="index.html"><FONT COLOR="#000080"><IMG SRC="up.gif" NAME="Grafik2" ALIGN=BOTTOM WIDTH=32 HEIGHT=32 BORDER=1></FONT></A><A HREF="chapter_3.9.html"><FONT COLOR="#000000"><IMG SRC="right.gif" NAME="Grafik3" ALIGN=BOTTOM WIDTH=32 HEIGHT=32 BORDER=1></FONT></A></FONT></P>
+<P STYLE="line-height: 100%"><I>Last change:&nbsp;</I> $Id:
+chapter_3.8.html 197 2008-09-16 15:29:03Z raasch $</P>
+</BODY>
+</HTML>

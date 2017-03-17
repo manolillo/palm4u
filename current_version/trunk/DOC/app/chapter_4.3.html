@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 4.3</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041013;13364831"> <meta name="CHANGED" content="20041015;15380006"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 200%;">4.3 User-defined parameters</h3>
+<table style="width: 100%;" border="1" cellpadding="2" cellspacing="2"> <tbody> <tr valign="top">
+<td> <p><font size="4"><b>Parameter name</b></font></p>
+</td> <td> <p><font size="4"><b>Type</b></font></p>
+</td> <td> <p><b><font size="4">Default</font></b>&nbsp;
+<br> <b><font size="4">value</font></b></p>
+</td> <td> <p><font size="4"><b>Explanation</b></font></p>
+</td> </tr> <tr><td style="vertical-align: top;"><span style="font-weight: bold;"><a name="data_output_pr_user"></a>data_output_pr_user</span></td><td style="vertical-align: top;">C * 10<br>(200)</td><td style="vertical-align: top;"><span style="font-style: italic;">200 * ' '</span></td><td style="vertical-align: top;">User defined quantities for
+which horizontally averaged profile data is to be output.<br><br>Beside
+the PALM standard output quantities (which can be selected via
+parameter <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>),
+the user can define (without any restriction) additional output
+quantities (e.g. turbulent resolved-scale horizontal momentum fluxes, etc.). Each of these
+quantities has to be given a unique identifier (string) which must be
+different from the strings defining the standard output quantities (see
+list from the description of <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>).
+Data output can be switched on by assigning the respective strings to <span style="font-weight: bold;">data_output_user</span>.<br><br>The
+user has to calculate/provide the respective data array(s) by
+appropriately extending the user interface (see <a href="chapter_3.5.4.html">3.5.4</a>).<br><br>For
+further steering of the user defined output (output times, cross
+section levels, time averaging, etc.), the steering parameters for <a href="chapter_4.2.html#data_output_pr">data_output_pr</a>
+apply accordingly.</td></tr><tr><td style="vertical-align: top;"><a name="data_output_user"></a><span style="font-weight: bold;">data_output_user</span></td><td style="vertical-align: top;">C * 10 (100)</td><td style="vertical-align: top;"><span style="font-style: italic;">100 * ' '</span></td><td style="vertical-align: top;">User defined quantities for
+which 2d cross section and/or 3d volume data are to be output.<br><br>Beside
+the PALM standard output quantities (which can be selected via
+parameter <a href="chapter_4.2.html#data_output">data_output</a>),
+the user can define (without any restriction) additional output
+quantities (e.g. the temperature variance, etc.). Each of these
+quantities has to be given a unique identifier (string) which must be
+different from the strings defining the standard output quantities (see
+list from the description of <a href="chapter_4.2.html#data_output">data_output</a>).
+Data output can be switched on by assigning the respective strings to <span style="font-weight: bold;">data_output_user</span>.<br><br>The
+user has to calculate/provide the respective data array(s) by
+appropriately extending the user interface (see <a href="chapter_3.5.4.html">3.5.4</a>).<br><br>For
+further steering of the user defined output (output times, cross
+section levels, time averaging, etc.), the steering parameters for <a href="chapter_4.2.html#data_output">data_output</a>
+apply accordingly.<br><br><span style="font-weight: bold;">Example:</span><br>If
+the user defined output quantity is the temperature variance and if the
+user has chosen the string <span style="font-style: italic;">'pt2'</span>
+as an identifier for this quantity, then output of horizontal cross
+sections can be selected by assigning <span style="font-weight: bold;">data_output_user</span> = <span style="font-style: italic;">'pt2_xy'</span>.</td></tr><tr valign="top"> <td> <p><b><a name="region"></a>region</b></p> </td>
+<td> <p>C*40 (0:9)</p> </td> <td> <p>&nbsp;</p>
+</td> <td> <p>Name(s) of the subdomain(s) defined
+by the user.&nbsp; </p> <p>With this variable, names
+can be assigned to the subsections
+defined by the user (see <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>)
+which afterwards appear in the headers of the respective files (<a href="chapter_3.4.html#PLOT1D_DATA">PLOT1D_DATA</a>)
+and within the respective plots. Up to 9 subdomains are allowed (<b>region</b>
+(1) to <b>region</b> (9)), the total domain has the index
+0 (<b>region</b>
+(0)).</p> </td> </tr> </tbody>
+</table><p style="line-height: 200%;">&nbsp; <br>
+&nbsp; </p>
+<hr><p><br>
+<font color="#000080"><font color="#000080"><a href="chapter_4.2.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.4.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p><span style="font-style: italic;">Last change:</span>
+$Id: chapter_4.3.html 256 2009-03-08 08:56:27Z letzel $&nbsp;</p>
+</body></html>

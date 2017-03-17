@@ -1,0 +1,16 @@
+# Settings in this block are valid for the IBM-Regatta-Power6 system at KISTI
+# Don't forget to replace "<replace by your KISTI username>" by your valid
+# username for the KISTI system!
+%compiler_name     mpxlf95_r                                  ibmkisti parallel
+%compiler_name_ser xlf95                                      ibmkisti parallel
+%cpp_options       -qsuffix=cpp=f90:-WF,-DMPI_REAL=MPI_DOUBLE_PRECISION,-D__netcdf=__netcdf,-D__netcdf_64bit=__netcdf_64bit  ibmkisti parallel
+%netcdf_inc        -I:/applic/local/64BIT/NETCDF/V363/include       ibmkisti parallel
+%netcdf_lib        -L/applic/local/64BIT/NETCDF/V363/lib:-lnetcdf   ibmkisti parallel
+%fopts             -O3:-g:-qfloat=nomaf:-qrealsize=8:-Q:-q64:-qmaxmem=-1:-qtune=pwr6:-qarch=pwr6:-qnosave:-qnoescape    ibmkisti parallel
+%lopts             -O3:-g:-qfloat=nomaf:-qrealsize=8:-Q:-q64:-qmaxmem=-1:-qtune=pwr6:-qarch=pwr6:-qnosave:-qnoescape:-lesslsmp   ibmkisti parallel
+%memory            2000                                       ibmkisti parallel
+%cpumax            1000                                       ibmkisti parallel
+%numprocs          4                                          ibmkisti parallel
+%remote_username   <replace by your KISTI username>           ibmkisti parallel
+%tmp_data_catalog  /gpfs1/<replace by your KISTI username>/palm_restart_data  ibmkisti parallel
+%tmp_user_catalog  /gpfs1/<replace by your KISTI username>    ibmkisti parallel

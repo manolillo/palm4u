@@ -1,0 +1,249 @@
+\documentclass[11pt,a4paper,titlepage]{scrreprt}
+\documentstyle[Flow]
+\usepackage{graphics}
+\usepackage{german}
+\usepackage{chimuk}
+\usepackage{bibgerm}
+\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{flafter}
+\usepackage[dvips]{epsfig}
+\usepackage{texdraw}
+\usepackage{supertabular}
+\usepackage{longtable}
+\usepackage{scrpage}
+\usepackage{fancyheadings}
+\usepackage{flow}
+\frenchspacing
+\sloppy
+\pagestyle{fancyplain}
+\addtolength{\headheight}{\baselineskip}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter~~#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\lhead{\fancyplain{}{\bfseries\leftmark}}
+\rhead{}
+%\begin{titlepage}
+%\author{Gerald Steinfeld}
+%\title{Prandtl layer parameterisation in PALM}
+%\end{titlepage}
+\begin{document}
+%\maketitle
+%\tableofcontents
+\pagebreak
+
+\chapter{Prandtl layer parameterisation in PALM}
+
+The friction velocity $u_{\ast}$ is a velocity scale that is defined by the relation 
+\begin{equation}
+u_{\ast}=\left ( \left | \tau / \overline{\rho} \right | \right )^{\frac{1}{2}}, 
+\end{equation}
+where $\tau$ is the Reynolds stress and $\rho$ is the air density.
+Using the surface kinematic momentum fluxes in the x and y directions 
+$\left ( -\overline{u'w'}, -\overline{v'w'} \right )$ to represent 
+surface stress, the friction velocity can be written as   
+\begin{equation}
+u_{\ast}=\left ( (-\overline{u'w'})^2 + (-\overline{v'w'})^2 \right )^{\frac{1}{4}}.
+\end{equation}
+Based on the definition of the friction velocity $u_{\ast}$ the vertical turbulent 
+momentum flux $\overline{u'w'}$ can be determined from 
+\begin{equation}
+{u^2_{\ast}} \cos \left ( \alpha_0 \right ) = - \overline{u'w'},
+\end{equation}
+while the vertical turbulent momentum flux $\overline{v'w'}$ can be determined 
+from  
+\begin{equation}
+{u^2_{\ast}} \sin \left ( \alpha_0 \right ) = - \overline{v'w'}.
+\end{equation}
+The angle $\alpha_0$, that is assumed to be constant in the Prandtl layer, is the 
+angle between the x-direction and the direction of the mean horizontal wind and can 
+be evaluated by   
+\begin{equation} \label{win}
+\alpha_0 = \arctan \left ( \frac{\overline{v}(z_p)}{\overline{u}(z_p)} \right ).
+\end{equation}
+According to the similarity theory of Monin and Obukhov the following relationship for 
+the profile of the mean horizontal wind is valid
+\begin{equation} \label{hmpr}
+\begin{split}
+\frac{\partial \left | \overline{\vec{v}} \right |}{\partial z} &= \frac{u_{\ast}}{\kappa z} \phi_m \left ( \frac{z}{L} \right ) \\
+                                                                &= u_{\ast} \frac{1}{\kappa z} \phi_m \left ( \frac{z}{L} \right ).
+\end{split}  
+\end{equation}
+In equation \ref{hmpr} $L$ denotes the Monin Obukhov length and $\kappa$ denotes the von Karman constant, while $\phi_m$ denotes the profile 
+or Dyer-Businger functions for momentum:
+\begin{equation}
+\phi_m = 
+\begin{cases}
+1+5 \text{Rif} & \text{if $\text{Rif} > 0$}, \\
+1 & \text{if $\text{Rif} = 0$}, \\
+\left ( 1 - 16 \text{Rif} \right )^{-\frac{1}{4}} & \text{if $\text{Rif} < 0$}. 
+\end{cases}
+\end{equation} 
+Rif denotes the dimensionless Richardson flux number.
+
+By integrating equation \ref{hmpr} over $z$ from $z_0$ to a height $z$ the following relationship for the friction velocity can be deduced:    
+\begin{equation} \label{usb}
+u_{\ast} =
+\begin{cases}
+\frac{\left | \overline{\vec{v}} \right | \kappa}{\left ( \ln \left ( \frac{z}{z_0} \right ) + 5 \text{Rif} \left ( \frac{z-z_0}{z} \right ) \right )} & \text{if $\text{Rif} \ge 0$}, \\
+%\frac{\left | \overline{\vec{v}} \right | \kappa}{\left ( ln \left ( \frac{1+B}{1-B} \frac{1-A}{1+A} \right ) + 2 \left ( arctan(B) - arctan(A) \right ) \right )} & \text{if $Rif<0$}
+\frac{\left | \overline{\vec{v}} \right | \kappa}{\ln \left ( \frac{z}{z_0} \right ) - \ln \left ( \frac{ \left ( 1+A \right )^2  \left ( 1+A^2 \right ) }{ \left ( 1+B \right )^2  \left ( 1+B^2 \right ) }\right ) + 2 \left ( \arctan(A) - \arctan(B) \right )} & \text{if $\text{Rif}<0$}
+\end{cases} 
+\end{equation}
+with
+\begin{equation}
+%A=\left ( 1 - 16 Rif \right )^{-\frac{1}{4}}
+A=\left ( 1 - 16 \text{Rif} \right )^{\frac{1}{4}} 
+\end{equation}
+and
+\begin{equation}
+%B=\left ( 1 - 16 Rif \frac{z_0}{z} \right )^{-\frac{1}{4}}.
+B=\left ( 1 - 16 \text{Rif} \frac{z_0}{z} \right )^{\frac{1}{4}}.
+\end{equation}
+In fact, equation \ref{usb} is used in PALM to determine the friction velocity $u_{\ast}$.
+
+The following paragraph is a short digression dealing with the integration of equation \ref{hmpr} that finally leads to equation \ref{usb}. The integration 
+is only shown for the profile function for unstable stratification. According to PAULSON (1970) the general result of an integration of $\phi=\frac{\kappa z'}{u_{\ast}} 
+\frac{\partial \overline{u}}{\partial z'}$ over $z'$ from $z_0$ to $z$ is
+\begin{equation}
+\overline{u}(z) = \frac{u_{\ast}}{\kappa} \left [ \ln \left ( \frac{z}{z_0} \right ) - \Psi \right ] 
+\end{equation}
+with
+\begin{equation}
+\Psi = \int_{\frac{z_0}{L}}^{\frac{z}{L}}d \left ( \frac{z'}{L} \right ) \frac{1-\phi \left ( \frac{z'}{L} \right )}{\frac{z'}{L}}.
+\end{equation}  
+Applying the profile function for unstable stratification, $\phi=\left ( 1 - 16 \frac{z}{L} \right )^{-\frac{1}{4}}$, $\Psi$ can be determined as follows:
+\begin{equation}
+\begin{split}
+\Psi &= \int_{\frac{z_0}{L}}^{\frac{z}{L}}d \left ( \frac{z'}{L} \right ) \frac{1- \left ( 1 - 16 \frac{z'}{L} \right )^{-\frac{1}{4}} }{\frac{z'}{L}} \text{ | substitution: } x=\frac{1}{\phi \left ( \frac{z'}{L} \right ) } \\
+     &= \int_{\left ( 1-16\frac{z_0}{L} \right )^{\frac{1}{4}}}^{\left ( 1-16\frac{z}{L} \right )^{\frac{1}{4}}} dx \left ( 4 \frac{x^2 - x^3}{1 - x^4} \right ) \\
+     &= \int_{\left ( 1-16\frac{z_0}{L} \right )^{\frac{1}{4}}}^{\left ( 1-16\frac{z}{L} \right )^{\frac{1}{4}}} dx \left ( 2 \left ( \frac{1}{1+x} + \frac{x}{1+x^2} - \frac{1}{1+x^2} \right ) \right ) \\
+     &= \left [ 2 \ln \left ( \frac{1+x}{2} \right ) + \ln \left ( \frac{1+x^2}{2} \right ) -2 \arctan(x) \right ]_{\left ( 1-16\frac{z_0}{L} \right )^{\frac{1}{4}}=B}^{\left ( 1-16\frac{z}{L} \right )^{\frac{1}{4}}=A} \\
+     &= \ln \left ( \frac{\left ( 1 + A \right )^2}{\left ( 1 + B \right )^2} \frac{1+A^2}{1+B^2} \right ) - 2 \left ( \arctan(A) - \arctan(B) \right )
+\end{split}
+\end{equation} 
+
+Making use of equation \ref{win} and \ref{hmpr}, it is also possible to deduce a relationship for the profile of the mean u-component of the wind velocity
+\begin{equation} \label{upr}
+\begin{split}
+\frac{\partial \overline{u} }{\partial z} &= \frac{\partial \left | \overline{\vec{v}} \right |}{\partial z} \cos \left ( \alpha_0 \right ) \\
+                                          &= \frac{u_{\ast}}{\kappa z} \phi_m \left ( \frac{z}{L} \right ) \cos \left ( \alpha_0 \right ) \\
+                                          &= \frac{1}{u_{\ast}} {u^2_{\ast}} \cos \left ( \alpha_0 \right ) \frac{1}{\kappa z} \phi_m \left ( \frac{z}{L} \right ) \\
+                                          &= \frac{-\overline{u'w'}}{u_{\ast}} \frac{1}{\kappa z} \phi_m \left ( \frac{z}{L} \right )
+\end{split} 
+\end{equation}
+and accordingly a relationship for the profile of the mean v-component of the wind velocity
+\begin{equation} \label{vpr}
+\begin{split}
+\frac{\partial \overline{v} }{\partial z} &= \frac{\partial \left | \overline{\vec{v}} \right |}{\partial z} \sin \left ( \alpha_0 \right ) \\
+                                          &= \frac{u_{\ast}}{\kappa z} \phi_m \left ( \frac{z}{L} \right ) \sin \left ( \alpha_0 \right ) \\
+                                          &= \frac{1}{u_{\ast}} {u^2_{\ast}} \sin \left ( \alpha_0 \right ) \frac{1}{\kappa z} \phi_m \left ( \frac{z}{L} \right ) \\
+                                          &= \frac{-\overline{v'w'}}{u_{\ast}} \frac{1}{\kappa z} \phi_m \left ( \frac{z}{L} \right ).
+\end{split} 
+\end{equation}
+As the right-hand sides of equation \ref{upr} and \ref{vpr} differ only by prefactors that are (assumed to be) constant within the Prandtl layer from the 
+right-hand side of equation \ref{hmpr}, we can directly make use of the integration that led to equation \ref{usb} in order to obtain   
+\begin{equation} \label{uswsb}
+C=\frac{-\overline{u'w'}}{u_{\ast}} =
+\begin{cases}
+\frac{\overline{u} \kappa}{\left ( \ln \left ( \frac{z}{z_0} \right ) + 5 \text{Rif} \left ( \frac{z-z_0}{z} \right ) \right )} & \text{if $\text{Rif} \ge 0$}, \\
+%\frac{\overline{u} \kappa}{\left ( ln \left ( \frac{1+B}{1-B} \frac{1-A}{1+A} \right ) + 2 \left ( arctan(B) - arctan(A) \right ) \right )} & \text{if $Rif<0$}.
+\frac{ \overline{u} \kappa}{\ln \left ( \frac{z}{z_0} \right ) - \ln \left ( \frac{ \left ( 1+A \right )^2  \left ( 1+A^2 \right ) }{ \left ( 1+B \right )^2  \left ( 1+B^2 \right ) }\right ) + 2 \left ( \arctan(A) - \arctan(B) \right )} & \text{if $\text{Rif}<0$}.
+
+\end{cases} 
+\end{equation}
+and
+\begin{equation} \label{vswsb}
+D=\frac{-\overline{v'w'}}{u_{\ast}} =
+\begin{cases}
+\frac{\overline{v} \kappa}{\left ( \ln \left ( \frac{z}{z_0} \right ) + 5 \text{Rif} \left ( \frac{z-z_0}{z} \right ) \right )} & \text{if $\text{Rif} \ge 0$}, \\
+%\frac{\overline{v} \kappa}{\left ( ln \left ( \frac{1+B}{1-B} \frac{1-A}{1+A} \right ) + 2 \left ( arctan(B) - arctan(A) \right ) \right )} & \text{if $Rif<0$}.
+\frac{\overline{v} \kappa}{\ln \left ( \frac{z}{z_0} \right ) - \ln \left ( \frac{ \left ( 1+A \right )^2  \left ( 1+A^2 \right ) }{ \left ( 1+B \right )^2  \left ( 1+B^2 \right ) }\right ) + 2 \left ( \arctan(A) - \arctan(B) \right )} & \text{if $\text{Rif}<0$}.
+
+\end{cases} 
+\end{equation}
+Both equations, \ref{uswsb} and \ref{vswsb}, are used in PALM. In order to get an information on the turbulent vertical momentum fluxes within the Prandtl layer, 
+equation \ref{uswsb} and equation \ref{vswsb} need only to be multiplied by $-1$ and the friction velocity $u_{\ast}$, so that finally the followings two steps 
+have to be executed in PALM: 
+\begin{equation}
+\overline{u'w'} = -C u_{\ast}
+\end{equation}
+and
+\begin{equation}
+\overline{v'w'} = -D u_{\ast}.
+\end{equation}
+
+In case that no near-surface heat flux has been prescribed by the user of PALM, the near-surface heat flux $\overline{w'\Theta'}_0$ is evaluated from
+\begin{equation} \label{hfe}
+\overline{w'\Theta'} = - u_{\ast} \theta_{\ast}.
+\end{equation}
+Here, $\theta_{\ast}$ is the so-called characteristic temperature for the Prandtl layer. In case of no preset near-surface heat flux the characteristic 
+temperature $\theta_{\ast}$ is determined in PALM from the integrated version of the profile function for the potential temperature. According to the 
+similarity theory of Monin and Obukhov the following relationship for the vertical gradient of the potential temperature is valid:
+\begin{equation} \label{hmpt}
+\frac{\partial \overline{\Theta}}{\partial z} = \frac{\theta_{\ast}}{\kappa z} \phi_h.
+\end{equation}  
+In equation \ref{hmpt} $\phi_h$ denotes the profile or Dyer-Businger functions for temperature:
+\begin{equation}
+\phi_h = 
+\begin{cases}
+1+5 \text{Rif} & \text{if $\text{Rif} > 0$}, \\
+1 & \text{if $\text{Rif} = 0$}, \\
+\left ( 1 - 16 \text{Rif} \right )^{-\frac{1}{2}} & \text{if $\text{Rif} < 0$}. 
+\end{cases}
+\end{equation} 
+By integrating equation \ref{hmpt} over $z$ from $z_0$ to a height $z$ the following relationship for the characteristic temperature in the Prandtl 
+layer can be deduced:    
+\begin{equation} \label{tsb}
+\theta_{\ast} =
+\begin{cases}
+\frac{\kappa \left ( \overline{\Theta}(z) - \overline{\Theta}(z_0) \right )}{\ln \left ( \frac{z}{z_0} \right ) + 5 \text{Rif} \left ( \frac{z-z_0}{z} \right )} & \text{if $\text{Rif} \ge 0$}, \\
+\frac{\kappa \left ( \overline{\Theta}(z) - \overline{\Theta}(z_0) \right )}{\ln \left ( \frac{z}{z_0} - 2 \ln \left ( \frac{1+A}{1+B} \right )\right )} & \text{if $\text{Rif}<0$}
+\end{cases} 
+\end{equation}
+with
+\begin{equation}
+%A=\left ( 1 - 16 \text{Rif} \right )^{-\frac{1}{4}}
+A=\sqrt{1 - 16 \text{Rif}} 
+\end{equation}
+and
+\begin{equation}
+%B=\left ( 1 - 16 \text{Rif} \frac{z_0}{z} \right )^{-\frac{1}{4}}.
+B=\sqrt{1 - 16 \text{Rif} \frac{z_0}{z}}.
+\end{equation}
+Note, that the temperature at the height of the roughness length that is required for the evaluation of $\theta_{\ast}$ in equation \ref{tsb} is saved 
+in PALM at the first vertical grid level of the temperature with index k=0. The height that is assigned to this vertical grid level is -0.5$\Delta z$, 
+where $\Delta z$ is the grid length in the vertical direction.   
+In case of a near-surface heat flux $\overline{w'\Theta'}_0$ that has been prescribed by the user, the evaluation of $\theta_{\ast}$ is not needed for 
+the integration of the model. Instead $\theta_{\ast}$ is only determined for the evaluation of statistics of the turbulent flow. In that case it is 
+simply derived by a transformation of equation \ref{hfe} into  
+\begin{equation}
+\theta_{\ast} = - \frac{\overline{w'\Theta'}_0}{u_{\ast}}.
+\end{equation}    
+In case that PALM is run in its moist version, the evaluation of the characteristic humidity for the Prandtl layer is evaluated in a way correspondent to 
+that of the determination of the characteristic temperature.
+
+
+  
+  
+ 
+        
+
+ 
+
+ 
+
+
+ 
+
+
+
+
+
+
+
+ 
+  
+
+ 
+
+\end{document}

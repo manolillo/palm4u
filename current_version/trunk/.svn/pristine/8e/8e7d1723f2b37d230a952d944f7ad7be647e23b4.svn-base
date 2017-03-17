@@ -1,0 +1,57 @@
+@string{AMS = {Amer. Meteorol. Soc.}}
+@string{BLM = {Boundary-Layer Meteorol.}}
+@string{JGR = {J. Geophys. Res.}}
+@string{JAS = {J. Atmos. Sci.}}
+@string{JCAM = {J. Climate Appl. Meteor.}}
+@string{JFM = {J. Fluid. Mech.}}
+@string{BPA = {Beitr. Phys. Atmosph.}}
+@string{MR  = {Meteorol. Rdsch.}}
+@string{MZ  = {Meteorol. Z.}}
+@string{QJR = {Quart. J. R. Meteorol. Soc.}}
+@string{MWR = {Mon. Wea. Rev.}}
+
+@Book{ahlberg:67,
+  author = 	 {Ahlberg, J. H. and Nilson, E. N. and Walsh, J. L.},
+  title = 	 {The theory of splines and their applications},
+  publisher = 	 {Academic Press},
+  year = 	 {1967},
+  address = 	 {New York/London},
+  pages =        {284}
+}
+
+@Book{press:86,
+  author = 	 {Press, William H. and Teukolsky, Saul A. and Vetterling, William T. and Flannery, Brian P.},
+  title = 	 {Numerical recipes in Fortran: the art of scientific computing},
+  publisher = 	 {Cambridge University Press},
+  year = 	 {1986},
+  address = 	 {Cambridge},
+  edition = 	 {2},
+  PAGES   =      {963}
+}
+
+@Book{stoer:72,
+  author = 	 {Stoer, Josef},
+  title = 	 {Einf"uhrung in die Numerische Mathematik I},
+  publisher = 	 {Springer-Verlag},
+  year = 	 {1972},
+  address = 	 {Berlin $\cdot$ Heidelberg $\cdot$ New York},
+  pages =        {250}
+}
+
+@Article{mahrer:78,
+  author = 	 {Mahrer, Ytzhaq and Pielke, Roger A.},
+  title = 	 {A test of an upstream spline interpolation technique for the advective terms in a numerical mesoscale model},
+  journal = 	 MWR,
+  year = 	 1978,
+  volume = 	 106,
+  pages = 	 {818-830}
+}
+
+@Article{price:73,
+  author = 	 {Price, G. V. and MacPherson, A. K.},
+  title = 	 {A numerical weather forcasting method using cubic splines on a variable grid},
+  journal = 	 MWR,
+  year = 	 {1973},
+  volume = 	 {12},
+  pages = 	 {1102--1113}
+}

@@ -1,0 +1,12 @@
+# $Id$
+# Configuration file for palm_wdd
+# Preconfigured for HLRN-III
+
+[Settings]
+readqueue="showq | egrep"
+tmpdir="/gfs1/tmp/"
+canceljob="canceljob"
+checkjob="checkjob"
+realname_grep="AName"
+starttime="showstart"
+starttime_grep="start in"

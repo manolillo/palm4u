@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.6</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20040809;10583400"> <meta name="CHANGED" content="20041112;15013624"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">3.6 Interactive mode and debugging</h3>
+<p style="line-height: 100%;">You can use <b>mrun</b>
+for running PALM
+in batch mode as well as for running it interactively. For interactive
+runs, you must (naturally) be logged in on the respective computer. For
+this computer the subroutines of the model must have
+been precompiled (see <a href="chapter_5.0.html">chapter
+5.0</a>). Files containing user-defined code must be stored in
+the directory given by the variable<span style="font-family: Courier New,Courier,monospace;">
+%add_source_path </span>in the mrun-configuration file<span style="font-family: Courier New,Courier,monospace;">
+.mrun.config</span>.<span style="font-family: monospace;"></span>
+All output-files possibly
+created by the model and requested by the user to be kept after the run
+are copied to
+directories on the local host corresponding to the specifications
+in the configuration file (in this case the file attribute<span style="font-family: Courier New,Courier,monospace;"> tr&nbsp;</span>does not cause transfer to another computer). </p>
+<p style="line-height: 100%;">Since model runs usually
+require large
+amounts of CPU time, interactive runs may not be feasible, since
+in interactive mode CPU time
+is strongly limited on many hosts and runs will be aborted
+after the time limit has been exceeded. However, an interactive run
+makes sense if a suitable debugger is available,
+which may be used for error tracing in the model (here, error tracing
+in
+the user-defined software is meant). The preparations neccessary for
+debugging are described in the following. This
+description is limited to the IBM Regatta "hanni" and "berni" of the
+HLRN. </p>
+<p style="line-height: 100%;">If certain routines of the
+model
+are to be debugged for errors, the complete source code of
+the model, including the user-defined code, must be compiled
+with special debug compiler options. For this purpose, at least the
+following three lines must be included in the <span style="font-weight: bold;">mrun </span>configuration
+file:<br>
+</p><p style="line-height: 100%;"><span style="font-family: Courier New,Courier,monospace;">%compiler_name&nbsp;&nbsp;&nbsp;&nbsp;
+mpxlf95_r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ibmh parallel debug</span><br style="font-family: Courier New,Courier,monospace;">
+<span style="font-family: Courier New,Courier,monospace;">%fopts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-g:-C:-qinitauto=FF:-qrealsize=8:-Q:-q64:-qmaxmem=-1:-qtune=pwr4:</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-qarch=pwr4:-qnosave:-qnoescape:-qflttrap=overflow::zerodivide:</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+:invalid::enable:-qsigtrap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ibmh parallel debug</span><br style="font-family: Courier New,Courier,monospace;">
+<span style="font-family: Courier New,Courier,monospace;">%lopts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-g:-C:-qinitauto=FF:-qrealsize=8:-Q:-q64:-qmaxmem=-1:-qtune=pwr4:</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-qarch=pwr4:-qnosave:-qnoescape:-qflttrap=overflow::zerodivide:</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+:invalid::enable:-qsigtrap:-lesslsmp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ibmh parallel debug</span><br style="font-family: monospace;">
+<br></p>
+<p style="line-height: 100%;">(Attention: in the
+configuration file,
+the compiler and linker options (<span style="font-family: Courier New,Courier,monospace;">fopts
+</span>and<span style="font-family: Courier New,Courier,monospace;"> lopts</span>)
+must be
+written in one line without any blank space before and after the
+colons!)<br>
+</p><p style="line-height: 100%;">Using the compiler
+options "<span style="font-family: Courier New,Courier,monospace;">-g</span>"
+and "<span style="font-family: Courier New,Courier,monospace;">-C</span>",
+debugable code is created
+and check of array bounds is
+switched on during run time. Option "<span style="font-family: Courier New,Courier,monospace;">-qinitauto=FF</span>"
+initializes all
+automatic variables (unfortunately not the global values of modules) to
+NaN.The "<span style="font-family: Courier New,Courier,monospace;">-qflttrap</span>"
+and "<span style="font-family: Courier New,Courier,monospace;">-qsigtrap</span>"
+options are needed
+in order to terminate the run in case of any floating point errors
+(otherwise the run will not terminate and errors can hardly be
+detected).<br>
+</p><p style="line-height: 100%;">The <b>mrun
+</b>call for debugging
+needs
+an extended argument for the option<span style="font-family: Courier New,Courier,monospace;"> </span><font style="font-size: 10pt; font-family: Courier New,Courier,monospace;" size="2">-K</font>:</p><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">mrun
+... -K &ldquo;parallel debug&rdquo; -s &rdquo;*.f90" ... .</div><p style="line-height: 100%;">The argument of option<span style="font-family: Courier New,Courier,monospace;"> -s </span><span style="font-family: Courier New,Courier,monospace;"></span>must
+list all source code files of the default PALM code. </p>
+<p style="line-height: 100%;">After compiling, the
+debugger
+<b>TotalView</b> is automatically called by <span style="font-weight: bold;">mrun</span>. With its
+assistance the user
+has to start
+the program execution manually, to set breakpoints, etc.. User manuals
+of <b>TotalView</b> are available <a href="http://www.hlrn.de/doc/totalview/index.html">online</a>.
+</p><p style="line-height: 100%;">Program crashes
+caused by errors in the
+user-defined code should usually be found
+unassisted. If the termination point lies outside the user code (in the
+default model code), the PALM&nbsp;group can be asked for
+assistance, but please do not expect any quick response. It is
+emphasized again that error tracing and programming
+of
+user-defined code requires more or less precise knowledge of the
+internal structure of PALM (see beginning of <a href="chapter_3.5.html">chapter
+3.5</a>). <br>
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.5.5.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.7.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;</i>
+$Id$</p>
+</body></html>

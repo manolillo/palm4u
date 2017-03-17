@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2014  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# -----------------
+# 
+# 
+# Former revisions:
+# -----------------
+# $Id: mrungui 1842 2016-04-07 19:24:16Z raasch $
+#
+# 1841 2016-04-07 19:14:06Z raasch
+# script now running under bash
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9)
+#
+# 793 2011-12-12 15:15:24Z maronga
+# Initial revision
+#
+# Description:
+# ------------
+# Starting script for mrungui
+#------------------------------------------------------------------------------#
+
+if which mrungui.x >/dev/null; then
+   mrungui.x
+else
+   echo "  +++ mrungui not found."
+fi
+
+
+
+

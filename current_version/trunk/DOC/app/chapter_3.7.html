@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252">
+  
+ 
+  <title>PALM chapter 3.7</title><meta name="GENERATOR" content="StarOffice 7 (Win32)">
+ 
+  <meta name="AUTHOR" content="Siegfried Raasch">
+ 
+  <meta name="CREATED" content="20040809;13460943">
+ 
+  <meta name="CHANGED" content="20041112;15085727">
+ 
+  <meta name="KEYWORDS" content="parallel LES model">
+ 
+  <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+  </style></head>
+
+<body style="direction: ltr;" lang="en-US">
+<h3 style="line-height: 100%;">3.7 Optional software packages</h3>
+
+<p style="line-height: 100%;">Starting from version 2.1
+PALM includes
+so-called software packages which can be used optionally. These
+software packages are part of the model, but they are not compiled with
+the default model
+installation (actually, the routines of the corresponding packages are
+compiled within the installation, but these subroutines are empty,
+i.e. they do not contain any executable statements). Thus the
+compilation time as well as the memory demand of the model is limited
+to the real needs. </p>
+
+<p style="line-height: 100%;">To use software packages in
+a model run,
+they must be requested with <b>mrun</b> option <tt><font style="font-size: 10pt;" size="2">-p</font>.</tt>
+Then the subroutines belonging to the respective package are
+additionally compiled for the run (and the respective restart
+runs; the filenames of these subroutines are also displayed on the
+terminal after <b>mrun</b> has been called). If one wants
+to use e.g.
+the two packages with the names
+<tt>package1</tt> and <tt>package2</tt>, then
+the <b>mrun</b> call
+has to be: </p>
+
+<ul>
+ 
+  <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">mrun ... -p
+&ldquo;package1 package2&rdquo; </font>.</tt></p>
+
+</ul>
+<p style="line-height: 100%;">Starting from version 3.2, the particles-package is part of the default model, so it does not have to be switched on using <span style="font-weight: bold;">mrun</span>-option <span style="font-family: Courier New,Courier,monospace;">-p</span>. However, the respective parameters have still to be set by using the NAMELIST group <span style="font-family: Courier New,Courier,monospace;">particles_par</span>.</p>
+<p style="line-height: 100%;">Further package
+names can be added to
+the list, separated by blanks. If the respective packages permit user
+steering, the appropriate parameters must be given at the end of
+the file <a href="chapter_3.4.html#PARIN">PARIN</a>.
+They must be given <b>before</b> possible user-defined
+parameters!
+Each package requires its own NAMELIST group. The respective NAMELIST
+group name is given in the table below. For the example above one
+would have to add the following lines to PARIN (example): &nbsp; </p>
+
+<ul>
+ 
+  <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">&amp;namelist_packagename1
+var1 = 1,0, var2 =
+&ldquo;abcd&rdquo; /</font></tt><font style="font-size: 10pt;" size="2"> </font> </p>
+
+  <p style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">&amp;namelist_packagename2
+var3 = .TRUE.,
+var4 = 0 /</font></tt></p>
+
+</ul>
+<p style="margin-bottom: 0cm; line-height: 100%;">The
+following
+packages are available: <br>
+
+&nbsp; <br>
+
+&nbsp; </p>
+
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+ <tbody>
+ <tr>
+ <td> 
+      <p><b>Package
+name:</b></p>
+ </td>
+ <td> 
+      <p><b>NAMELIST
+group name:</b></p>
+ </td>
+ <td> 
+      <p><b>Functionality:</b></p>
+
+      </td>
+ <td> 
+      <p><b>Control parameter:</b></p>
+
+      </td>
+ </tr>
+ <tr valign="top">
+ <td> 
+      <p>--- (see above)</p>
+
+      </td>
+ <td> 
+      <p>particles_par</p>
+ </td>
+ <td>
+      <p>Release and advection of particles. The particle sources can
+additionally be defined by the user in subroutine <tt><font style="font-size: 10pt;" size="2">user_init_particles</font></tt>
+.</p>
+ </td>
+ <td> 
+      <p>see section <a href="chapter_4.2.html#particle_parameters">4.2</a></p>
+
+      </td>
+ </tr>
+ <tr valign="top">
+ <td> 
+      <p>dvrp_graphics</p>
+
+      </td>
+ <td> 
+      <p>dvrp_graphics_par</p>
+ </td>
+
+      <td> 
+      <p>Graphical output with the dvrp software of the
+RRZN. This is
+only available on the IBM Regatta "hanni" of the HLRN. Possible output
+are iso-surfaces, cross-sections and particles (if the particle package
+is selected). The use of this package is described in section <a href="chapter_4.5.7.html">4.5.7</a>.</p>
+ </td>
+
+      <td> 
+      <p>see section <a href="chapter_4.2.html#dvrp_graphics">4.2</a></p>
+ </td>
+ </tr>
+
+    <tr valign="top">
+ <td> 
+      <p>spectra</p>
+ </td>
+
+      <td> 
+      <p>spectra_par</p>
+ </td>
+ <td> 
+      <p>Computation
+and output of horizontal power spectra of the
+prognostic variables. </p>
+ </td>
+ <td> 
+      <p>see
+section <a href="chapter_4.2.html#spectra">4.2</a></p>
+
+      </td>
+ </tr>
+ 
+  </tbody>
+</table>
+<hr>
+<p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.6.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.8.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" src="right.gif" name="Grafik3"></font></a></font></font></p>
+
+<p style="line-height: 100%;"><i>Last
+change:&nbsp;</i> $Id: chapter_3.7.html 189 2008-08-13 17:09:26Z letzel $</p>
+
+</body></html>

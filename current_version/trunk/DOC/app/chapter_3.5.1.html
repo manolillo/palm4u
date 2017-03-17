@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 3.5.1</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20040802;11451548"> <meta name="CHANGED" content="20041112;14401801"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">3.5.1 Interfaces for
+user-defined code<br>
+</h3><p style="margin-bottom: 0cm; line-height: 100%;">The
+following table
+describes the available interfaces for user-defined code in the model,
+the
+names and possible arguments of the subroutines involved as well as
+actions which can be accomplished in these subroutines. The respective
+name of a source code files is the&nbsp;subroutine name followed by "<span style="font-family: Courier New,Courier,monospace;">.f90</span>". Exception: the file containing the module<span style="font-family: Courier New,Courier,monospace;"> user </span>has the name <span style="font-family: Courier New,Courier,monospace;">user_module.f90</span>.<br>
+&nbsp; </p>
+<table style="width: 100%;" border="1" cellpadding="2" cellspacing="4"> <col width="211"> <col width="117"> <col width="862"> <tbody> <tr><td width="211"> <p><font size="4"><b>Call
+location</b></font></p> </td> <td width="117"> <p><font size="4"><b>Subroutine
+name and
+argument(s)</b></font></p> </td> <td style="width: 862px;"> <p><font size="4"><b>Possible
+actions</b></font></p> </td> </tr> <tr><td style="vertical-align: top;">---</td><td style="vertical-align: top;"><span style="font-family: monospace;"><a name="user"></a>MODULE
+user</span></td><td style="vertical-align: top;">All
+user-defined variables which are used outside the respective local
+scopes of the user-defined subroutines have to be declared here.</td></tr><tr valign="top"> <td width="211"> <p>End
+of <tt><font style="font-size: 10pt;" size="2">parin.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_parin"></a>user_parin</font></font></tt></p>
+</td> <td width="862"> <p>Declaration of
+user-defined parameters in the NAMELIST
+group <tt><font style="font-size: 10pt;" size="2">&amp;userpar</font></tt>.
+These
+parameters can be read from the local file <a href="chapter_3.4.html#PARIN">PARIN</a>
+and be used for steering the user-defined code (see <a href="chapter_4.0.html">chapter
+4.0</a>). The user-defined parameter <a href="chapter_4.3.html#region">region</a>
+is already pre-defined in <tt><font style="font-size: 10pt;" size="2">&amp;userpar</font></tt>
+and must not be changed. Additional NAMELIST groups may be declared if
+desired.&nbsp; <br>
+The CPU time needed for executing <tt><font style="font-size: 10pt;" size="2">user_parin</font></tt>
+is included in the
+local file <a href="chapter_3.4.html#CPU_MEASURES">CPU_MEASURES</a>
+within the category &ldquo;initialisation&rdquo;.</p> </td>
+</tr> <tr valign="top"> <td width="211"><p>End
+of <tt><font style="font-size: 10pt;" size="2">header.f90</font></tt></p>
+</td>
+<td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_header"></a>user_header(
+io )</font></font></tt></p> </td> <td width="862"> <p>Output of the values of the
+user-defined parameters to
+the
+local files <a href="chapter_3.4.html#HEADER">HEADER</a>
+and <a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a>.
+This output should be made anyway in order to subsequently check the
+parameter values used for the respective run. The number of the output
+unit is passed as an argument and must be used in each WRITE statement
+(e.g.: &ldquo;<tt><font face="Cumberland, monospace"><font style="font-size: 10pt;" size="2">WRITE </font><font style="font-size: 10pt;" size="2">( io,&hellip;</font></font></tt><font style="font-size: 10pt;" size="2">&rdquo;))</font>.
+By default, this
+subroutine only creates output if a user-defined NAMELIST is found in
+file <a href="chapter_3.4.html#PARIN">PARIN</a>
+(in this case <tt><font face="Thorndale, serif">the</font></tt>
+variable <tt><font style="font-size: 10pt;" size="2">user_defined_namelist_found</font></tt>
+is set&nbsp; <i>.TRUE.</i> in <tt><font style="font-size: 10pt;" size="2">user_parin</font></tt>).
+The names of any
+user-defined
+subdomains are displayed by default (see <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>).</p>
+</td> </tr> <tr valign="top"> <td width="211"> <p>End of <tt><font style="font-size: 10pt;" size="2">init_3d_model.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_init"></a>user_init</font></font></tt></p>
+</td> <td width="862"> <p>Here, user-defined
+initialization actions which should
+be
+accomplished before the start of the 3D-model can be implemented (e.g.
+inhomogenous change of the surface temperature, the roughness length,
+or similar). At this point, all default parameter initializations of
+the model (<a href="chapter_4.1.html">chapter
+4.1</a>) have already been carried out at all.&nbsp; </p>
+<p>One of the most important actions here is the definition
+of
+user-defined subdomains for statistic analysis and output (see <a href="chapter_4.1.html#statistic_regions">statistic_regions</a>
+and <a href="chapter_3.5.3.html">chapter
+3.5.3</a>) and of additional time series quantities (see comment
+line example in the file).&nbsp; <br>
+CPU time for <tt><font style="font-size: 10pt;" size="2">user_init</font></tt>
+is considered in the local file <a href="chapter_3.4.html#CPU_MEASURES">CPU_MEASURES</a>
+within the category &ldquo;initialisation&rdquo;.</p><p>See
+also <tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a href="#user_init_3d_model">user_init_3d_model</a>.</font></font></tt></p>
+</td> </tr> <tr><td style="vertical-align: top;">End of <span style="font-family: Courier New,Courier,monospace;">read_3d_binary.f90</span></td><td style="vertical-align: top;"><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_read_restart_data"></a>user_read_<br>restart_data( nxlc, nxlf,nxl_on_file, nxrc, nxrf, nxr_on_file, nync, nynf,nyn_on_file, nysc, nysf, nys_on_file, tmp_2d, tmp_3d )</font></font></tt></td><td style="vertical-align: top;">Reading of user-defined 2d- and 3d-arrays from the restart file.<br><br>In
+case of restart runs, user-defined quantities may have to be read from
+the restart file generated by the previous run. These quantities must
+have been output by the user in the previous run using routine <a href="#user_last_actions"><span style="font-family: Courier New,Courier,monospace;">user_last_actions</span></a>.<br><br>For usage, see example contained in <span style="font-family: Courier New,Courier,monospace;">read_3d_binary.f90</span> and <span style="font-family: Courier New,Courier,monospace;">user_last_actions.f90</span>.</td></tr><tr><td style="vertical-align: top;"><tt><font style="font-size: 10pt;" size="2">DEFAULT</font></tt>
+case of <tt><font style="font-size: 10pt;" size="2">SELECT
+CASE( TRIM(canopy_mode) ) </font></tt>command in the
+middle&nbsp;of <tt><font style="font-size: 10pt;" size="2">init_3d_model.f90</font></tt></td><td style="vertical-align: top;"><a name="user_init_plant_canopy"></a><code>user_init_plant_canopy</code></td><td style="vertical-align: top;">User-defined initilisation of the plant canopy model.<br><br>Here, the user can define the two three-dimensional arrays <code>lad_s and cdc </code>that
+stand for the leaf area density and the canopy drag coefficient. By
+this, the user can configure a&nbsp;plant canopy. This requires
+definition of at least one
+new&nbsp;<a href="chapter_4.1.html#canopy_mode">canopy_mode</a>&nbsp;in the&nbsp;<tt><font style="font-size: 10pt;" size="2">SELECT CASE( TRIM(canopy_mode) ) </font></tt>command
+in&nbsp;<tt><font style="font-size: 10pt;" size="2">user_init_plant_canopy</font></tt>.
+Note that the&nbsp;<a href="chapter_4.1.html#canopy_mode">canopy_mode</a>&nbsp;<span style="font-style: italic;">'block'</span> is<span style="font-style: italic;"></span> not allowed here since it is the standard case used in the
+calling routine <tt><font style="font-size: 10pt;" size="2">init_3d_model</font></tt>. </td></tr><tr> <td style="vertical-align: top;"><tt><font style="font-size: 10pt;" size="2">DEFAULT</font></tt>
+case of <tt><font style="font-size: 10pt;" size="2">SELECT
+CASE( TRIM(topography) ) </font></tt>command in the
+middle&nbsp;of <tt><font style="font-size: 10pt;" size="2">init_grid.f90</font></tt></td> <td style="vertical-align: top;"><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_init_grid"></a>user_init_grid</font></font></tt></td>
+<td> <p>Execution of user-defined grid initializing
+actions.</p> <p>Here, the user can define the
+two-dimensional index
+array&nbsp;<tt><font style="font-size: 10pt;" size="2">nzb_local</font></tt> that is used to
+set up a non-flat topography. This requires definition of at least one
+new <a href="chapter_4.1.html#topography">topography</a>&nbsp;mode
+in the&nbsp;<tt><font style="font-size: 10pt;" size="2">SELECT CASE( TRIM(topography) ) </font></tt>command
+and the definition of <a href="chapter_4.3.html#topography_grid_convention">topography_grid_convention</a> in&nbsp;<tt><font style="font-size: 10pt;" size="2">user_init_grid</font></tt>.
+Note that the <a href="chapter_4.1.html#topography">topography</a>&nbsp;modes
+<span style="font-style: italic;">'flat'</span>, <span style="font-style: italic;">'single_building'</span>
+and <span style="font-style: italic;">'read_from_file'</span> are not allowed here since these are the standard cases used in the
+calling routine <tt><font style="font-size: 10pt;" size="2">init_grid</font></tt>. </p> <p>CPU
+time for <tt><font style="font-size: 10pt;" size="2">user_init_grid</font></tt>
+is considered in the local file <a href="chapter_3.4.html#CPU_MEASURES">CPU_MEASURES</a>
+within the category &ldquo;initialisation&rdquo;.</p> </td>
+</tr> <tr><td style="vertical-align: top;">End of <code>check_parameters</code></td><td style="vertical-align: top;"><code><a name="user_check_parameters"></a>user_check_parameters</code></td><td style="vertical-align: top;">Check &amp;userpar control parameters and deduce further quantities.</td></tr><tr><td style="vertical-align: top;">In
+the middle of <tt><font style="font-size: 10pt;" size="2">init_3d_model.f90</font></tt></td><td style="vertical-align: top;"><span style="font-family: monospace;"></span><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_init_3d_model"></a>user_init_3d_<br>model</font></font></tt></td><td style="vertical-align: top;">Initialization of the 3d-model.<br><br>Allows
+the complete initialization of the 3d model. The user is responsible to
+set at least all those quantities which are normally set within <tt><font style="font-size: 10pt;" size="2">init_3d_model</font></tt>.</td></tr><tr valign="top"> <td width="211"> <p>In
+the middle of <tt><font style="font-size: 10pt;" size="2">init_particles.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_init_particles"></a>user_init_</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">particles</font></font></tt></p>
+</td> <td width="862"> <p>With this routine
+e.g. size and color of particles,
+which have
+been released initially from a source, can be specified. Like the
+calling routine <tt><font style="font-size: 10pt;" size="2">init_particles</font><font style="font-size: 11pt;" size="2">,</font></tt>
+this routine is only
+called if particle advection is switched on (see package parameter <a href="chapter_4.2.html#dt_prel">dt_prel</a>).</p>
+</td> </tr> <tr valign="top"> <td width="211"> <p>End of <tt><font style="font-size: 10pt;" size="2">advec_particles.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_particle_attributes"></a>user_particle_</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">attributes</font></font></tt></p>
+</td> <td width="862"> <p>Here the particles
+can be assigned new attributes
+(diameter,
+color etc.) after each time step. Like the calling routine <tt><font style="font-size: 10pt;" size="2">advec_particles</font><font style="font-size: 11pt;" size="2">,</font> </tt>this
+routine is only
+called if particle advection is switched on (see package parameter <a href="chapter_4.2.html#dt_prel">dt_prel</a>).</p>
+</td> </tr> <tr valign="top"> <td width="211"> <p>Before the plot of particles and
+cross-sections in <br> <tt><font style="font-size: 10pt;" size="2">dvrp_plot.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_dvrp_coltab"></a>user_dvrp_coltab
+(</font></font></tt><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> mode )</font></font></tt></p>
+</td> <td width="862"> <p>With this routine,
+color tables can be adjusted which
+should
+be used for output with the dvrp software. Individuell color tables for
+particles and cross-sections are possible. For this purpose the two
+arrays <tt><font style="font-size: 10pt;" size="2">interval_values_dvrp</font></tt>
+and <tt><font style="font-size: 10pt;" size="2">interval_h_dvrp</font></tt>
+(declared in the module <tt><font style="font-size: 10pt;" size="2">dvrp_variables</font></tt>)
+have to be preset with appropriate values. The number of color table
+entries must be assigned to the variable of <tt><font style="font-size: 10pt;" size="2">dvrp_colourtable_entries</font></tt>.
+The value of the subroutine argument <span style="font-family: monospace;">mode</span> defines,
+whether the color
+table is valid for particles or for cross-sections<span style="font-family: monospace;"></span> (i.e. <tt><font size="2">mode</font></tt>
+can have the values &ldquo;<i>particles&rdquo;</i>
+or &ldquo;<i>slicer&rdquo;</i>).&nbsp; <br>
+This routine only becomes active if dvrp-graphics is switched on (see
+package parameter <a href="chapter_4.2.html#dt_dvrp">dt_dvrp</a>).</p>
+</td> </tr> <tr valign="top"> <td width="211"> <p>Beginning and end of the time
+integration loop
+of&nbsp; <br> <tt><font style="font-size: 10pt;" size="2">time_integration.f90</font></tt>
+as well as after each prognostic equation in <br> <tt><font style="font-size: 10pt;" size="2">prognostic_equations.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_actions"></a>user_actions(
+location )</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> </font></font> </p>
+<p>or<br> <font face="Cumberland, monospace"><font style="font-size: 10pt;" size="2"> </font></font>
+</p> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">user_actions(
+i, j,</font></font></tt><span style="font-family: Cumberland,monospace;"> </span><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">location )</font></font></tt></p>
+</td> <td width="862"> <p>In this routine
+user actions can be implemented which
+are to
+be executed either at each time step or at certain times (defined by
+the user). Since in each case the routine is called at the beginning
+and at the end of a time step as well as after each prognostic equation
+it must be defined at which place (and/or at which places) the
+respective actions are supposed to be executed. For this purpose an
+appropriate CASE structure is already inserted in this routine. The
+location of the calling routine is passed to this routine via the
+argument <tt><font style="font-size: 10pt;" size="2">location</font></tt>.
+For example, if called at the beginning of a time step, <tt><font style="font-size: 10pt;" size="2">location</font></tt>
+=&nbsp;<i>'before_timestep' </i>and if
+called at the end, <tt><font style="font-size: 10pt;" size="2">location</font></tt><font style="font-size: 10pt;" size="2"> </font>=&nbsp;<i>'after_timestep'</i><span style="font-weight: bold;">.</span></p><p>Calculation
+of user-defined output quantities should be carried out at <span style="font-family: monospace;">location</span> = <span style="font-style: italic;">'after_integration'</span>.<span style="font-weight: bold;"></span></p><p><span style="font-weight: bold;">Important:</span>
+if the
+cache-optimized version of <span style="font-family: monospace;">prognostic_equation.f90</span>
+is used (this is the default for IBM-Regatta-Systems), the loop
+variables <tt>i</tt> and <tt>j</tt> must be
+passed as arguments for
+all calls within <span style="font-family: monospace;">prognostic_equations</span>.
+</p> <p>CPU time for <tt><font style="font-size: 10pt;" size="2">user_actions</font></tt>
+appears within the category &ldquo;user_actions&rdquo; in the
+local file <a href="chapter_3.4.html#CPU_MEASURES">CPU_MEASURES</a>.
+If the cache-optimized version of <span style="font-family: monospace;">prognostic_equation.f90</span>
+is used, this time measurement only considers the CPU time which was
+needed outside of the prognostic equations. Time needed for calls
+within prognostic_equations is considered within the category "all
+prog.equations".<br> </p> <p><b>Important:</b>
+this subroutine is written
+as a FORTRAN
+module, which uses so-called function overloading. It can be called in
+two ways: with one argument (<tt><font style="font-size: 10pt;" size="2">location</font></tt>)
+and with three arguments <font style="font-size: 10pt;" size="2">(</font><tt><font style="font-size: 10pt;" size="2">i, j, location</font></tt><font style="font-size: 10pt;" size="2">)</font>. The
+three argument version
+is used in the cache-optimized version of <span style="font-family: monospace;">prognostic_equations</span>.
+Depending
+on the number of given arguments the subroutine internally calls <tt><font style="font-size: 10pt;" size="2">user_actions</font></tt>
+or <tt><font style="font-size: 10pt;" size="2">user_actions_ij</font></tt>.
+So the
+user must insert the actions (code extensions) desired for the
+respective prognostic equation either in the CASE structure of <tt><font style="font-size: 10pt;" size="2">user_actions</font><font style="font-size: 11pt;" size="2">,</font> </tt>or/and
+in the CASE
+structure of <tt><font style="font-size: 10pt;" size="2">user_actions_ij</font></tt>!</p> </td>
+</tr> <tr><td style="vertical-align: top;"><code>SUBROUTINE preprocess_spectra</code> in <code>calc_spectra.f90</code>, and <code>data_output_spectra.f90</code></td><td style="vertical-align: top;"><p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_spectra"></a>user_spectra</font></font></tt></p></td><td style="vertical-align: top;"><p><a href="chapter_3.5.4.html#spectra">Spectra of user-defined
+quantities</a> can be computed here.</p>The
+routine contains some simple examples (as comment lines) in order to
+demonstrate how to use it.</td></tr><tr valign="top"> <td width="211"><p><tt><font style="font-size: 10pt;" size="2">flow_statistics.f90</font></tt>
+before the summation of array <span style="font-family: monospace;">hom</span>
+(horizontal averages)<br> </p> </td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_statistics"></a>user_statistics<br>(
+sr )</font></font></tt></p> </td> <td width="862"> <p>Horizontal
+averages of vertical profiles of user-defined
+quantities can be computed here. Also, additional time series
+quantities can be calculated. They have to be defined before in routine
+<a style="font-family: monospace;" href="#user_init">user_init</a>.
+The routine is called once for each defined statistic region (see <a href="chapter_4.1.html#statistic_region">statistic_region</a>).</p><p>The
+routine contains some simple examples (as comment lines) in order to
+demonstrate how to use it.<br><br>Profile sums have to
+be stored in
+the array <tt><font style="font-size: 10pt;" size="2">sums_l</font></tt>.&nbsp;The profile identification number (second index of array <span style="font-family: monospace;">sums_l</span>) must be within the range [<span style="font-family: monospace;"> pr_palm+1 , pr_palm+max_pr_user</span> ], where <span style="font-family: monospace;">pr_palm</span> is an internal parameter and&nbsp; <span style="font-family: Courier New,Courier,monospace;">max_pr_user</span> is the number of&nbsp;user-defined profiles as given by parameter <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/doc/app/chapter_4.3.html#data_output_pr_user">data_output_pr_user</a> in the respective PALM run.</p><p> These additional
+profiles
+are further processed (e.g. temporally averaged), like the standard profiles, in <tt><font style="font-size: 10pt;" size="2">flow_statistics</font></tt>.</p> </td>
+</tr> <tr><td style="vertical-align: top;">Middle of <span style="font-family: Courier New,Courier,monospace;">advec_particles.f90</span>, after particle reflection from walls.</td><td style="vertical-align: top;"><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_advec_particles"></a>user_advec_<br>particles</font></font></tt></td><td style="vertical-align: top;">User-defined actions after the calculation of the new particle position.</td></tr><tr><td style="vertical-align: top;">End
+of <span style="font-family: monospace;">check_parameters.f90</span>
+where 2d/3d output quantities are checked</td><td style="vertical-align: top;"><span style="font-family: monospace;"><a name="user_check_data_output"></a>user_check_data_<br>output(
+variable, unit )</span></td><td style="vertical-align: top;">Here the physical <span style="font-family: monospace;">unit</span>(s) of
+user-defined 2d/3d output quantities (see <a href="chapter_4.3.html#data_output_user">data_output_user</a>)
+have to be set. Input parameter <span style="font-family: monospace;">variable</span>
+contains the string identifier of the respective variable. For those
+variables not recognized by the user, the parameter <span style="font-family: monospace;">unit</span> is set to
+"illegal", which tells the calling routine that the output variable is
+not defined and leads to a program abort.<br><br>See <a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities.</td></tr><tr><td style="vertical-align: top;">End
+of <span style="font-family: monospace;">check_parameters.f90</span>
+where vertical profile output quantities are checked</td><td style="vertical-align: top;"><a name="user_check_data_output_pr"></a><br><span style="font-family: monospace;">user_check_data_</span><br style="font-family: monospace;"><span style="font-family: monospace;">output_pr(</span><br style="font-family: monospace;"><span style="font-family: monospace;">variable, var_count, unit )</span></td><td style="vertical-align: top;">Here the physical <span style="font-family: monospace;">unit</span>(s) and vertical grid (u- or w-grid) of
+user-defined vertical profile output quantities (see <a href="chapter_4.3.html#data_output_pr_user">data_output_pr_user</a>)
+have to be set. Input parameter <span style="font-family: monospace;">variable</span>
+contains the string identifier of the respective variable. Parameter<span style="font-family: monospace;"> var_count </span>contains the internal profile number and must not be changed by the user. For those
+variables not recognized by the user, the parameter <span style="font-family: monospace;">unit</span> is set to
+"illegal", which tells the calling routine that the output variable is
+not defined and leads to a program abort.<br><br>See <a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities.</td></tr><tr><td style="vertical-align: top;"><span style="font-family: monospace;">netcdf.f90</span> (4
+times) where the vertical grid coordinates for cross sections and
+volume data are defined</td><td style="vertical-align: top;"><span style="font-family: monospace;"><a name="user_define_netcdf_grid"></a>user_define_<br>netcdf_grid(
+variable, found, grid_x, grid_y, grid_z )</span></td><td style="vertical-align: top;">Set the grid on which
+user-defined output quantities (see <a href="chapter_4.3.html#data_output_user">data_output_user</a>)
+are defined. Input parameter <span style="font-family: monospace;">variable</span>
+contains the string identifier of the respective variable. Allowed
+values are <span style="font-style: italic;">'x'</span>
+and <span style="font-style: italic;">'xu'</span>
+for <span style="font-family: monospace;">grid_x</span>,
+<span style="font-style: italic;">'y'</span> and <span style="font-style: italic;">'yv'</span> for <span style="font-family: monospace;">grid_y</span>, and<span style="font-family: monospace;"></span>&nbsp;<span style="font-style: italic;">'zu'</span> and <span style="font-style: italic;">'zw'</span> for <span style="font-family: monospace;">grid_z</span>. The
+output parameter <span style="font-family: monospace;">found</span>
+has to be set <span style="font-style: italic;">.TRUE.</span>
+by the user, otherwise an error message will appear in the job protocol
+for the respective output quantity.<br><br><span style="font-weight: bold;">Example:</span><br>If
+an output quantity is defined at the center of the grid boxes, the
+following settings have to be used:<br><br><div style="margin-left: 40px;"><span style="font-family: monospace;">grid_x = <span style="font-style: italic;">'x'</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">grid_y = <span style="font-style: italic;">'y'</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">grid_z = <span style="font-style: italic;">'zu'</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">found &nbsp;= <span style="font-style: italic;">.TRUE.</span></span><br></div><br>For
+defining an output quantity at the grid points where the
+u-velocity-component is defined, please use<br><br><div style="margin-left: 40px;"><span style="font-family: monospace;">grid_x = <span style="font-style: italic;">'xu'</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">grid_y = <span style="font-style: italic;">'y'</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">grid_z = <span style="font-style: italic;">'zu'</span></span><br style="font-family: monospace;"><span style="font-family: monospace;">found &nbsp;= <span style="font-style: italic;">.TRUE.</span></span><br></div><br>See
+<a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities.</td></tr><tr><td style="vertical-align: top;">Middle of <span style="font-family: monospace;">data_output_2d.f90</span></td><td style="vertical-align: top;"><span style="font-family: monospace;"><a name="user_data_output_2d"></a>user_data_<br>output_2d(
+av, variable, found, grid, local_pf )</span></td><td style="vertical-align: top;">Resorts&nbsp;user-defined&nbsp;quantities
+(to be output as cross-section data;&nbsp;see <a href="chapter_4.3.html#data_output_user">data_output_user</a>)
+with indices (k,j,i) to a temporary array <span style="font-family: monospace;">local_pf</span> with
+indices (i,j,k) and sets the <span style="font-family: monospace;">grid</span>
+on which they are defined. Depending on the value of input parameter <span style="font-family: monospace;">av</span> resorting is
+done for instantaneous (<span style="font-family: monospace;">av</span>=<span style="font-style: italic;">0</span>) or time averaged
+data (<span style="font-family: monospace;">av</span>=<span style="font-style: italic;">1</span>). Input parameter
+<span style="font-family: monospace;">variable</span>
+contains the string identifier of the respective variable. Allowed
+values for <span style="font-family: monospace;">grid</span>
+are&nbsp;<span style="font-style: italic;">'zu'</span>
+and&nbsp;<span style="font-style: italic;">'zw'</span>.
+The output parameter <span style="font-family: monospace;">found</span>
+has to be set <span style="font-style: italic;">.TRUE.</span>
+by the user, otherwise an error message will appear in the job protocol
+for the respective output quantity.<br><br>See <a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities.</td></tr><tr><td style="vertical-align: top;"><span style="font-family: monospace;">data_output_3d.f90</span>
+at the end of the CASE structure</td><td style="vertical-align: top;"><span style="font-family: monospace;"><a name="user_data_output_3d"></a>user_data_<br>output_3d(
+av, variable, found, local_pf, nz_do )</span></td><td style="vertical-align: top;">Resorts&nbsp;user-defined&nbsp;quantities
+(to be output as volume data;&nbsp;see <a href="chapter_4.3.html#data_output_user">data_output_user</a>)
+with indices (k,j,i) to a temporary array <span style="font-family: monospace;">local_pf</span> with
+indices (i,j,k) and sets the <span style="font-family: monospace;">grid</span>
+on which they are defined. Depending on the value of input parameter <span style="font-family: monospace;">av</span> resorting is
+done for instantaneous (<span style="font-family: monospace;">av</span>=<span style="font-style: italic;">0</span>) or time averaged
+data (<span style="font-family: monospace;">av</span>=<span style="font-style: italic;">1</span>). Input parameter
+<span style="font-family: monospace;">variable</span>
+contains the string identifier of the respective variable<span style="font-family: monospace;"></span><span style="font-style: italic;"></span><span style="font-style: italic;"></span>. The input
+parameter <span style="font-family: monospace;">nz_do</span>
+defines the upper limit of vertical grid index k of the output array
+(see <a href="chapter_4.2.html#nz_do3d">nz_do3d</a>).
+The output parameter <span style="font-family: monospace;">found</span>
+has to be set <span style="font-style: italic;">.TRUE.</span>
+by the user, otherwise an error message will appear in the job protocol
+for the respective output quantity.<br><br>See <a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities.</td></tr><tr><td style="vertical-align: top;">End of <span style="font-family: monospace;">average_3d_data.f90</span>,
+middle and end of <span style="font-family: monospace;">sum_up_3d_data.f90</span></td><td style="vertical-align: top;"><span style="font-family: monospace;"><a name="user_3d_data_averaging"></a>user_3d_data_<br>averaging(
+mode, variable )</span></td><td style="vertical-align: top;">Sum up and time-average of
+user-defined output quantities (see <a href="chapter_4.3.html#data_output_user">data_output_user</a>)
+as well as allocation of the arrays necessary for storing the
+respective averages. Input parameter <span style="font-family: monospace;">variable</span>
+contains the string identifier of the respective variable. Depending on
+the requested action, input parameter <span style="font-family: monospace;">mode</span> has the
+value <span style="font-style: italic;">'allocate'</span>,
+<span style="font-style: italic;">'sum'</span>, or <span style="font-style: italic;">'average'</span>.<br><br>See
+<a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities. </td></tr><tr><td style="vertical-align: top;"><tt><font style="font-size: 10pt;" size="2">DEFAULT</font></tt>
+case of <tt><font style="font-size: 10pt;" size="2">SELECT
+CASE(&nbsp;</font></tt><font style="font-size: 10pt; font-family: Courier New,Courier,monospace;" size="2"><code></code></font><tt><font style="font-size: 10pt;" size="2"><code>output_variable</code> ) </font></tt>command near the end of <code>data_output_dvrp.f90</code></td><td style="vertical-align: top;"><code><a name="user_data_output_dvrp"></a>user_data_<br>output_dvrp(<br>output_variable, local_pf )</code></td><td style="vertical-align: top;">Resorts&nbsp;user-defined&nbsp;quantities
+(to be output as dvrp objects;&nbsp;see <a href="chapter_4.3.html#data_output_user">data_output_user</a> and <a href="chapter_4.2.html#mode_dvrp">mode_dvrp</a>)
+with indices (k,j,i) to a temporary array <span style="font-family: monospace;">local_pf</span> with
+indices (i,j,k). The array  <span style="font-family: monospace;">local_pf</span> is then handed back to the calling subroutine&nbsp;<code>data_output_dvrp.f90</code>.<br><br>See
+<a href="chapter_3.5.4.html">chapter 3.5.4</a> about
+creating user-defined output quantities.</td></tr><tr valign="top"> <td width="211"> <p>End
+of <tt><font style="font-size: 10pt;" size="2">palm.f90</font></tt></p>
+</td> <td width="117"> <p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_last_action"></a>user_last_</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">actions</font></font></tt></p>
+</td> <td width="862"> <p>User-defined
+actions which are to be executed at the end
+of a
+model run. When <tt><font style="font-size: 10pt;" size="2">user_last_actions</font></tt>
+is called all model actions are already completed, but the files opened
+by the model are not closed yet and possibly terminating actions for
+these files (see subroutine of <tt><font style="font-size: 10pt;" size="2">close_files</font></tt>)
+are also not carried
+out yet.&nbsp; <br>
+CPU time for <tt><font style="font-size: 10pt;" size="2">user_last_actions</font></tt>
+appears in the local file <a href="chapter_3.4.html#CPU_MEASURES">CPU_MEASURES</a>
+within the category &ldquo;last actions&rdquo; (the time
+necessary for <tt><font style="font-size: 10pt;" size="2">close_files</font></tt> is included).</p>
+</td> </tr><tr><td style="vertical-align: top;">Not called in the default PALM code</td><td style="vertical-align: top;"><p><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"><a name="user_additional_routines"></a>user_additional_</font></font></tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace"> <br> </font></font><span style="font-family: Cumberland,monospace;">routines</span></p></td><td style="vertical-align: top;">This routine may contain additional routines defined by the user to be called from other user interface routines.</td></tr> </tbody></table><hr>
+<p style="line-height: 100%;"><br><font color="#000080"><font color="#000080"><a href="chapter_3.5.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.5.2.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last
+change: </i>$Id: chapter_3.5.1.html 217 2008-12-09 18:00:48Z letzel $</p>
+</body></html>

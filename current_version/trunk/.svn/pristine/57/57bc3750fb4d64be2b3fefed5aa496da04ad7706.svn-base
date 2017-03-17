@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta content="text/html; charset=windows-1252" http-equiv="CONTENT-TYPE"><title>PALM chapter 3.5</title> <meta content="StarOffice 7 (Win32)" name="GENERATOR"> <meta content="Siegfried Raasch" name="AUTHOR"> <meta content="20040802;10431831" name="CREATED"> <meta content="20041112;14292662" name="CHANGED"> <meta content="parallel LES model" name="KEYWORDS"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">3.5 Programming of user-defined
+code
+extensions<br>
+</h3><p style="line-height: 100%;">Programming
+user-defined code
+extensions usually requires exact knowledge of the internal structure
+of PALM.
+Appropriate explanations in <a href="chapter_2.0.html">chapter
+2.0</a> and the technical documentation are usually not
+sufficient
+and must be supplemented by a rigorous study of the model's source code. Programming experiences with FORTRAN95 and if necessary
+experiences with the parallelization tool MPI are absolutely
+necessary! </p>
+<p style="line-height: 100%;">Changes of the standard
+model code by the
+user
+should be avoided whenever possible and are reserved to the
+developer-group of PALM. The corrections, revisions and extensions of
+the
+model accomplished by this group are published in the
+<a href="../tec/index.html">technical/numerical
+documentation</a> and the accordingly updated source files are
+accessible to the users (see <a href="chapter_5.1.html">chapter
+5.1</a>).</p>
+<p style="line-height: 100%;">However, the user frequently
+may feel the
+need to make extensions of the model code for his/her own simulations.
+For this purpose, a set
+of interfaces is available, which can be used to add user-defined code
+to the model. This
+chapter describes the programming of such user-defined code extensions.</p><p style="line-height: 100%;">The integration of user-defined
+code
+occurs in the form of subroutine calls, which are made at a set of
+places in the model code, by default. These subroutines have
+pre-defined names, which must not be changed by the user. Their basic
+versions are a component of the standard model
+code and can be found in the source code files
+<tt><font style="font-size: 10pt;" size="2">user_***.f90</font></tt><font style="font-size: 10pt;" size="2">.</font>
+<font color="#000000">The</font> basic versions
+accomplish nearly no
+actions, thus they are pure templates, which can be extended by the
+user as required. Actions which are already accomplished in these
+basic versions by default should not be changed. Here is an example
+of such a basic version (file <span style="font-family: Courier New,Courier,monospace;">user_init.f90</span>): </p>
+<p style="line-height: 100%;">&nbsp; </p>
+<pre style="line-height: 100%;"><font color="#000000"><font style="font-size: 10pt;" size="2">SUBROUTINE user_init</font></font><br><br><font color="#000000"><font style="font-size: 10pt;" size="2">!------------------------------------------------------------------------------</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">!</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">!</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">! Description:</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">! -----------</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">! Execution of user-defined initializing actions</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">!------------------------------------------------------------------------------</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">!</font></font><br><br><font color="#000000"> <font style="font-size: 10pt;" size="2">USE control_parameters</font></font><br><font color="#000000"> <font style="font-size: 10pt;" size="2">USE user</font></font><br><br><font color="#000000"> <font style="font-size: 10pt;" size="2">IMPLICIT NONE</font></font><br><br><font color="#000000"><font style="font-size: 10pt;" size="2">!</font></font><br><font color="#000000"><font style="font-size: 10pt;" size="2">!-- Here the user defined initializing actions follow:</font></font><br><br><br><font color="#000000"><font style="font-size: 10pt;" size="2">END SUBROUTINE user_init</font></font></pre><p style="line-height: 100%;">The communication (handling of
+variables)
+with the model occurs via the
+global variables, which are defined within the individual FORTRAN -
+modules of PALM. The appropriate modules (they are all in the
+source code file <tt><font style="font-size: 10pt;" size="2">modules.f90</font></tt>)
+must be declared by means of <font size="2"><font face="Cumberland, monospace">USE</font></font>
+statements in the
+user-defined routines in order to be able to work with the variables
+contained in them. As in the example, this is already done with the
+module <tt><font style="font-size: 10pt;" size="2">control_parameters</font></tt>.
+This yields access to most of the existing parameters for steering the
+model. Furthermore, the module <tt><font style="font-size: 11pt;" size="2">user</font></tt>
+appears in the example
+above. This is a
+user-defined module (it can be found in file <tt><font style="font-size: 10pt;" size="2">user_module.f90</font></tt>)
+and can be used for communication between the user-defined routines. In
+this module own variables can be declared as desired. It
+is not used (and should not be used!) outside of the user code. </p>
+<p style="line-height: 100%;">A very typical request of
+users is the
+calculation and output of
+quantities which are not part of PALM's standard output. Several
+routines in the basic user interface are already designed and prepared
+for calculating and output of such quantities (see <a href="chapter_3.5.4.html">3.5.4</a>).</p><p style="line-height: 100%;">As already mentioned, the
+contents of
+the files <tt><font style="font-size: 10pt;" size="2">user_***.f90</font></tt>
+can be used as a basis for extensions. However these files should not be
+manipulated directly. Instead, a copy should be used.
+</p>
+<p style="line-height: 100%;">The following sections
+describe, which
+interfaces for user-defined code exist in the
+model, how user parameters can be defined for steering this code
+and how it is translated and linked to the model. &nbsp;</p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_3.4.html"><font color="#000080"><img name="Grafik1" src="left.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img name="Grafik2" src="up.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_3.5.1.html"><font color="#000080"><img name="Grafik3" src="right.gif" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;</i>
+$Id$</p>
+</body></html>

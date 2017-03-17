@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM chapter 4.5.7</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041029;14344622"> <meta name="CHANGED" content="20050119;9531085"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head><body style="direction: ltr;" lang="en-US"><h4 style="line-height: 100%;"><font size="4">4.5.7
+Plots of
+isosurfaces, 2d cross sections and particles with dvrp</font></h4>
+<p style="line-height: 100%;"><span style="font-weight: bold;">Preliminary note:</span></p><p style="line-height: 100%;">Usage of the <span style="font-weight: bold;">dvrp</span>-software requires installation of additional software components (dvrp-library, streaming-server, browser-plugin) which are <span style="font-weight: bold;">not</span>
+part of the PALM distribution. Currently (May 2009), this software is
+only available on the the HLRN/IMUK system and partly on RIAM's NEC
+system. If you are interested in using <span style="font-weight: bold;">dvrp</span> on your system, please contact the PALM developers.</p><br><span style="font-weight: bold;">General remarks:</span><p style="line-height: 100%;">The <span style="font-weight: bold;">dvrp</span>
+software was originally developed by the RRZN
+(Stephan Olbrich, Carsten Chmielewski) and is meanwhile continuosly developed and improved under the name <span style="font-weight: bold;">dsvr</span> by the University of Düsseldorf (Prof. Stephan Olbrich, see webpage of the <a href="http://www.dsvr-software.de/">dsvr-software</a>). It allows to create 3d-animations with PALM,
+which can be displayed via a special plugin for internet browsers. With
+suitable graphic hardware (e.g. NVIDIA quattro FX cards) even stereoscopic views are
+possible.</p><p style="line-height: 100%;">
+In contrast to the other kinds of visualization output realized
+in PALM (1d-, 2d-, 3d-NetCDF output),
+where the data
+is output in a format suitable for many kinds of post-processing graphic software, the creation of animations via <span style="font-weight: bold;">dvrp</span>
+software is
+integrated in PALM, i.e. respective routines are directly called within
+the PALM code. The
+<span style="font-weight: bold;">dvrp</span>
+routines then output the
+graphic data
+(so-called plot-primitives, e.g. polygones of isosurfaces) in a special
+dvr format. Since the <span style="font-weight: bold;">dvrp</span>
+software is parallelized (i.e. each PE calculates the graphic data for
+its subdomain), the visualization of simulations with very
+large numbers of grid points is possible (which so far failed because
+of
+several problems: volume of the raw data, which rapidly may sum-up to
+several Terabytes; main memory size needed for graphic workstations, on
+which the visualization is to be carried out; the insufficient scalar
+(!)
+computing speed of commercial graphic software in case of such
+large numbers of grid points). </p>
+<p style="line-height: 100%;">The coupling of <span style="font-weight: bold;">dvrp</span> software and
+PALM
+as well as the visualization of the model results via <span style="font-weight: bold;">dvrp</span> has been
+the main focus of the BMBF project "Application of
+tele-immersion in long-distance networks" (2001-2002),
+which was a joint project of RRZN, ZIB and IMUK. This work was
+continued by RRZN in the DFG-funded project "<a href="http://www.rrzn.uni-hannover.de/evita.html">EVITA</a> - Untersuchung
+effizienter
+Methoden zur visuellen und haptischen tele-immersiven
+Exploration
+komplexer Volumen- und Strömungsdaten aus
+parallelisierten,
+dynamischen 3D-Simulationen" (2005-2007). </p>
+<p style="line-height: 100%;"></p><p style="line-height: 100%;"><span style="font-weight: bold;">Using dvrp with PALM:</span></p><p style="line-height: 100%;">The calls of the <span style="font-weight: bold;">dvrp</span> routines are
+contained within a
+PALM software package (see chapter <a href="chapter_3.7.html">3.7</a>).
+To use this package, the additional option<tt style="font-family: monospace;"> </tt><font style="font-family: Courier New,Courier,monospace;" size="2">-p
+<span style="font-family: Helvetica,Arial,sans-serif;">“</span>dvrp_graphics<span style="font-family: Helvetica,Arial,sans-serif;">”</span></font><span style="font-family: monospace;">
+</span>has to be given in the <b>mrun</b> call. This
+automatically links the
+required libraries.
+Steering of the plot output is done via the package
+parameters (see chapter <a href="chapter_4.2.html">4.2</a>).
+In contrast to all other PALM output, <span style="font-weight: bold;">dvrp</span>
+graphic
+data are not output to local files but directly to a special remote
+computer which is defined via the package parameter <a href="chapter_4.2.html#dvrp_host">dvrp_host</a>. If the default values of the dvrp parameters are used, data are send to a so-called <span style="font-style: italic;">streaming server</span> at the
+RRZN. Apart from graphic data an additional html file is created, which
+can be opened by an internet browser to view the data (a special <span style="font-weight: bold;">dvrp</span> plugin is required for this).</p><p style="line-height: 100%;"></p><p style="line-height: 100%;"><span style="font-weight: bold;">Quickstart guide for using dvrp on the HLRN/IMUK-System (June 2010):</span></p><p style="line-height: 100%;">In the following, please replace the string<span style="font-family: Courier New,Courier,monospace; font-weight: bold;"> &lt;UNAME&gt; </span>with your IMUK username, wherever it appears. Please also replace the string<span style="font-family: Courier New,Courier,monospace;"><span style="font-weight: bold;"> &lt;UDIR&gt;</span> </span>with a subdirectory name of your choice. <span style="font-weight: bold;"></span> </p>
+<ol><li>
+Add the following define statements for environment variables to the configuration file (<span style="font-family: Courier New,Courier,monospace;">.mrun.config</span>):<br><br><span style="font-family: Courier New,Courier,monospace;"></span><span style="font-family: Courier New,Courier,monospace;"> &nbsp; &nbsp;%dvr_inc&nbsp;&nbsp;
+-I/home/h/niksiraa/dvr_mvapich2/lib&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; lcsgih parallel</span><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">&nbsp; &nbsp;%dvr_lib&nbsp;&nbsp;&nbsp;-L/home/h/niksiraa/dvr_mvapich2/lib:-lDVRP2:-lftp&nbsp; &nbsp; lcsgih
+parallel</span><br><br><br></li><li>Add the dvrp-steering parameters to your NAMELIST-parameter file, e.g.<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp;&amp;d3par &nbsp;end_time = 3600.0,<br>&nbsp; ... &nbsp; &nbsp; /<br><br>&nbsp;&amp;dvrp_graphics_par &nbsp; dvrp_username = '<span style="font-weight: bold;">&lt;UNAME&gt;</span>',<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; dvrp_host = '130.75.105.6',<br>&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+dvrp_directory = '<span style="font-weight: bold;">&lt;UNAME&gt;</span>/<span style="font-weight: bold;">&lt;UDIR&gt;</span>', ... /<br></span><br>For other dvrp-parameters see <a href="chapter_4.2.html#Paketparameter">chapter 4.2</a>. An example parameter file can be found in directory <span style="font-family: Courier New,Courier,monospace;">..../trunk/EXAMPLES/dvr &nbsp;</span>.<span style="font-family: Courier New,Courier,monospace;"><br><br></span></li><li>Ask the IMUK system operator (Notker Fechner) to mount the filesystem<span style="font-family: Courier New,Courier,monospace;"> /dvrdata </span>on your local computer.<br>
+    <br>
+</li>
+  <li>On the IMUK-system (your local computer), create a subdirectory
+in which the dvrp-data are stored and give it access permit for group <span style="font-style: italic;">palm</span>.<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp; &nbsp;mkdir /dvrdata/<span style="font-weight: bold;">&lt;UNAME&gt;<br>
+</span>&nbsp;&nbsp; chmod g+rwx /dvrdata</span><span style="font-family: Courier New,Courier,monospace;">/<span style="font-weight: bold;">&lt;UNAME&gt;</span></span><br><br><span style="font-weight: bold;">Steps 3. and 4. have to be done only once, before dvrp is used for the first time.</span><br>
+<br></li>
+<li>Submit the job&nbsp; with <span style="font-weight: bold;">mrun</span>-command<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp; &nbsp;mrun .... -p dvrp_graphics ....</span><br><br></li><li><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;">After the job has finished, the dvrp-output can be found on the IMUK-cluster in a subdirectory under <span style="font-family: Courier New,Courier,monospace;">/dvrdata</span>. The name of the subdirectory is determined by the dvrp-parameter <a href="chapter_4.2.html#dvrp_directory">dvrp_directory</a> (see above), i.e. if the user has set <span style="font-family: Courier New,Courier,monospace;">dvrp_directory</span> = <span style="font-style: italic;">'<span style="font-weight: bold;">&lt;UNAME&gt;</span>/movie_1'</span>, the dvrp-data are stored under&nbsp;<span style="font-family: Courier New,Courier,monospace;">/dvrdata/<span style="font-weight: bold;">&lt;UNAME&gt;</span>/movie_1</span>.<br><br></span></span></li><li><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;">Change to this subdirectory (e.g. </span></span><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;"><span style="font-family: Courier New,Courier,monospace;">/dvrdata/&lt;UNAME&gt;/movie_1</span></span></span><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;">) and enter the command<br><br><span style="font-family: Courier New,Courier,monospace;">&nbsp; &nbsp;process_dvr_output</span><br><br>It will create a file with name <span style="font-family: Courier New,Courier,monospace;">all_streams_streaming.html</span>.<br><br></span></span></li><li><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;">Call the opera-browser (i.e. enter the command <span style="font-family: Courier New,Courier,monospace;">opera</span>) and open the file </span></span><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;"><span style="font-family: Courier New,Courier,monospace;">all_streams_streaming.html</span>.</span></span><span style="font-family: Courier New,Courier,monospace;"><span style="font-family: Times New Roman,Times,serif;"></span><br></span><br></li></ol><span style="font-weight: bold;">Further features:<br></span>The script<span style="font-family: Courier New,Courier,monospace;"> process_dvr_output </span>has additional options:<br><br><span style="font-weight: bold; font-family: Courier New,Courier,monospace;">-s</span> &nbsp; &nbsp; : <span style="font-weight: bold;">create sequence output</span>.
+All streams (and static scenes) are collected to one sequence (one
+static scene), which can be displayed with a browser without using the
+streaming server (the so-called sequence mode). This allows e.g. to
+show animations on a notebook without beeing connected to the internet.
+When the script is called with this option, the sequence is generated
+in subdirectory sequence_data. Copy this subdirectory and the file<span style="font-family: Courier New,Courier,monospace;">
+all_streams_sequence.html </span>to a directory on your local computer and
+open the file<span style="font-family: Courier New,Courier,monospace;"> all_streams_sequence.html </span>with your browser. For this,
+you will need to install the the dvr-plugin (see webpage of the <a href="http://www.dsvr-software.de/">dsvr-software</a>) on your local computer, which is also available for Windows.<br><br><span style="font-weight: bold;">-a</span> &nbsp; &nbsp; &nbsp;: <span style="font-weight: bold;">acceleration factor</span>. If, in case of sequence mode, the performance of the animation is to slow, you can accelerate it. E.g., by using <span style="font-family: Courier New,Courier,monospace;">"-a 2</span>", only every second frame of the original streams will be used for the sequence.<br><br><br><br><br><span style="font-weight: bold;">Current limitations (May 09):</span><br>Only a special opera-version on host "bora" can be used. Log-in on "bora" and call &nbsp;<span style="font-family: Courier New,Courier,monospace;">/usr/bin/opera</span>. <span style="font-weight: bold;">Before that(!!!)</span>, enter the command "<span style="font-family: Courier New,Courier,monospace;">export LD_PRELOAD=libXm.so</span>" !
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_4.5.6.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.6.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;">&nbsp;<i>Last
+change:&nbsp;</i> $Id: chapter_4.5.7.html 555 2010-09-07 07:32:53Z raasch $</p>
+</body></html>

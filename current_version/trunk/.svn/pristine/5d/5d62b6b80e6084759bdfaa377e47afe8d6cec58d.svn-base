@@ -1,0 +1,181 @@
+#!/bin/ksh
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2014  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# -----------------
+# 
+#
+# Former revisions:
+# -----------------
+# $Id$
+#
+# 1221 2013-09-10 08:59:13Z raasch
+# setting of PGI_ACC_SYNCHRONOUS=1 for running with pgi-openacc
+#
+# 1172 2013-05-30 11:46:00Z raasch
+# for performance reasons set PGI_ACC_SYNCHRONOUS=1 for pgi/openacc execution
+#
+# 1171 2013-05-30 11:27:45Z raasch
+# new option -e which defines the execution command to be used to run PALM
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9)
+#
+# 29/08/11 - BjornW - Adapted for lcflow (ForWind cluster in Oldenburg)
+# 18/03/10 - Siggi  - Some comments changed
+# 25/01/10 - Siggi  - Generating the first version
+
+
+#--------------------------------------------------------------------------------#
+# palm_simple_run - a simple method for running the palm code without
+#                   using the mrun script
+#
+# This script runs the palm code in a unique subdirectory (OUTPUT...,
+# current time/date and number of processors are part of the subdirectory
+# name).
+# It requires that palm has been installed with command
+# palm_simple_install and that the executable palm has been created
+# with make in directory  ...../MAKE_DEPOSITORY_simple
+#--------------------------------------------------------------------------------#
+
+
+    # Variable declarations + default values
+ case=example_cbl
+ cpumax=999999
+ execute_for=unknown
+ localhost=unknown
+ localhost_realname=$(hostname)
+ mpi_procs=1
+ mpi_procs_per_node=1
+ openmp_threads=1
+
+ typeset -i  ii
+
+
+    # Read shellscript options
+ while  getopts  :c:e:l:n:p:t:  option
+ do
+   case  $option  in
+       (c)   case=$OPTARG;;
+       (e)   execute_for=$OPTARG;;
+       (l)   localhost=$OPTARG;;
+       (n)   mpi_procs_per_node=$OPTARG;;
+       (p)   mpi_procs=$OPTARG;;
+       (t)   openmp_threads=$OPTARG;;
+       (\?)  printf "\n  +++ unknown option $OPTARG \n"
+             printf "\n      allowed option are -c, -e, -l, -n, -p, -t \n"
+             exit;;
+   esac
+ done
+
+
+    # Find out the global svn revision number
+ global_revision=`svnversion ${palm_dir}trunk  2>/dev/null`
+ global_revision="Rev: $global_revision"
+
+
+    # Generate unique directory/files for this run
+ timedate="`date +%d.%b_%H:%M:%S`"
+ suffix=$case+$mpi_procs+$timedate
+ RUNDIR=OUTPUT.$suffix/
+
+ if [[ ! -d $RUNDIR ]]
+ then
+    mkdir $RUNDIR
+    echo "*** running in directory $RUNDIR"
+ else
+    echo "+++ ERROR: $RUNDIR exists\!   Must be unique.  Exiting."
+    exit
+ fi
+
+
+    # Check if palm has been installed and copy executable into the run
+    # directory
+ if [[ ! -f ${palm_dir}MAKE_DEPOSITORY_simple/palm ]]
+ then
+    echo "+++ ERROR: palm executable does not exist."
+    echo "           Please run \"palm_simple_install\"."
+    exit
+ else
+    cp  ${palm_dir}MAKE_DEPOSITORY_simple/palm  $RUNDIR/palm
+ fi
+
+
+    # Check, if parameter file exists and copy into the run directory
+ if [[ ! -f ${palm_dir}JOBS/${case}/INPUT/${case}_p3d ]]
+ then
+    echo "+++ ERROR: parameter file"
+    echo "           \"${palm_dir}JOBS/${case}/INPUT/${case}_p3d\""
+    echo "           does not exist."
+    exit
+ else
+    cp  ${palm_dir}JOBS/${case}/INPUT/${case}_p3d  $RUNDIR/PARIN
+ fi
+
+
+    # Switch to run directory
+ cd  $RUNDIR
+
+
+
+    # Create NAMELIST file containing environment values needed by palm
+ cat  >  ENVPAR  <<  %%END%%
+ &envpar  run_identifier = '$case', host = '$localhost',
+          write_binary = 'false', tasks_per_node = $mpi_procs_per_node,
+          maximum_cpu_time_allowed = ${cpumax}.,
+          revision = '$global_revision',
+          local_dvrserver_running = .FALSE. /
+
+%%END%%
+
+
+    # Coupled runs cannot be carried out with this simple run script
+ echo "no_coupling"  >  runfile_atmos
+
+
+    # Generate hostfile (if neccessary)
+ (( ii = 1 ))
+ while (( ii <= $mpi_procs ))
+ do
+    echo  $localhost_realname  >>  hostfile
+    (( ii = ii + 1 ))
+ done
+
+
+    # Set number of OpenMP threads
+ export OMP_NUM_THREADS=$openmp_threads
+
+
+
+    # Start palm run
+ echo "*** palm will be run:  MPI tasks: $mpi_procs   OpenMP thread: $OMP_NUM_THREADS"
+
+ case $execute_for in
+
+    (imuk)         mpiexec  -machinefile hostfile  -n $mpi_procs  ./palm  < runfile_atmos;;
+    (sgi-mpt)      mpiexec_mpt  -np $mpi_procs  ./palm  < runfile_atmos;;
+    (hpc-flow)     mpiexec  -machinefile $TMPDIR/machines -n $mpi_procs  -env I_MPI_FABRICS shm:ofa ./palm  < runfile_atmos;;
+    (pgi-openacc)  export PGI_ACC_SYNCHRONOUS=1; ./palm;;
+    (*)      echo "+++ -e option to define execution command is missing";;
+
+ esac
+
+ echo "*** palm finished"
+ echo "*** see"
+ echo "    \"$RUNDIR\""
+ echo "    for results"

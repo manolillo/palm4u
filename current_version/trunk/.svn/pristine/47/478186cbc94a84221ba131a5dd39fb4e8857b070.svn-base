@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta content="text/html; charset=windows-1252" http-equiv="CONTENT-TYPE"><title>PALM chapter 4.4</title>
+<meta content="StarOffice 7 (Win32)" name="GENERATOR">
+<meta content="Siegfried Raasch" name="AUTHOR"> <meta content="20041013;13430732" name="CREATED"> <meta content="20041117;11162734" name="CHANGED"> <meta content="parallel LES model" name="KEYWORDS"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"><h3 style="line-height: 100%;">4.4.2 A&nbsp;parameter set for ocean runs</h3>
+<p style="line-height: 100%;">... to be completed ...</p><p style="line-height: 100%;">In this chapter a brief,
+simple and
+complete parameter set is described, which can be used to carry out a
+model run. The presented example is available via <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/example_p3d">example
+file</a> and can be used (together with the <a href="http://www.muk.uni-hannover.de/%7Eraasch/PALM_group/INSTALL/.mrun.config">configuration
+file</a> described in <a href="chapter_3.2.html">chapter
+3.2)</a> for the execution of a simple model run. </p>
+<p style="line-height: 100%;">This run simulates a
+quasi-stationary,
+convective, atmospheric boundary layer with&nbsp; <font color="#000000">zero
+mean horizontal
+wind.</font> For evaluation purposes, cross sections and
+horizontally averaged vertical
+profiles of typical boundary layer variables
+are output at the end of the run. The run shall be carried out in
+batch mode on the IBM Regatta "hanni" of the HLRN.</p>
+<p style="line-height: 100%;">The parameter file necessary
+to carry
+out a run must be provided to the model as an input file under the
+local name <a href="chapter_3.4.html#PARIN">PARIN</a>
+and has the following contents:</p>
+<pre style="line-height: 100%;">&amp;inipar <a href="chapter_4.1.html#nx">nx</a> = <span style="font-style: italic;">39</span>, <a href="chapter_4.1.html#ny">ny</a> = <span style="font-style: italic;">39</span>, <a href="chapter_4.1.html#nz">nz</a> = <span style="font-style: italic;">40</span>,<br> <a href="chapter_4.1.html#dx">dx</a> = <span style="font-style: italic;">50.0</span>, <a href="chapter_4.1.html#dy">dy</a> = <span style="font-style: italic;">50.0</span>, <a href="chapter_4.1.html#dz">dz</a> = <span style="font-style: italic;">50.0</span>,<br> <a href="chapter_4.1.html#dz_stretch_level">dz_stretch_level</a> = <span style="font-style: italic;">1200.0</span>,<br> <a href="chapter_4.1.html#fft_method">fft_method</a> = <span style="font-style: italic;">'temperton-algorithm'</span>,<br> <a href="chapter_4.1.html#initializing_actions">initializing_actions</a> = <span style="font-style: italic;">'set_constant_profiles'</span>,<br> <a href="chapter_4.1.html#ug_surface">ug_surface</a> = <span style="font-style: italic;">0.0</span>, <a href="chapter_4.1.html#vg_surface">vg_surface</a> = <span style="font-style: italic;">0.0</span>,<br> <a href="chapter_4.1.html#pt_vertical_gradient">pt_vertical_gradient</a> = <span style="font-style: italic;">0.0</span>, <span style="font-style: italic;">1.0</span>,<br> <a href="chapter_4.1.html#pt_vertical_gradient_level">pt_vertical_gradient_level</a> = <span style="font-style: italic;">0.0</span>, <span style="font-style: italic;">800.0</span>,<br> <a href="chapter_4.1.html#surface_heatflux">surface_heatflux</a> = <span style="font-style: italic;">0.1</span>, <a href="chapter_4.1.html#bc_pt_b">bc_pt_b</a> = <span style="font-style: italic;">'neumann'</span>,/<br><br>&amp;d3par <a href="chapter_4.2.html#end_time">end_time</a> = <span style="font-style: italic;">3600.0</span>,<br> <a href="chapter_4.2.html#create_disturbances">create_disturbances</a> = <span style="font-style: italic;">.T.</span>,<br> <a href="chapter_4.2.html#dt_disturb">dt_disturb</a> = <span style="font-style: italic;">150.0</span>, <a href="chapter_4.2.html#disturbance_energy_limit">disturbance_energy_limit</a> = <span style="font-style: italic;">0.01</span>,<br> <a href="chapter_4.2.html#dt_run_control">dt_run_control</a> = <span style="font-style: italic;">0.0</span>,<br> <a href="chapter_4.2.html#data_output">data_output</a> = <span style="font-style: italic;">'w_xy'</span>, <span style="font-style: italic;">'w_xz'</span>, <span style="font-style: italic;">'w_xz_av'</span>, <span style="font-style: italic;">'pt_xy'</span>, <span style="font-style: italic;">'pt_xz'</span>,<br> <a href="chapter_4.2.html#dt_data_output">dt_data_output</a> = <span style="font-style: italic;">900.0</span>,<br> <a href="chapter_4.2.html#dt_data_output_av">dt_data_output_av</a> = <span style="font-style: italic;">1800.0</span>,<br> <a href="chapter_4.2.html#averaging_interval">averaging_interval</a> = <span style="font-style: italic;">900.0</span>,<br> <a href="chapter_4.2.html#dt_averaging_input">dt_averaging_input</a> = <span style="font-style: italic;">10.0</span>,<br> <a href="chapter_4.2.html#section_xy">section_xy</a> = <span style="font-style: italic;">2</span>, <span style="font-style: italic;">10</span>, <a href="chapter_4.2.html#section_xz">section_xz</a> = <span style="font-style: italic;">20</span>,<br> <a href="chapter_4.2.html#data_output_2d_on_each_pe">data_output_2d_on_each_pe</a> = <span style="font-style: italic;">.F.</span>,<br> <a href="chapter_4.2.html#dt_dopr">dt_dopr</a> = <span style="font-style: italic;">900.0</span>, <a href="chapter_4.2.html#averaging_interval_pr">averaging_interval_pr</a> = <span style="font-style: italic;">600.0</span>,<br> <a href="chapter_4.2.html#dt_averaging_input_pr">dt_averaging_input_pr</a> = <span style="font-style: italic;">10.0</span>,<br> <a href="chapter_4.2.html#data_output_pr">data_output_pr</a> = <span style="font-style: italic;">'#pt'</span>, <span style="font-style: italic;">'w&rdquo;pt&rdquo;'</span>, <span style="font-style: italic;">'w*pt*'</span>, <span style="font-style: italic;">'wpt'</span>, <span style="font-style: italic;">'w*2'</span>, <span style="font-style: italic;">'pt*2'</span>,<br> <a href="chapter_4.2.html#cross_profiles">cross_profiles</a> = <span style="font-style: italic;">' pt '</span>, <span style="font-style: italic;">' w"pt" w*pt* wpt '</span>, <span style="font-style: italic;">' w*2 '</span>, <span style="font-style: italic;">' pt*2 '</span>,<br> <a href="chapter_4.2.html#cross_xtext">cross_xtext</a> = <span style="font-style: italic;">'pot. temperature in K'</span>,<br> <span style="font-style: italic;">'heat flux in K ms&gt;-&gt;1'</span>,<br> <span style="font-style: italic;">'velocity variance in m&gt;2s&gt;-&gt;2'</span>,<br> <span style="font-style: italic;">'temperature variance in K&gt;2'</span>,<br> <a href="chapter_4.2.html#z_max_do1d">z_max_do1d</a> = <span style="font-style: italic;">1500.0</span>, /</pre><p style="line-height: 100%;"><br><br></p>
+<p style="line-height: 100%;">The initialization
+parameters (<tt><font style="font-size: 10pt;" size="2">&amp;inipar</font></tt>)
+are located at the beginning of the file. For analysis of a
+convective boundary layer of approx. 1000 m thickness the horizontal
+size of the model domain should amount to at least 2 km x 2 km. In
+order to resolve the convective structures a grid spacing of <b>dx</b>
+=
+<b>dy</b> = <b>dz</b> = <i>50 m</i>
+is enough, since the typical
+diameter of convective plumes is more than 100 m. Thereby the
+upper array index in the two horizontal directions needs to be <b>nx</b>
+= <b>ny</b> = <i>39</i>. <font color="#000000">Since in
+each case the lower array index has the value 0, 40 grid points are
+used along both horizontal directions.</font> In the vertical
+direction
+the domain must be high enough to include the entrainment processes at
+the top of the boundary layer as well as the propagation of gravity
+waves, which were stimulated by
+the convection. However, in the stably stratified region the grid
+resolution has not necessarily to be as high as within the boundary
+layer. This can be obtained by a vertical stretching of the grid
+starting
+from 1200 m via <b>dz_stretch_level</b> = <i>1200.0
+m.</i> This saves
+grid points and computing time. <font color="#800000">T</font><font color="#000000">he
+upper boundary of the model is located at (see </font><a href="chapter_4.1.html#dz_stretch_factor"><font color="#000000">dz_stretch_factor</font></a><font color="#000000">)
+&hellip; m (computed by the model)</font>.</p><p style="line-height: 100%;">Fast Fourier transformations are
+calculated using the Temperton-algorithm, which -on the IBM Regatta- is
+faster than the default system-specific algorithm (from IBM essl
+library).</p><p style="line-height: 100%;">The
+initial profiles for
+wind and temperature can be assigned via <b>initializing_actions</b>
+= <span style="font-style: italic;">'set_constant_profiles'</span>.
+The wind speed, constant with
+height, amounts to <b>ug_surface</b> = <b>vg_surface</b>
+= <i>0.0 m/s</i>. In order
+to allow for a fast onset of convection, a neutral stratified layer up
+to z
+= 800 m capped by an inversion with dtheta/dz = 1K/100 m is given:
+<b>pt_vertical_gradient</b> = <i>0.0, 1.0</i>,
+<b>pt_vertical_gradient_level</b> = <i>0.0, 800.0.</i>
+The surface
+temperature, which by default amounts to 300 K, provides the fixed
+point for the temperature profile (see <a href="chapter_4.1.html#pt_surface">pt_surface</a>).
+Convection is driven by a given, near-surface sensible heat flux via <b>surface_heatflux</b>
+= <i>0.1 K m/s.</i> A given surface sensible heta flux
+requires the
+bottom boundary condition for potential temperature to be <b>bc_pt_b</b>
+=
+<span style="font-style: italic;">'neumann'</span> .
+Thus
+all initialization parameters are determined. These can not be
+changed during the run (also not for restart runs). </p>
+<p style="line-height: 100%;">Now the run parameters (<tt><font style="font-size: 10pt;" size="2">&amp;d3par</font></tt>)
+must be specified. To produce a quasi stationary boundary layer the
+simulated time should be at least one hour, i.e. <b>end_time</b>
+= <i>3600
+s.</i> To stimulate convection, the initially homogeneous (zero)
+wind
+field must be disturbed (<b>create_disturbances</b> = <i>.T.</i>).
+These perturbations should be repeated in a temporal interval of
+<b>dt_disturb</b> = <i>150.0 s</i> until the
+energy of the
+perturbations exceeds the value <b>disturbance_energy_limit</b>
+= 0.<i>01
+m<sup>2</sup>/s<sup>2</sup></i>. After
+each time step run time
+informations (e.g. size of the timestep, maximum velocities, etc.) are
+to be written to the local file <a href="chapter_3.4.html#RUN_CONTROL">RUN_CONTROL</a>
+(<b>dt_run_control</b> = <i>0.0 s</i>).</p><p style="line-height: 100%;">Instantaneous cross section data
+of vertical velocity (<span style="font-style: italic;">w</span>)
+and potential temperature (<span style="font-style: italic;">pt</span>)
+are to be output for horizontal (<span style="font-style: italic;">xy</span>)
+and vertical (<span style="font-style: italic;">xz</span>)
+cross sections, and additionally, time averaged (<span style="font-style: italic;">av</span>) vertical cross
+section data are to be output for the vertical velocity: <span style="font-weight: bold;">data_output</span> = <span style="font-style: italic;">'w_xy'</span>, <span style="font-style: italic;">'w_xz'</span>, <span style="font-style: italic;">'w_xz_av'</span>, <span style="font-style: italic;">'pt_xy'</span>, <span style="font-style: italic;">'pt_xz'</span>. Output of
+instantaneous (time averaged) data is done after each 900 (1800)s: <span style="font-weight: bold;">dt_data_output</span> = <span style="font-style: italic;">900.0</span>, <span style="font-weight: bold;">dt_data_output_av</span> = <span style="font-style: italic;">1800.0</span>. The
+averaged data are time averaged over the last 900.0 s, where the
+temporal interval of data entering the average is 10 s: <span style="font-weight: bold;">averaging_interval</span> =
+<span style="font-style: italic;">900.0</span>, <span style="font-weight: bold;">dt_averaging_input</span> =
+<span style="font-style: italic;">10.0</span>.
+Horizontal cross sections are output for vertical levels with grid
+index k=2 and k=10, vertical cross sections are output for index j=20: <span style="font-weight: bold;">section_xy</span> = <span style="font-style: italic;">2</span>, <span style="font-style: italic;">10</span>, <span style="font-weight: bold;">section_xz</span> = <span style="font-style: italic;">20</span>. For runs on
+more than one processor, cross section data are collected and output on
+PE0: <span style="font-weight: bold;">data_output_2d_on_each_pe</span>
+= <span style="font-style: italic;">.F.</span>.</p><p style="line-height: 100%;">Output
+of vertical profiles is to be done after each 900 s. The profiles shall
+be temporally averaged<font color="#000000"> over the last
+<font color="#000000">600 </font>seconds, </font>whereby
+the temporal interval of the profiles entering the average has to be
+10 s: <b>dt_dopr</b> = <i>900.0 s</i>, <b>averaging_interval_pr</b>
+=
+<i>600.0 s</i>, <b>dt_averaging_input_pr</b> =
+<i>10.0 s.</i> The temperature
+profile including the initial temperature profile (therefore <span style="font-style: italic;">'#pt'</span>),
+the subgrid scale, resolved and total vertical sensible heat flux as
+well as the variances of the vertical velocity and the potential
+temperature are to be output:&nbsp; <b>data_output_pr</b>
+= <span style="font-style: italic;">'#pt'</span><i>,
+'w"pt&rdquo;',
+'w*pt*', 'wpt', 'w*2', 'pt*2'</i>.</p><p style="line-height: 100%;">If the data output format for
+graphic software <span style="font-weight: bold;">profil</span>
+is selected (see <a href="chapter_4.2.html#data_output_format">data_output_format</a>),
+the temperature
+profile and the individual variances are to be drawn into independent
+coordinate systems, and in contrast to this all heat flux profiles are
+to
+be
+drawn into the same system: <b>cross_profiles</b> = <span style="font-style: italic;">'pt'</span><i>,
+'w"pt"w*pt*wpt', 'w*2', 'pt*2'</i>. The legend of the x
+axes of these systems is set to <b>cross_xtext</b>= <i>'pot.
+temperature in K', 'heat flux in K ms&gt;-&gt;1', 'velocity
+variance
+in m&gt;2s&gt;-&gt;2', 'temperature variance in K&gt;2'</i>.
+The profiles are to be drawn up to a height level of <b>z_max_do1d</b>
+=
+<i>1500.0 m</i>. </p>
+<p style="line-height: 100%;">Before starting the mo<font color="#000000">del
+on the parallel computer, the number of processing elements must be
+specified.</font> Since relatively few grid points are used for
+this run, choosing of e.g. 8 PEs is sufficient. By default, a 1d domain
+decomposition along x is used on the IBM-Regatta, which means that a
+virtual processor topology (grid) of 8*1 (x*y) is used. (<span style="font-weight: bold;">Note:</span> the user may
+adjust this
+default domain decomposition with the help of the parameters <a href="chapter_4.2.html#npex">npex</a>
+and <a href="chapter_4.2.html#npey">npey</a>).
+</p><p style="line-height: 100%;">Provided that the
+parameters
+file described above are set within the file </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">~/palm/current_version/JOBS/example/INPUT/example_p3d</font></pre></ul><p style="line-height: 100%;">and that the conditions
+mentioned in the
+first sections of <a href="chapter_3.2.html">chapter
+3.2</a> are met, the model run can be started with the command </p>
+<p style="line-height: 100%;"><font face="Cumberland, monospace"><font style="font-size: 10pt;" size="2">mrun
+-d example -h ibmh -K parallel -X 8 -T 8 -t 1800 -q cdev -r
+&ldquo;d3# xy# xz# pr#&rdquo;</font></font></p>
+<p style="line-height: 100%;">The output files will appear
+in the
+directories </p>
+<blockquote style="line-height: 100%;"><tt><font style="font-size: 10pt;" size="2">~/palm/current_version/JOBS/example/MONITORING</font></tt><font style="font-size: 10pt;" size="2"><br> </font><tt><font style="font-size: 10pt;" size="2">~/palm/current_version/JOBS/example/OUTPUT
+,</font></tt></blockquote>
+<p style="line-height: 100%;">while the job protocol will
+appear in
+directory <font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">~/</font></font><tt><font style="font-size: 10pt;" size="2"><font face="Cumberland, monospace">job_queue</font></font></tt>.
+<br>
+&nbsp; </p>
+<hr><p style="line-height: 100%;"><br><font color="#000080"><font color="#000080"><a href="chapter_4.4.1.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" name="Grafik1" src="left.gif"></font></a><a href="index.html"><font color="#000080"><img name="Grafik2" src="up.gif" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.html"><font color="#000080"><img style="border: 2px solid ; width: 32px; height: 32px;" alt="" name="Grafik3" src="right.gif"></font></a></font></font></p><p style="line-height: 100%;"><i>Last change:&nbsp;
+</i>$Id$
+<br>&nbsp; <br>
+&nbsp; </p>
+</body></html>

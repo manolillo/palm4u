@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252"><title>PALM
+chapter 4.5.5</title> <meta name="GENERATOR" content="StarOffice 7 (Win32)"> <meta name="AUTHOR" content="Siegfried Raasch"> <meta name="CREATED" content="20041027;13094394"> <meta name="CHANGED" content="20041117;11561956"> <meta name="KEYWORDS" content="parallel LES model"> <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+
+<body style="direction: ltr;" lang="en-US"><h4 style="line-height: 100%;"><font size="4">4.5.5
+Plots of 3d volume
+data with AVS</font></h4>
+<p style="line-height: 100%;">In contrast to the plot
+output described
+so far, which can be handled more or less automatically, the creation
+of
+plots with <b>AVS</b> requires programming a so-called
+network by
+using the <span style="font-weight: bold;">AVS</span>
+network editor
+to design the plot
+layout. Details are not given here because it is assumed that the user
+is familiar with <b>AVS</b>. </p>
+<p style="line-height: 100%;"><font color="#000000">Output
+of 3d volume
+data requires to set at least two parameters: </font>first, the
+temporal
+interval of the output time (run parameter <a href="chapter_4.2.html#dt_do3d"><u>dt_do3d)</u></a><span style="text-decoration: none;">
+and second<span style="text-decoration: none;"></span>
+the names of the quantities for which volume data output is wanted</span><span style="text-decoration: none;"><span style="text-decoration: none;"> (<a href="chapter_4.2.html#data_output">data_output</a></span></span>).<font color="#000000"> </font><font color="#000000"><span style="text-decoration: none;"></span></font><font color="#000000"><span style="text-decoration: none;"></span><span style="text-decoration: none;"></span></font><font color="#800000"> </font>The
+parameter <a href="chapter_4.2.html#nz_do3d">nz_do3d</a>
+can be used to limit data output in vertical direction up to a certain
+grid
+point. If no value has been assigned to <b>data_output</b>
+or
+if the value given for <b>dt_do3d </b>is
+larger than the simulated time (see <a href="chapter_4.1.html#end_time">end_time</a>),
+<b>then there will be no output!</b> By default, data is
+output in
+32-bit real format. Alternatively, for parallel runs, data can also be
+output in compressed format using 32-bit integers. This yields
+a loss of accuracy, but the file size is clearly reduced. The output of
+compressed data is described in more detail in <a href="chapter_4.5.6.html">chapter
+4.5.6</a>. </p>
+<p style="line-height: 100%;">Data, whether compressed or
+uncompressed, is output into the local file <a href="chapter_3.4.html#PLOT3D_DATA">PLOT3D_DATA</a>.
+This file must be linked with a permanent file by
+using a file connection statement in the <b>mrun</b>
+configuration
+file (see e.g. <a href="chapter_3.2.html">chapter
+3.2</a>). At the end of the run the local file is copied to this
+file. Additionally, mrun creates a file containing some coordinate
+informations about the 3d data, which also has to be copied. The
+statements can look like this: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">PLOT3D_DATA out:loc:tr avs ~/PLOT/$fname _avs<br>PLOT3D_COOR out:loc:tr avs ~/PLOT/$fname _coor .</font></pre></ul>
+<p style="line-height: 100%;">If the respective <b>mrun</b>
+call is
+like</p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">mrun -d test -r &ldquo;avs&rdquo;&hellip;</font></pre></ul>
+<p style="line-height: 100%;">then the local file <tt><font style="font-size: 10pt;" size="2">PLOT3D_DATA</font></tt>
+is copied to the permanent file <tt><font style="font-size: 10pt;" size="2">~/PLOT/test/test_avs</font></tt>
+.
+However, the character string &ldquo;<tt><font style="font-size: 10pt;" size="2">avs</font></tt>&rdquo;
+activating the file connection staement (see third column of the
+statement) must be given in the <b>mrun</b> call as
+argument of the
+option -r (and/or -o). <span style="text-decoration: none;">If
+t</span>his
+is forgotten by mistake, the model outputs the data to the local
+file, but this is not copied to the permanent file and thus the data
+are not available for the user after the run has finished.<br>
+</p><p style="line-height: 100%;">The created data
+file can be used as
+input file for the plot software <span style="font-weight: bold;">AVS</span>
+although for parallel runs another step is necessary which is
+described at the end of this chapter. However, after starting <b>AVS</b>
+(by executing the command &ldquo;avs&rdquo;), these data file
+is not read
+immediately<font color="#000000">. First, the user has to
+load a
+suitable network (created by the
+network editor). This module usually contains the module</font>
+&ldquo;read
+field&rdquo;, which requires an input
+file in the so-called "fld-format", which in turn refers to the two
+files
+specified above (containing the volume data and coordinate
+informations) and describes their exact structure. This fld file is
+also generated by PALM by creating two different
+local files with the names <a href="chapter_3.4.html#PLOT3D_FLD">PLOT3D_FLD</a>
+and <a href="chapter_3.4.html#PLOT3D_FLD_COOR">PLOT3D_FLD_COOR</a>,
+which must be combined into one file by a so-called <a href="http://www.muk.uni-hannover.de/institut/software/mrun_beschreibung.html#chapter6.2">output
+command</a>: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">OC:[[ -f PLOT3D_FLD ]] &amp;&amp; cat PLOT3D_FLD_COOR &gt;&gt; PLOT3D_FLD</font></pre></ul>
+<p style="line-height: 100%;">The new file PLOT3D_FLD also
+needs a file
+connection statement: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">PLOT3D_FLD out:loc:tr avs ~/PLOT/$fname _fld fld</font></pre></ul>
+<p style="line-height: 100%;">The above <b>mrun </b>call
+then copies the local file <tt><font style="font-size: 10pt;" size="2">PLOT3D_FLD</font></tt>
+to the permanent file <tt><font style="font-size: 10pt;" size="2">~/PLOT/test/test_fld.fld</font>
+</tt><font face="Thorndale, serif">.</font> In
+this case the entry
+&ldquo;<tt><font style="font-size: 10pt;" size="2">fld</font></tt>&rdquo;
+in the sixth column of the file connection statement is
+very important because this ensures that the permanent file name gets
+the suffix &rdquo; <tt><font style="font-size: 10pt;" size="2">.fld</font></tt>
+".&nbsp; The <span style="font-weight: bold;">AVS</span>
+module &ldquo;read field&rdquo; expects all files to have this
+suffix. (Note: With
+this file
+connection statements files with cycle numbers receive the names
+&rdquo;<tt><font style="font-size: 10pt;" size="2">&hellip;
+_fld.&lt;number of cycle&gt;.fld</font></tt><font style="font-size: 10pt;" size="2">
+</font>".) </p>
+<p style="line-height: 100%;"><font color="#000000">The
+file
+connection statements must guarantee that all three permanent files
+(volume
+data, coordinates, fld file) lie in the same directory. The names of
+the volume data file and coordinate file may not be changed after
+creation of the files, since they are registered in the fld file and
+otherwise cannot be found </font>by the "read field" module.
+Sometimes
+it may happen<font color="#000000">
+that incorrect file names are registered into the fld file. In such
+cases the user must edit and correct the fld file accordingly. </font>
+</p><p style="line-height: 100%;"><font color="#800000"><font color="#000000">After
+<font color="#000000">the <span style="font-weight: bold;">AVS</span>
+module <font color="#000000">&ldquo;read
+fields&rdquo; </font>has </font>read in the data, the
+content of this
+file is listed in a separate <span style="font-weight: bold;">AVS</span>
+window where each quantity is represented by its name and output time.</font>
+</font></p><p style="line-height: 100%;">With
+parallel runs each PE outputs the
+volume data of its subdomain to a separate file with the name
+PLOT3D_DATA_&lt;processor-Id&gt;,
+whereby &lt;processor-Id&gt; is a four digit number (e.g.
+PLOT3D_DATA_0000). These files are not suitable for&nbsp; <b>AVS</b>,
+but after the end of a run they can be combined to one file readable by
+<span style="font-weight: bold;">AVS</span>. This is
+done via a
+further output command in the configuration file: </p>
+<ul> <pre style="margin-bottom: 0.5cm; line-height: 100%;"><font style="font-size: 10pt;" size="2">OC:[[$ ( echo $localhost | cut -c1-3 ) = ibmh ]] &amp;&amp; combine_plot_fields.x</font></pre></ul>
+<p style="line-height: 100%;">The program <tt><font style="font-size: 10pt;" size="2">combine_plot_fields.x</font></tt>
+collects the data from the individual processor files and outputs it
+into the local file <tt><font style="font-size: 10pt;" size="2">PLOT2D_DATA</font></tt>
+which can be processed by <span style="font-weight: bold;">AVS</span>.
+Using this call, possibly existing
+files of 2d cross sections (xy, xz, yz) are
+also combined.&nbsp;The tool writes
+informative messages about the actions accomplished into the job
+protocol, even if no files were found (i.e. the output command
+may remain in the configuration file, even if no appropriate files
+are created during the simulation). <span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span><tt><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span></tt><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span><tt><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span></tt><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span><tt><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span></tt><span style="background: transparent none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"></span><br>
+</p><p style="line-height: 100%;">&nbsp;<b>Note:</b>
+<span style="font-weight: bold;">AVS</span> can
+process 64 arrays at maximum
+in one file (with vector representations even
+only 25). If more arrays should be output, surplus arrays must be
+removed from the fld file (see <a href="chapter_3.4.html#PLOT3D_FLD">PLOT3D_FLD</a>)
+manually. &nbsp; </p>
+<hr><p style="line-height: 100%;"><br>
+<font color="#000080"><font color="#000080"><a href="chapter_4.5.4.html"><font color="#000080"><img src="left.gif" name="Grafik1" align="bottom" border="2" height="32" width="32"></font></a><a href="index.html"><font color="#000080"><img src="up.gif" name="Grafik2" align="bottom" border="2" height="32" width="32"></font></a><a href="chapter_4.5.6.html"><font color="#000080"><img src="right.gif" name="Grafik3" align="bottom" border="2" height="32" width="32"></font></a></font></font></p><p style="line-height: 100%;">&nbsp;<i>Last
+change:&nbsp;</i> $Id$</p>
+</body></html>

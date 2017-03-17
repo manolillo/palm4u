@@ -1,0 +1,338 @@
+#!/bin/ksh
+
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2014  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# -----------------
+# 
+#
+# Former revisions:
+# -----------------
+# $Id: img2stereo 1310 2014-03-14 08:01:56Z raasch $
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9)
+# 
+# 981 2012-08-09 14:57:44Z maronga
+# Initial version
+#
+# Description:
+# ------------
+# img2stereo converts single or series of images into anaglyphic stereo images
+#------------------------------------------------------------------------------!
+
+#
+#-- Define Variables
+    input_left="."
+    input_right="."
+    output_dir="."
+    grayscale=false
+    mode="single"
+    output_file=""
+    file_ident=""
+
+#
+#-- Define strings
+    typeset  -L20 col1
+    typeset  -L40 col2
+    typeset  -L30 version="img2stereo  Rev: $Rev$"
+    typeset  -R30 calltime
+    typeset  -L60 text1
+
+
+#
+#-- Get parameters
+    while  getopts  :gl:n:o:r: option
+    do
+       case  $option  in
+          (g)   grayscale=true;;
+          (l)   input_left=$OPTARG;;
+          (r)   input_right=$OPTARG;;
+          (n)   file_ident=$OPTARG;;
+          (\?)  printf "\n  +++ unknown option $OPTARG \n"
+                printf "\n  --> type \"$0 ?\" for available options \n"
+                locat=parameter;exit;;
+       esac
+    done
+
+    shift OPTIND-1
+
+#
+#-- Print help
+    if [[ "$1" = "?" ]]
+    then
+       (printf "\n  *** img2stereo can be called as follows:        \n"
+       printf "\n Single mode: img2stereo #1 #2                     \n"
+       printf "\n              with left eye image #1 and right eye image #2.    \n"
+       printf "\n Series mode: img2stereo  -g -i.. -l.. -n.. -r..           \n"
+       printf "\n      Description of available options:\n"
+       printf "\n      Option      Description                                 Default-Value"
+       printf "\n        -g        convert images to grayscale (recommended)           false"
+       printf "\n        -l        input directory (left images)                          ./"
+       printf "\n        -n        file identifier (for series mode)                        "
+       printf "\n        -r        input directory (right images)                         ./"
+       printf "\n         ?        this outline \n\n") | more
+       exit
+    elif [[ "$1" == "" ]]
+    then
+       if [[ "$input_left" == "." || "$input_right" == "." ]]
+       then
+          printf "\n  +++ Missing files to be converted \n"
+          locat=parameter
+          exit
+       else
+          mode="series"
+          output_dir="${input_left%/*}/stereo"
+          if [[ "$file_ident" == "" ]]
+          then
+             printf "\n  +++ Parameter -n needed in series mode. \n"
+             locat=parameter; exit
+          fi
+       fi
+    elif [[ "$2" != "" ]]
+    then
+       mode="single"
+       tmp=`readlink -f "$1"`
+       output_dir="${tmp%/*}/stereo"
+    else
+       printf "\n  +++ A file is missing \n"
+       locat=parameter
+       exit
+    fi
+
+
+
+
+#
+#-- Print header
+    calltime=$(date)
+
+    printf "\n#--------------------------------------------------------------#"
+    printf "\n| $version$calltime |"
+
+    col1=""
+    col2=""
+    printf "\n| $col1$col2 |"
+
+    text1="Initialization parameters"
+    printf "\n| $text1 |"
+
+    if [[ "$mode" == "series" ]]
+    then
+       col1="Input dir (left):"
+       col2=$input_left
+       printf "\n| $col1$col2 |"
+       row=$(echo "$input_left" | cut -c41-)
+       while [[ "$row" != "" ]]
+       do
+          col1=""
+          col2=$row
+          printf "\n| $col1$col2 |"
+          row=$(echo "$row" | cut -c41-)
+       done
+
+       col1="Input dir (right):"
+       col2=$input_right
+       printf "\n| $col1$col2 |"
+       row=$(echo "$input_left" | cut -c41-)
+       while [[ "$row" != "" ]]
+       do
+          col1=""
+          col2=$row
+          printf "\n| $col1$col2 |"
+          row=$(echo "$row" | cut -c41-)
+       done
+    else
+       col1="Left image:"
+       col2=$1
+       printf "\n| $col1$col2 |"
+       col1="Right image:"
+       col2=$2
+       printf "\n| $col1$col2 |"
+    fi
+
+
+    col1="Output directory:"
+    col2=$output_dir
+    printf "\n| $col1$col2 |"
+    row=$(echo "$output_dir" | cut -c41-)
+    while [[ "$row" != "" ]]
+    do
+       col1=""
+       col2=$row
+       printf "\n| $col1$col2 |"
+       row=$(echo "$row" | cut -c41-)
+    done
+
+    col1="Mode:"
+    col2=$mode
+    printf "\n| $col1$col2 |"
+
+    if [[ $grayscale == true ]]
+    then
+       text1="Colors will be converted to grayscale"
+    else
+       text1="Colors enabled"
+    fi
+    printf "\n| $text1 |"
+
+    col1=""
+    col2=""
+    printf "\n| $col1$col2 |"
+
+
+    if [[ "$mode" == "single" ]]
+    then
+       tmp=`basename ${1%}`
+       filename=${tmp%.*}
+       fileext=".${1##*.}"
+       output_file="${filename}_stereo${fileext}"
+
+#
+#--    Check for cycle number
+       looping=true
+       output_file_tmp=$output_file
+       while [[ $looping = true ]]
+       do
+          if [[ -f "$output_dir/$output_file_tmp" ]]
+          then
+             ((run_string +=1))
+             output_file_tmp="${output_file}_$run_string"
+          else
+             looping=false
+             if (( run_string >= 1 ))
+             then
+                output_file="${output_file}_$run_string"
+             fi
+             break;
+          fi
+       done
+
+    else
+       output_file="$file_ident*..."
+    fi
+
+    text1="Image(s) will be saved under $output_file"
+    printf "\n| $text1 |"
+
+    printf "\n|                                                              |"
+    printf "\n#--------------------------------------------------------------#\n"
+
+    ############################################################################
+
+
+#exit
+
+#
+#-- Create output directory if necessary
+    if [[ ! -e $output_dir ]]; then
+       mkdir $output_dir
+    fi
+
+#
+#-- start converting images
+    if [[ "$mode" == "single" ]]
+    then
+
+#
+#--    SINGLE IMAGE MODE
+       left_image=`basename ${1%}`
+       right_image=`basename ${2%}`
+       left_full=`readlink -f "$1"`
+       right_full=`readlink -f "$2"`
+       if [[ $grayscale == true ]]
+       then
+          opt1="-colorspace Gray"
+          left_image_intern=$output_dir/"gray_$left_image"
+          right_image_intern=$output_dir/"gray_$right_image"
+
+          convert $opt1 "$left_full" "$left_image_intern"
+          convert $opt1 "$right_full" "$right_image_intern"
+          composite -stereo "0x0" "$right_image_intern" "$left_image_intern" "$output_dir/$output_file"
+          rm "$right_image_intern"
+          rm "$left_image_intern"
+       else
+          composite -stereo "0x0" "$right_full" "$left_full" "$output_dir/$output_file"
+       fi
+       printf "\n --> All actions finished. Stereo image saved as $output_dir/$output_file\n"
+       exit
+
+    else
+
+#
+#--    SERIES MODE
+
+       printf "*** Generating stereo files...\n"
+
+#
+#--    get total number of output files
+       nofl=`find $input_left/$ident* -type f -name $file_ident*  -print -o -type d -prune |wc -l`
+       nofr=`find $input_right/$ident* -type f -name $file_ident*  -print -o -type d -prune |wc -l`
+
+       if  [[ $nofl != $nofr ]]
+       then
+          printf "+++ Different number of files for left and right eye!\n"
+          locat=parameter
+          exit
+       fi
+       typeset -Z${#nofl} counter
+#
+#--    get i-st left imgae
+       for i in $input_left/$ident*;
+       do
+          (( img_counter_l+=1 ))
+#
+#--       get the i-st right file
+          (( img_counter_r=0 ))
+          for j in $input_right/$ident*;
+          do
+             (( img_counter_r+=1 ))
+             if [[ $img_counter_l == $img_counter_r ]] then
+                break;
+             fi
+          done
+#
+#--       combine the two images
+          left_image=`basename ${i%}`
+          right_image=`basename ${j%}`
+          left_full=`readlink -f "$i"`
+          right_full=`readlink -f "$j"`
+          counter=$img_counter_r
+          output_file="${file_ident}_stereo$counter"
+          if [[ $grayscale == true ]]
+          then
+             opt1="-colorspace Gray"
+             left_image_intern=$output_dir/"gray_$left_image"
+             right_image_intern=$output_dir/"gray_$right_image"
+
+             convert $opt1 "$left_full" "$left_image_intern"
+             convert $opt1 "$right_full" "$right_image_intern"
+             composite -stereo "0x0" "$right_image_intern" "$left_image_intern" "$output_dir/$output_file"
+             printf "    created $output_file\n"
+             rm "$right_image_intern"
+             rm "$left_image_intern"
+          else
+             composite -stereo "0x0" "$right_full" "$left_full" "$output_dir/$output_file"
+             printf "    created $output_file\n"
+          fi
+       done
+
+       printf "\n --> All actions finished. Stereo images saved under $output_dir.\n"
+
+    fi
+exit

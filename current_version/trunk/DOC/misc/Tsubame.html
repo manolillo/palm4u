@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<xsscleaned_taghttp-equiv ="content-type" content="text/html; charset=windows-1252"></xsscleaned_taghttp-equiv><title>Tsubame</title><style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+</style></head>
+<body style="direction: ltr;" lang="en-US"> <xsscleaned_tagname ="generator" content="StarOffice 7 (Win32)"></xsscleaned_tagname>
+<xsscleaned_tagname ="author" content="Siegfried Raasch"></xsscleaned_tagname>
+<xsscleaned_tagname ="created" content="20040809;13460943"></xsscleaned_tagname>
+<xsscleaned_tagname ="changed" content="20041112;15085727"></xsscleaned_tagname>
+<xsscleaned_tagname ="keywords" content="parallel LES model"></xsscleaned_tagname>
+<h3 style="line-height: 100%;">Tsubame</h3>
+<p style="line-height: 100%;">This document contains local
+support information for PALM users on the Linux Cluster <span style="font-weight: bold;">Tsubame</span> of the Tokyo
+Institute of Technology, Tokyo, Japan (<a href="http://www.gsic.titech.ac.jp/%7Eccwww">http://www.gsic.titech.ac.jp/~ccwww</a>).
+Japanese and English user manuals are available for download (<a href="http://www.gsic.titech.ac.jp/%7Eccwww/tebiki">http://www.gsic.titech.ac.jp/~ccwww/tebiki</a>).</p><h4>Subversion</h4><p><span style="text-decoration: underline;">Installation:</span><br>The
+following lines should be added to your <code><span style="font-family: Courier New,Courier,monospace;">~/.profile</span></code> (for ksh users - create if necessary) or <code>~/.bashrc</code> (for bash users). These settings will be active from the next login.<span style="font-family: Courier New,Courier,monospace;"></span></p><span style="font-family: Courier New,Courier,monospace;"><code>export
+LD_LIBRARY_PATH=~mkanda/svn/lib</code></span><code><br style="font-family: Courier New,Courier,monospace;"><span style="font-family: Courier New,Courier,monospace;">
+export PATH=~mkanda/svn/bin:$PATH</span></code><span style="text-decoration: underline;"><br></span><p><span style="text-decoration: underline;">Usage:</span><br>Since
+Tsubame is located behind a firewall, the usual&nbsp;address  <a class="fixed" href="svn://130.75.105.45" target="_blank">svn://130.75.105.45</a>&nbsp;is unreachable from Tsubame. Instead, please login to media-o
+and use&nbsp;<a class="fixed" href="svn://p9c.cc.titech.ac.jp:36900" target="_blank">svn://p9c.cc.titech.ac.jp:36900</a>.
+This port works in both directions, i.e. for <code>svn update</code> as well as <code>svn commit</code> commands.</p><h4>Batch system<br></h4><p>The implementation of the <span style="font-weight: bold;">n1ge</span> command on
+Tsubame requires modifications to&nbsp;<span style="font-weight: bold;">mrun</span> and <span style="font-weight: bold;">subjob</span> for PALM to
+run on Tsubame. Since <span style="font-weight: bold;">mrun</span>
+must be executed on one PE only, a one-PE "submitting job" is created
+when the user calls <span style="font-weight: bold;">mrun</span>.
+At the time when this "submitting job" is actually executed, it starts
+the main PALM job in the foreground. However, this only works if
+enough resources are available at that time. Therefore PALM users on
+Tsubame are advised to consider the queue load of the available queues
+for the main job (<code>qstat -g c</code>) before job submission.</p><p>According
+to the current queue configuration (<a href="http://www.gsic.titech.ac.jp/%7Eccwww/tgc/q_e.html">http://www.gsic.titech.ac.jp/~ccwww/tgc/q_e.html</a>),
+the following <span style="font-weight: bold;">mrun</span>
+options are available:</p><table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td><span style="font-weight: bold;">mrun</span> option</td><td>explanation</td><td>possible
+values</td><td>default value</td></tr><tr><td><code>-q</code></td><td>queue
+name for main job</td><td>novice,&nbsp;sla1, sla2,
+sla3, RAM64GB, RAM128GB</td><td>sla3</td></tr><tr><td><code>-n</code></td><td>queue
+name for "submitting job" (always runs on 1 PE only)</td><td>novice,
+sla1, sla2, sla3</td><td>sla3</td></tr><tr><td><code>-g</code></td><td>group number</td><td>name of the N1GE_GROUP that is required to utilize the bes or sla queues</td><td>none</td></tr></tbody></table><p>Note that the default value "sla3" of the
+<span style="font-weight: bold;">mrun</span> option <code>-q</code> may
+not always be the best choice. For code development, debugging or short
+test runs the value "novice" for both options may be suitable.
+Production runs should use the respective production queues (see <a href="http://www.gsic.titech.ac.jp/%7Eccwww/tgc/q_e.html">http://www.gsic.titech.ac.jp/~ccwww/tgc/q_e.html</a> for details). In the past the queueing system on Tsubame has undergone several changes, so this information may change.</p><p>The
+computer center advised us that due to restrictions of the batch system
+the value "novice" should not be mixed with the other queues. Please
+specify either a combination of sla<span style="font-style: italic;">n</span> for <code>-n</code> and sla<span style="font-style: italic;">n</span> or RAM<span style="font-style: italic;">*</span> for <code>-q</code>, or specify the combination "novice" + "novice".</p><p>The group number contains the accounting information. You must specify it using the&nbsp;<span style="font-weight: bold;">mrun</span> option <code>-g</code>. Alternatively, you may set also a default value in your <code><span style="font-family: Courier New,Courier,monospace;">.mrun.config </span></code>file like this:</p><p><code>%group_number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+12345678
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+lctit parallel<br></code></p><p>The <span style="font-weight: bold;">mrun</span> option <code><span style="font-family: Courier New,Courier,monospace;">-t</span></code>
+contains the CPU time demand for the main job<span style="font-weight: bold;"> in s</span> which will be
+automatically converted into min for the <span style="font-weight: bold;">n1ge</span> command. The
+option <code><span style="font-family: Courier New,Courier,monospace;">-m</span></code>
+contains the memory demand for the main job <span style="font-weight: bold;">in MB</span> which will be
+automatically converted into GB for the <span style="font-weight: bold;">n1ge</span> command.</p><p>Finally, PALM batch jobs on Tsubame require the&nbsp;<span style="font-weight: bold;">mrun</span> option <code>-b</code>.</p><h4>NetCDF</h4><p>In order to use <a href="http://www.unidata.ucar.edu/software/netcdf" target="_top">NetCDF</a> commands like <code>ncdump</code>&nbsp;and the graphical NetCDF tools <a href="http://www.ncl.ucar.edu" target="_top">NCL</a>,&nbsp;<a href="http://meteora.ucsd.edu/%7Epierce/ncview_home_page.html" target="_top">Ncview</a> and <a href="http://ferret.pmel.noaa.gov/Ferret" target="_top">Ferret</a>, please add the following lines to  <code><span style="font-family: Courier New,Courier,monospace;">~/.profile</span></code> (for ksh users) or <code>~/.bashrc</code> (for bash users):</p><p><code># NetCDF<br>export PATH=$PATH:~mkanda/netcdf-3.6.2/bin:~mkanda/netcdf-3.6.2/include<br><br></code><code># NCL<br>export NCARG_ROOT=~mkanda/ncl<br>PATH=~mkanda/ncl/bin:$PATH<br><br># Ncview<br>export PATH=$PATH:~mkanda/ncview/bin<br>export XAPPLRESDIR=~mkanda/.app-defaults</code></p><p><code># Ferret<br>export FER_DIR=~mkanda/ferret<br>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$FER_DIR/lib<br>export PATH=$PATH:$FER_DIR:$FER_DIR/bin<br>export FER_DSETS=$FER_DIR<br>export FER_WEB_BROWSER=firefox<br>export FER_EXTERNAL_FUNCTIONS="$FER_DIR/lib"<br>export FER_GO=". $FER_DIR/go $FER_DIR/examples $FER_DIR/contrib"<br>export FER_DATA="."<br>export FER_DESCR="."<br>export FER_GRIDS=". $FER_DSETS/grids"<br>export TMAP="$FER_DIR/fmt"<br>export PLOTFONTS="$FER_DIR/ppl/fonts"<br>export SPECTRA="$FER_DIR/ppl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # for old ferret versions<br>export FER_PALETTE=". $FER_DIR/ppl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # palette search list<br></code></p><i><br>Last
+change:</i>&nbsp; $Id: Tsubame.html 132 2007-11-20 09:46:11Z letzel $</body></html>

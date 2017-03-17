@@ -1,0 +1,641 @@
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2015  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# WARNING: don't write filenames with extension .f90 in this header!!!!
+#
+# Current revisions:
+# ------------------
+# 
+# Initial Version of KPP chemistry 
+# 
+# Former revisions:
+# -----------------
+# $Id: Makefile 2055 2016-11-09 09:30:24Z ketelsen $
+#
+# 2050 2016-11-08 15:00:55Z gronemeier
+# Implement turbulent outflow method
+# 
+# 2007 2016-08-24 15:47:17Z kanani
+# urban surface module added,
+# cleaned up some lines (compiler flags/options), which were accidentally
+# added in rev1938
+# 
+# 1998 2016-08-20 18:45:34Z knoop
+# Bugfix: added netcdf_interface to dependency list for user_init_land_surface
+#
+# 1986 2016-08-10 14:07:17Z gronemeier
+# POSIX-calls module added
+# 
+# 1972 2016-07-26 07:52:02Z maronga
+# Removed some dependencies due to further modularization of land surface model
+# 
+# 1957 2016-07-07 10:43:48Z suehring
+# flight module added
+#
+# 1946 2016-06-15 11:38:13Z suehring
+# Bugfix dependency init_grid on advec_ws
+#
+# 1938 2016-06-13 15:26:05Z hellstea
+# Some dependency errors corrected 
+# 
+# 1934 2016-06-13 09:46:57Z hellstea
+# poismg renamed poismg_noopt, poismg_fast_mod renamed poismg_mod
+# 
+# 1914 2016-05-26 14:44:07Z witha
+# Added wind_turbine_model_mod
+#
+# 1900 2016-05-04 15:27:53Z raasch
+# pmc_general renamed pmc_general_mod
+#
+# 1871 2016-04-15 11:46:09Z hoffmann
+# dependencies for package_parin corrected
+#
+# 1850 2016-04-08 13:29:27Z maronga
+# Adapted for modularization of microphysics 
+# Several files renamed --> _mod
+# Bugfix for previous commit
+#
+# 1849 2016-04-08 11:33:18Z hoffmann
+# Adapted for modularization of microphysics
+#
+# 1837 2016-04-07 18:21:57Z raasch
+# further bug removed from r1835
+#
+# 1835 2016-04-07 16:31:50Z raasch
+# bugfix: merge comments removed
+#
+# 1833 2016-04-07 14:23:03Z raasch
+# spectrum renamed spectra_mod, depencies for spectra changed
+# 
+# 1826 2016-04-07 12:01:39Z maronga
+# Renamed radiation_model to radiation_model_mod.
+# Renamed plant_canopy_model to plant_canopy_model_mod.
+# 
+# 1822 2016-04-07 07:49:42Z hoffmann
+# Tails removed. lpm_release_set removed. calc_precipitation, impact_of_latent_heat
+# removed. 
+#
+# 1817 2016-04-06 15:44:20Z maronga
+# Renamed land_surface_model to land_surface_model_mod.
+# 
+# 1808 2016-04-05 19:44:00Z raasch
+# -local_flush, -local_getenv
+#
+# 1797 2016-03-21 16:50:28Z raasch
+# dependcy for check_for_restart updated
+#
+# 1791 2016-03-11 10:41:25Z raasch
+# dependencies of header changed
+#
+# 1786 2016-03-08 05:49:27Z raasch
+# rename calc_spectra to spectrum + modularization of spectrum
+#
+# 2016-03-06 18:36:17Z raasch
+# name change of netcdf routines and respective dependencies
+#
+# 1779 2016-03-03 08:01:28Z raasch
+# dependencies changed for init_peprid
+#
+# 1766 2016-02-29 08:37:15Z raasch
+# update dependency for swap_timelevel
+#
+# 1764 2016-02-28 12:45:19Z raasch
+# several updates of dependencies
+#
+# 1762 2016-02-25 12:31:13Z hellstea
+# +pmc_interface, +pmc routines 
+#
+# 1747 2016-02-08 12:25:53Z raasch
+# dependencies for routine palm updated
+#
+# 1691 2015-10-26 16:17:44Z maronga
+# Replaced prandtl_fluxes with surface_layer_fluxes. Added radiation_model to 
+# prognostic_equations
+# 
+# 1585 2015-04-30 07:05:52Z maronga
+# Added user_init_radiation.f90
+# 
+# 1575 2015-03-27 09:56:27Z raasch
+# +poismg_fast
+#
+# 1551 2015-03-03 14:18:16Z maronga
+# Bugfix: further adjustments for the land surface model and radiation model
+# 
+# 1517 2015-01-07 19:12:25Z hoffmann
+# advec_s_bc added to prognostic_equations
+#
+# 1500 2014-12-03 17:42:41Z maronga
+# Bugfix: missing adjustments for land surface model and radiation model
+# 
+# 1496 2014-12-02 17:25:50Z maronga
+# Added land surface model and radiation model files: land_surface_model, 
+# radiation_model, user_init_land_surface
+# 
+# 1484 2014-10-21 10:53:05Z kanani
+# plant_canopy_model-dependency added for check_parameters, header, init_3d_model,
+# package_parin, read_var_list, user_init_plant_canopy, write_var_list
+# 
+# 1444 2014-08-02 20:10:32Z letzel
+# bugfix: cpulog added to lpm_advec
+# 
+# 1404 2014-05-14 09:01:39Z keck
+# bugfix: dependencies added for progress_bar
+#
+# 1402 2014-05-09 14:25:13Z raasch
+# progress_bar added
+# 
+# 1400 2014-05-09 14:03:54Z knoop
+# Added new module random_generator_parallel
+# 
+# 1380 2014-04-28 12:40:45Z heinze
+# bugfix: mod_particle_attributes  added to check_open
+# nudging added to time_integration 
+#
+# 1374 2014-04-25 12:55:07Z raasch
+# bugfix: missing dependency added for check_open
+#
+# 1365 2014-04-22 15:03:56Z boeske
+# Added new module calc_mean_profile, previously in module buoyancy,
+# removed buoyancy dependency from nudging
+# 
+# 1363 2014-04-17 12:28:49Z keck
+# bugfix: cpulog added to lpm_pack_arrays
+#
+# 1361 2014-04-16 15:17:48Z hoffmann
+# cpulog added to microphysics
+# 
+# 1359 2014-04-11 17:15:14Z hoffmann
+# mod_particle_attributes added, lpm_sort_arrays removed, 
+# lpm_extend_particle_array removed
+#
+# 1336 2014-03-25 15:07:20Z raasch
+# -write_compressed
+#
+# 2014-03-20 16:38:49Z raasch
+# cpulog-dependency added for disturb_heatflux
+#
+# 1320 2014-03-20 08:40:49Z raasch
+# +mod_kinds in dependency list
+#
+# 1318 2014-03-17 13:35:16Z raasch
+# +cpulog, dependencies for cpulog added
+# -cpu_log, cpu_statistics
+#
+# 1311 2014-03-14 12:13:39Z heinze
+# bugfix: buoyancy dependency added to nudging
+#
+# 1306 2014-03-13 14:30:59Z raasch
+# +mod_kinds
+#
+# 1241 2013-10-30 11:36:58Z heinze
+# +nudging, ls_forcing
+#
+# 1212 2013-08-15 08:46:27Z raasch
+# +tridia_solver, -poisfft_hybrid
+#
+# 1210 2013-08-14 10:58:20Z raasch
+# object file list replaced by one line statement
+#
+# 1128 2013-04-12 06:19:32Z raasch
+# dependencies for time_integration modified
+#
+# 1111 2013-03-08 23:54:10Z raasch
+# dependencies removed from init_pegrid
+# bugfix: dependency added for cuda_fft_interfaces
+#
+# 1106 2013-03-04 05:31:38Z raasch
+# +cuda_fft_interfaces
+#
+# 1053 2012-11-13 17:11:03Z hoffmann
+# +microphysics for two-moment cloud physics
+#
+# 1036 2012-10-22 13:43:42Z raasch
+# code put under GPL (PALM 3.9)
+#
+# 1001 2012-09-13 14:08:46Z raasch
+# -asselin_filter, advec_s|u|v|w_ups, spline_x|y|z
+#
+# 872 2012-03-29 15:57:54Z franke
+# lpm depends on modules
+#
+# 849 2012-03-15 10:35:09Z raasch
+# +lpm_advec, lpm_data_output_particles, lpm_droplet_collision,
+# lpm_droplet_condensation,
+# lpm_exchange_horiz, lpm_extend_particle_array, lpm_extend_tails,
+# lpm_extend_tail_array, lpm_init_sgs_tke, lpm_pack_arrays,
+# lpm_read_restart_file, lpm_release_set, lpm_sort_arrays,
+# lpm_write_exchange_statistics, lpm_write_restart_file
+# advec_particles renamed lpm,
+# init_particles renamed lpm_init,
+# user_advec_particles renamed user_lpm_advec,
+# particle_boundary_conds renamed lpm_boundary_conds,
+# set_particle_attributes renamed lpm_set_attributes
+# user_init_particles renamed user_lpm_init,
+# user_particle_attributes renamed user_lpm_set_attributes
+#
+# 828 2012-02-21 12:00:36Z raasch
+# init_particles depends on lpm_collision_kernels
+#
+# 825 2012-02-19 03:03:44Z raasch
+# wang_kernel renamed lpm_collision_kernels
+#
+# 790 2011-11-29 03:11:20Z raasch
+# +wang_kernel
+#
+# 667 2010-12-23 12:06:00Z suehring/gryschka
+# +advec_ws
+#
+# 421 2010-01-25 15:50:10Z raasch
+# comment line for simple install method added, which will be replaced
+# by an include command for preprocessor and compiler options when the simple
+# install process is used instead of mbuild/mrun,
+# +set_particle_attributes, set_slicer_attributes_dvrp
+# +subsidence
+#
+# 410 2009-12-04 17:05:40Z letzel
+# +data_output_mask, init_masks, user_data_output_mask
+#
+# 217 2008-12-09 18:00:48Z letzel
+# former file user_interface split into one file per subroutine
+# +init_coupling, message
+#
+# 151 2008-03-07 13:42:18Z raasch
+# +plant_canopy_model, inflow_turbulence
+# +surface_coupler
+#
+# 96 2007-06-04 08:07:41Z raasch
+# +eqn_state_seawater, init_ocean
+#
+# 82 2007-04-16 15:40:52Z raasch
+# +local_flush
+#
+# 58 2007-03-09 14:27:38Z raasch
+# default suffixes removed from the suffix list to avoid calling of m2c in
+# case of .mod files
+# +wall_fluxes, +particle_boundary_conds
+#
+# RCS Log replace by Id keyword, revision history cleaned up
+#
+# Revision 1.13  2006/08/04 14:45:31  raasch
+# +data_output_ptseries
+#
+# Revision 1.1  2002/06/11 13:42:20  raasch
+# Initial revision
+#
+#
+# Description:
+# ------------
+# Makefile for the parallelized LES model (PALM) to be used by the
+# shellscript "mrun"
+#------------------------------------------------------------------------------!
+
+PROG =  palm
+
+SOURCES = advec_s_bc.f90 advec_s_pw.f90 advec_s_up.f90 advec_ws.f90 \
+	advec_u_pw.f90 advec_u_up.f90 advec_v_pw.f90 advec_v_up.f90 \
+	advec_w_pw.f90 advec_w_up.f90 average_3d_data.f90 boundary_conds.f90 \
+	buoyancy.f90 calc_liquid_water_content.f90 calc_mean_profile.f90 \
+	calc_radiation.f90 \
+	check_for_restart.f90 check_open.f90 check_parameters.f90 \
+	close_file.f90 compute_vpt.f90 coriolis.f90 cpulog_mod.f90 \
+	cuda_fft_interfaces_mod.f90 data_log.f90 data_output_dvrp.f90 \
+	data_output_mask.f90 data_output_profiles.f90 \
+	data_output_ptseries.f90 data_output_spectra.f90 data_output_flight.f90\
+	data_output_tseries.f90 data_output_2d.f90 data_output_3d.f90 \
+	diffusion_e.f90 diffusion_s.f90 diffusion_u.f90 diffusion_v.f90 \
+	diffusion_w.f90 diffusivities.f90 disturb_field.f90 \
+	disturb_heatflux.f90 eqn_state_seawater.f90 exchange_horiz.f90 \
+	exchange_horiz_2d.f90 fft_xy_mod.f90 flow_statistics.f90 \
+	global_min_max.f90 header.f90 \
+	inflow_turbulence.f90 init_1d_model.f90 init_3d_model.f90 \
+	init_advec.f90 init_cloud_physics.f90 init_coupling.f90 init_dvrp.f90 \
+	init_grid.f90 init_masks.f90 init_ocean.f90 \
+	init_pegrid.f90 init_pt_anomaly.f90 init_rankine.f90 init_slope.f90 \
+	interaction_droplets_ptq.f90 kchem_driver.f90 kchem_kpp.f90 land_surface_model_mod.f90 \
+	local_stop.f90 local_system.f90 local_tremain.f90 \
+	local_tremain_ini.f90 lpm.f90 lpm_advec.f90 lpm_boundary_conds.f90 \
+	lpm_calc_liquid_water_content.f90 lpm_collision_kernels.f90 \
+	lpm_data_output_particles.f90 lpm_droplet_collision.f90 \
+	lpm_droplet_condensation.f90 lpm_exchange_horiz.f90 \
+	lpm_init.f90 lpm_init_sgs_tke.f90 \
+	lpm_pack_arrays.f90 lpm_read_restart_file.f90 \
+	lpm_set_attributes.f90 \
+	lpm_write_exchange_statistics.f90 lpm_write_restart_file.f90 \
+	ls_forcing_mod.f90 message.f90 microphysics_mod.f90 modules.f90 mod_kinds.f90 \
+	mod_particle_attributes.f90 netcdf_interface_mod.f90 nudging_mod.f90 \
+	outflow_turbulence.f90 package_parin.f90 palm.f90 parin.f90 plant_canopy_model_mod.f90 \
+	pmc_interface_mod.f90 pmc_child_mod.f90 pmc_general_mod.f90 pmc_handle_communicator_mod.f90 \
+	pmc_mpi_wrapper_mod.f90 pmc_parent_mod.f90 poisfft_mod.f90 poismg_mod.f90 \
+	poismg_noopt.f90 posix_calls_from_fortran.f90 pres.f90 print_1d.f90 production_e.f90 \
+	prognostic_equations.f90 progress_bar_mod.f90 radiation_model_mod.f90 \
+	random_function_mod.f90 random_gauss.f90 random_generator_parallel_mod.f90 \
+	read_3d_binary.f90 read_var_list.f90 run_control.f90 \
+	set_slicer_attributes_dvrp.f90 singleton_mod.f90 sor.f90 spectra_mod.f90 \
+	subsidence_mod.f90 sum_up_3d_data.f90 \
+	surface_coupler.f90 surface_layer_fluxes_mod.f90 swap_timelevel.f90 temperton_fft_mod.f90 \
+	time_integration.f90 time_to_string.f90 timestep.f90 \
+	timestep_scheme_steering.f90 transpose.f90 tridia_solver_mod.f90 \
+	urban_surface_mod.f90 \
+	user_3d_data_averaging.f90 \
+	user_actions.f90 user_additional_routines.f90 \
+	user_check_data_output.f90 user_check_data_output_pr.f90 \
+	user_check_parameters.f90 user_data_output_2d.f90 \
+	user_data_output_3d.f90 user_data_output_dvrp.f90 \
+	user_data_output_mask.f90 user_define_netcdf_grid.f90 \
+	user_dvrp_coltab.f90 user_header.f90 user_init.f90 \
+	user_init_3d_model.f90 user_init_flight.f90 user_init_grid.f90 user_init_land_surface.f90 \
+	user_init_plant_canopy.f90 user_init_radiation.f90 user_flight.f90\
+	user_init_urban_surface.f90 \
+	user_last_actions.f90 user_lpm_advec.f90 \
+	user_lpm_init.f90 user_lpm_set_attributes.f90 user_module.f90 \
+	user_parin.f90 user_read_restart_data.f90 \
+	user_spectra.f90 user_statistics.f90 virtual_flight_mod.f90 wall_fluxes.f90 \
+	wind_turbine_model_mod.f90 write_3d_binary.f90 write_var_list.f90
+
+
+OBJS=$(SOURCES:.f90=.o)
+
+CC = cc
+CFLAGS = -O
+
+F90 =
+COPT =
+F90FLAGS =
+LDFLAGS =
+
+CHECK  = -check all -g 
+
+KK_IO=-L/home/modelle/kkio/eclipse_mars_ws/kk_io/lib -lkk_io -lstdc++
+
+F90 = mpif90
+COPT = -cpp -DMPI_REAL=MPI_DOUBLE_PRECISION -DMPI_2REAL=MPI_2DOUBLE_PRECISION -D__lc -D__parallel  \
+             -D__fftw -D__netcdf -D__netcdf4 -D__netcdf4_parallel -D__intel_compiler -DKPP_CHEM
+F90FLAGS = -O3 -nbs -convert little_endian -xHost -I /opt/NetCDF/include $(CHECK) -diag-disable 8290,8291 # -qopenmp
+LDFLAGS = -qopenmp -nbs -L/opt/NetCDF/lib64 -lnetcdff -lnetcdf -lfftw3 $(CHECK) -lc -lm -L/opt/hdf5/lib64 -lhdf5 -lhdf5_hl $(KK_IO) -ldl -lm -lhdf5
+
+# The following line is needed for palm_simple_install, don't remove it!
+#to_be_replaced_by_include
+
+.SUFFIXES:
+.SUFFIXES: .o .f90
+
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(F90) -o $(PROG) $(OBJS) $(LDFLAGS)
+
+clean:
+	rm -f $(PROG) $(OBJS) *.mod *.i *.lst
+
+.f90.o:
+	$(F90) $(F90FLAGS) $(COPT) -c $<
+
+
+
+advec_s_bc.o: modules.o cpulog_mod.o mod_kinds.o
+advec_s_pw.o: modules.o mod_kinds.o
+advec_s_up.o: modules.o mod_kinds.o
+advec_u_pw.o: modules.o mod_kinds.o
+advec_u_up.o: modules.o mod_kinds.o
+advec_v_pw.o: modules.o mod_kinds.o
+advec_v_up.o: modules.o mod_kinds.o
+advec_ws.o: modules.o mod_kinds.o
+advec_w_pw.o: modules.o mod_kinds.o
+advec_w_up.o: modules.o mod_kinds.o
+average_3d_data.o: modules.o cpulog_mod.o mod_kinds.o land_surface_model_mod.o \
+	radiation_model_mod.o urban_surface_mod.o
+boundary_conds.o: modules.o mod_kinds.o pmc_interface_mod.o
+buoyancy.o: modules.o mod_kinds.o
+calc_mean_profile.o: modules.o mod_kinds.o
+calc_liquid_water_content.o: modules.o mod_kinds.o
+calc_radiation.o: modules.o mod_kinds.o
+check_for_restart.o: modules.o mod_kinds.o pmc_interface_mod.o
+check_open.o: modules.o mod_kinds.o mod_particle_attributes.o \
+	netcdf_interface_mod.o posix_calls_from_fortran.o
+check_parameters.o: modules.o mod_kinds.o land_surface_model_mod.o \
+	netcdf_interface_mod.o plant_canopy_model_mod.o pmc_interface_mod.o radiation_model_mod.o \
+	spectra_mod.o subsidence_mod.o microphysics_mod.o wind_turbine_model_mod.o \
+	urban_surface_mod.o kchem_driver.o
+close_file.o: modules.o mod_kinds.o netcdf_interface_mod.o
+compute_vpt.o: modules.o mod_kinds.o
+coriolis.o: modules.o mod_kinds.o
+cpulog_mod.o: modules.o mod_kinds.o
+cpu_statistics.o: modules.o mod_kinds.o
+cuda_fft_interfaces_mod.o: cuda_fft_interfaces_mod.f90 modules.o mod_kinds.o
+data_log.o: modules.o mod_kinds.o
+data_output_dvrp.o: modules.o cpulog_mod.o mod_kinds.o
+data_output_mask.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o \
+   netcdf_interface_mod.o
+data_output_profiles.o: modules.o cpulog_mod.o mod_kinds.o netcdf_interface_mod.o
+data_output_ptseries.o: modules.o cpulog_mod.o mod_kinds.o \
+   netcdf_interface_mod.o mod_particle_attributes.o
+data_output_spectra.o: modules.o cpulog_mod.o mod_kinds.o netcdf_interface_mod.o \
+   spectra_mod.o
+data_output_tseries.o: modules.o cpulog_mod.o mod_kinds.o netcdf_interface_mod.o
+data_output_flight.o: modules.o cpulog_mod.o mod_kinds.o netcdf_interface_mod.o virtual_flight_mod.o
+data_output_2d.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o \
+   netcdf_interface_mod.o land_surface_model_mod.o radiation_model_mod.o \
+   urban_surface_mod.o
+data_output_3d.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o \
+   netcdf_interface_mod.o land_surface_model_mod.o urban_surface_mod.o kchem_driver.o
+diffusion_e.o: modules.o mod_kinds.o microphysics_mod.o \
+   mod_particle_attributes.o
+diffusion_s.o: modules.o mod_kinds.o
+diffusion_u.o: modules.o mod_kinds.o wall_fluxes.o
+diffusion_v.o: modules.o mod_kinds.o wall_fluxes.o
+diffusion_w.o: modules.o mod_kinds.o wall_fluxes.o
+diffusivities.o: modules.o mod_kinds.o
+disturb_field.o: modules.o cpulog_mod.o mod_kinds.o random_function_mod.o \
+                 random_generator_parallel_mod.o
+disturb_heatflux.o: modules.o cpulog_mod.o mod_kinds.o
+eqn_state_seawater.o: modules.o mod_kinds.o
+exchange_horiz.o: modules.o cpulog_mod.o mod_kinds.o
+exchange_horiz_2d.o: modules.o cpulog_mod.o mod_kinds.o pmc_interface_mod.o
+fft_xy_mod.o: cuda_fft_interfaces_mod.o modules.o mod_kinds.o singleton_mod.o temperton_fft_mod.o
+flow_statistics.o: modules.o cpulog_mod.o mod_kinds.o land_surface_model_mod.o \
+   netcdf_interface_mod.o radiation_model_mod.o
+global_min_max.o: modules.o mod_kinds.o
+header.o: modules.o cpulog_mod.o mod_kinds.o netcdf_interface_mod.o land_surface_model_mod.o\
+   microphysics_mod.o plant_canopy_model_mod.o pmc_handle_communicator_mod.o pmc_interface_mod.o \
+   radiation_model_mod.o spectra_mod.o subsidence_mod.o virtual_flight_mod.o
+inflow_turbulence.o: modules.o cpulog_mod.o mod_kinds.o
+init_1d_model.o: modules.o mod_kinds.o
+init_3d_model.o: modules.o mod_kinds.o advec_ws.o cpulog_mod.o land_surface_model_mod.o \
+   lpm_init.o ls_forcing_mod.o netcdf_interface_mod.o plant_canopy_model_mod.o \
+   radiation_model_mod.o random_function_mod.o random_generator_parallel_mod.o \
+   surface_layer_fluxes_mod.o microphysics_mod.o mod_particle_attributes.o \
+   urban_surface_mod.o virtual_flight_mod.o wind_turbine_model_mod.o 
+init_advec.o: modules.o mod_kinds.o
+init_cloud_physics.o: modules.o mod_kinds.o
+init_coupling.o: modules.o mod_kinds.o
+init_dvrp.o: modules.o mod_kinds.o
+init_grid.o: modules.o mod_kinds.o advec_ws.o
+init_masks.o: modules.o mod_kinds.o netcdf_interface_mod.o
+init_ocean.o: modules.o eqn_state_seawater.o mod_kinds.o
+init_pegrid.o: modules.o mod_kinds.o spectra_mod.o pmc_interface_mod.o
+init_pt_anomaly.o: modules.o mod_kinds.o
+init_rankine.o: modules.o mod_kinds.o
+init_slope.o: modules.o mod_kinds.o
+interaction_droplets_ptq.o: modules.o mod_kinds.o
+kchem_driver.o: kchem_kpp.o  modules.o mod_kinds.o
+kchem_kpp.o: mod_kinds.o
+land_surface_model_mod.o: modules.o mod_kinds.o radiation_model_mod.o
+local_stop.o: modules.o mod_kinds.o pmc_interface_mod.o
+local_tremain.o: modules.o cpulog_mod.o mod_kinds.o
+local_tremain_ini.o: modules.o cpulog_mod.o mod_kinds.o
+lpm.o: modules.o cpulog_mod.o lpm_exchange_horiz.o lpm_init.o lpm_pack_arrays.o \
+	mod_kinds.o mod_particle_attributes.o
+lpm_advec.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o
+lpm_boundary_conds.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o
+lpm_calc_liquid_water_content.o: modules.o cpulog_mod.o mod_kinds.o \
+	mod_particle_attributes.o
+lpm_collision_kernels.o: modules.o cpulog_mod.o user_module.o mod_kinds.o \
+	mod_particle_attributes.o
+lpm_data_output_particles.o: modules.o cpulog_mod.o mod_kinds.o \
+	mod_particle_attributes.o netcdf_interface_mod.o
+lpm_droplet_collision.o: modules.o cpulog_mod.o lpm_collision_kernels.o \
+	mod_kinds.o mod_particle_attributes.o
+lpm_droplet_condensation.o: modules.o cpulog_mod.o lpm_collision_kernels.o \
+	mod_kinds.o mod_particle_attributes.o
+lpm_exchange_horiz.o: modules.o cpulog_mod.o lpm_pack_arrays.o mod_kinds.o \
+	mod_particle_attributes.o netcdf_interface_mod.o
+lpm_init.o: modules.o lpm_collision_kernels.o mod_kinds.o \
+	netcdf_interface_mod.o random_function_mod.o mod_particle_attributes.o \
+	lpm_exchange_horiz.o lpm_pack_arrays.o random_generator_parallel_mod.o
+lpm_init_sgs_tke.o: modules.o mod_kinds.o mod_particle_attributes.o
+lpm_pack_arrays.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o
+lpm_read_restart_file.o: modules.o mod_kinds.o mod_particle_attributes.o \
+	lpm_pack_arrays.o
+lpm_set_attributes.o: modules.o cpulog_mod.o mod_kinds.o mod_particle_attributes.o
+lpm_write_exchange_statistics.o: modules.o mod_kinds.o mod_particle_attributes.o
+lpm_write_restart_file.o: modules.o mod_kinds.o mod_particle_attributes.o
+ls_forcing_mod.o: modules.o cpulog_mod.o mod_kinds.o
+message.o: modules.o mod_kinds.o pmc_interface_mod.o
+microphysics_mod.o: modules.o cpulog_mod.o mod_kinds.o
+modules.o: modules.f90 mod_kinds.o
+mod_kinds.o: mod_kinds.f90
+mod_particle_attributes.o: mod_particle_attributes.f90 mod_kinds.o
+netcdf_interface_mod.o: netcdf_interface_mod.f90 modules.o mod_kinds.o \
+   land_surface_model_mod.o radiation_model_mod.o spectra_mod.o urban_surface_mod.o kchem_driver.o
+nudging_mod.o: modules.o cpulog_mod.o mod_kinds.o
+outflow_turbulence.o: modules.o cpulog_mod.o mod_kinds.o
+package_parin.o: modules.o mod_kinds.o mod_particle_attributes.o
+palm.o: modules.o cpulog_mod.o land_surface_model_mod.o ls_forcing_mod.o mod_kinds.o nudging_mod.o\
+	pmc_interface_mod.o surface_layer_fluxes_mod.o kchem_driver.o
+parin.o: modules.o cpulog_mod.o land_surface_model_mod.o mod_kinds.o netcdf_interface_mod.o \
+   plant_canopy_model_mod.o pmc_interface_mod.o progress_bar_mod.o spectra_mod.o \
+   radiation_model_mod.o microphysics_mod.o virtual_flight_mod.o wind_turbine_model_mod.o kchem_driver.o
+plant_canopy_model_mod.o: modules.o mod_kinds.o
+pmc_interface_mod.o: modules.o mod_kinds.o pmc_child_mod.o pmc_general_mod.o \
+	pmc_handle_communicator_mod.o pmc_mpi_wrapper_mod.o pmc_parent_mod.o
+pmc_child_mod.o: mod_kinds.o pmc_general_mod.o pmc_handle_communicator_mod.o \
+   pmc_mpi_wrapper_mod.o
+pmc_general_mod.o: mod_kinds.o
+pmc_handle_communicator_mod.o: modules.o mod_kinds.o pmc_general_mod.o
+pmc_mpi_wrapper_mod.o: pmc_handle_communicator_mod.o
+pmc_parent_mod.o: pmc_general_mod.o pmc_handle_communicator_mod.o pmc_mpi_wrapper_mod.o
+poisfft_mod.o: modules.o cpulog_mod.o fft_xy_mod.o mod_kinds.o tridia_solver_mod.o
+poismg_mod.o: modules.o cpulog_mod.o mod_kinds.o
+poismg_noopt.o: modules.o cpulog_mod.o mod_kinds.o
+posix_calls_from_fortran.o: posix_calls_from_fortran.f90
+pres.o: modules.o cpulog_mod.o mod_kinds.o poisfft_mod.o poismg_mod.o pmc_interface_mod.o
+print_1d.o: modules.o cpulog_mod.o mod_kinds.o
+production_e.o: modules.o mod_kinds.o wall_fluxes.o
+prognostic_equations.o: modules.o advec_s_pw.o advec_s_up.o advec_s_bc.o advec_u_pw.o \
+	advec_u_up.o advec_v_pw.o advec_v_up.o advec_w_pw.o advec_w_up.o \
+	advec_ws.o buoyancy.o calc_radiation.o coriolis.o \
+	cpulog_mod.o diffusion_e.o diffusion_s.o diffusion_u.o diffusion_v.o diffusion_w.o \
+	eqn_state_seawater.o kchem_driver.o mod_kinds.o microphysics_mod.o \
+	nudging_mod.o plant_canopy_model_mod.o production_e.o radiation_model_mod.o \
+	subsidence_mod.o urban_surface_mod.o user_actions.o wind_turbine_model_mod.o
+progress_bar_mod.o: modules.o mod_kinds.o
+radiation_model_mod.o : modules.o mod_particle_attributes.o microphysics_mod.o
+random_function_mod.o: mod_kinds.o
+random_gauss.o: mod_kinds.o random_function_mod.o random_generator_parallel_mod.o
+random_generator_parallel_mod.o: mod_kinds.o
+read_3d_binary.o: modules.o cpulog_mod.o mod_kinds.o \
+   land_surface_model_mod.o radiation_model_mod.o random_function_mod.o random_generator_parallel_mod.o \
+   spectra_mod.o
+read_var_list.o: modules.o mod_kinds.o netcdf_interface_mod.o plant_canopy_model_mod.o \
+   spectra_mod.o microphysics_mod.o urban_surface_mod.o virtual_flight_mod.o
+run_control.o: modules.o cpulog_mod.o mod_kinds.o
+set_slicer_attributes_dvrp.o: modules.o mod_kinds.o
+singleton_mod.o: mod_kinds.o singleton_mod.f90
+sor.o: modules.o mod_kinds.o
+spectra_mod.o: spectra_mod.f90 modules.o mod_kinds.o cpulog_mod.o fft_xy_mod.o
+subsidence_mod.o: modules.o mod_kinds.o
+sum_up_3d_data.o: modules.o cpulog_mod.o mod_kinds.o land_surface_model_mod.o \
+                  radiation_model_mod.o urban_surface_mod.o
+surface_coupler.o: modules.o cpulog_mod.o mod_kinds.o
+surface_layer_fluxes_mod.o: modules.o mod_kinds.o land_surface_model_mod.o \
+	urban_surface_mod.o
+swap_timelevel.o: modules.o cpulog_mod.o mod_kinds.o land_surface_model_mod.o \
+   pmc_interface_mod.o urban_surface_mod.o kchem_driver.o
+temperton_fft_mod.o: modules.o mod_kinds.o
+time_integration.o: modules.o advec_ws.o buoyancy.o calc_mean_profile.o \
+	cpulog_mod.o data_output_flight.o interaction_droplets_ptq.o land_surface_model_mod.o \
+	ls_forcing_mod.o mod_kinds.o nudging_mod.o pmc_interface_mod.o production_e.o \
+	prognostic_equations.o progress_bar_mod.o radiation_model_mod.o \
+	spectra_mod.o user_actions.o surface_layer_fluxes_mod.o microphysics_mod.o \
+	urban_surface_mod.o virtual_flight_mod.o wind_turbine_model_mod.o
+time_to_string.o: mod_kinds.o
+timestep.o: modules.o cpulog_mod.o mod_kinds.o microphysics_mod.o
+timestep_scheme_steering.o: modules.o mod_kinds.o
+transpose.o: modules.o cpulog_mod.o mod_kinds.o
+tridia_solver_mod.o: modules.o mod_kinds.o
+urban_surface_mod.o: modules.o mod_kinds.o radiation_model_mod.o plant_canopy_model_mod.o
+user_3d_data_averaging.o: modules.o mod_kinds.o user_module.o
+user_actions.o: modules.o cpulog_mod.o mod_kinds.o user_module.o
+user_additional_routines.o: modules.o mod_kinds.o user_module.o
+user_check_data_output.o: modules.o mod_kinds.o user_module.o
+user_check_data_output_pr.o: modules.o mod_kinds.o user_module.o \
+   netcdf_interface_mod.o
+user_check_parameters.o: modules.o mod_kinds.o user_module.o
+user_data_output_2d.o: modules.o mod_kinds.o user_module.o
+user_data_output_3d.o: modules.o mod_kinds.o user_module.o
+user_data_output_mask.o: modules.o mod_kinds.o user_module.o
+user_data_output_dvrp.o: modules.o mod_kinds.o user_module.o
+user_define_netcdf_grid.o: modules.o mod_kinds.o user_module.o
+user_dvrp_coltab.o: modules.o mod_kinds.o user_module.o
+user_flight.o: modules.o mod_kinds.o user_module.o
+user_header.o: modules.o mod_kinds.o user_module.o
+user_init.o: modules.o mod_kinds.o netcdf_interface_mod.o user_module.o
+user_init_3d_model.o: modules.o mod_kinds.o user_module.o
+user_init_flight.o: modules.o mod_kinds.o netcdf_interface_mod.o user_module.o
+user_init_grid.o: modules.o mod_kinds.o user_module.o
+user_init_land_surface.o: modules.o mod_kinds.o user_module.o land_surface_model_mod.o netcdf_interface_mod.o
+user_init_plant_canopy.o: modules.o mod_kinds.o user_module.o plant_canopy_model_mod.o
+user_init_radiation.o: modules.o mod_kinds.o user_module.o radiation_model_mod.o
+user_init_urban_surface.o: modules.o mod_kinds.o user_module.o urban_surface_mod.o
+user_last_actions.o: modules.o mod_kinds.o user_module.o
+user_lpm_advec.o: modules.o mod_kinds.o user_module.o
+user_lpm_init.o: modules.o mod_kinds.o user_module.o
+user_lpm_set_attributes.o: modules.o mod_kinds.o user_module.o
+user_module.o: mod_kinds.o user_module.f90
+user_parin.o: modules.o mod_kinds.o user_module.o
+user_read_restart_data.o: modules.o mod_kinds.o user_module.o
+user_spectra.o: modules.o mod_kinds.o spectra_mod.o user_module.o
+user_statistics.o: modules.o mod_kinds.o netcdf_interface_mod.o user_module.o
+virtual_flight_mod.o: modules.o cpulog_mod.o mod_kinds.o netcdf_interface_mod.o user_init_flight.o user_flight.o
+wall_fluxes.o: modules.o mod_kinds.o
+wind_turbine_model_mod.o: modules.o cpulog_mod.o mod_kinds.o
+write_3d_binary.o: modules.o cpulog_mod.o mod_kinds.o \
+	radiation_model_mod.o random_function_mod.o random_generator_parallel_mod.o \
+	spectra_mod.o
+write_var_list.o: modules.o mod_kinds.o netcdf_interface_mod.o plant_canopy_model_mod.o\
+   spectra_mod.o microphysics_mod.o urban_surface_mod.o virtual_flight_mod.o

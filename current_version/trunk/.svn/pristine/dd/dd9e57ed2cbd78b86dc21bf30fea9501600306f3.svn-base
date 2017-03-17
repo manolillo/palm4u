@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+  
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=windows-1252">
+
+  
+
+
+  
+  
+  <title>PALM chapter 3.8</title><meta name="GENERATOR" content="StarOffice 7 (Win32)">
+
+
+  
+  <meta name="AUTHOR" content="Siegfried Raasch">
+
+
+  
+  <meta name="CREATED" content="20040809;13460943">
+
+
+  
+  <meta name="CHANGED" content="20041112;15085727">
+
+
+  
+  <meta name="KEYWORDS" content="parallel LES model">
+
+
+  
+  <style>
+<!--
+@page { size: 21cm 29.7cm }
+-->
+  </style></head>
+<body style="direction: ltr;" lang="en-US">
+
+
+<h3 style="line-height: 100%;">Topography flags</h3>
+
+
+<p style="line-height: 100%;">Starting from version 3.4a
+a flag array has been introduced in PALM for representing the topography. The new array<span style="font-family: Courier New,Courier,monospace;">&nbsp;flags </span>is a 3D-<span style="font-family: Courier New,Courier,monospace;">INTEGER</span> array dimensioned (<span style="font-family: Courier New,Courier,monospace;">nzb:nzt+1,nys-1:nyn+1,nxl-1:nxr+1</span>) where each value describes the features of the respective grid point with respect to the topography. Strictly speaking,&nbsp;<span style="font-family: Courier New,Courier,monospace;">flags</span> is a <span style="font-family: Courier New,Courier,monospace;">POINTER</span> which by default points to the real array<span style="font-family: Courier New,Courier,monospace;"> wall_flags_1</span>. In case of using the multigrid method as pressure solver, additional arrays<span style="font-family: Courier New,Courier,monospace;"> wall_flags_2</span>,<span style="font-family: Courier New,Courier,monospace;"> wall_flags_3</span>,
+etc. are used containing the respective flag informations for the
+coarser grids. (Attention: The finest grid always has the largest
+number, i.e. if four multigrid levels are used, then the flags for the
+finest grid are stored in array<span style="font-family: Courier New,Courier,monospace;"> wall_flags_4</span>.)</p><p style="line-height: 100%;">Each
+INTEGER value has to be interpreted bitwise. As to the FORTRAN model
+bits are counted from right to left starting with bit 0. So far, the
+first seven bits are used for storing the following informations (a bit value of "<span style="font-style: italic;">1</span>" means that the appropriate flag is set):</p><br><table style="text-align: left; height: 220px; width: 496px;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="width: 85px; text-align: center;"><span style="font-weight: bold;">bit position</span></td><td style="width: 393px;"><span style="font-weight: bold;">meaning</span></td></tr><tr><td style="width: 85px; text-align: center;">0</td><td style="width: 393px;">wall to the bottom</td></tr><tr><td style="width: 85px; text-align: center;">1</td><td style="width: 393px;">wall to the top &nbsp;(this cannot be used in the code so far)</td></tr><tr><td style="width: 85px; text-align: center;">2</td><td style="width: 393px;">wall to the south</td></tr><tr><td style="width: 85px; text-align: center;">3</td><td style="width: 393px;">wall to the north</td></tr><tr><td style="width: 85px; text-align: center;">4</td><td style="width: 393px;">wall to the left</td></tr><tr><td style="width: 85px; text-align: center;">5</td><td style="width: 393px;">wall to the rigth</td></tr><tr><td style="width: 85px; text-align: center;">6</td><td style="width: 393px;">inside topography / building</td></tr></tbody></table><p style="line-height: 100%;"><span style="font-weight: bold;">Example:</span><br>If a gridpoint has two neighbouring walls to the bottom and to the left, then the flag bit value is "<span style="font-style: italic;">...010001</span>" which gives the<span style="font-family: Courier New,Courier,monospace;"> INTEGER </span>value "<span style="font-style: italic;">17</span>" = 1*2<sup>4</sup>+1*2<sup>0</sup>.</p><p style="line-height: 100%;">For a gridpoint in the free flow without any neighbouring wall no bits are set, i.e. the<span style="font-family: Courier New,Courier,monospace;"> INTEGER </span>value of the respective array element of<span style="font-family: Courier New,Courier,monospace;"> flags </span>is "<span style="font-style: italic;">0</span>".</p><p style="line-height: 100%;">The intrinsic FORTRAN functions <span style="font-family: Courier New,Courier,monospace;">IBSET</span>, <span style="font-family: Courier New,Courier,monospace;">IBITS</span>, <span style="font-family: Courier New,Courier,monospace;">IAND</span>, <span style="font-family: Courier New,Courier,monospace;">IOR</span>, etc. can be used to manipulate the bits.</p><p style="line-height: 100%; font-weight: bold;"></p><p style="line-height: 100%; font-weight: bold;">Examples:</p><div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;">flags(k,j,i) = IBSET( flags(k,j,i), 6 )</span></div><p style="line-height: 100%;">sets the sixth bit of array element <span style="font-family: Courier New,Courier,monospace;">(k,j,i)</span> to "<span style="font-style: italic;">1</span>".</p><div style="margin-left: 40px; font-family: Courier New,Courier,monospace;">IBITS( flags(k,j,i), 4, 1 )</div><p style="line-height: 100%;">gives the<span style="font-family: Courier New,Courier,monospace;"> INTEGER </span>value "<span style="font-style: italic;">1</span>" if the fourth bit of array element <span style="font-family: Courier New,Courier,monospace;">(k,j,i)</span> is "<span style="font-style: italic;">1</span>", otherwise "<span style="font-style: italic;">0</span>".</p><p style="line-height: 100%;">Here is an example from routine <span style="font-family: Courier New,Courier,monospace;">redblack</span> (within <span style="font-family: Courier New,Courier,monospace;">poismg.f90</span>) which shows how <span style="font-family: Courier New,Courier,monospace;">IBITS</span> is used for implicit setting of Neumann boundary conditions:</p><p style="line-height: 100%; margin-left: 40px; font-family: Courier New,Courier,monospace;">p_mg(k,j,i+1) + IBITS( flags(k,j,i), 5, 1 ) * &amp;<br>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( p_mg(k,j,i) - p_mg(k,j,i+1) )&nbsp;</p><p style="line-height: 100%;">If there is no wall to the right of gridpoint <span style="font-family: Courier New,Courier,monospace;">(k,j,i)</span> the term results to <span style="font-family: Courier New,Courier,monospace;">p_mg(k,j,i+1)</span>, otherwise it gives <span style="font-family: Courier New,Courier,monospace;">p_mg(k,j,i)</span>.</p><br>The flag array <span style="font-family: Courier New,Courier,monospace;">flags</span> is calculated in routine <span style="font-family: Courier New,Courier,monospace;">init_grid</span> using the topography information stored in <span style="font-family: Courier New,Courier,monospace;">nzb_local</span>.
+Here also the flag arrays for the coarser grids needed for the
+multigrid scheme are calculated. This requires informations from a
+distance of more than one grid spacing away from the current gridpoint.
+Therfore, array <span style="font-family: Courier New,Courier,monospace;">nzb_local</span> had to be extended for further ghost point levels (see <span style="font-family: Courier New,Courier,monospace;">init_grid</span>).</body></html>
