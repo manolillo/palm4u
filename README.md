@@ -1,9 +1,9 @@
 # palm4u
 The state-of-the-art Urban Climate Model
 
-# Contributors to the Chemistry Module
+Contributors to the Chemistry Module
 
-# Renate Forkel
-# Sabine Banzhaf
-# Emmanuele Russo
-# Basit Khan
+Renate Forkel,  
+Sabine Banzhaf,  
+Emmanuele Russo, 
+and Basit Khan.
