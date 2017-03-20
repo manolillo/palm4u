@@ -1,0 +1,7 @@
+#include      smog.spc
+#include      smog.eqn
+#INTEGRATOR rosenbrock
+#LANGUAGE   Fortran90
+//#DRIVER     general
+#HESSIAN    on
+#STOICMAT   on

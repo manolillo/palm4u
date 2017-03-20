@@ -352,7 +352,7 @@
 
 #ifdef KPP_CHEM
     USE kchem_driver,                                                          &
-        ONLY: chem_species, kchem_integrate, NSPEC, use_kpp_chemistry
+        ONLY: chem_species, kchem_integrate, NSPEC, NVAR, use_kpp_chemistry, SPC_NAMES      !NVAR, SPC_NAMES added bk pe1
 #endif
 
     PRIVATE
@@ -1096,18 +1096,24 @@
              CALL cpu_log( log_point_s(83), 'chemistry advec+diff+prog ', 'start' )
              
 !--          Loop over chemical species
-             DO  n = 1, NSPEC  
+             DO  n = 1,NVAR                        ! NSPEC by NVAR bk pe2 
                 CALL tendency_caller ( chem_species(n)%conc_p, chem_species(n)%conc, &
                                        chem_species(n)%tconc_m,                      &
                                        i, j, i_omp_start, tn,                        &
                                        chem_species(n)%ssws, chem_species(n)%sswst,  &
                                        chem_species(n)%flux_s, chem_species(n)%diss_s, &
                                        chem_species(n)%flux_l, chem_species(n)%diss_l)       
+                 
+!           print*,'the val of ', SPC_NAMES(13), 'after : ', chem_species(13)%conc_p(:,12,12)  ! bK  
+
              ENDDO
 
              CALL cpu_log( log_point_s(83), 'chemistry advec+diff+prog ', 'stop' )
              CALL cpu_log( log_point(32), 'all progn.equations', 'continue' )
+             
           ENDIF                
+!                IF ( n == 13 ) print*,'the val of ', SPC_NAMES(13), ' is: ', chem_species(n)%conc_p(:,12,12)     ! bK pe3  
+
 #endif
 
        ENDDO
@@ -2893,7 +2899,7 @@
  ! Module private subroutines
 
  SUBROUTINE tendency_caller ( rs_p, rs, trs_m, i, j, i_omp_start, tn, ssws_kc, sswst_kc, flux_s, diss_s, flux_l, diss_l )
-    USE pegrid,   ONLY: threads_per_task
+    USE pegrid,   ONLY: threads_per_task,myid      !myid added by bK 
     USE indices,  ONLY: nysg,nyng,nxlg,nxrg
     IMPLICIT NONE
 

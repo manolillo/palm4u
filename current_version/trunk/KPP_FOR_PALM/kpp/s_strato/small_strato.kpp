@@ -1,0 +1,10 @@
+#MODEL		small_strato
+//#include  small_strato.spc
+//#include  small_strato.eqn
+#INTEGRATOR rosenbrock
+#LANGUAGE   Fortran90
+#DOUBLE     on
+#JACOBIAN   SPARSE_LU_ROW
+#DRIVER     general
+#HESSIAN    on
+#STOICMAT   on

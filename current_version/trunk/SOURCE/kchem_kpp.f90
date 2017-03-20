@@ -78,7 +78,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Parameters.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -175,7 +175,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Global.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -248,7 +248,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_JacobianSP.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -302,7 +302,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Monitor.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -369,7 +369,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Initialize.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -395,7 +395,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Integrator.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -414,26 +414,25 @@ Module kchem_kpp
   !   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  !  
-  !    Rosenbrock -  Implementation of several Rosenbrock methods:              !  
-  !                 *Ros2                                                       !  
-  !                 *Ros3                                                       !  
-  !                 *Ros4                                                       !  
-  !                 *Rodas3                                                     !  
-  !                 *Rodas4                                                     !  
+  !    Rosenbrock -  Implementation of several Rosenbrock methods:               !  
+  !                 *Ros2                                                      !  
+  !                 *Ros3                                                      !  
+  !                 *Ros4                                                      !  
+  !                 *Rodas3                                                    !  
+  !                 *Rodas4                                                    !  
   !    By default the code employs the KPP sparse linear algebra routines       !  
-  !    Compile with - DFULL_ALGEBRA to use full linear algebra (LAPACK)         !  
+  !    Compile with - DFULL_ALGEBRA to use full linear algebra (LAPACK)          !  
   !                                                                             !  
   !      (C)  Adrian Sandu, August 2004                                         !  
   !      Virginia Polytechnic Institute and State University                    !  
   !      Contact: sandu@cs.vt.edu                                               !  
   !      Revised by Philipp Miehe and Adrian Sandu, May 2006                    !                                   !  
-  !      This implementation is part of KPP -  the Kinetic PreProcessor         !  
+  !      This implementation is part of KPP -  the Kinetic PreProcessor          !  
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  !  
 
 
   SAVE
- 
-!    print*,'here is the list of SAVE vars : ',SAVE 
+  
   !  ~~~>  Statistics on the work performed by the Rosenbrock method
   INTEGER, PARAMETER :: Nfun=1, Njac=2, Nstp=3, Nacc=4, &
                         Nrej=5, Ndec=6, Nsol=7, Nsng=8, &
@@ -454,7 +453,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_LinearAlgebra.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -481,7 +480,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Jacobian.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -508,7 +507,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Function.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -537,7 +536,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Rates.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -563,7 +562,7 @@ Module kchem_kpp
   !          R. Sander, Max- Planck Institute for Chemistry, Mainz, Germany
   !   
   !   File                 : kchem_kpp_Util.f90
-  !   Time                 : Thu Dec 29 14:12:02 2016
+  !   Time                 : Mon Mar  6 14:11:23 2017
   !   Working directory    : /pd/home/khan- b/palm/current_version/trunk/KPP_FOR_PALM/tmp_kp4
   !   Equation file        : kchem_kpp.kpp
   !   Output root filename : kchem_kpp
@@ -699,9 +698,8 @@ Module kchem_kpp
  CONTAINS
  
 SUBROUTINE Initialize()
-
-
-
+    IMPLICIT NONE               ! bK kkp1
+  
   INTEGER :: i
   REAL(kind=dp) :: x
 
@@ -718,16 +716,19 @@ SUBROUTINE Initialize()
   END DO
 
   !   constant rate coefficients
-  RCONST(2) = 2.183e-05_dp     !FKa
-  RCONST(3) = 26.59_dp     !FKa
-  RCONST(4) = 3775_dp     !FKa
-  RCONST(5) = 23410_dp     !FKa
-  RCONST(7) = 12140_dp     !FKa
-  RCONST(8) = 11270_dp     !FKa
-  RCONST(9) = 11270_dp     !FKa
-  RCONST(10) = 16130_dp     !FKa
-  RCONST(11) = 6893_dp     !FKa
-  RCONST(12) = 0.02143_dp     !FKa
+  RCONST(2) = 8.125e-19_dp      !bK
+  RCONST(3) = 9.897e-13_dp      !bK
+  RCONST(4) = 1.405e-10_dp      !bK
+  RCONST(5) = 8.713e-10_dp      !bK
+  RCONST(7) = 4.518e-10_dp      !bK
+  RCONST(8) = 4.195e-10_dp      !bK
+  RCONST(9) = 4.195e-10_dp      !bK
+  RCONST(10) = 6.004e-10_dp     !bK
+  RCONST(11) = 2.566e-10_dp     !bK
+  RCONST(12) = 7.976e-16_dp     !bK
+  
+
+
   !   END constant rate coefficients
 
   !   INLINED initializations
@@ -740,7 +741,7 @@ END SUBROUTINE Initialize
 SUBROUTINE INTEGRATE( TIN, TOUT, &
   ICNTRL_U, RCNTRL_U, ISTATUS_U, RSTATUS_U, IERR_U)
 
-
+    IMPLICIT NONE                                    ! bK kkp2
    REAL(kind=dp), INTENT(IN) :: TIN   !  Start Time
    REAL(kind=dp), INTENT(IN) :: TOUT  !  End Time
     !  Optional input parameters and statistics
@@ -792,7 +793,7 @@ SUBROUTINE INTEGRATE( TIN, TOUT, &
 END SUBROUTINE INTEGRATE
  
 SUBROUTINE Fun(V, F, RCT, Vdot)
-
+        IMPLICIT NONE               ! bK kkp3
   !   V -  Concentrations of variable species (local)
   REAL(kind=dp) :: V(NVAR)
   !   F -  Concentrations of fixed species (local)
@@ -804,18 +805,18 @@ SUBROUTINE Fun(V, F, RCT, Vdot)
 
 
   !   Computation of equation rates
-  A(1) = RCT(1)*V(11)
-  A(2) = 2.183e-05_dp*V(2)*F(2)     !FKa
-  A(3) = 26.59_dp*V(5)*V(10)     !FKa
-  A(4) = 3775._dp*V(3)*V(12)     !FKa
-  A(5) = 23410._dp*V(8)*V(12)     !FKa
-  A(6) = RCT(6)*V(8)
-  A(7) = 12140._dp*V(6)*V(10)     !FKa
-  A(8) = 11270._dp*V(9)*V(10)     !FKa
-  A(9) = 11270._dp*V(7)*V(10)     !FKa
-  A(10) = 16130._dp*V(11)*V(12)     !FKa
-  A(11) = 6893._dp*V(7)*V(11)     !FKa
-  A(12) = 0.02143_dp*V(4)     !FKa
+  A(1) = RCT(1)*V(11)           !bK
+  A(2) = 8.125e-19_dp*V(2)*F(2)    !bK
+  A(3) = 9.897e-13_dp*V(5)*V(10)   !bK
+  A(4) = 1.405e-10_dp*V(3)*V(12)   !bK
+  A(5) = 8.713e-10_dp*V(8)*V(12)   !bK
+  A(6) = RCT(6)*V(8)            !bK
+  A(7) = 4.518e-10_dp*V(6)*V(10)   !bK
+  A(8) = 4.195e-10_dp*V(9)*V(10)   !bK
+  A(9) = 4.195e-10_dp*V(7)*V(10)   !bK
+  A(10) = 6.004e-10_dp*V(11)*V(12) !bK
+  A(11) = 2.566e-10_dp*V(7)*V(11)  !bK
+  A(12) = 7.976e-16_dp*V(4)        !bK
 
   !   Aggregate function
   Vdot(1) = A(10)
@@ -834,7 +835,7 @@ SUBROUTINE Fun(V, F, RCT, Vdot)
 END SUBROUTINE Fun
  
 SUBROUTINE KppSolve(JVS, X)
-
+    IMPLICIT NONE                   ! bK kkp4
   !   JVS -  sparse Jacobian of variables
   REAL(kind=dp) :: JVS(LU_NONZERO)
   !   X -  Vector for variables
@@ -865,7 +866,7 @@ SUBROUTINE KppDecomp( JVS, IER)
   !   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !          Sparse LU factorization
   !   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+        IMPLICIT NONE               ! bK  kkp5
 
       INTEGER  :: IER
       REAL(kind=dp) :: JVS(LU_NONZERO), W(NVAR), a
@@ -906,7 +907,7 @@ END SUBROUTINE KppDecomp
 !          CALL SLAMCH('E') or CALL DLAMCH('E')
   !  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   !        USE kchem_kpp_Precision
-
+        IMPLICIT NONE               ! bk kkp6
       CHARACTER ::  C
       INTEGER    :: i
       REAL(kind=dp), SAVE  ::  Eps
@@ -922,7 +923,7 @@ END SUBROUTINE KppDecomp
           CALL WLAMCH_ADD(ONE,Eps,Suma)
           IF (Suma.LE.ONE) GOTO 10
         END DO
-!         PRINT*,'ERROR IN WLAMCH. EPS < ',Eps              !comment back
+        PRINT*,'ERROR IN WLAMCH. EPS < ',Eps
         RETURN
 10      Eps = Eps*2
         i = i- 1      
@@ -934,14 +935,14 @@ END SUBROUTINE KppDecomp
  
       SUBROUTINE WLAMCH_ADD( A, B, Suma)
   !        USE kchem_kpp_Precision
-      
+      IMPLICIT NONE                 ! bK kkp7
       REAL(kind=dp) A, B, Suma
       Suma = A +  B
 
       END SUBROUTINE WLAMCH_ADD
  
 SUBROUTINE Jac_SP(V, F, RCT, JVS)
-
+        IMPLICIT NONE           ! bK kkp8        
   !   V -  Concentrations of variable species (local)
   REAL(kind=dp) :: V(NVAR)
   !   F -  Concentrations of fixed species (local)
@@ -956,46 +957,46 @@ SUBROUTINE Jac_SP(V, F, RCT, JVS)
   !   B -  Temporary array
   REAL(kind=dp) :: B(21)
 
-  !   B(1) = dA(1)/dV(11)
+ !   B(1) = dA(1)/dV(11)
   B(1) = RCT(1)
   !   B(2) = dA(2)/dV(2)
-  B(2) = 2.183e-05_dp*F(2)     !FKa
+  B(2) = 8.125e-19_dp*F(2)      !bK
   !   B(4) = dA(3)/dV(5)
-  B(4) = 26.59_dp*V(10)     !FKa
-  !   B(5) = dA(3)/dV(10)
-  B(5) = 26.59_dp*V(5)     !FKa
+  B(4) = 9.897e-13_dp*V(10)     !bK
+  !   B(5) = dA(3)/dV(10)       
+  B(5) = 9.897e-13_dp*V(5)      !bK
   !   B(6) = dA(4)/dV(3)
-  B(6) = 3775._dp*V(12)     !FKa
+  B(6) = 1.405e-10_dp*V(12)     !bK
   !   B(7) = dA(4)/dV(12)
-  B(7) = 3775._dp*V(3)     !FKa
+  B(7) = 1.405e-10_dp*V(3)      !bK
   !   B(8) = dA(5)/dV(8)
-  B(8) = 23410._dp*V(12)     !FKa
+  B(8) = 8.713e-10_dp*V(12)     !bK
   !   B(9) = dA(5)/dV(12)
-  B(9) = 23410._dp*V(8)     !FKa
+  B(9) = 8.713e-10_dp*V(8)      !bK
   !   B(10) = dA(6)/dV(8)
   B(10) = RCT(6)
   !   B(11) = dA(7)/dV(6)
-  B(11) = 12140._dp*V(10)     !FKa
+  B(11) = 4.518e-10_dp*V(10)    !bK
   !   B(12) = dA(7)/dV(10)
-  B(12) = 12140._dp*V(6)     !FKa
+  B(12) = 4.518e-10_dp*V(6)     !bK
   !   B(13) = dA(8)/dV(9)
-  B(13) = 11270._dp*V(10)     !FKa
+  B(13) = 4.195e-10_dp*V(10)    !bK
   !   B(14) = dA(8)/dV(10)
-  B(14) = 11270._dp*V(9)     !FKa
+  B(14) = 4.195e-10_dp*V(9)     !bK
   !   B(15) = dA(9)/dV(7)
-  B(15) = 11270._dp*V(10)     !FKa
+  B(15) = 4.195e-10_dp*V(10)    !bK
   !   B(16) = dA(9)/dV(10)
-  B(16) = 11270._dp*V(7)     !FKa
+  B(16) = 4.195e-10_dp*V(7)     !bK
   !   B(17) = dA(10)/dV(11)
-  B(17) = 16130._dp*V(12)     !FKa
+  B(17) = 6.004e-10_dp*V(12)    !bK
   !   B(18) = dA(10)/dV(12)
-  B(18) = 16130._dp*V(11)     !FKa
+  B(18) = 6.004e-10_dp*V(11)    !bK
   !   B(19) = dA(11)/dV(7)
-  B(19) = 6893._dp*V(11)     !FKa
+  B(19) = 2.566e-10_dp*V(11)    !bK
   !   B(20) = dA(11)/dV(11)
-  B(20) = 6893._dp*V(7)     !FKa
+  B(20) = 2.566e-10_dp*V(7)     !bK
   !   B(21) = dA(12)/dV(4)
-  B(21) = 0.02143_dp     !FKa
+  B(21) = 7.976e-16_dp          !bK
 
 ! Construct the Jacobian terms from B's
   !   JVS(1) = Jac_FULL(1,1)
@@ -1121,7 +1122,7 @@ END SUBROUTINE Jac_SP
  
   ELEMENTAL REAL(kind=dp) FUNCTION k_arr (k_298,tdep,temp)
      !  Arrhenius function
-
+    IMPLICIT NONE                                           ! bK kkp9
     REAL,     INTENT(IN) :: k_298  !  k at T = 298.15K
     REAL,     INTENT(IN) :: tdep   !  temperature dependence
     REAL(kind=dp), INTENT(IN) :: temp   !  temperature
@@ -1133,6 +1134,7 @@ END SUBROUTINE Jac_SP
   END FUNCTION k_arr
  
 SUBROUTINE Update_RCONST()
+    IMPLICIT NONE               ! bK kkp10
  integer         :: j,k
 
   k = is
@@ -1142,12 +1144,12 @@ SUBROUTINE Update_RCONST()
 
   !   End INLINED RCONST
 
-  RCONST(1) = (0.533_dp)     !FKa
+  RCONST(1) = (0.533_dp)                       ! bK added _dp photo dissociation k of NO2
   !   RCONST(2) = constant rate coefficient
   !   RCONST(3) = constant rate coefficient
   !   RCONST(4) = constant rate coefficient
   !   RCONST(5) = constant rate coefficient
-  RCONST(6) = (1.91E-4_dp)     !FKa
+  RCONST(6) = (1.91E-4_dp)                      !bK added _dp photodissociation k of RCHO
   !   RCONST(7) = constant rate coefficient
   !   RCONST(8) = constant rate coefficient
   !   RCONST(9) = constant rate coefficient
@@ -1158,7 +1160,7 @@ SUBROUTINE Update_RCONST()
 END SUBROUTINE Update_RCONST
  
   ELEMENTAL REAL(kind=dp) FUNCTION k_3rd(temp,cair,k0_300K,n,kinf_300K,m,fc)
-
+    IMPLICIT NONE                   ! bK kkp11
     INTRINSIC LOG10
 
     REAL(kind=dp), INTENT(IN) :: temp       !  temperature [K]
@@ -1179,7 +1181,7 @@ END SUBROUTINE Update_RCONST
   END FUNCTION k_3rd
  
 SUBROUTINE initialize_kpp_ctrl(status, iou, modstr)
-
+    IMPLICIT NONE           ! bK  kkp12
 
    !  I/O
   INTEGER,          INTENT(OUT) :: status
@@ -1231,13 +1233,13 @@ SUBROUTINE initialize_kpp_ctrl(status, iou, modstr)
 END SUBROUTINE initialize_kpp_ctrl
  
 SUBROUTINE error_output(C,ierr,PE)
-
+    IMPLICIT NONE                   ! bK kkp13   
 
   INTEGER, INTENT(IN) :: ierr
   INTEGER, INTENT(IN) :: PE
   REAL(dp), DIMENSION(:),INTENT(IN) :: C
 
-!   write(6,*) 'ERROR in kchem_kpp ',ierr,C(1)                         !comment back
+  write(6,*) 'ERROR in kchem_kpp ',ierr,C(1)
 
 
 END SUBROUTINE error_output
@@ -1251,7 +1253,7 @@ END SUBROUTINE error_output
   !           CALL  SCOPY(N,X,1,Y,1)   or   CALL  DCOPY(N,X,1,Y,1)
   !  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   !       USE kchem_kpp_Precision
-      
+      IMPLICIT NONE                 ! bK kkp14 
       INTEGER  :: i,incX,incY,M,MP1,N
       REAL(kind=dp) :: X(N),Y(N)
 
@@ -1286,7 +1288,7 @@ END SUBROUTINE error_output
   !       replace this by the function from the optimized BLAS implementation:
   !           CALL SSCAL(N,Alpha,X,1) or  CALL DSCAL(N,Alpha,X,1)
   !  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
+        IMPLICIT NONE                   ! bK kkp15
       INTEGER  :: i,incX,M,MP1,N
       REAL(kind=dp)  :: X(N),Alpha
       REAL(kind=dp), PARAMETER  :: ZERO=0.0_dp, ONE=1.0_dp
@@ -1348,7 +1350,7 @@ END SUBROUTINE error_output
   !       replace this by the function from the optimized BLAS implementation:
   !           CALL SAXPY(N,Alpha,X,1,Y,1) or  CALL DAXPY(N,Alpha,X,1,Y,1)
   !  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
+        IMPLICIT NONE           ! bK kkp16
       INTEGER  :: i,incX,incY,M,MP1,N
       REAL(kind=dp) :: X(N),Y(N),Alpha
       REAL(kind=dp), PARAMETER :: ZERO = 0.0_dp
@@ -1490,7 +1492,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
   !  
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+    IMPLICIT NONE               ! bK kkp17
   !  ~~~>  Arguments
    INTEGER,       INTENT(IN)    :: N
    REAL(kind=dp), INTENT(INOUT) :: Y(N)
@@ -1550,7 +1552,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
      CASE (6)
        CALL Rang3
      CASE DEFAULT
-!        PRINT *,'Unknown Rosenbrock method: ICNTRL(3)=',ICNTRL(3)       !comment back
+       PRINT *,'Unknown Rosenbrock method: ICNTRL(3)=',ICNTRL(3) 
        CALL ros_ErrorMsg(- 2,Tstart,ZERO,IERR)
        RETURN
    END SELECT
@@ -1561,7 +1563,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (ICNTRL(4) > 0) THEN
       Max_no_steps=ICNTRL(4)
    ELSE
-!       PRINT *,'User-selected max no. of steps: ICNTRL(4)=',ICNTRL(4)         !comment back
+      PRINT *,'User-selected max no. of steps: ICNTRL(4)=',ICNTRL(4)
       CALL ros_ErrorMsg(- 1,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1575,7 +1577,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(1) > ZERO) THEN
       Hmin = RCNTRL(1)
    ELSE
-!       PRINT *,'User-selected Hmin: RCNTRL(1)=',RCNTRL(1)        !comment back
+      PRINT *,'User-selected Hmin: RCNTRL(1)=',RCNTRL(1)
       CALL ros_ErrorMsg(- 3,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1585,7 +1587,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(2) > ZERO) THEN
       Hmax = MIN(ABS(RCNTRL(2)),ABS(Tend-Tstart))
    ELSE
-!       PRINT *,'User-selected Hmax: RCNTRL(2)=',RCNTRL(2)         !comment back
+      PRINT *,'User-selected Hmax: RCNTRL(2)=',RCNTRL(2)
       CALL ros_ErrorMsg(- 3,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1595,7 +1597,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(3) > ZERO) THEN
       Hstart = MIN(ABS(RCNTRL(3)),ABS(Tend-Tstart))
    ELSE
-!       PRINT *,'User-selected Hstart: RCNTRL(3)=',RCNTRL(3)      !comment back
+      PRINT *,'User-selected Hstart: RCNTRL(3)=',RCNTRL(3)
       CALL ros_ErrorMsg(- 3,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1605,7 +1607,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(4) > ZERO) THEN
       FacMin = RCNTRL(4)
    ELSE
-!       PRINT *,'User-selected FacMin: RCNTRL(4)=',RCNTRL(4)        !comment back
+      PRINT *,'User-selected FacMin: RCNTRL(4)=',RCNTRL(4)
       CALL ros_ErrorMsg(- 4,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1614,7 +1616,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(5) > ZERO) THEN
       FacMax = RCNTRL(5)
    ELSE
-!       PRINT *,'User-selected FacMax: RCNTRL(5)=',RCNTRL(5)         !comment back
+      PRINT *,'User-selected FacMax: RCNTRL(5)=',RCNTRL(5)
       CALL ros_ErrorMsg(- 4,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1624,7 +1626,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(6) > ZERO) THEN
       FacRej = RCNTRL(6)
    ELSE
-!       PRINT *,'User-selected FacRej: RCNTRL(6)=',RCNTRL(6)         !comment back
+      PRINT *,'User-selected FacRej: RCNTRL(6)=',RCNTRL(6)
       CALL ros_ErrorMsg(- 4,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1634,7 +1636,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
    ELSEIF (RCNTRL(7) > ZERO) THEN
       FacSafe = RCNTRL(7)
    ELSE
-!       PRINT *,'User-selected FacSafe: RCNTRL(7)=',RCNTRL(7)          !comment back
+      PRINT *,'User-selected FacSafe: RCNTRL(7)=',RCNTRL(7)
       CALL ros_ErrorMsg(- 4,Tstart,ZERO,IERR)
       RETURN
    END IF
@@ -1642,8 +1644,8 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
     DO i=1,UplimTol
       IF((AbsTol(i) <= ZERO) .OR. (RelTol(i) <= 10.0_dp*Roundoff) &
          .OR. (RelTol(i) >= 1.0_dp))THEN
-!         PRINT *,' AbsTol(',i,') = ',AbsTol(i)                  !comment back
-!         PRINT *,' RelTol(',i,') = ',RelTol(i)
+        PRINT *,' AbsTol(',i,') = ',AbsTol(i)
+        PRINT *,' RelTol(',i,') = ',RelTol(i)
         CALL ros_ErrorMsg(- 5,Tstart,ZERO,IERR)
         RETURN
       END IF
@@ -1669,38 +1671,38 @@ CONTAINS  !   SUBROUTINES internal to Rosenbrock
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
   !      Handles all error messages
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
-  
+    IMPLICIT NONE                   ! bK kkp18  
    REAL(kind=dp), INTENT(IN) :: T, H
    INTEGER, INTENT(IN)  :: Code
    INTEGER, INTENT(OUT) :: IERR
    
    IERR = Code
-!    PRINT *, &         !comment back
-!      'Forced exit from Rosenbrock due to the following error:' 
-!      
-!    SELECT CASE (Code)
-!     CASE (- 1)    
-!       PRINT *,'--> Improper value for maximal no of steps'
-!     CASE (- 2)    
-!       PRINT *,'--> Selected Rosenbrock method not implemented'
-!     CASE (- 3)    
-!       PRINT *,'--> Hmin/Hmax/Hstart must be positive'
-!     CASE (- 4)    
-!       PRINT *,'--> FacMin/FacMax/FacRej must be positive'
-!     CASE (- 5) 
-!       PRINT *,'--> Improper tolerance values'
-!     CASE (- 6) 
-!       PRINT *,'--> No of steps exceeds maximum bound'
-!     CASE (- 7) 
-!       PRINT *,'--> Step size too small: T + 10*H = T',&
-!             ' or H < Roundoff'
-!     CASE (- 8)    
-!       PRINT *,'--> Matrix is repeatedly singular'
-!     CASE DEFAULT
-!       PRINT *,'Unknown Error code: ',Code
-!    END SELECT
-!    
-!    PRINT *, "T=", T, "and H=", H
+   PRINT *, &
+     'Forced exit from Rosenbrock due to the following error:' 
+     
+   SELECT CASE (Code)
+    CASE (- 1)    
+      PRINT *,'--> Improper value for maximal no of steps'
+    CASE (- 2)    
+      PRINT *,'--> Selected Rosenbrock method not implemented'
+    CASE (- 3)    
+      PRINT *,'--> Hmin/Hmax/Hstart must be positive'
+    CASE (- 4)    
+      PRINT *,'--> FacMin/FacMax/FacRej must be positive'
+    CASE (- 5) 
+      PRINT *,'--> Improper tolerance values'
+    CASE (- 6) 
+      PRINT *,'--> No of steps exceeds maximum bound'
+    CASE (- 7) 
+      PRINT *,'--> Step size too small: T + 10*H = T',&
+            ' or H < Roundoff'
+    CASE (- 8)    
+      PRINT *,'--> Matrix is repeatedly singular'
+    CASE DEFAULT
+      PRINT *,'Unknown Error code: ',Code
+   END SELECT
+   
+   PRINT *, "T=", T, "and H=", H
      
  END SUBROUTINE ros_ErrorMsg
 
@@ -1719,7 +1721,7 @@ CONTAINS  !   SUBROUTINES internal to Rosenbrock
   !        and its coefficients ros_{A,C,M,E,Alpha,Gamma}
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+    IMPLICIT NONE           ! bK kkp19
   !  ~~~> Input: the initial condition at Tstart; Output: the solution at T
    REAL(kind=dp), INTENT(INOUT) :: Y(N)
   !  ~~~> Input: integration interval
@@ -1913,7 +1915,7 @@ Stage: DO istage = 1, ros_S
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !  ~~~> Computes the "scaled norm" of the error vector Yerr
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    IMPLICIT NONE           ! bK kkp20
   !   Input arguments
    REAL(kind=dp), INTENT(IN) :: Y(N), Ynew(N), &
           Yerr(N), AbsTol(N), RelTol(N)
@@ -1946,7 +1948,7 @@ Stage: DO istage = 1, ros_S
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !  ~~~> The time partial derivative of the function by finite differences
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    IMPLICIT NONE       !bK kkp22
   !  ~~~> Input arguments
    REAL(kind=dp), INTENT(IN) :: T, Roundoff, Y(N), Fcn0(N)
   !  ~~~> Output arguments
@@ -1975,7 +1977,7 @@ Stage: DO istage = 1, ros_S
   !         - half the step size if LU decomposition fails and retry
   !         - exit after 5 consecutive fails
   !   - - -  - - -  - - -  - - -  - - -  - - -  - - -  - - -  - - -  - - -  - - -  - - -  - - - 
-
+    IMPLICIT NONE       ! bK kkp23
   !  ~~~> Input arguments
 #ifdef FULL_ALGEBRA    
    REAL(kind=dp), INTENT(IN) ::  Jac0(N,N)
@@ -2032,7 +2034,7 @@ Stage: DO istage = 1, ros_S
         ISTATUS(Nsng) = ISTATUS(Nsng) +  1
         Nconsecutive = Nconsecutive+1
         Singular = .TRUE.
-!         PRINT*,'Warning: LU Decomposition returned ISING = ',ISING        !comment back
+        PRINT*,'Warning: LU Decomposition returned ISING = ',ISING
         IF (Nconsecutive <= 5) THEN  !  Less than 5 consecutive failed decompositions
            H = H*HALF
         ELSE   !  More than 5 consecutive failed decompositions
@@ -2051,6 +2053,7 @@ Stage: DO istage = 1, ros_S
   !    Template for the LU decomposition
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !  ~~~> Inout variables
+    IMPLICIT NONE               !bk kkp24
 #ifdef FULL_ALGEBRA    
    REAL(kind=dp), INTENT(INOUT) :: A(N,N)
 #else   
@@ -2076,6 +2079,8 @@ Stage: DO istage = 1, ros_S
   !    Template for the forward/backward substitution (using pre-computed LU decomposition)
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !  ~~~> Input variables
+    IMPLICIT NONE               !bk kkp25
+
 #ifdef FULL_ALGEBRA    
    REAL(kind=dp), INTENT(IN) :: A(N,N)
    INTEGER :: ISING
@@ -2089,7 +2094,7 @@ Stage: DO istage = 1, ros_S
 #ifdef FULL_ALGEBRA    
    CALL  DGETRS( 'N',N ,1,A,N,Pivot,b,N,ISING)
    IF(Info < 0)THEN
-!       PRINT*,"Error in DGETRS. ISING=",ISING               !comment back
+      PRINT*,"Error in DGETRS. ISING=",ISING
    END IF  
 #else   
    CALL KppSolve( A, b)
@@ -2106,7 +2111,7 @@ Stage: DO istage = 1, ros_S
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !   - - -  AN L- STABLE METHOD, 2 stages, order 2
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+   IMPLICIT NONE               !bk kkp26
    DOUBLE PRECISION g
 
     g = 1.0_dp +  1.0_dp/SQRT(2.0_dp)
@@ -2153,7 +2158,7 @@ Stage: DO istage = 1, ros_S
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !   - - -  AN L- STABLE METHOD, 3 stages, order 3, 2 function evaluations
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+   IMPLICIT NONE               !bk kkp27
    rosMethod = RS3
   !  ~~~> Name of the method
    ros_Name = 'ROS-3'
@@ -2215,7 +2220,7 @@ Stage: DO istage = 1, ros_S
   !        SPRINGER SERIES IN COMPUTATIONAL MATHEMATICS,
   !        SPRINGER- VERLAG (1990)
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    IMPLICIT NONE               !bk kkp28
 
    rosMethod = RS4
   !  ~~~> Name of the method
@@ -2280,7 +2285,7 @@ Stage: DO istage = 1, ros_S
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !   - - -  A STIFFLY- STABLE METHOD, 4 stages, order 3
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+   IMPLICIT NONE               !bk kkp29
 
    rosMethod = RD3
   !  ~~~> Name of the method
@@ -2351,7 +2356,7 @@ Stage: DO istage = 1, ros_S
   !        SPRINGER SERIES IN COMPUTATIONAL MATHEMATICS,
   !        SPRINGER- VERLAG (1996)
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    IMPLICIT NONE               !bk kkp30
 
     rosMethod = RD4
   !  ~~~> Name of the method
@@ -2457,6 +2462,7 @@ Stage: DO istage = 1, ros_S
   !   Table 4.1- 4.2
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    IMPLICIT NONE               !bk kkp31
 
     rosMethod = RG3
   !  ~~~> Name of the method
@@ -2524,6 +2530,8 @@ SUBROUTINE FunTemplate( T, Y, Ydot)
   !    Updates the rate coefficients (and possibly the fixed species) at each call
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !  ~~~> Input variables
+    IMPLICIT NONE               !bk kkp32
+
    REAL(kind=dp) :: T, Y(NVAR)
   !  ~~~> Output variables
    REAL(kind=dp) :: Ydot(NVAR)
@@ -2545,6 +2553,7 @@ SUBROUTINE JacTemplate( T, Y, Jcb)
   !    Updates the rate coefficients (and possibly the fixed species) at each call
   !  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !  ~~~> Input variables
+    IMPLICIT NONE               !bk kkp33
     REAL(kind=dp) :: T, Y(NVAR)
   !  ~~~> Output variables
 #ifdef FULL_ALGEBRA    
@@ -2580,6 +2589,7 @@ SUBROUTINE JacTemplate( T, Y, Jcb)
 END SUBROUTINE JacTemplate
  
   SUBROUTINE Update_SUN()
+        IMPLICIT NONE               !bk kkp34
        ! USE kchem_kpp_Parameters
        ! USE kchem_kpp_Global
 
@@ -2595,7 +2605,7 @@ END SUBROUTINE JacTemplate
     Tlocal = Thour -  (INT(Thour)/24)*24
 
     IF ((Tlocal>=SunRise).AND.(Tlocal<=SunSet))THEN
-       Ttmp = (2.0_dp*Tlocal- SunRise-SunSet)/(SunSet- SunRise)     !FKa
+       Ttmp = (2.0_dp*Tlocal- SunRise-SunSet)/(SunSet- SunRise)     ! bK added _dp
        IF (Ttmp.GT.0) THEN
           Ttmp =  Ttmp*Ttmp
        ELSE
@@ -2630,18 +2640,18 @@ SUBROUTINE kpp_integrate (time_step_len,Conc,ierrf,xNacc,xNrej,istatus,l_debug,P
   if (present (istatus)) istatus = 0                              
                                                                     
   DO k=1,VL_glo,VL_DIM                                              
+!    print*,'vals of vl_glo, vl_dim, is, k, are :',VL_glo,VL_DIM,is,k
     is = k                                                          
     ie = min(k+VL_DIM-1,VL_glo)                                     
     vl = ie-is+1                                                    
                                                                     
     C(:) = Conc(is,:)                                             
                                                                     
-    CALL update_rconst                                              
-                                                                    
-    dt = time_step_len                                              
+    CALL update_rconst   ! photo k of NO2 & RCHO to RCONST(1) & RCONST(6)                                           
+     dt = time_step_len                                              
                                                                     
     ! integrate from t=0 to t=dt                                    
-    CALL integrate(0._dp,dt,icntrl,rcntrl,istatus_u = istatus_u,ierr_u=ierr_u)
+    CALL integrate(0._dp,dt,icntrl,rcntrl,istatus_u = istatus_u,ierr_u=ierr_u )     !bK
                                                                     
                                                                     
    IF (PRESENT(l_debug) .AND. PRESENT(PE)) THEN                       
@@ -2672,7 +2682,7 @@ SUBROUTINE kpp_integrate (time_step_len,Conc,ierrf,xNacc,xNrej,istatus,l_debug,P
 END SUBROUTINE kpp_integrate                                        
  
   SUBROUTINE fill_TEMP(status,array) 
- 
+    IMPLICIT NONE                                   ! bK kkp35 
     integer,intent(OUT)               :: status 
     real (dp),intent(IN),dimension(:) :: array 
  

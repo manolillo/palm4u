@@ -1,0 +1,10 @@
+#MODEL		  smog
+//#include      smog.spc
+//#include      smog.eqn
+#INTEGRATOR rosenbrock
+#LANGUAGE   Fortran90
+#DOUBLE     on
+#JACOBIAN   SPARSE_LU_ROW
+#DRIVER     general
+#HESSIAN    on
+#STOICMAT   on

@@ -1,0 +1,51 @@
+#include atoms
+#include ./smog.spc
+#include ./smog.eqn
+
+{#LANGUAGE Fortran77
+#INTEGRATOR rodas3
+#DRIVER general}
+
+#LOOKATALL
+#MONITOR O3;
+
+#INITVALUES
+
+//CFACTOR = 2.6867E+13;
+CFACTOR = 1.;
+ALL_SPEC = 1.0E-8;
+RH   = 5.373E+13;   {2.0 ppm} ;
+RCHO = 5.373E+13;   {2.0 ppm} ;
+NO   = 1.343E+13;   {0.5 ppm} ;
+NO2  = 2.687E+12;   {0.1 ppm} ;
+H2O  = 3.493E+17;   {1.3E+4 ppm} ;
+O2   = 5.373E+18;   {2.0E+5 ppm} ;
+
+#INLINE F77_INIT
+	TSTART = 0
+	TEND = TSTART + 600
+	DT = 60.0
+        TEMP = 298
+#ENDINLINE
+
+#INLINE F90_INIT
+	TSTART = 0
+	TEND = TSTART + 600
+	DT = 60.0
+        TEMP = 298
+#ENDINLINE
+
+#INLINE MATLAB_INIT
+   global TSTART TEND DT TEMP
+   TSTART = 0;
+   TEND = TSTART + 600;
+   DT = 60.0;
+   TEMP = 298;
+#ENDINLINE
+
+#INLINE C_INIT
+   TSTART = 0;
+   TEND = TSTART + 600;
+   DT = 60.0;
+   TEMP = 298;
+#ENDINLINE

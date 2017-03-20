@@ -1,0 +1,8 @@
+kchem_kpp_Initialize
+kchem_kpp_Integrator
+kchem_kpp_LinearAlgebra
+kchem_kpp_Jacobian
+kchem_kpp_Function
+kchem_kpp_Rates
+kchem_kpp_Util
+initialize_kpp_ctrl_template

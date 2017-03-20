@@ -1,0 +1,17 @@
+#EQUATIONS
+
+{ A Generalized Reaction Mechanism for Photochemical Smog }
+
+{ 1.}  NO2 + hv = NO + O :                 0.533_dp ;
+{ 2.}  O + O2 = O3       :                 8.125E-019;	{2.183E-5;}
+{ 3.}  NO + O3 = NO2 + O2 :                9.897E-013;	{26.59;}
+{ 4.}  RH + OH = RO2 + H2O :               1.405E-010; 	{3.775E+3;}
+{ 5.}  RCHO + OH = RCOO2 + H2O :           8.713E-010; 	{2.341E+4;}
+{ 6.}  RCHO + hv = RO2 + HO2 + CO :        1.91E-4_dp;
+{ 7.}  HO2 + NO = NO2 + OH :               4.518E-010; 	{1.214E+4;}
+{ 8.}  RO2 + NO = NO2 + RCHO + HO2 :       4.195E-010; 	{1.127E+4;}
+{ 9.}  RCOO2 + NO = NO2 + RO2 + CO2 :      4.195E-010; 	{1.127E+4;}
+{10.}  OH + NO2 = HNO3 :                   6.004E-010; 	{1.613E+4;}
+{11.}  RCOO2 + NO2 = RCOO2NO2 :            2.566E-010; 	{6.893E+3;}  
+{12.}  RCOO2NO2 = RCOO2 + NO2 :            7.976E-016; 	{2.143E-2;}
+

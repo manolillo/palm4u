@@ -26,7 +26,7 @@
 # 
 # Former revisions:
 # -----------------
-# $Id: subjob 1945 2016-06-15 07:17:24Z raasch $
+# $Id: subjob 2009 2016-08-30 15:07:36Z SadiqHuq $
 #
 # 1944 2016-06-15 06:29:00Z raasch
 # adjustments for using HLRN ssh-keys
@@ -230,9 +230,13 @@
      (inferno)               local_address=130.75.105.5;   local_host=lcmuk;;
      (irifi)                 local_address=130.75.105.104; local_host=lcmuk;;
      (jaboticaba)            local_address=150.163.25.181; local_host=lcbr;;
+     (kea*)                  local_address=172.27.80.109;  local_host=lckeal;;
      (sno)                   local_address=130.75.105.113; local_host=lcmuk;;
      (levanto)               local_address=130.75.105.45;  local_host=lcmuk;;
      (login*)                local_address=118.128.66.201; local_host=lckiaps;;
+     (lx*)                   local_address=129.187.20.240; local_host=lclrz;;
+     (mpp2*)                 local_address=129.187.20.105; local_host=lclrz;;
+     (lm*)                   local_address=118.128.66.223; local_host=ibmmuc;;
      (maestro)               local_address=130.75.105.2;   local_host=lcmuk;;
      (meller)                local_address=134.106.74.155; local_host=lcfor;;
      (meteo-login*)          local_address=193.166.211.144;local_host=lcxt5m;;
@@ -254,6 +258,7 @@
      (sugoka*)               local_address=172.31.120.1;   local_host=lckyut;;
      (tc*)                   local_address="ocean";        local_host=lcocean;; 
      (t2a*)                  local_address=10.1.6.165;     local_host=lctit;;
+     (uc1n*)                 local_address=129.13.82.89;   local_host=lcbwuni;;
      (urban*)                local_address=147.46.30.151   local_host=lcsb;;
      (vinessa)               local_address=130.75.105.112; local_host=lcmuk;;
      (vorias)                local_address=172.20.25.43;   local_host=lcmuk;;
@@ -384,6 +389,7 @@
         (ibmkisti) queue=class.32plus; remote_address=150.183.146.24; submcom=/usr/lpp/LoadL/full/bin/llsubmit;;
         (ibmku)   queue=s4; remote_address=133.5.4.129; submcom=/usr/local/bin/llsubmit;;
         (ibms)    queue=p_normal; remote_address=150.183.5.101; submcom=/usr/lpp/LoadL/full/bin/llsubmit;;
+        (lcbwuni) queue=develop; remote_address=129.13.82.89; submcom=/opt/moab/bin/msub;;
         (lcbullhh)    queue=compute; remote_address=136.172.50.13; submcom=/usr/bin/sbatch;;
         (lccrayb) queue=mpp1testq; remote_address=130.73.233.1; submcom=/opt/moab/default/bin/msub;;
         (lccrayh) queue=mpp1testq; remote_address=130.75.4.1; submcom=/opt/moab/default/bin/msub;;
@@ -391,10 +397,13 @@
         (lcflow)  remote_address=10.140.1.72; submcom=qsub;;
         (lckyoto) remote_address=133.3.51.11; submcom=/thin/local/bin/qsub;;
         (lck)     remote_address=165.132.26.61; submcom=/usr/torque/bin/qsub;;
+        (lckeal)   queue=ivy; remote_address=172.27.80.109; submcom=/usr/bin/sbatch;;
         (lckiaps) remote_address=118.128.66.201; submcom=/opt/pbs/default/bin/qsub;;
         (lckordi) remote_address=210.219.61.8; submcom=/usr/torque/bin/qsub;;
         (lckyuh)  remote_address=133.5.4.33; submcom=/usr/bin/pjsub;;
         (lckyut)  remote_address=133.5.4.37; submcom=/usr/bin/pjsub;;
+        (lclrz)   remote_address=129.187.20.240; submcom=/usr/bin/sbatch;;
+        (ibmmuc)   remote_address=118.128.66.223; submcom=/usr/bin/pjsub;;
         (lcocean) remote_address="ocean"; submcom=qsub;;
         (lcsb)    remote_address=147.46.30.151; submcom=/usr/torque/bin/qsub;;
         (lctit)   queue=S; remote_address=10.1.6.165; submcom=/opt/pbs/tools/bin/t2sub;;
@@ -438,6 +447,10 @@
                      (compute|shared)  error=false;;
                      (*)                                     error=true;;
                  esac;;
+        (lcbwuni) case  $ndq  in
+                     (develop|singlenode|multinode|verylong|fat) error=false;;
+                     (*)                                     error=true;;
+                 esac;;
         (lccrayb) case  $ndq  in
                      (dataq|mpp1q|mpp1testq|mpp2q|mpp2testq|smp1q|smp1testq|specialm1q)   error=false;;
                      (*)                                     error=true;;
@@ -468,6 +481,14 @@
                  esac;;
         (lckyut) case  $ndq  in
                      (cx-dbg|cx-single|cx-small|cx-middle|cx-large)  error=false;;
+                     (*)                                     error=true;;
+                 esac;;
+        (lclrz) case  $ndq  in
+                     (mpp1|mpp2|iuv2|myri)                   error=false;;
+                     (*)                                     error=true;;
+                 esac;;
+        (ibmmuc) case  $ndq  in
+                     (test|micro|igeneral|large|fat|fattest|special|tmp1|tmp2) error=false;;
                      (*)                                     error=true;;
                  esac;;
         (lctit)  case  $ndq  in
@@ -1250,6 +1271,71 @@ $module_calls
        submcom="$submcom -W group_list=$group_number -N $job_name -l walltime=$timestring -l select=$nodes:ncpus=$processes_per_node:mpiprocs=$tasks_per_node:mem=${Memory}gb -l place=scatter -o $remote_dayfile -j oe -et 1 -q $queue "
     fi
 
+ elif [[ $remote_host = lclrz ]]
+ then
+       cat > $job_to_send << %%END%%
+#!/bin/bash 
+#SBATCH -J $job_name
+#SBATCH -t $timestring
+#SBATCH -N $nodes
+#SBATCH --ntasks-per-node=$processes_per_node
+#SBATCH --get-user-env
+#SBATCH -o $remote_dayfile
+#SBATCH -e $remote_dayfile
+#SBATCH --mail-user=${email_notification}
+#SBATCH --clusters=$queue
+
+$init_cmds
+
+$module_calls
+
+%%END%%
+
+ elif [[ $remote_host = lckeal ]]
+ then
+       cat > $job_to_send << %%END%%
+#!/bin/bash 
+#SBATCH -J $job_name
+#SBATCH -t $timestring
+#SBATCH -N $nodes
+#SBATCH --ntasks-per-node=$processes_per_node
+#SBATCH --ntasks-per-core=1
+#SBATCH --get-user-env
+#SBATCH -o $remote_dayfile
+#SBATCH -e $remote_dayfile
+#SBATCH --mail-user=${email_notification}
+#SBATCH --mail-type=ALL
+#SBATCH --partition=$queue 
+
+export MV2_ENABLE_AFFINITY=0
+
+$init_cmds
+
+$module_calls
+
+%%END%%
+
+ elif [[ $remote_host=lcbwuni ]]
+ then
+    if [[ $email_notification = none ]]
+    then
+       email_directive=""
+    else
+       email_directive="#PBS -M $email_notification"
+    fi
+       cat > $job_to_send << %%END%%
+#!/bin/ksh
+#PBS -N $job_name
+#PBS -l walltime=$timestring
+#PBS -l nodes=${nodes}:ppn=$processes_per_node
+#PBS -l pmem=${memory}mb
+#PBS -m abe
+#PBS -o $remote_dayfile
+#PBS -j oe
+#PBS -q $queue
+$email_directive
+%%END%%
+
  else
 
     cat > $job_to_send << %%END%%
@@ -1653,6 +1739,15 @@ $module_calls
           then
              eval  $submcom  $job_on_remhost
           fi
+       elif [[ $local_host = lclrz ]]
+       then
+          eval  $submcom  $job_on_remhost
+       elif [[ $local_host = lckeal ]]
+       then
+          eval  $submcom  $job_on_remhost
+       elif [[ $local_host = lcbwuni ]]
+       then
+               msub  -q $queue $job_on_remhost
        else
           qsub  $job_on_remhost
        fi

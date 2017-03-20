@@ -1,0 +1,178 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# User: Set here the F90 compiler and options
+#       Pedefined compilers: INTEL, PGF, HPUX, LAHEY
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#COMPILER = G95
+#COMPILER = LAHEY
+COMPILER = INTEL
+#COMPILER = PGF
+#COMPILER = HPUX
+#COMPILER = GFORTRAN
+
+FC_G95     = g95
+FOPT_G95   = -cpp -O -pg -fbounds-check -fimplicit-none  -Wall -ftrace=full
+
+FC_LAHEY   = lf95
+# More aggressive for production runs:
+#FOPT_LAHEY = -Cpp --pca -O
+# More checking for debugging:
+FOPT_LAHEY = -Cpp --chk a,e,s,u --pca --ap -O0 -g --trap --trace --chkglobal
+
+FC_INTEL   = ifort 
+# More aggressive for production runs:
+#FOPT_INTEL = -cpp -O -fp-model precise -pc80 -prec_div
+# More checking for debugging:
+FOPT_INTEL = -cpp -O0 -fp-model strict -implicitnone -ftrapuv \
+              -debug all -check all -warn all
+
+FC_PGF     = pgf90
+# More aggressive for production runs:
+FOPT_PGF   = -Mpreprocess -O -fast -pc 80 -Kieee
+# More checking for debugging:
+#FOPT_PGF   = -Mpreprocess -O0 -Mbounds -Mchkfpstk -Mchkptr -Mchkstk \
+#             -Ktrap=fp -pc 80 -Kieee
+
+FC_HPUX    = f90
+FOPT_HPUX  = -O -u +Oall +check=on
+
+FC_GFORTRAN     = gfortran
+FOPT_GFORTRAN   = -cpp -O
+
+# define FULL_ALGEBRA for non-sparse integration
+FC   = $(FC_$(COMPILER))
+FOPT = $(FOPT_$(COMPILER)) # -DFULL_ALGEBRA
+
+LIBS =
+#LIBS = -llapack -lblas
+
+# Command to create Matlab mex gateway routines 
+# Note: use $(FC) as the mex Fortran compiler
+MEX  = mex
+
+GENSRC = cbm4_Precision.f90  \
+	 cbm4_Parameters.f90     \
+	 cbm4_Global.f90  
+
+GENOBJ = cbm4_Precision.o    \
+	 cbm4_Parameters.o       \
+	 cbm4_Global.o     
+
+FUNSRC = cbm4_Function.f90 
+FUNOBJ = cbm4_Function.o 
+
+JACSRC = cbm4_JacobianSP.f90  cbm4_Jacobian.f90
+JACOBJ = cbm4_JacobianSP.o    cbm4_Jacobian.o
+
+HESSRC = cbm4_HessianSP.f90   cbm4_Hessian.f90
+HESOBJ = cbm4_HessianSP.o     cbm4_Hessian.o
+
+STMSRC = cbm4_StoichiomSP.f90 cbm4_Stoichiom.f90 
+STMOBJ = cbm4_StoichiomSP.o   cbm4_Stoichiom.o
+
+UTLSRC = cbm4_Rates.f90 cbm4_Util.f90 cbm4_Monitor.f90
+UTLOBJ = cbm4_Rates.o   cbm4_Util.o   cbm4_Monitor.o
+
+LASRC  = cbm4_LinearAlgebra.f90 
+LAOBJ  = cbm4_LinearAlgebra.o   
+
+STOCHSRC = cbm4_Stochastic.f90 
+STOCHOBJ = cbm4_Stochastic.o 
+
+MAINSRC = cbm4_Main.f90   cbm4_Initialize.f90   cbm4_Integrator.f90 cbm4_Model.f90
+MAINOBJ = cbm4_Main.o     cbm4_Initialize.o     cbm4_Integrator.o   cbm4_Model.o 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# User: modify the line below to include only the
+#       objects needed by your application
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) $(HESOBJ) $(STMOBJ) \
+	 $(UTLOBJ) $(LAOBJ)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# User: modify the line below to include only the
+#       executables needed by your application
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+all:    exe
+
+exe:	$(ALLOBJ) $(MAINOBJ) 
+	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o cbm4.exe
+
+stochastic:$(ALLOBJ) $(STOCHOBJ) $(MAINOBJ)
+	$(FC) $(FOPT) $(ALLOBJ) $(STOCHOBJ) $(MAINOBJ) $(LIBS) \
+	-o cbm4_stochastic.exe
+
+mex:    $(ALLOBJ)
+	$(MEX) FC#$(FC) -fortran -O cbm4_mex_Fun.f90     $(ALLOBJ)
+	$(MEX) FC#$(FC) -fortran -O cbm4_mex_Jac_SP.f90  $(ALLOBJ)
+	$(MEX) FC#$(FC) -fortran -O cbm4_mex_Hessian.f90 $(ALLOBJ)
+
+clean:
+	rm -f cbm4*.o cbm4*.mod \
+	cbm4*.dat cbm4.exe cbm4*.mexglx \
+	cbm4.map
+
+distclean:
+	rm -f cbm4*.o cbm4*.mod \
+	cbm4*.dat cbm4.exe cbm4.map \
+	cbm4*.f90 cbm4_*.mexglx
+
+cbm4_Precision.o: cbm4_Precision.f90 
+	$(FC) $(FOPT) -c $<
+
+cbm4_Parameters.o: cbm4_Parameters.f90 \
+	            cbm4_Precision.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Monitor.o: cbm4_Monitor.f90 \
+	             cbm4_Precision.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Global.o: cbm4_Global.f90 \
+	            cbm4_Parameters.o cbm4_Precision.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Initialize.o: cbm4_Initialize.f90  $(GENOBJ) 
+	$(FC) $(FOPT) -c $<
+
+cbm4_Function.o: cbm4_Function.f90  $(GENOBJ) 
+	$(FC) $(FOPT) -c $<
+
+cbm4_Stochastic.o: cbm4_Stochastic.f90  $(GENOBJ) 
+	$(FC) $(FOPT) -c $<
+
+cbm4_JacobianSP.o: cbm4_JacobianSP.f90 $(GENOBJ)
+	$(FC) $(FOPT) -c $<
+
+cbm4_Jacobian.o: cbm4_Jacobian.f90  $(GENOBJ) cbm4_JacobianSP.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_LinearAlgebra.o: cbm4_LinearAlgebra.f90 $(GENOBJ) cbm4_JacobianSP.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Rates.o: cbm4_Rates.f90  $(GENOBJ) 
+	$(FC) $(FOPT) -c $<
+
+cbm4_HessianSP.o: cbm4_HessianSP.f90  $(GENOBJ)
+	$(FC) $(FOPT) -c $<
+
+cbm4_Hessian.o:  cbm4_Hessian.f90 $(GENOBJ) cbm4_HessianSP.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_StoichiomSP.o: cbm4_StoichiomSP.f90 $(GENOBJ)
+	$(FC) $(FOPT) -c $<
+
+cbm4_Stoichiom.o: cbm4_Stoichiom.f90  $(GENOBJ) cbm4_StoichiomSP.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Util.o: cbm4_Util.f90  $(GENOBJ) cbm4_Monitor.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Main.o: cbm4_Main.f90  $(ALLOBJ) cbm4_Initialize.o cbm4_Model.o cbm4_Integrator.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Model.o: cbm4_Model.f90  $(ALLOBJ) cbm4_Integrator.o
+	$(FC) $(FOPT) -c $<
+
+cbm4_Integrator.o: cbm4_Integrator.f90  $(ALLOBJ)
+	$(FC) $(FOPT) -c $<

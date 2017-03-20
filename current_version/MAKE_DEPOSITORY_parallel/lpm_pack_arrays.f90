@@ -1,0 +1,239 @@
+!> @file lpm_pack_arrays.f90
+!------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the
+! terms of the GNU General Public License as published by the Free Software
+! Foundation, either version 3 of the License, or (at your option) any later
+! version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2016 Leibniz Universitaet Hannover
+!------------------------------------------------------------------------------!
+!
+! Current revisions:
+! ------------------
+! 
+! 
+! Former revisions:
+! -----------------
+! $Id: lpm_pack_arrays.f90 2001 2016-08-20 18:41:22Z knoop $
+!
+! 2000 2016-08-20 18:09:15Z knoop
+! Forced header and separation lines into 80 columns
+!
+! 1822 2016-04-07 07:49:42Z hoffmann
+! Tails removed. Unused variables removed.
+!
+! 1685 2015-10-08 07:32:13Z raasch
+! bugfix concerning vertical index calculation in case of ocean
+!
+! 1682 2015-10-07 23:56:08Z knoop
+! Code annotations made doxygen readable 
+! 
+! 1359 2014-04-11 17:15:14Z hoffmann
+! New particle structure integrated. 
+! Kind definition added to all floating point numbers.
+!
+! 1320 2014-03-20 08:40:49Z raasch
+! ONLY-attribute added to USE-statements,
+! kind-parameters added to all INTEGER and REAL declaration statements,
+! kinds are defined in new module kinds,
+! comment fields (!:) to be used for variable explanations added to
+! all variable declaration statements
+!
+! 1036 2012-10-22 13:43:42Z raasch
+! code put under GPL (PALM 3.9)
+!
+! 849 2012-03-15 10:35:09Z raasch
+! initial revision (former part of advec_particles)
+!
+!
+! Description:
+! ------------
+!> Pack particle arrays, which means eliminate those elements marked for
+!> deletion and move data with higher index values to these free indices.
+!> Determine the new number of particles.
+!------------------------------------------------------------------------------!
+ MODULE lpm_pack_arrays_mod
+ 
+
+    USE particle_attributes,                                                   &
+        ONLY:  grid_particles, number_of_particles, offset_ocean_nzt,          &
+               particles, particle_type, prt_count
+
+    PRIVATE
+    PUBLIC lpm_pack_all_arrays, lpm_pack_arrays
+
+    INTERFACE lpm_pack_all_arrays
+       MODULE PROCEDURE lpm_pack_all_arrays
+    END INTERFACE lpm_pack_all_arrays
+
+    INTERFACE lpm_pack_arrays
+       MODULE PROCEDURE lpm_pack_arrays
+    END INTERFACE lpm_pack_arrays
+
+CONTAINS
+
+!------------------------------------------------------------------------------!
+! Description:
+! ------------
+!> @todo Missing subroutine description.
+!------------------------------------------------------------------------------!
+    SUBROUTINE lpm_pack_all_arrays
+
+       USE cpulog,                                                             &
+           ONLY:  cpu_log, log_point_s
+
+       USE indices,                                                            &
+           ONLY:  nxl, nxr, nys, nyn, nzb, nzt
+
+       USE kinds
+
+       IMPLICIT NONE
+
+       INTEGER(iwp) ::  i !<
+       INTEGER(iwp) ::  j !<
+       INTEGER(iwp) ::  k !<
+
+       CALL cpu_log( log_point_s(51), 'lpm_pack_all_arrays', 'start' )
+       DO  i = nxl, nxr
+          DO  j = nys, nyn
+             DO  k = nzb+1, nzt
+                number_of_particles = prt_count(k,j,i)
+                IF ( number_of_particles <= 0 )  CYCLE
+                particles => grid_particles(k,j,i)%particles(1:number_of_particles)
+                CALL lpm_pack_and_sort(i,j,k)
+                prt_count(k,j,i) = number_of_particles
+             ENDDO
+          ENDDO
+       ENDDO
+       CALL cpu_log( log_point_s(51), 'lpm_pack_all_arrays', 'stop' )
+       RETURN
+
+    END SUBROUTINE lpm_pack_all_arrays
+
+!------------------------------------------------------------------------------!
+! Description:
+! ------------
+!> @todo Missing subroutine description.
+!------------------------------------------------------------------------------!
+    SUBROUTINE lpm_pack_arrays
+
+       USE kinds
+
+       IMPLICIT NONE
+
+       INTEGER(iwp) ::  n       !<
+       INTEGER(iwp) ::  nn      !<
+!
+!--    Find out elements marked for deletion and move data from highest index
+!--    values to these free indices
+       nn = number_of_particles
+
+       DO WHILE ( .NOT. particles(nn)%particle_mask )
+          nn = nn-1
+          IF ( nn == 0 )  EXIT
+       ENDDO
+
+       IF ( nn > 0 )  THEN
+          DO  n = 1, number_of_particles
+             IF ( .NOT. particles(n)%particle_mask )  THEN
+                particles(n) = particles(nn)
+                nn = nn - 1
+                DO WHILE ( .NOT. particles(nn)%particle_mask )
+                   nn = nn-1
+                   IF ( n == nn )  EXIT
+                ENDDO
+             ENDIF
+             IF ( n == nn )  EXIT
+          ENDDO
+       ENDIF
+
+!
+!--    The number of deleted particles has been determined in routines
+!--    lpm_boundary_conds, lpm_droplet_collision, and lpm_exchange_horiz
+       number_of_particles = nn
+
+    END SUBROUTINE lpm_pack_arrays
+
+!------------------------------------------------------------------------------!
+! Description:
+! ------------
+!> @todo Missing subroutine description.
+!------------------------------------------------------------------------------!
+    SUBROUTINE lpm_pack_and_sort (ip,jp,kp)
+
+      USE control_parameters,                                                  &
+          ONLY: dz
+
+      USE kinds
+
+      USE grid_variables,                                                      &
+          ONLY: ddx, ddy
+
+      IMPLICIT NONE
+
+      INTEGER(iwp), INTENT(IN) :: ip
+      INTEGER(iwp), INTENT(IN) :: jp
+      INTEGER(iwp), INTENT(IN) :: kp
+
+      INTEGER(iwp)             :: i
+      INTEGER(iwp)             :: is
+      INTEGER(iwp)             :: j
+      INTEGER(iwp)             :: k
+      INTEGER(iwp)             :: n
+      INTEGER(iwp)             :: nn
+      INTEGER(iwp)             :: m
+      INTEGER(iwp)             :: sort_index
+
+      INTEGER(iwp), DIMENSION(0:7) :: sort_count
+
+      TYPE(particle_type), DIMENSION(number_of_particles,0:7) :: sort_particles
+
+       nn = 0
+       sort_count = 0
+
+       DO  n = 1, number_of_particles
+          sort_index = 0
+
+          IF ( particles(n)%particle_mask )  THEN
+             nn = nn + 1
+             i = particles(n)%x * ddx
+             j = particles(n)%y * ddy
+             k = ( particles(n)%z + 0.5_wp * dz ) / dz + offset_ocean_nzt
+             IF ( i == ip )  sort_index = sort_index+4
+             IF ( j == jp )  sort_index = sort_index+2
+             IF ( k == kp )  sort_index = sort_index+1
+             sort_count(sort_index) = sort_count(sort_index)+1
+             m = sort_count(sort_index)
+             sort_particles(m,sort_index) = particles(n)
+             sort_particles(m,sort_index)%block_nr = sort_index
+          ENDIF
+
+       ENDDO
+
+       nn = 0
+
+       DO is = 0,7
+          grid_particles(kp,jp,ip)%start_index(is) = nn + 1
+          DO n = 1,sort_count(is)
+             nn = nn+1
+             particles(nn) = sort_particles(n,is)
+          ENDDO
+          grid_particles(kp,jp,ip)%end_index(is) = nn
+       ENDDO
+
+       number_of_particles = nn
+       RETURN
+
+    END SUBROUTINE lpm_pack_and_sort
+
+
+ END module lpm_pack_arrays_mod

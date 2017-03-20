@@ -15,10 +15,10 @@ set -eu
 
 ########################### User SetUp ####################################
 
-export KPP_HOME=/home/modelle/kpp_for_palm/eclipse_neon_ws/kpp_for_palm/kpp
+#export KPP_HOME=/home/modelle/kpp_for_palm/eclipse_neon_ws/kpp_for_palm/kpp
 export KPP=$KPP_HOME/bin/kpp
 
-BASE=`pwd`/kp4
+BASE=$HOME/palm/current_version/trunk/KPP_FOR_PALM/kp4
 
 ########################## End User Setup ################################
 
@@ -27,8 +27,8 @@ WORK=tmp_kp4
 # Default
 
 PREFIX=kchem_kpp
-OUTDIR=`pwd`/../palm/
-DEFDIR=$BASE/def_small_strato
+OUTDIR=$HOME/palm/current_version/trunk/SOURCE
+DEFDIR=$BASE/def_smog
 MODE="scalar"
 VLEN=1
 KEEP="NO"

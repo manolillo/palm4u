@@ -1,0 +1,4617 @@
+#!/bin/bash
+
+# mrun - script for running PALM jobs
+
+#--------------------------------------------------------------------------------#
+# This file is part of PALM.
+#
+# PALM is free software: you can redistribute it and/or modify it under the terms
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+#
+# PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# PALM. If not, see <http://www.gnu.org/licenses/>.
+#
+# Copyright 1997-2015  Leibniz Universitaet Hannover
+#--------------------------------------------------------------------------------#
+#
+# Current revisions:
+# ------------------
+# Added lckea & lckeam. KIT/IMK-IFU Garmisch cluster. LRZ
+# Vertical grid vnesting: set vnested_mode. -N Procs for fine and coarse grid.
+# 
+# Former revisions:
+# -----------------
+# $Id: mrun 1945 2016-06-15 07:17:24Z raasch $
+#
+# 1944 2016-06-15 06:29:00Z raasch
+# adjustments for using HLRN ssh-keys
+#
+# 1940 2016-06-14 05:15:20Z raasch $
+# adjustments for lckiaps
+#
+# 1866 2016-04-15 06:50:59Z raasch
+# adjusted for lcocean
+# 
+# 1841 2016-04-07 19:14:06Z raasch
+# script now running under bash
+# 
+# 1804 2016-04-05 16:30:18Z maronga
+# test: implementing an execute mechanism where the execute command is given in the
+# configuration file
+# ROPTS removed from execution commands
+# Warnings about missing optional files or user code changed to informative messages
+# Removed parameter file check
+# 
+# 1755 2016-02-22 13:53:39Z maronga
+# Minor bugfix to last commit
+# 
+# 1753 2016-02-22 13:49:49Z maronga
+# Bugfix: use random job number when PBS job nummer retrieval fails on lccray*
+# 
+# 1622 2015-07-20 06:21:36Z heinze 
+# bugfix for Mistral (lcbullhh)
+#
+# 1621 2015-07-17 11:39:33Z heinze
+# adjustments for Mistral at DKRZ Hamburg (lcbullhh)
+#
+# 1609 2015-07-03 15:37:58Z maronga
+# Modified the random number of the temporary working directory to match the 
+# queuing system number on HLRN-III (lccray*).
+# 
+# 1604 2015-06-23 15:48:03Z suehring
+# Enable coupled runs for lcmuk
+#
+# 1598 2015-05-29 06:45:40Z raasch
+# bugfix for creating hostfile and total number of MPI tasks if run in openmp-mode on one node
+# 
+# 1549 2015-01-30 14:26:16Z suehring
+# Enable interactive debug sessions with allinea debugger
+#
+# 1547 2015-01-29 15:09:12Z witha
+# adjustments for ForWind computing cluster (lcflow)
+# 
+# 1491 2014-11-12 08:12:57Z heinze
+# correct setting of batch_job allowed for ibm-machines
+#
+# 1468 2014-09-24 14:06:57Z maronga
+# Typo removed (addres->address)
+# Bugfix: returning files to IMUK via ssh did not work for lccrayh and lcycrayb
+# Added support for restart runs (remote) for lcxe6
+# 
+# 1442 2014-07-28 07:09:10Z raasch
+# default queues for HLRN-III (lccrayb/lccrayh) defined
+#
+# 1422 2014-07-02 10:01:25Z kanani
+# automatic restarts enabled for lccrayb,
+# adjustment of path to compilervars.sh at IMUK (see automatic restarts) 
+#
+# 1420 2014-06-10 06:24:14Z raasch
+# -j1 option added to aprung command for lccrayf (CSC)
+#
+# 1402 2014-05-09 14:25:13Z raasch
+# batch_job added to envpar-NAMELIST
+#
+# 1357 2014-04-11 15:02:03Z witha
+# adjustments for lccrayh (automatic restarts on lccrayh outside of IMUK are now
+# possible)
+# 
+# 1320 2014-03-20 08:40:49Z raasch
+# check namelist file set false by default
+# 
+# 1304 2014-03-12 10:29:42Z raasch
+# ulimit option changed from -Ss to -s
+#
+# bugfix: missing "fi" in r1289
+#
+# 1289 2014-03-04 07:12:34Z raasch
+# comments translated to English
+# necriam-, fimm-, ibmy-, and sgi-specific code removed
+# export of variables for palm and interpret_config removed
+#
+# 1281 2014-02-01 07:55:49Z raasch
+# rsync-copy restricted to Cray machines, since command is unavailable on some
+# other systems
+#
+# 1279 2014-01-28 12:10:14Z raasch
+# tasks_per_node must not be an integral divisor of numprocs any more. This was done
+# in order to remove annoying restrictions concerning the number of processors which
+# appear on machines with larger nodes (e.g. containing 24 cores). Now without this
+# restriction, one of the nodes will be filled with less than the given number of
+# tasks per node. A respective warning is given.
+#
+# 1274 2014-01-09 13:14:54Z heinze
+# adjustments for lccrayh
+#
+# 1272 2014-01-08 10:19:32Z witha
+# small adjustment for lcflow
+#
+# 1270 2013-12-16 11:05:01Z fricke
+# call of combine_plot_fields adjusted for lccrayb/lccrayh
+#
+# 1255 2013-11-07 14:43:35Z raasch
+# further adjustments for lccrayb remote access
+#
+# 1241 2013-10-30 11:36:58Z heinze
+# Enable use of nudging input and input of large scale forcing from 
+# external files
+#
+# 1229 2013-09-20 06:55:19Z raasch
+# further adjustments for lccrayb
+#
+# 1224 2013-09-16 07:27:23Z raasch
+# first adjustments for lccrayb
+#
+# 1210 2013-08-14 10:58:20Z raasch
+# fftw support added
+#
+# 1201 2013-07-10 16:17:59Z witha
+# adjustments for Forwind cluster (lcflow)
+#
+# 1199 2013-07-05 14:52:22Z raasch
+# adjustments for CSC Helsinki (lccrayf),
+# executables for batch jobs can be created in advance, in order to avoid calling
+# the compiler within the batch job (only works if batch jobs are submitted on
+# local host)
+#
+# 1190 2013-06-25 09:39:21Z heinze
+# enable use of automatic restarts for ibmh
+# use of cluster/express queue enabled (ibmh)
+#
+# 1124 2013-04-09 15:46:52Z raasch
+# variable "memory" is exported via typeset option -x, because otherwise an unknown
+# side effect may lead to data loss while getopts is reading the script-option arguments
+#
+# 1122 2013-04-09 08:37:16Z heinze
+# Bugfix: change type of variable last_char
+#
+# 1119 2013-04-05 15:11:19Z raasch
+# Bugfix for setting -T option for subjob
+#
+# 1108 2013-03-05 07:03:32Z raasch
+# bugfix for coupled runs on lckyut/lckyuh
+#
+# 1106 2013-03-04 05:31:38Z raasch
+# --stdin argument for mpiexec on lckyuh
+# -y and -Y settings output to header
+#
+# 1103 2013-02-20 02:15:53Z raasch
+# default script runs again under ksh, because of unsolved problems with read
+# from stdin: when bash script is called from a ksh, message "read error: 0:
+# Resource temporarily unavailable" appears and script does not stop,
+# further bash compatibility adjustments,
+# shebang line replaced by /bin/bash when running jobs on lckyuh; no restarts
+# on lckyuh, but mrun does not terminate and issues a warning instead
+#
+# 1101 2013-02-17 10:20:21Z raasch
+# script now running under bash instead of ksh, which required small adjustments
+# (output formatting with printf instead "typeset -L/-R", print replaced by echo,
+# read from stdin),
+# cross compilername on lckyuh compute nodes replaced by real compiler name
+#
+# 1099 2013-02-10 01:47:43Z raasch
+# adjustments for Kyushu-University computing center (lckyuh - hayaka)
+# and for Forwind cluster (lcflow)
+# small further adjustments for lckyut
+#
+# 1094 2013-02-03 01:52:12Z raasch
+# explicit ssh/scp port can be set in config file with environment variable
+# scp_port.  This port is handled to all ssh/scp/batch_scp calls.
+# decalpha parts (yonsei) removed
+#
+# 2013-02-02 07:06:13Z raasch
+# adjustments for Kyushu-University computing center (lckyut - tatara)
+#
+# 1083 2013-01-04 10:22:09Z maronga
+# bugfix in parameter file check (read %cpp_options was missing)
+#
+# 1069 2012-11-28 16:18:43Z maronga
+# bugfix: coupling mode was always set to mpi2, typos removed
+#
+# 1058 2012-11-21 07:00:35Z raasch
+# Intel inspector (inspxe) is given the number of PEs instead of the number of
+# nodes
+#
+# 1046 2012-11-09 14:38:45Z maronga
+# code put under GPL (PALM 3.9)
+#
+# 21/03/94 - Siggi - first version finished
+# 03/03/94 - Siggi - script development started
+#
+#--------------------------------------------------------------------------------#
+# mrun - script for running PALM jobs
+#--------------------------------------------------------------------------------#
+
+
+ 
+    # DECLARATION OF VARIABLES AND THEIR DEFUALT VALUES
+
+ set +o allexport    # SUPPRESS EXPORT OF ALL VARIABLES, SINCE IN THE PAST THIS
+                     # LES TO PROBLEMS IN ROUTINES CALLED BY MRUN
+                     # (TOO MANY ARGUMENTS - PROBLEM)
+ set +o noclobber    # EXISTING FILES ARE ALLOWED TO BE OVERWRITTEN
+
+ AddFilenames=""
+ additional_conditions=""
+ add_source_path=""
+ afname=""
+ archive_save=true
+ archive_system=none
+ check_namelist_files=false
+ combine_plot_fields=true
+ compiler_name=""
+ cond1=""
+ cond2="" 
+ config_file=.mrun.config
+ coupled_dist=""
+ coupled_mode="mpi1"
+ cpp_opts=""
+ cpp_options=""
+ cpumax=0
+ cpurest=0
+ create_executable_for_batch=false
+ delete_temporary_catalog=true
+ do_batch=false
+ do_compile=true
+ do_remote=false
+ do_stagein=true
+ do_stageout=true
+ do_trace=false
+ email_notification="none"
+ exclude=""
+ executable=""
+ execute_command="none"
+ execution_error=false
+ fftw_inc=""
+ fftw_lib=""
+ fftw_support=false
+  fname=test
+ fromhost=""
+ global_revision=""
+ group_number=none
+ host=""
+ host_file=""
+ hp=""
+ ignore_archive_error=false
+ input_list=""
+ interpreted_config_file=""
+ job_catalog="~/job_queue"
+ job_on_file=""
+ keep_data_from_previous_run=false
+ link_local_input=false
+ link_local_output=false
+ localhost_realname=$(hostname)
+ local_dvrserver_running=.FALSE.
+ locat=normal
+ mainprog=""
+ makefile=""
+ max_par_io_str=""
+ mc=$0
+ while [[ $(echo $mc | grep -c "/") != 0 ]]
+ do
+    mc=`echo $mc | cut -f2- -d"/"`
+ done
+ module_calls=""
+ mrun_script_name=$mc
+ vnested_dist=""
+ vnested_mode="vnested_twi"
+ netcdf_inc=""
+ netcdf_lib=""
+ netcdf_support=false
+ node_usage=default
+ numprocs=""
+ numprocs_atmos=0
+ numprocs_ocean=0
+ numprocs_crse=0
+ numprocs_fine=0
+ OOPT=""
+ openmp=false
+ output_list=""
+ package_list=""
+ queue=none
+ read_from_config=""
+ restart_run=false
+ if [[ `hostname` = rte10 ]]
+ then
+    return_address=133.5.185.60
+    echo "+++ WARNING: fixed return_address = $return_address is used !!!!!"
+ elif [[ `hostname` = climate0 ]]
+ then
+    return_address=165.132.26.68
+    echo "+++ WARNING: fixed return_address = $return_address is used !!!!!"
+ elif [[ `hostname` = "schultzl-Latitude-E6540" ]]
+ then
+    return_address="schultzl-Latitude-E6540"
+    echo "+++ WARNING: fixed return_address = $return_address is used !!!!!"
+ elif [[ `hostname` = urban00 ]]
+ then
+    return_address=147.46.30.151
+    echo "+++ WARNING: fixed return_address = $return_address is used !!!!!"
+ else
+    return_address=$(nslookup `hostname` 2>&1 | grep "Address:" | tail -1 | awk '{print $2}')
+ fi
+ return_password=""
+ return_username=$LOGNAME
+ remotecall=false
+ remote_username=""
+ run_coupled_model=false
+ run_mode=""
+ run_vnested_model=false
+ store_on_archive_system=false
+ dashes="  ----------------------------------------------------------------------------"
+ silent=false
+ source_list=""
+ source_path=SOURCE
+ tasks_per_node=""
+ threads_per_task=1
+ tmpcreate=false
+ tmp_data_catalog=""
+ transfer_problems=false
+ usern=$LOGNAME
+ use_openmp=false
+ version="MRUN  2.1 Rev$Rev: 2009 $"
+ working_directory=`pwd`
+ TOPT=""
+ XOPT=""
+ zeit=$( date | cut -c 12-19 )
+
+ typeset -i  iec=0 iic=0 iin=0 ioc=0 iout=0 stagein_anz=0 stageout_anz=0
+ typeset -x -i  memory=0   # HAS TO BE EXPORTED HERE, OTHERWISE AN UNKNOWN SIDE
+                           # SIDE EFFECT MAY CAUSE DATA LOSS WHEN GETOPTS IS READING THE
+                           # SCRIPT-OPTION ARGUMENTS
+ typeset -i  cputime i ii iia iii iio icycle inode ival jobges jobsek last_char_int maxcycle minuten nodes pes remaining_pes sekunden tp1
+
+    # ERROR HANDLING IN CASE OF EXIT
+ trap 'rm -rf  $working_directory/tmp_mrun
+       if [[ $locat != normal  &&  $locat != control_c ]]
+       then
+
+              # CARRY OUT ERROR-COMMANDS GIVEN IN THE CONFIGURATION FILE (EC:)
+          (( i = 0 ))
+          while (( i < iec ))
+          do
+             (( i = i + 1 ))
+             printf "\n  *** Execution of ERROR-command:\n"
+             printf "  >>> ${err_command[$i]}\n"
+             eval  ${err_command[$i]}
+          done
+          if [[ -n $interpreted_config_file ]]
+          then
+             rm -rf  $interpreted_config_file
+          fi
+          if [[ -n .mrun_environment ]]
+          then
+             rm -rf  .mrun_environment
+          fi
+          if [[ $tmpcreate = true ]]
+          then
+             printf "\n  *** Contents of \"$TEMPDIR\":\n"
+             ls -al; cd
+             [[ $delete_temporary_catalog = true ]]  &&  rm -rf $TEMPDIR
+          fi
+          if [[ "$dvrserver_id" != "" ]]
+          then
+             echo "+++ killing dvrserver_id=$dvrserver_id"
+             kill $dvrserver_id
+          fi
+          if [[ -f ~/job_queue/JOBINFO.$QSUB_REQID ]]
+          then
+             rm -rf  ~/job_queue/JOBINFO.$QSUB_REQID
+          fi
+          printf "\n\n+++ MRUN killed \n\n"
+       elif [[ $locat != control_c ]]
+       then
+          printf "\n\n --> all actions finished\n\n"
+          printf "     Bye, bye $usern !!\n\n"
+       fi' exit
+
+
+    # ACTIONS IN CASE OF TERMINAL-BREAK (CONTROL-C):
+ trap 'rm -rf  $working_directory/tmp_mrun
+       rm -rf  $working_directory/tmp_check_namelist_files
+       [[ $tmpcreate = true ]]  &&  (cd; rm -rf $TEMPDIR)
+       if [[ -f ~/job_queue/JOBINFO.$QSUB_REQID ]]
+       then
+          rm -rf  ~/job_queue/JOBINFO.$QSUB_REQID
+       fi
+       if [[ "$dvrserver_id" != "" ]]
+       then
+          echo "+++ killing dvrserver_id=$dvrserver_id"
+          kill $dvrserver_id
+       fi
+       printf "\n+++ MRUN killed by \"^C\" \n\n"
+       locat=control_c
+       exit
+      ' 2
+
+
+    # CHECK IF THE PATH FOR THE PALM BINARIES (SCRIPTS+UTILITY-PROGRAMS) HAS
+    # BEEN SET
+ if [[ "$PALM_BIN" = "" ]]
+ then
+    printf "\n  +++ environment variable PALM_BIN has not been set"
+    printf "\n      please set it to the directory where the PALM scripts are located"
+    locat=palm_bin; exit
+ fi
+ export PATH=$PALM_BIN:$PATH
+
+
+
+    # READ SHELLSCRIPT-OPTIONS AND REBUILD THE MRUN-COMMAND STRING (MC),
+    # WHICH WILL BE USED TO START RESTART-JOBS
+ while  getopts  :a:AbBc:Cd:D:Fg:G:h:H:i:IkK:m:M:n:N:o:O:p:P:q:r:R:s:St:T:u:U:vw:xX:yY:zZ option
+ do
+   case  $option  in
+       (a)   afname=$OPTARG;;
+       (A)   store_on_archive_system=true; mc="$mc -A";;
+       (b)   do_batch=true; mc="$mc -b";;
+       (B)   delete_temporary_catalog=false; mc="$mc -B";;
+       (c)   config_file=$OPTARG; mc="$mc -c$OPTARG";;
+       (C)   restart_run=true; mc="$mc -C";;
+       (d)   fname=$OPTARG; mc="$mc -d$OPTARG";;
+       (D)   cpp_opts="$cpp_opts $OPTARG"; mc="$mc -D'$OPTARG'";;
+       (F)   job_on_file="-D"; mc="$mc -F";;
+       (g)   group_number=$OPTARG; mc="$mc -g$OPTARG";;
+       (G)   global_revision=$OPTARG; mc="$mc -G'$OPTARG'";;
+       (h)   host=$OPTARG; mc="$mc -h$OPTARG";;
+       (H)   fromhost=$OPTARG; mc="$mc -H$OPTARG";;
+       (i)   input_list=$OPTARG; mc="$mc -i'$OPTARG'";;
+       (I)   ignore_archive_error=true; mc="$mc -I";;
+       (k)   keep_data_from_previous_run=true; mc="$mc -k";;
+       (K)   additional_conditions="$OPTARG"; mc="$mc -K'$OPTARG'";;
+#CSH   (j)   hyper_thread="$OPTARG"; mc="$mc -j'$OPTARG'";;
+       (m)   memory=$OPTARG; mc="$mc -m$OPTARG";;
+       (M)   makefile=$OPTARG; mc="$mc -M$OPTARG";;
+       (n)   node_usage=$OPTARG; mc="$mc -n$OPTARG";; 
+       (N)   run_vnested_model=true; vnested_dist=$OPTARG; mc="$mc -N'$OPTARG'";;
+       (o)   output_list=$OPTARG; mc="$mc -o'$OPTARG'";;
+       (O)   use_openmp=true; threads_per_task=$OPTARG; mc="$mc -O$OPTARG";;
+       (p)   package_list=$OPTARG; mc="$mc -p'$OPTARG'";;
+       (P)   return_password=$OPTARG; mc="$mc -P$OPTARG";;
+       (q)   queue=$OPTARG; mc="$mc -q$OPTARG";;
+       (r)   run_mode=$OPTARG; mc="$mc -r'$OPTARG'";;
+       (R)   remotecall=true;return_address=$OPTARG; mc="$mc -R$OPTARG";;
+       (s)   source_list=$OPTARG; mc="$mc -s'$OPTARG'";;
+       (S)   read_from_config=false; mc="$mc -S";;
+       (t)   cpumax=$OPTARG; mc="$mc -t$OPTARG";;
+       (T)   mrun_tasks_per_node=$OPTARG; mc="$mc -T$OPTARG";;
+       (u)   remote_username=$OPTARG; mc="$mc -u$OPTARG";;
+       (U)   return_username=$OPTARG; mc="$mc -U$OPTARG";;
+       (v)   silent=true; mc="$mc -v";;
+       (w)   max_par_io_str=$OPTARG; mc="$mc -w$OPTARG";;
+       (x)   do_trace=true;set -x; mc="$mc -x";;
+       (X)   numprocs=$OPTARG; mc="$mc -X$OPTARG";;
+       (y)   ocean_file_appendix=true; mc="$mc -y";;
+       (Y)   run_coupled_model=true; coupled_dist=$OPTARG; mc="$mc -Y'$OPTARG'";;
+       (z)   check_namelist_files=false; mc="$mc -z";;
+       (Z)   combine_plot_fields=false; mc="$mc -Z";;
+       (\?)  printf "\n  +++ unknown option $OPTARG \n"
+             printf "\n  --> type \"$0 ?\" for available options \n"
+             locat=parameter;exit;;
+   esac
+ done
+
+
+    # SKIP GIVEN OPTIONS TO READ POSITIONAL PARAMETER, IF GIVEN
+    # CURRENTLY ONLY PARAMETER ? (TO OUTPUT A SHORT COMMAND INFO) IS ALLOWED
+ (( to_shift = $OPTIND - 1 ))
+ shift $to_shift
+
+    # PRINT SHORT DESCRIPTION OF MRUN OPTIONS
+ if [[ "$1" = "?" ]]
+ then
+   (printf "\n  *** mrun can be called as follows:\n"
+    printf "\n      $mrun_script_name  -b -c.. -d.. -D.. -f.. -F -h.. -i.. -I -K.. -m.. -o.. -p.. -r.. -R -s.. -t.. -T.. -v -x -X.. -y -Y.. -Z <modus> \n"
+    printf "\n      Description of available options:\n"
+    printf "\n      Option  Description                              Default-Value"
+    printf "\n        -a    base name of input files                 equiv. -d"
+    printf "\n        -A    archiving when using file-attribute fl"
+    printf "\n        -b    batch-job on local machine               ---"
+    printf "\n        -B    do not delete temporary directory at end ---"
+    printf "\n        -c    configuration file                       .mrun.config"
+    printf "\n        -d    base name of files attached to program   test"
+    printf "\n        -D    preprocessor(cpp)-directives             \"\" "
+    printf "\n        -F    create remote job file only              ---"
+    printf "\n        -h    execution host                           $localhost_realname"
+    printf "\n        -i    INPUT control list                       \"\" "
+    printf "\n        -I    archiving errors of previous batch-jobs"
+    printf "\n              will be ignored"
+    printf "\n        -k    keep data from previous run"
+    printf "\n        -K    additional conditions for controling"
+    printf "\n              usage of conditional code and"
+    printf "\n              env-variables in configuration file      \"\" "
+    printf "\n        -m    memory demand in MB (batch-jobs)         0 MB"
+    printf "\n        -M    Makefile name                            Makefile"
+    printf "\n        -n    node usage (shared/not_shared)           depending on -h"
+    printf "\n        -o    OUTPUT control list                      \"\" "
+    printf "\n        -O    threads per openMP task                  ---"
+    printf "\n        -p    software package list                    \"\" "
+    printf "\n        -q    queue                                    \"$queue\" "
+    printf "\n        -r    run control list (combines -i -o)        \"\" "
+    printf "\n        -s    filenames of routines to be compiled     \"\" "
+    printf "\n              must end with .f, .f90, .F, or .c !"
+    printf "\n              use \"..\" for more than one file and wildcards"
+    printf "\n              -s LM compiles all locally modified files"
+    printf "\n        -S    config file interpreted by shellscript   ---"
+    printf "\n        -t    allowed cpu-time in seconds (batch)      0"
+    printf "\n        -T    tasks per node                           depending on -h"
+    printf "\n        -u    username on remote machine               \"\" "
+    printf "\n        -v    no prompt for confirmation               ---"
+    printf "\n        -w    maximum parallel io streams              as given by -X"
+    printf "\n        -x    tracing of mrun for debug purposes       ---"
+    printf "\n        -X    # of processors (on parallel machines)   1"
+    printf "\n        -y    add appendix \"_O\" to all local output"
+    printf "\n              files (ocean precursor runs followed by"
+    printf "\n              coupled atmosphere-ocean runs)           ---"
+    printf "\n        -Y    run coupled model, \"#1 #2\" with" 
+    printf "\n              #1 atmosphere and #2 ocean processors    \"#/2 #/2\" depending on -X"
+    printf "\n        -Z    skip combine_plot_fields at the end of      "
+    printf "\n              the simulation                           ---"
+    printf "\n "
+    printf "\n      Possible values of positional parameter <modus>:"
+    printf "\n        \"?\"       -  this outline \n\n") | more
+    exit
+ elif [[ "$1" != "" ]]
+ then
+    printf "\n  +++ positional parameter $1 unknown \n"
+    locat=parameter; exit
+ fi
+
+
+
+    # SHORT STARTING MESSAGE
+ printf "\n*** $version "
+ printf "\n    will be executed.     Please wait ..."
+
+
+
+    # CHECK, IF CONFIGURATION FILE EXISTS
+ if [[ ! -f $config_file ]]
+ then
+    printf "\n\n  +++ configuration file: "
+    printf "\n           $config_file"
+    printf "\n      does not exist"
+    locat=connect; exit  
+ fi
+
+
+    # DETERMINE THE HOST-IDENTIFIER (localhost) FROM THE CONFIGURATION FILE
+ line=""
+ grep  "%host_identifier"  $config_file  >  tmp_mrun
+ while read line
+ do
+    if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+    then
+       HOSTNAME=`echo $line | cut -d" " -s -f2`
+       host_identifier=`echo $line | cut -d" " -s -f3`
+       if [[ $localhost_realname = $HOSTNAME ]]
+       then
+          localhost=$host_identifier
+          break
+       fi
+    fi
+ done < tmp_mrun
+
+ if [[ "$localhost" = "" ]]
+ then
+    printf "\n\n  +++ no host identifier found in configuration file \"$config_file\""
+    printf "\n      for local host \"$localhost_realname\"."
+    printf "\n      Please add line"
+    printf "\n      \"\%host_identifier $localhost_realname <identifier>\""
+    printf "\n      to the configuration file."
+    locat=localhost; exit
+ fi
+
+
+    # SET HOST-SPECIFIC VARIABLES
+ case  $localhost_realname  in
+     (r1*|r2*|h01*|b01*)     archive_system=tivoli;;
+     (cs*)                   archive_system=ut;;
+ esac
+
+
+    # ??? THIS SHOULD BE DECRIBED IN THE MRUN DOCUMENTATION ??? 
+    # SET BASENAME OF THE INPUT-FILES TO THE GENERAL BASENAME (GIVEN BY OPTION -d),
+    # IF IT HAS NOT BEEN SET BY THE USER DIFFERENTLY (USING OPTION -a)
+ [[ "$afname" = "" ]]  &&  afname=$fname
+
+
+    # ADD RUN-FILE ACTIVATION STRINGS (GIVEN BY OPTION -r) TO THE
+    # RESPECTIVE LISTS FOR ACTIVATING THE INPUT/OUTPUT FILE CONNECTION
+    # STATEMENTS IN THE CONFIGURATION FILE
+ if [[ "$run_mode" != "" ]]
+ then
+    input_list="$input_list $run_mode"
+    output_list="$output_list $run_mode"
+ fi
+
+
+    # ??? is this (and the respective option -H) really required ???
+    # STORE HOSTNAME, FROM WHICH THE JOB IS STARTED,
+    # BUT ONLY IF IT HASN'T BEEN ALREADY SET BY OPTION -H
+    # (MRUN IS AUTOMATICALLY SETTING THIS OPTION IN THE MRUN-CALLS WITHIN
+    # THOSE BATCH-JOBS, WHICH ARE CREATED BY MRUN ITSELF)
+ if [[ "$fromhost" = "" ]]
+ then
+    fromhost=$localhost
+ fi
+
+
+    # CHECK, IF EXECUTION SHALL TO BE DONE ON THE REMOTE-MACHINE.
+    # VALUE OF do_remote IS IMPORTANT FOR THE FILE CONNECTIONS.
+    # IN CASE OF EXECUTION ON A REMOTE-MACHINE, A BATCH-JOB HAS
+    # TO BE SUBMITTED (I.E. do_batch=true)
+ if [[ -n $host  &&  "$host" != $localhost ]]
+ then
+    do_batch=true
+    do_remote=true
+    case  $host  in
+        (ibm|ibmh|ibmkisti|ibmku|ibms|nech|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|unics|lcbwuni|lcxe6|lcxt5m|lck|lckeal|lckiaps|lckordi|lckyuh|lckyut|lclrz|lcsb)  true;;
+        (*)  printf "\n"
+             printf "\n  +++ sorry: execution of batch jobs on remote host \"$host\""
+             printf "\n      is not available"
+             locat=nqs; (( iec = 0 )); exit;;
+    esac
+ else
+    host=$localhost
+ fi
+
+
+     # EVALUATE ADDITIONAL CONDITIONS GIVEN BY OPTION -K
+ if [[ -n $additional_conditions ]]
+ then
+    cond1=`echo $additional_conditions | cut -d" " -f1`
+    cond2=`echo $additional_conditions | cut -d" " -s -f2`
+    dummy=`echo $additional_conditions | cut -d" " -s -f3`
+    if [[ -n $dummy ]]
+    then
+       printf "\n  +++ more than 2 additional conditions given for Option \"-K\""
+       locat=options; exit
+    fi
+    block=_$cond1
+    [[ -n $cond2 ]]  &&  block=${block}_$cond2
+ fi
+
+
+      # EVALUATE MODEL COUPLING FEATURES (OPTION -Y) AND DETERMINE coupled_mode
+ if [[ $run_coupled_model = true ]] 
+ then
+
+    numprocs_atmos=`echo $coupled_dist | cut -d" " -s -f1`
+    numprocs_ocean=`echo $coupled_dist | cut -d" " -s -f2`
+
+    if (( $numprocs_ocean + $numprocs_atmos != $numprocs ))
+    then
+
+       printf "\n  +++ number of processors does not fit to specification by \"-Y\"."
+       printf "\n      PEs (total)     : $numprocs"
+       printf "\n      PEs (atmosphere): $numprocs_atmos"
+       printf "\n      PEs (ocean)     : $numprocs_ocean"
+       locat=coupling; exit
+
+    fi
+
+
+       # GET coupled_mode FROM THE CONFIG FILE
+    line=""
+    grep  "%cpp_options.*-D__mpi2.*$host" $config_file  >  tmp_mrun
+    while read line
+    do
+       echo line=\"$line\"
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" &&  $(echo $line | cut -d" " -s -f4) = $cond1 && $(echo $line | cut -d" " -s -f5)  = $cond2 ]]
+       then
+          coupled_mode="mpi2"
+       fi
+    done < tmp_mrun
+
+ fi
+
+      # NESTING (-N) selected and vnesting_mode specified
+ if [[ $run_vnested_model = true ]] 
+ then
+
+    if  [[ -n $vnested_dist ]]
+    then
+
+       numprocs_crse=`echo $vnested_dist | cut -d" " -s -f1`
+       numprocs_fine=`echo $vnested_dist | cut -d" " -s -f2`
+
+       if (( $numprocs_crse + $numprocs_fine != $numprocs ))
+       then
+
+          printf "\n  +++ number of processors does not fit to specification by \"-Y\"."
+          printf "\n      PEs (total)     : $numprocs"
+          printf "\n      PEs (Coarse)    : $numprocs_crse"
+          printf "\n      PEs (Fine)      : $numprocs_fine"
+          locat=vnesting; exit
+
+       fi
+
+    else
+
+       (( numprocs_crse = $numprocs / 2 ))
+       (( numprocs_fine = $numprocs / 2 ))
+
+    fi
+    vnested_dist=`echo "$numprocs_crse $numprocs_fine"`
+    #vnested_mode="vnested_twi"
+ fi
+
+    # CHECK, IF FILE-ARCHIVING HAS FAILED IN PREVIOUS JOB (OF A JOB-CHAIN)
+ if [[ -f ~/job_queue/ARCHIVE_ERROR_$fname ]]
+ then
+    if [[ $ignore_archive_error = false ]]
+    then
+       printf "\n  +++ data archiving of previous run failed"
+       printf "\n      see directory \~/job_queue on remote machine"
+       locat=archive; exit
+    else
+       printf "\n  +++ warning: data archiving in a previous run failed"
+       printf "\n      MRUN continues, trying to get backup copy"
+    fi
+ fi
+
+
+    # SAVE VALUES OF MRUN-OPTIONS SICHERN IN ORDER TO OVERWRITE
+    # THOSE VALUES GIVEN IN THE CONFIGURATION-FILE
+ mrun_memory=$memory
+ mrun_group_number=$group_number
+ mrun_cpumax=$cpumax
+ mrun_numprocs=$numprocs
+
+
+    # READ AND EVALUATE THE CONFIGURATION-FILE FROM WITHIN THIS SHELLSCRIPT
+    # (OPTION -S). THE DEFAULT IS USING THE ROUTINE <<<<
+ if [[ "$read_from_config" = false ]]
+ then
+    [[ $silent = false ]]  &&  printf "\n    Reading the configuration file... "
+
+       # READ THE CONFIGURATION FILE LINE BY LINE
+    while  read zeile
+    do
+        [[ $silent = false ]]  &&  printf "."
+
+
+          # FIRST REPLACE ENVIRONMENT-VARIABLES BY THEIR RESPECTIVE VALUES
+       eval  zeile=\"$zeile\"
+
+
+          # INTERPRET THE LINE
+       if [[ "$(echo $zeile)" = "" ]]
+       then
+             # EMPTY LINE, NO ACTION
+          continue
+
+       elif [[ "$(echo $zeile | cut -c1)"  =  "#" ]]
+       then
+
+             # LINE IS A COMMENT LINE
+          true
+
+       elif [[ "$(echo $zeile | cut -c1)"  =  "%" ]]
+       then
+
+             # LINE DEFINES AN ENVIRONMENT-VARIABLE
+          zeile=$(echo $zeile | cut -c2-)
+          var=`echo $zeile | cut -d" " -f1`
+          value=`echo $zeile | cut -d" " -s -f2`
+          for_host=`echo $zeile | cut -d" " -s -f3`
+          for_cond1=`echo $zeile | cut -d" " -s -f4`
+          for_cond2=`echo $zeile | cut -d" " -s -f5`
+
+          if [[ "$for_host" = ""  ||  ( "$for_host" = $host  &&  "$for_cond1" = "$cond1"  &&  "$for_cond2" = "$cond2" )  ||  $(echo "$input_list$output_list"|grep -c "$for_host") != 0 ]]
+          then
+
+                # REPLACE ":" BY " " IN COMPILER- CPP- OR LINKER-OPTIONS,
+                # "::" IS REPLACED BY ":".
+             value=`echo $value | sed 's/::/%DUM%/g' | sed 's/:/ /g' | sed 's/%DUM%/:/g'`
+
+
+                # VALUE FROM THE CONFIGURATION-FILE IS ASSIGNED TO THE
+                # ENVIRONMENT-VARIABLE, BUT ONLY IF NO VALUE HAS BEEN ALREADY
+                # ASSIGNED WITHIN THIS SCRIPT (E.G. BY SCRIPT-OPTIONS).
+                # NON-ASSIGNED VARIABLES HAVE VALUE "" OR 0 (IN CASE OF INTEGER).
+                # HENCE THE GENERAL RULE IS: SCRIPT-OPTION OVERWRITES THE
+                # CONFIGURATION-FILE.
+             if [[ "$(eval echo \$$var)" = ""  ||  "$(eval echo \$$var)" = "0" ]]
+             then
+                eval  $var=\$value
+
+                   # TERMINAL OUTPUT OF ENVIRONMENT-VARIABLES, IF TRACEBACK IS SWITCHED on
+                if [[ $do_trace = true ]]
+                then
+                   printf "\n*** ENVIRONMENT-VARIABLE $var = $value"
+                fi
+             fi
+
+                # IF AN ENVIRONMENT-VARIABLE DETERMINES THE HOST, THEN EVALUATE IT IMMEDIATELY:
+                # VALUE OF do-remote IS REQUIRED FOR THE FILE CONNECTIONS (COPY OF I/O FILES).
+                # IF EXECUTION IS SCHEDULED FOR A REMOTE-MASCHINE, A BATCH-JOB
+                # MUST HAVE TO BE STARTED
+             if [[ $var = host ]]
+             then
+                if [[ -n $host  &&  "$host" != $localhost ]]
+                then
+                   do_batch=true
+                   do_remote=true
+                   case  $host  in
+                       (ibm|ibmh|ibmkisti|ibmku|ibms|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|nech|unics|lcbwuni|lcxe6|lcxt5m|lck|lckeal|lckiaps|lckordi|lckyuh|lckyut|lclrz|lcsb)  true;;
+                       (*)  printf "\n  +++ sorry: execution of batch jobs on remote host \"$host\""
+                            printf "\n      is not available"
+                            locat=nqs; exit;;
+                   esac
+                else
+                   host=$localhost
+                fi
+             fi
+
+                # USER-DEFINED ENVIRONMENT VARIABLES MUST BE EXPORTED,
+                # BECAUSE THEY MAY BE REQUIRED IN OTHER SCRIPTS CALLED
+                # BY MRUN (E.G. subjob)
+             export  $var
+          fi
+
+
+
+
+       elif [[ "$(echo $zeile | cut -c1-3)" = "EC:" ]]
+       then
+
+             # LINE DEFINES ERROR-COMMAND
+          (( iec = iec + 1 ))
+          zeile=$(echo $zeile | cut -c4-)
+          err_command[$iec]="$zeile"
+
+       elif [[ "$(echo $zeile | cut -c1-3)" = "IC:" ]]
+       then
+
+             # LINE DEFINES INPUT-COMMAND
+          (( iic = iic + 1 ))
+          zeile=$(echo $zeile | cut -c4-)
+          in_command[$iic]="$zeile"
+
+       elif [[ "$(echo $zeile | cut -c1-3)" = "OC:" ]]
+       then
+
+             # LINE DEFINES OUTPUT-COMMAND
+          (( ioc = ioc + 1 ))
+          zeile=$(echo $zeile | cut -c4-)
+          out_command[$ioc]="$zeile"
+
+       else
+
+             # LINE DEFINES FILE CONNECTION. READ THE FILE ATTRIBUTES.
+             # s2a: in/out - field
+             # s2b: loc    - field (optional)
+             # s2c: tr/ar  - field (optional)
+          s1=`echo $zeile | cut -d" " -f1`
+          s2=`echo $zeile | cut -d" " -s -f2`
+          s2a=$(echo $s2 | cut -d":" -f1)
+          if [[ $(echo $s2 | grep -c ":") = 0 ]]
+          then
+             s2b=""
+             s2c=""
+          else
+             s2b=`echo $s2 | cut -d":" -f2 | sed 's/:/ /g'`
+             s2c=`echo $s2 | cut -d":" -s -f3 | sed 's/:/ /g'`
+          fi
+          s3=`echo $zeile | cut -d" " -f3`
+          s4=`echo $zeile | cut -d" " -s -f4`
+          s5=`echo $zeile | cut -d" " -s -f5`
+          s6=`echo $zeile | cut -d" " -s -f6`
+
+       
+             # STORE FILE CONNECTION, IF ACTIVATED BY ACTIVATION-STRING FROM
+             # INPUT- OR OUTPUT-LIST.
+             # VARIABLE S3 MAY CONTAIN A LIST OF ACTIVATION STRINGS (FIELD-SEPERATOR ":").
+             # IF EXECUTION IS SCHEDULED FOR A REMOTE-MACHINE AND THE FILE IS ONLY
+             # LOCALLY REQUIRED ON THAT MACHINE (I.E. s2b = loc), THE FILE CONNECTION
+             # IS NOT CHECKED AND STORED.
+          IFSALT="$IFS"; IFS="$IFS:"
+          if [[ "$s2a" = in  &&  ! ( $do_remote = true  &&  ( "$s2b" = loc  ||  "$s2b" = locopt ) ) ]]
+          then
+             found=false
+             for  actual  in  $input_list
+             do
+                for  formal  in  $s3
+                do
+                   [[ $actual = $formal  ||  "$formal" = "-" ]]  &&  found=true
+                done
+             done
+             if [[ $found = true ]]
+             then
+                (( iin = iin + 1 ))
+                localin[$iin]=$s1; transin[$iin]=$s2b; actionin[$iin]=$s2c;
+                typein[$iin]=$s3; pathin[$iin]=$s4; endin[$iin]=$s5;
+                extin[$iin]=$s6
+             fi
+          elif [[ "$s2a" = out  &&  ! ( $do_remote = true  &&  "$s2b" = loc ) ]]
+          then
+             found=false
+             for  actual  in  $output_list
+             do
+                for  formal  in  $s3  
+                do
+                   [[ $actual = $formal  ||  "$formal" = "-"  ]]  &&  found=true
+                done
+             done
+             if [[ $found = true ]]
+             then
+                (( iout = iout + 1 ))
+                localout[$iout]=$s1; actionout[$iout]=$s2c; typeout[$iout]=$s3;
+                pathout[$iout]=$s4; endout[$iout]=$s5; extout[$iout]=$s6
+             fi
+          elif [[ "$s2a" != in  &&  "$s2a" != out ]]
+          then
+             printf "\n  +++ I/O-attribute in configuration file $config_file has the invalid"
+             printf "\n      value \"$s2\". Only \"in\" and \"out\" are allowed!"
+             locat=connect; exit
+          fi
+          IFS="$IFSALT"
+       fi
+    done < $config_file
+
+ else
+
+       # EVALUATE THE CONFIGURATION-FILE BY FORTRAN-PROGRAM
+    [[ $silent = false ]]  &&  printf "..."
+    interpreted_config_file=.icf.$RANDOM
+
+
+
+       # PROVIDE VALUES OF ENVIRONMENT-VARIABLE FOR interpret_config VIA NAMELIST-FILE
+    cat  >  .mrun_environment  <<  %%END%%
+ &mrun_environment  cond1 = '$cond1', cond2 = '$cond2', 
+                    config_file = '$config_file', do_remote = '$do_remote',
+                    do_trace = '$do_trace', host = '$host',
+                    input_list = '$input_list', icf = '$interpreted_config_file',
+                    localhost = '$localhost', output_list = '$output_list' /
+
+%%END%%
+
+    if [[ "$host" != $localhost ]]
+    then
+
+          # REMOTE JOB FROM LOCAL HOST: JUST TAKE THE FIRST EXECUTABLE FOUND
+       interpret_config_executable=`ls -1 ${PALM_BIN}/interpret_config*.x 2>/dev/null`
+       if [[ $? != 0 ]]
+       then
+          printf "\n\n  +++ no interpret_config found"
+          printf "\n      run \"mbuild -u -h ...\" to generate utilities for this host"
+          locat=interpret_config; exit
+       fi
+       interpret_config_executable=`echo $interpret_config_executable | cut -d" " -f1`
+       $interpret_config_executable
+
+    else
+
+          # CHECK, IF THERE IS AN EXECUTABLE FOR THE BLOCK
+       if [[ ! -f ${PALM_BIN}/interpret_config${block}.x ]]
+       then
+          printf "\n\n  +++ no interpret_config found for given block \"$cond1 $cond2\""
+          printf "\n      run \"mbuild -u -h ...\" to generate utilities for this block"
+          locat=interpret_config; exit
+       else
+          interpret_config${block}.x
+       fi
+
+    fi
+    rm .mrun_environment
+
+
+       # EXECUTE SHELL-COMMANDS GENERATED BY interpret_config WITHIN THIS SHELL
+    chmod  u+x  $interpreted_config_file
+    export PATH=$PATH:.
+    . $interpreted_config_file
+    rm  $interpreted_config_file
+
+ fi
+
+
+    # VALUES OF MRUN-OPTIONS OVERWRITE THOSE FROM THE CONFIGURATION-FILE
+ [[ $mrun_memory     != 0   ]]  &&  memory=$mrun_memory
+ [[ "$mrun_group_number" != "none" ]]  &&  group_number=$mrun_group_number
+ [[ $mrun_cpumax     != 0   ]]  &&  cpumax=$mrun_cpumax
+ [[ "$mrun_numprocs" != ""  ]]  &&  numprocs=$mrun_numprocs
+ [[ "$max_par_io_str" != "" ]]  &&  maximum_parallel_io_streams=$max_par_io_str
+ [[ "$mrun_tasks_per_node" != "" ]]  &&  tasks_per_node=$mrun_tasks_per_node
+
+
+    # ON THE LOCAL MACHINE, DETERMINE (FROM THE CONFIGURATION-FILE) THE PATH
+    # FOR SOURCE-FILES TO BE COMPILED. 
+    # IN A BATCH-JOB, SOURCES (ROUTINES TO BE COMPILED) ARE COMPLETE ALREADY.
+    # BEFORE MRUN IS CALLED IN THE JOB, SOURCES_COMPLETE = true IS ASSIGNED (SEE FURTHER BELOW).
+ if [[ "$SOURCES_COMPLETE" = "" ]]
+ then
+
+       # FIRST CHECK, IF A GLOBAL SOURCE PATH (TO BE USED FOR ALL HOSTS)
+       # HAS BEEN DEFINED
+    source_path=""
+    line=""
+    grep "%source_path" $config_file  >  tmp_mrun
+    while read line
+    do
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          if [[ "$(echo $line | cut -d" " -f3)" = "" ]]
+          then
+             global_source_path=`echo $line | cut -d" " -f2`
+          fi
+       fi
+    done  <  tmp_mrun
+
+    line=""
+    found=false
+    grep  " $localhost" $config_file | grep "%source_path"  >  tmp_mrun
+    while read line
+    do
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          if [[ $found = true ]]
+          then
+             printf "\n\n  +++ more than one source path found in configuration file"
+             printf "\n      for local host \"$localhost\" "
+             locat=source_path; exit
+          fi
+          source_path=`echo $line | cut -d" " -f2`
+          found=true
+       fi
+    done  <  tmp_mrun
+    rm  tmp_mrun
+
+    if [[ "$source_path" = "" ]]
+    then
+       if [[ "$global_source_path" != "" ]]
+       then
+          source_path=$global_source_path
+       else
+          printf "\n\n  +++ no source path found in configuration file"
+          printf "\n      for local host \"$localhost\" "
+          locat=source_path; exit
+       fi
+    fi
+    eval source_path=$source_path
+
+    if [[ ! -d $source_path ]]
+    then
+       printf "\n\n  +++ source path \"$source_path\" on local host"
+       printf "\n      \"$localhost\" does not exist"
+       locat=source_path; exit
+    fi
+
+ fi
+
+
+    # GET THE GLOBAL REVISION-NUMBER OF THE SVN-REPOSITORY
+    # (HANDED OVER TO RESTART-RUNS USING OPTION -G)
+ if [[ "$global_revision" = ""  &&  $host != "ibmkisti" ]]
+ then
+    global_revision=`svnversion $source_path  2>/dev/null`
+    global_revision="Rev: $global_revision"
+ fi
+
+
+    # ??? das darf doch eigentlich garnicht passieren, weil optionen config-datei uebersteuern ???
+    # CHECK AGAIN, IF EXECUTION SHALL BE DONE ON A REMOTE-HOST (BATCH-JOB).
+    # (HOST MAY HAVE CHANGED DUE TO SETTINGS IN THE CONFIGURATION-FILE)
+ if [[ -n $host  &&  "$host" != $localhost ]]
+ then
+    do_batch=true
+    do_remote=true
+    case  $host  in
+        (ibm|ibmh|ibmkisti|ibmku|ibms|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|nech|unics|lcbwuni|lcxe6|lcxt5m|lck|lckeal|lckiaps|lckordi|lckyuh|lckyut|lclrz|lcsb)  true;;
+        (*)  printf "\n"
+             printf "\n  +++ sorry: execution of batch jobs on remote host \"$host\""
+             printf "\n      is not available"
+             locat=nqs; (( iec = 0 )); exit;;
+    esac
+ else
+    host=$localhost
+ fi
+
+
+
+    # IN CASE OF PARALLEL EXECUTION, CHECK SOME SPECIFICATIONS CONCERNING PROCESSOR NUMBERS
+ if [[ "$cond1" = parallel  ||  "$cond2" = parallel ]]
+ then
+
+       # CHECK, IF NUMBER OF CORES TO BE USED HAS BEEN GIVEN
+    if [[ ! -n $numprocs ]]
+    then
+       printf "\n"
+       printf "\n  +++ option \"-K parallel\" requires additional specification"
+       printf "\n      of the number of processors to be used by"
+       printf "\n      mrun-option \"-X\" or by environment-variable"
+       printf "\n      \"numprocs\" in the configuration file"
+       locat=numprocs; (( iec = 0 )); exit 
+    fi
+
+       # CHECK, IF THE NUMBER OF CORES PER NODE HAS BEEN GIVEN UND IF IT IS AN
+       # INTEGRAL DIVISOR OF THE TOTAL NUMBER OF CORES GIVEN BY OPTION -X
+    if [[ "$tasks_per_node" = ""  &&  $host != lcflow  &&  $host != lcxt5m ]]
+    then
+       printf "\n"
+       printf "\n  +++ option \"-T\" (tasks per node) is missing"
+       printf "\n      set -T option or define tasks_per_node in the config file"
+       locat=tasks_per_node; (( iec = 0 )); exit 
+    fi
+
+    if (( numprocs < tasks_per_node ))
+    then
+       printf "\n"
+       printf "\n  +++ tasks per node (-T) cannot exceed total number of processors (-X)"
+       printf "\n      given values: -T $tasks_per_node  -X $numprocs"
+       locat=tasks_per_node; (( iec = 0 )); exit 
+    fi
+
+    if [[ $host != lcflow  &&  $host != lcxt5m ]]
+    then
+       (( nodes = numprocs / ( tasks_per_node * threads_per_task ) ))
+       (( ival = $tasks_per_node ))
+       (( pes = numprocs ))
+       (( ii = pes / ival ))
+       (( remaining_pes =  pes - ii * ival ))
+       if (( remaining_pes > 0 ))
+       then
+          printf "\n"
+          printf "\n  +++ WARNING: tasks per node (option \"-T\") is not an integral"
+          printf "\n      divisor of the total number of processors (option \"-X\")"
+          printf "\n      values of this mrun-call: \"-T $tasks_per_node\" \"-X $numprocs\""
+          printf "\n      One of the nodes is filled with $remaining_pes instead of $tasks_per_node tasks"
+          (( nodes = nodes + 1 ))
+       fi
+    fi
+
+
+       # SETTINGS FOR SUBJOB-COMMAND
+    OOPT="-O $threads_per_task"
+
+       # SET THE TOTAL NUMBER OF NODES, REQUIRED FOR THE SUBJOB-COMMAND (SEE FURTHER BELOW)
+    if [[ "$tasks_per_node" != "" ]]
+    then
+       TOPT="-T $tasks_per_node"
+    fi
+
+       # CHECK node_usage FOR ALLOWED VALUES AND SET DEFAULT VALUE, IF NECESSARY
+    if [[ $node_usage = default ]]
+    then
+       if [[ $host = ibms ]]
+       then
+          node_usage=shared
+       else
+          node_usage=not_shared
+       fi
+    fi
+
+    if [[ $node_usage != shared  &&  $node_usage != not_shared  &&  $node_usage != singlejob  &&  "$(echo $node_usage | cut -c1-3)" != "sla" ]]
+    then
+       printf "\n"
+       printf "\n  +++ node usage (option \"-n\") is only allowed to be set"
+       printf "\n      \"shared\" or \"not_shared\""
+       locat=tasks_per_node; (( iec = 0 )); exit 
+    fi
+
+ fi
+
+    # CHECK IF HOSTFILE EXISTS
+ if [[ -n $hostfile ]]
+ then
+    if [[ ! -f $hostfile ]]
+    then
+       printf "\n"
+       printf "\n  +++ hostfile \"$hostfile\" does not exist"
+       locat=hostfile; exit
+    fi
+ fi
+
+
+    # SET DEFAULT VALUE FOR THE MAXIMUM NUMBER OF PARALLEL IO STREAMS
+ if [[ "$maximum_parallel_io_streams" = "" ]]
+ then
+    maximum_parallel_io_streams=$numprocs
+ fi
+
+
+    # SET PORT NUMBER OPTION FOR CALLS OF SSH/SCP, subjob AND batch_scp SCRIPTS
+ if [[ "$scp_port" != "" ]]
+ then
+    PORTOPT="-P $scp_port"
+    SSH_PORTOPT="-p $scp_port"
+ fi
+
+
+    # DETERMINE THE SSH-OPTION IN CASE THAT AN SSH-KEY IS EXPLICITLY GIVEN IN THE
+    # CONFIG-FILE
+ if [[ "$ssh_key" != "" ]]
+ then
+    ssh_key="-i $HOME/.ssh/$ssh_key"
+ fi
+
+
+    # SET DEFAULT-QUEUE, IF NOT GIVEN
+ if [[ $queue = none ]]
+ then
+    case  $host  in
+        (ibmh)       queue=cluster;;
+        (ibmkisti)   queue=class.32plus;;
+        (lcbwuni)    queue=develop;;
+        (lcbullhh)   queue=compute;;
+        (lccrayb)    queue=mpp1q;;
+        (lccrayh)    queue=mpp1q;;
+        (lckeal)     queue=ivy2;;
+        (lckiaps)    queue=normal;;
+        (lckyoto)    queue=ph;;
+        (lckyuh)     queue=fx-single;;
+        (lckyut)     queue=cx-single;;
+        (lclrz)      queue=mpp2;;
+        (lctit)      queue=S;;
+        (nech)       queue=none;;
+        (unics)      queue=unics;;
+    esac
+ fi
+
+
+    # GENERATE FULL FILENAMES OF INPUT-FILES, INCLUDING THEIR PATH
+    # CHECK, IF INPUT-FILES EXIST, AND DETERMINE HIGHEST CYCLE NUMBER (IF CYCLES EXIST)
+ (( i = 0 ))
+ while (( i < iin ))
+ do
+    (( i = i + 1 ))
+    (( maxcycle = 0 ))
+
+       # GENERATE PATH AND FULL FILE NAME (then-BRANCH: FIXED FULL NAME IS GIVEN, I.E. THE
+       # FILE IDENTIFIER IS NOT PART OF THE FILENAME))
+    if [[ "${actionin[$i]}" = di ]]
+    then
+       remotepathin[$i]=${pathin[$i]}/${endin[$i]}  # EVALUATE REMOTE-PATH ON THE REMOTE
+                                                    # HOST ONLY
+       eval filename=${pathin[$i]}/${endin[$i]}
+    else
+       remotepathin[$i]=${pathin[$i]}/${afname}${endin[$i]}  # EVALUATE REMOTE-PATH ON THE REMOTE
+                                                             # HOST ONLY
+       eval filename=${pathin[$i]}/${afname}${endin[$i]}
+    fi
+    eval pathname=${pathin[$i]}
+
+       # CHECK IF FILE EXISTS
+    if [[ $(ls $filename* 2>&1 | grep -c "not found") = 1  || \
+          $(ls $filename* 2>&1 | grep -c "nicht gefunden") = 1  || \
+          $(ls $filename* 2>&1 | grep -c "No such file") = 1  || \
+          $(ls $filename* 2>&1 | grep -c "does not exist") = 1 ]]
+    then
+
+          # FILES WITH ATTRIBUTE locopt ARE OPTIONAL. NO ABORT, IF THEY DO NOT EXIST.
+       if [[ "${transin[$i]}" != "locopt" ]]
+       then
+          printf "\n\n  +++ INPUT-file: "
+          if [[ "${extin[$i]}" = "" ]]
+          then
+             printf "\n           $filename"
+          else
+             printf "\n           $filename.${extin[$i]}"
+          fi
+          printf "\n      does not exist\n"
+          locat=input; exit
+       else
+          transin[$i]="unavailable"
+       fi
+    else
+
+          # DETERMINE THE FILE'S CYCLE NUMBER
+       ls -1 -d $filename    >   filelist  2>/dev/null
+       ls -1 -d $filename.*  >>  filelist  2>/dev/null
+       while  read zeile
+       do
+          cycle=$(echo $zeile | cut -f2 -d".")
+          if [[ "$cycle" = "$zeile" ]]
+          then
+             (( icycle = 0 ))
+          elif [[ "$cycle" = "${extin[$i]}" ]]
+          then
+             (( icycle = 0 ))
+          else
+             (( icycle = $cycle ))
+          fi
+          if (( icycle > maxcycle ))
+          then
+             (( maxcycle = icycle ))
+             file_to_be_used=$zeile
+          fi
+       done <filelist
+       rm filelist
+
+          # APPEND CYCLE NUMBER TO FILENAME
+       if (( maxcycle > 0 ))
+       then
+          if [[ "${extin[$i]}" != " "  &&   "${extin[$i]}" != "" ]]
+          then
+             filename=${filename}.$maxcycle.${extin[$i]}
+          else
+             filename=${filename}.$maxcycle
+          fi
+       else
+          if [[ "${extin[$i]}" != " "  &&   "${extin[$i]}" != "" ]]
+          then
+             filename=${filename}.${extin[$i]}
+          fi
+       fi
+       
+          # STORE FILENAME WITHOUT PATH BUT WITH CYCLE NUMBER,
+          # BECAUSE IT MIGHT BE REQUIRED LATER TO RESTORE THE FILE FROM AN ARCHIVE-SYSTEM
+       absnamein[$i]=$filename
+       if (( maxcycle > 0 ))
+       then
+          if [[ "${actionin[$i]}" = di ]]
+          then
+             frelin[$i]=${endin[$i]}.$maxcycle
+          else
+             frelin[$i]=${afname}${endin[$i]}.$maxcycle
+          fi
+       else
+          if [[ "${actionin[$i]}" = di ]]
+          then
+             frelin[$i]=${endin[$i]}
+          else
+             frelin[$i]=${afname}${endin[$i]}
+          fi
+       fi
+
+    fi
+ done
+    
+    # GENERATE FULL FILENAMES OF OUTPUT-FILES (WITHOUT $ OR ~),
+    # CHECK, IF OUTPUT-FILES EXIST, AND DETERMINE HIGHEST CYCLE NUMBER (IF CYCLES EXIST),
+    # OR, IN CASE THAT FILE DOES NOT EXIST, CHECK, IF IT CAN BE CREATED  
+    # THESE ACTIONS ARE NOT CARRIED OUT, IF FILES SHALL BE TRASFERRED FROM THE REMOTE TO
+    # THE LOCAL HOST (BECAUSE THEIR IS NO DIRECT ACCESS TO THE LOCAL DIRECTORIES FROM THE
+    # REMOTE HOST)
+ (( i = 0 ))
+ while (( i < iout ))
+ do
+    (( i = i + 1 ))
+    if [[ ! ( $fromhost != $localhost  &&  ( "${actionout[$i]}" = tr || "${actionout[$i]}" = tra || "${actionout[$i]}" = trpe ) ) ]]
+    then
+       if [[ "${actionout[$i]}" = tr ]]
+       then
+          actionout[$i]=""
+       elif [[ "${actionout[$i]}" = trpe ]]
+       then
+          actionout[$i]=pe
+       elif [[ "${actionout[$i]}" = tra ]]
+       then
+          actionout[$i]=a
+       fi
+       (( maxcycle = 0 ))
+       eval filename=${pathout[$i]}/${fname}${endout[$i]}
+       eval catalogname=${pathout[$i]}
+       if [[ $(ls $filename* 2>&1 | grep -c "not found") = 1  || \
+             $(ls $filename* 2>&1 | grep -c "nicht gefunden") = 1  || \
+             $(ls $filename* 2>&1 | grep -c "No such file") = 1  || \
+             $(ls $filename* 2>&1 | grep -c "does not exist") = 1 ]]
+       then
+      
+             # IF OUTPUT-FILE DOES NOT EXIST CHECK, IF IT CAN BE CREATED
+          if  cat /dev/null > $filename  
+          then
+             rm  $filename
+          else
+
+                # CHECK, IF THE DIRECTORY WHERE FILE SHALL BE COPIED TO EXISTS
+                # IF IT DOES NOT EXIST, TRY TO CREATE IT
+             if [[ ! -d $catalogname ]]
+             then
+                if  mkdir -p  $catalogname
+                then
+                   printf "\n\n  *** directory:"
+                   printf "\n           $catalogname"
+                   printf "\n      was created\n"
+                else
+                   printf "\n\n  +++ OUTPUT-file:"
+                   printf "\n           $filename"
+                   printf "\n      cannot be created, because directory does not exist"
+                   printf "\n      and cannot be created either"
+                   printf "\n"
+                   locat=output  ; exit
+                fi 2>/dev/null 
+             else
+                printf "\n\n  +++ OUTPUT-file:"
+                printf "\n           $filename"
+                printf "\n      cannot be created, although directory exists"
+                printf "\n"
+                locat=output  ; exit
+             fi
+          fi 2>/dev/null
+       else
+
+             # DETERMINE THE CYCLE NUMBER
+          ls -1 -d $filename    >   filelist  2>/dev/null
+          ls -1 -d $filename.*  >>  filelist  2>/dev/null
+          while  read zeile
+          do
+             cycle=$(echo $zeile | cut -f2 -d".")
+             if [[ "$cycle" = "$zeile"  ||  "$cycle" = ${extout[$i]} ]]
+             then
+                (( icycle = 1 ))
+             else
+                (( icycle = $cycle + 1 ))
+             fi
+             if (( icycle > maxcycle ))
+             then
+                (( maxcycle = icycle ))
+             fi
+          done <filelist
+          rm filelist
+       fi
+
+          # APPEND CYCLE NUMBER TO FILENAME AND CHECK, IF FILE CAN BE CREATED
+          # IN CASE OF FILE-APPEND, FILE MUST BE APPENDED TO THE ONE WITH HIGHEST CYCLE NUMBER
+       if [[ "${actionout[$i]}" != a ]]
+       then
+          if (( maxcycle > 0 ))
+          then
+             filename=${filename}.$maxcycle
+             if  cat /dev/null > $filename 
+             then
+                rm  $filename
+             else
+                printf "\n  +++ OUTPUT-file:"
+                printf "\n           $filename"
+                printf "\n      cannot be created"
+                locat=output  ; exit
+             fi
+          fi
+       else
+          (( maxcycle = maxcycle - 1 ))
+          if (( maxcycle > 0 ))
+          then
+             filename=${filename}.$maxcycle
+          fi
+       fi
+       
+          # STORE FILENAME WITHOUT PATH BUT WITH CYCLE NUMBER,
+          # BECAUSE IT MIGHT BE REQUIRED LATER TO STORE THE FILE ON AN ARCHIVE-SYSTEM
+          # OR TO PUT THIS FILENAME ON FILE OUTPUT_FILE_CONNECTIONS
+       pathout[$i]=$filename
+       if (( maxcycle > 0 ))
+       then
+          frelout[$i]=${fname}${endout[$i]}.$maxcycle
+       else
+          frelout[$i]=${fname}${endout[$i]}
+       fi
+
+    fi
+ done
+
+
+     # THE DVR-PACKAGE REQUIRES ITS OWN LIBRARY
+ if [[ $(echo $package_list | grep -c dvrp_graphics) != 0 ]]
+ then
+    if [[ "$dvr_inc" = "" ]]
+    then
+       printf "\n\n  +++ no value for \"dvr_inc\" given in configuration file"
+       printf "\n      This is required for the dvrp_graphics package.\n"
+       locat=dvr; exit
+    fi
+    if [[ "$dvr_lib" = "" ]]
+    then
+       printf "\n\n  +++ no value for \"dvr_lib\" given in configuration file"
+       printf "\n      This is required for the dvrp_graphics package.\n"
+       locat=dvr; exit
+    fi
+ fi
+
+
+     # CHECK, WETHER A MAIN PROGRAM OR AN EXECUTABLE HAVE BEEN DECLARED.
+     # EXECUTABLES DO NOT NEED TO BE COMPILED.
+ if [[ "$mainprog" = ""  &&  "$executable" = "" ]]
+ then
+    printf "\n  +++ neither main program nor executable defined"
+    locat=source; exit
+ elif [[ "$mainprog" != ""  &&  "$executable" != "" ]]
+ then
+    printf "\n  +++ main program as well as executable defined"
+    locat=source; exit
+ elif [[ "$mainprog" = ""  &&  "$executable" != "" ]]
+ then
+    do_compile=false
+ fi
+
+
+    # CREATE SOURCE-DIRECTORY TO COLLECT ROUTINES TO BE COMPILED.
+    # LATER THE MRUN-SCRIPT AND CONFIGURATION-FILE WILL ALSO BE COPIED TO THIS DIRECTORY.
+ if [[ $restart_run != true  &&  "$SOURCES_COMPLETE" = "" ]]
+ then
+    rm -rf  SOURCES_FOR_RUN_$fname
+    mkdir   SOURCES_FOR_RUN_$fname
+ fi
+
+
+    # COLLECT ALL ROUTINES TO BE COMPILED
+    # THIS IS NOT REQUIRED WITHIN BATCH-JOBS, BECAUSE ROUTINES HAVE ALREADY BEEN COLLECTED
+    # BY THE MRUN-CALL WHICH CREATED THE BATCH-JOB.
+ if [[ $do_compile = true  &&  "$SOURCES_COMPLETE" = "" ]]
+ then
+
+    [[ "$source_list" = LM ]]  &&  source_list=LOCALLY_MODIFIED
+
+    if [[ "$source_list" = LOCALLY_MODIFIED ]]
+    then
+
+          # DETERMINE MODIFIED FILES OF THE SVN WORKING COPY
+       source_list=""
+       cd  $source_path
+
+
+          # CHECK, IF DIRECTORY IS UNDER SVN CONTROL
+       if [[ ! -d .svn ]]
+       then
+          printf "\n\n  +++ source directory"
+          printf "\n         \"$source_path\" "
+          printf "\n         is not under control of \"subversion\"."
+          printf "\n         Please do not use mrun-option \"-s LOCALLY_MODIFIED\"\n"
+       fi
+
+
+          # LIST ALL MODIFIED SOURCE CODE FILES
+       Filenames=""
+       svn status  >  tmp_mrun
+       while  read line
+       do
+          firstc=`echo $line | cut -c1`
+          if [[ $firstc = M  ||  $firstc = "?" ]]
+          then
+             Name=`echo "$line" | cut -c8-`
+             extension=`echo $Name | cut -d. -f2`
+             if [[ "$extension" = f90 || "$extension" = F90 || "$extension" = f || "$extension" = F || "$extension" = c ]]
+             then
+                Filenames="$Filenames "$Name
+             fi
+          fi
+       done < tmp_mrun
+
+
+          # COPY FILES TO SOURCES_FOR_RUN_...
+       for  dateiname  in  $Filenames
+       do
+          cp  $dateiname  $working_directory/SOURCES_FOR_RUN_$fname
+          source_list=$source_list"$dateiname "
+       done
+
+       cd -  > /dev/null
+
+
+       # COPY FILES GIVEN BY OPTION -s TO DIRECTORY SOURCES_FOR_RUN_...
+       # AUTOMATIC RESTART RUNS JUST ACCESS THE DIRECTORY CREATED BY THE INITIAL RUN
+    elif [[ "$source_list" != ""  &&  $restart_run != true ]]
+    then
+
+       cd  $source_path
+
+       for  filename  in  $source_list
+       do
+
+             # SOURCE CODE FILE IS NOT ALLOWED TO INCLUDE PATH
+          if [[ $(echo $filename | grep -c "/") != 0 ]]
+          then
+             printf "\n  +++ source code file:  $filename"
+             printf "\n      must not contain (\"/\") "
+             locat=source; exit
+          fi
+
+          if [[ ! -f $filename ]]
+          then
+             printf "\n  +++ source code file:  $filename"
+             printf "\n      does not exist"
+             locat=source; exit
+          else
+             cp  $filename  $working_directory/SOURCES_FOR_RUN_$fname
+          fi
+
+       done
+
+       cd -  > /dev/null
+
+    fi
+
+
+       # CHECK, IF A MAIN PROGRAM EXISTS AND IF IT IS PART OF THE LIST OF FILES
+       # TO BE COMPILED. IF NOT, ADD IT TO THE LIST.
+    if [[ $restart_run != true ]]
+    then
+
+       if [[ ! -f "$source_path/$mainprog" ]]
+       then
+          printf "\n\n  +++ main program:  $mainprog"
+          printf "\n      does not exist in source directory"
+          printf "\n      \"$source_path\"\n"
+          locat=source; exit
+       else
+          if [[ $(echo $source_list | grep -c $mainprog) = 0 ]]
+          then
+             cp  $source_path/$mainprog  SOURCES_FOR_RUN_$fname
+             source_list=${mainprog}" $source_list"
+          fi
+       fi
+    fi
+
+
+       # CHECK, IF MAKEFILE EXISTS AND COPY IT TO THE SOURCES_FOR_RUN... DIRECTORY
+       # NOT REQUIRED FOR RESTART RUNS, SOURCES_FOR_RUN... HAS BEEN CREATED BY THE INITIAL RUN
+    if [[ "$restart_run" != true ]]
+    then
+       [[ "$makefile" = "" ]]  &&  makefile=$source_path/Makefile
+       if [[ ! -f $makefile ]]
+       then
+          printf "\n  +++ file \"$makefile\" does not exist"
+          locat=make; exit
+       else
+          cp  $makefile  SOURCES_FOR_RUN_$fname/Makefile 
+       fi
+    fi
+
+
+       # COPY FILES FROM OPTIONAL SOURCE PATH GIVEN IN THE CONFIGURATION FILE
+    if [[ $restart_run != true  &&  "$add_source_path" != "" ]]
+    then
+
+          # DOES THE DIRECTORY EXIST?
+       if [[ ! -d $add_source_path ]]
+       then
+          printf "\n\n  *** INFORMATIVE: additional source code directory"
+          printf "\n      \"$add_source_path\" "
+          printf "\n      does not exist or is not a directory."
+          printf "\n      No source code will be used from this directory!\n"
+          add_source_path=""
+          if [[ $silent == false ]]
+          then
+             sleep 3
+          fi
+       else
+
+          cd $add_source_path
+          found=false
+
+          Names=$(ls -1 *.f90 2>&1)
+          [[ $(echo $Names | grep -c '*.f90') = 0 ]]  &&  AddFilenames="$Names"
+          Names=$(ls -1 *.F90 2>&1)
+          [[ $(echo $Names | grep -c '*.F90') = 0 ]]  &&  AddFilenames="$AddFilenames $Names"
+          Names=$(ls -1 *.F 2>&1)
+          [[ $(echo $Names | grep -c '*.F') = 0   ]]  &&  AddFilenames="$AddFilenames $Names"
+          Names=$(ls -1 *.f 2>&1)
+          [[ $(echo $Names | grep -c '*.f') = 0   ]]  &&  AddFilenames="$AddFilenames $Names"
+          Names=$(ls -1 *.c 2>&1)
+          [[ $(echo $Names | grep -c '*.c') = 0   ]]  &&  AddFilenames="$AddFilenames $Names"
+
+          cd -  > /dev/null
+          cd  SOURCES_FOR_RUN_$fname
+
+             # COPY MAKEFILE IF EXISTING
+          if [[ -f $add_source_path/Makefile ]]
+          then
+             printf "\n\n  *** user Makefile from directory"
+             printf "\n      \"$add_source_path\" is used \n"
+             if [[ $silent == false ]]
+             then
+                sleep 1
+             fi
+             cp  $add_source_path/Makefile  .
+          fi
+
+          for  dateiname  in  $AddFilenames
+          do
+             if [[ -f $dateiname ]]
+             then
+                printf "\n  +++ source code file \"$dateiname\" found in additional"
+                printf "\n      source code directory \"$add_source_path\" "
+                printf "\n      but was also given with option \"-s\" which means that it should be taken"
+                printf "\n      from directory \"$source_path\"."
+                locat=source; exit
+             fi
+
+             cp  $add_source_path/$dateiname  .
+             source_list="$source_list $dateiname"
+
+                # CHECK IF FILE IS CONTAINED IN MAKEFILE
+             if [[ $(grep -c $dateiname Makefile) = 0 ]]
+             then
+                printf "\n\n  +++ user file \"$dateiname\" "
+                printf "\n      is not listed in Makefile \n"
+                locat=source; exit
+             else
+
+                if [[ $found = false ]]
+                then
+                   found=true
+                   printf "\n\n  *** following user file(s) added to the"
+                   printf " files to be translated:\n      "
+                fi
+                printf "$dateiname  "
+                if [[ $silent == false ]]
+                then
+                   sleep 0.5
+                fi
+
+             fi
+          done
+          [[ $found = true ]]  &&  printf "\n"
+          cd -  > /dev/null
+       fi
+    fi
+
+
+       # ADD ALL ROUTINES BELONGING TO SOFTWARE PACKAGES (GIVEN BY OPTION -p)
+       # TO THE LIST OF FILES TO BE COMPILED
+    if [[ $restart_run != true  &&  -n $package_list ]]
+    then
+
+       cd  $source_path
+
+       for  package  in  $package_list
+       do
+
+          [[ $package = "dvrp_graphics+1PE" ]]  &&  package=dvrp_graphics
+
+             # DETERMINE FILES BELONGING TO THE PACKAGE
+             # ERROR MESSAGE ARE REDIRECTED TO /dev/null, BECAUSE WILDCARD (*) ALSO GIVES
+             # THE NAME OF THE DIRECTORY
+          package_source_list=`grep "defined( __$package " * 2>/dev/null | cut -f1 -d:`
+
+
+             # ADD THESE FILES TO THE LIST OF FILES TO BE COMPILED,
+             # IF THEY ARE NOT ALREADY PART OF THE LIST
+          for  source_list_name  in  $package_source_list
+          do
+             if [[ $(echo $source_list | grep -c $source_list_name) = 0 ]]
+             then
+
+                    # ONLY TAKE FILES WITH VALID SUFFIX
+                ending=`echo $source_list_name | cut -f2 -d.`
+                if [[ "$ending" = f90  ||  "$ending" = F90  ||  "$ending" = f  ||  "$ending" = F  ||  "$ending" = c ]]
+                then
+                   cp  $source_list_name  $working_directory/SOURCES_FOR_RUN_$fname
+                   source_list="$source_list $source_list_name"
+                fi
+             fi
+          done
+       done
+
+       cd -  > /dev/null
+    fi
+
+ fi  # do_compile=true
+
+
+    # IF SOURCE CODE IS TO BE COMPILED, DO SOME MORE CHECKS
+    # AND SET PRE-PROCESSOR DIRECTIVES
+ if [[ $do_compile = true  ||  $create_executable_for_batch = true ]]
+ then
+
+       # SET PREPROCESSOR-DIRECTIVES TO SELECT OPERATING SYSTEM SPECIFIC CODE
+    if [[ $(echo $localhost | cut -c1-3) = ibm ]]
+    then
+       cpp_options="${cpp_options},-D__ibm=__ibm"
+    elif [[ $(echo $localhost | cut -c1-3) = nec ]]
+    then
+       cpp_options="$cpp_options -D__nec"
+    elif [[ $(echo $localhost | cut -c1-2) = lc ]]
+    then
+       cpp_options="$cpp_options -D__lc"
+    else
+       cpp_options="$cpp_options -D__$localhost"
+    fi
+
+       # SET DIRECTIVES GIVEN BY OPTION -K (E.G. parallel)
+    if [[ $(echo $localhost | cut -c1-3) = ibm ]]
+    then
+       [[ -n $cond1 ]]  &&  cpp_options="${cpp_options},-D__$cond1=__$cond1"
+       [[ -n $cond2 ]]  &&  cpp_options="${cpp_options},-D__$cond2=__$cond2"
+    else
+       [[ -n $cond1 ]]  &&  cpp_options="$cpp_options -D__$cond1"
+       [[ -n $cond2 ]]  &&  cpp_options="$cpp_options -D__$cond2"
+    fi
+
+       # SET DIRECTIVES FOR ACTIVATING SOFTWARE-PACKAGES (OPTION -p)
+    if [[ -n $package_list ]]
+    then
+       for  package  in  $package_list
+       do
+          if [[ $(echo $localhost | cut -c1-3) = ibm ]]
+          then
+             if [[ $package != "dvrp_graphics+1PE" ]]
+             then
+                cpp_options="${cpp_options},-D__$package=__$package"
+             else
+                cpp_options="${cpp_options},-D__dvrp_graphics=__dvrp_graphics"
+                export use_seperate_pe_for_dvrp_output=true
+             fi
+          else
+             if [[ $package != "dvrp_graphics+1PE" ]]
+             then
+                cpp_options="$cpp_options -D__$package"
+             else
+                cpp_options="$cpp_options -D__dvrp_graphics"
+                export use_seperate_pe_for_dvrp_output=true
+             fi
+          fi
+       done
+    fi
+
+       # SET DIRECTIVES GIVEN BY OPTION -D
+    if [[ -n $cpp_opts ]]
+    then
+       for  popts  in  $cpp_opts
+       do
+          if [[ $(echo $localhost | cut -c1-3) = ibm ]]
+          then
+             cpp_options="${cpp_options},-D__$popts=__$popts"
+          else
+             cpp_options="$cpp_options -D__$popts"
+          fi
+       done
+    fi
+
+ else
+
+
+       # FOR LOCAL RUNS CHECK AGAIN, IF EXECUTABLE EXISTS
+    if [[ $do_remote = false ]]
+    then
+       if [[ ! -f $executable ]]
+       then
+          printf "\n  +++ executable file:  $executable"
+          printf "\n      does not exist"
+          locat=executable; exit
+       fi
+    fi
+ fi
+
+
+    # DETERMINE THE JOB MODE
+ if [[ $(echo $localhost | cut -c1-3) = ibm ]]
+ then
+    if [[ "$LOADLBATCH" = yes ]]
+    then
+       batch_job=.TRUE.
+       jobmo=BATCH
+    else
+       batch_job=.FALSE.
+       jobmo=INTERACTIVE
+    fi 
+ else
+    if [[ "$ENVIRONMENT" = BATCH ]]
+    then
+       batch_job=.TRUE.
+       jobmo=BATCH
+    else
+       batch_job=.FALSE.
+       jobmo=INTERACTIVE
+    fi
+ fi
+
+    # NO INTERACTIVE RUNS ALLOWED ON LCTIT 
+ if [[ $host = lctit  &&  $jobmo = INTERACTIVE  &&  $do_batch = false ]]
+ then
+    printf "\n  +++ no interactive runs allowed on host \"$host\" "
+    printf "\n      please submit batch job using mrun option \"-b\" \n"
+    locat=normal; exit
+ fi
+
+
+    # CHECK, IF USER DEFINED A COMPILER
+ if [[ "$compiler_name" = "" ]]
+ then
+
+    printf "\n  +++ no compiler specified for \"$host $cond1 $cond2\""
+    locat=compiler_name; exit
+
+ fi
+
+
+    # DETERMINE THE NAME OF MRUN'S TEMPORARY WORKING DIRECTORY
+
+    # ON HLRN-III, USE THE QUEUING NAME. OTHERWISE USE USERNAME AND RANDOM NUMBER
+ if [[ $do_batch = false && $(echo $host | cut -c1-6) = lccray ]]
+ then
+    kennung=$(checkjob $PBS_JOBID | grep Reservation | cut -d" " -s -f2 | cut -d"." -s -f2 | sed "s/['\"]//g")
+    if [[ "$kennung" = "" ]]
+    then
+       kennung=$RANDOM
+    fi
+ else
+    kennung=$RANDOM
+ fi
+
+ if [[ "$tmp_user_catalog" = "" ]]
+ then
+    if [[ $localhost = ibmh ]]
+    then
+       tmp_user_catalog=$SCRATCH
+    elif [[ $localhost = nech ]]
+    then
+       tmp_user_catalog=$WRKSHR
+    else
+       tmp_user_catalog=/tmp
+    fi
+ fi
+ TEMPDIR=$tmp_user_catalog/${usern}.$kennung
+
+
+    # DETERMINE THE NAME OF THE DIRECTORY WHICH IS USED TO TEMPORARILY STORE DATA FOR RESTART RUNS
+ if [[ "$tmp_data_catalog" = "" ]]
+ then
+    if [[ $localhost = nech ]]
+    then
+       tmp_data_catalog=$WRKSHR/mrun_restart_data
+    else
+       tmp_data_catalog=/tmp/mrun_restart_data
+    fi
+ fi
+
+
+    # IN CASE OF LOCAL RUNS REPLACE ENVIRONMENT VARIABLES BY THEIR VALUES
+ if [[ $do_remote = false  &&  $do_compile = true  ||  $create_executable_for_batch = true ]]
+ then
+    eval  fopts=\"$fopts\"
+    eval  lopts=\"$lopts\"
+ fi
+
+
+    # DETERMINE COMPILE- AND LINK-OPTIONS
+ fopts="$fopts $netcdf_inc $fftw_inc $dvr_inc"
+ lopts="$lopts $netcdf_lib $fftw_lib $dvr_lib"
+ XOPT="-X $numprocs"
+
+
+    # CHECK THE CPU-LIMIT. IT MUST BE GIVEN FOR BATCH-JOBS AND IS COMMUNICATED TO THE
+    # EXECUTABLE VIA NAMELIST-PARAMETER cputime
+ done=false
+ while [[ $done = false ]]
+ do
+    cputime=$cpumax
+    if (( $cputime == 0 ))
+    then
+       if [[ $do_batch = true ]]
+       then
+          printf "\n  +++ cpu-time is undefined"
+          printf "\n  >>> Please type CPU-time in seconds as INTEGER:"
+          printf "\n  >>> "
+          read  cputime  1>/dev/null  2>&1
+       else
+          cputime=10000000   # NO CPU LIMIT FOR INTERACTIVE RUNS
+       fi
+    else
+       done=true
+    fi
+    cpumax=$cputime
+ done
+
+ (( minuten = cputime / 60 ))
+ (( sekunden = cputime - minuten * 60 ))
+
+
+    # CHECK THE MEMORY DEMAND
+ if [[ $do_batch = true ]]
+ then
+    done=false
+    while [[ $done = false ]]
+    do
+       if (( memory == 0 ))
+       then
+          printf "\n  +++ memory demand is undefined"
+          printf "\n  >>> Please type memory in  MByte per process  as INTEGER:"
+          printf "\n  >>> "
+          read  memory  1>/dev/null  2>&1
+       else
+          done=true
+       fi
+    done
+ fi
+
+
+    # IN CASE OF REMOTE-JOBS CHECK, IF A USERNAME FOR THE REMOTE HOST IS GIVEN
+ if [[ $do_remote = true  &&  -z $remote_username ]]
+ then
+    while [[ -z $remote_username ]]
+    do
+       printf "\n  +++ username on remote host \"$host\" is undefined"
+       printf "\n  >>> Please type username:"
+       printf "\n  >>> "
+       read  remote_username
+    done
+    mc="$mc -u$remote_username"
+ fi
+
+    # CHECK FOR INITIAL COMMANDS AFTER LOGIN
+ if [[ "$login_init_cmd" != "" ]]
+ then
+    export init_cmds="${login_init_cmd};"
+ fi
+
+
+    # SET THE MODULE-LOAD COMMAD AND EXPORT IT FOR subjob
+ if [[ "$modules" != "" ]]
+ then
+    if [[ $host = lctit ]]
+    then
+       export module_calls=". $modules"
+    else
+       export module_calls="module load ${modules};"
+    fi
+ fi
+
+    # OUTPUT OF THE MRUN-HEADER
+ calltime=$(date)
+ printf "\n"
+ printf "#------------------------------------------------------------------------# \n"
+ printf "| %-35s%35s | \n" "$version" "$calltime"
+ printf "|                                                                        | \n"
+ spalte1="called on:"; spalte2=$localhost_realname
+ printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ if [[ $do_remote = true ]]
+ then
+    spalte1="execution on:"; spalte2="$host (username: $remote_username)"
+ else
+    spalte1="execution on:"; spalte2="$host ($localhost_realname)"
+ fi
+ printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ if [[ -n $numprocs ]]
+ then
+    if [[ $run_coupled_model = false ]]
+    then
+       spalte1="number of PEs:"; spalte2=$numprocs
+    else
+       spalte1="number of PEs:"; spalte2="$numprocs  (atmosphere: $numprocs_atmos, ocean: $numprocs_ocean)"
+    fi
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ fi
+ if [[ -n $tasks_per_node ]]
+ then
+    spalte1="tasks per node:"; spalte2="$tasks_per_node (number of nodes: $nodes)"
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    if (( remaining_pes > 0 ))
+    then
+       spalte1=" "; spalte2="one of the nodes only filled with $remaining_pes tasks"
+       printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    fi
+ fi
+ if [[ $maximum_parallel_io_streams != $numprocs ]]
+ then
+    spalte1="max par io streams:"; spalte2="$maximum_parallel_io_streams"
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ fi
+ if [[ $use_openmp = true ]]
+ then
+    spalte1="threads per task:"; spalte2="$threads_per_task"
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ fi
+ printf "|                                                                        | \n"
+ if [[ $do_compile = true ]]
+ then
+    if [[ "$mopts" != "" ]]
+    then
+       spalte1="make options:"; spalte2=$(echo "$mopts" | cut -c-45)
+       printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+       zeile=$(echo "$mopts" | cut -c46-)
+       while [[ "$zeile" != "" ]]
+       do
+          spalte1=""
+          spalte2=$(echo "$zeile" | cut -c-45)
+          printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+          zeile=$(echo "$zeile" | cut -c46-)
+       done
+    fi
+
+    spalte1="cpp directives:"; spalte2=$(echo "$cpp_options" | cut -c-45)
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    zeile=$(echo "$cpp_options" | cut -c46-)
+    while [[ "$zeile" != "" ]]
+    do
+       spalte1=""
+       spalte2=$(echo "$zeile" | cut -c-45)
+       printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+       zeile=$(echo "$zeile" | cut -c46-)
+    done
+
+    spalte1="compiler options:"; spalte2=$(echo "$fopts" | cut -c-45)
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    zeile=$(echo "$fopts" | cut -c46-)
+    while [[ "$zeile" != "" ]]
+    do
+       spalte1=""
+       spalte2=$(echo "$zeile" | cut -c-45)
+       printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+       zeile=$(echo "$zeile" | cut -c46-)
+    done
+
+    spalte1="linker options:"; spalte2=$(echo "$lopts" | cut -c-45)
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    zeile=$(echo "$lopts" | cut -c46-)
+    while [[ "$zeile" != "" ]]
+    do
+       spalte1=""
+       spalte2=$(echo "$zeile" | cut -c-45)
+       printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+       zeile=$(echo "$zeile" | cut -c46-)
+    done
+
+    spalte1="modules to be load:"; spalte2=$(echo "$modules" | cut -c-45)
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    zeile=$(echo "$modules" | cut -c46-)
+    while [[ "$zeile" != "" ]]
+    do
+       spalte1=""
+       spalte2=$(echo "$zeile" | cut -c-45)
+       printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+       zeile=$(echo "$zeile" | cut -c46-)
+    done
+
+    spalte1="main program:"; spalte2=$mainprog
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ else
+    spalte1=executable:; spalte2=$executable
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ fi
+ printf "|                                                                        | \n"
+ spalte1="base name of files:"; spalte2=$fname
+ printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ if [[ $fname != $afname ]]
+ then
+    spalte1="base name of input files:"; spalte2=$afname
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ fi
+ spalte1="INPUT control list:"; spalte2=$(echo $input_list)
+ printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ spalte1="OUTPUT control list:"; spalte2=$(echo $output_list)
+ printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+
+ if [[ "$ocean_file_appendix" = true ]]
+ then
+    printf "| %-35s%-35s | \n" "suffix \"_O\" is added to local files" " "
+ fi
+
+ if [[ $do_batch = true  ||  "$LOADLBATCH" = yes ]]
+ then
+    spalte1="memory demand / PE":; spalte2="$memory MB"
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+    spalte1=CPU-time:; spalte2="$minuten:$sekunden"
+    printf "| %-25s%-45s | \n" "$spalte1" "$spalte2"
+ fi
+
+ if [[ $do_compile = true ]]
+ then
+    printf "|                                                                        | \n"
+    printf "| Files to be compiled:                                                  | \n"
+    zeile=$source_list
+    while [[ "$zeile" != "" ]]
+    do
+       linestart=$(echo $zeile | cut -c-70)
+       printf "| %-70s | \n" "$linestart"
+       zeile=$(echo "$zeile" | cut -c71-)
+    done
+ fi
+ printf "#------------------------------------------------------------------------#"
+
+
+
+    # OUTPUT OF FILE CONNECTIONS IN CASE OF TRACEBACK
+ if [[ $do_trace = true ]]
+ then
+    (( i = 0 ))
+    while (( i < iin ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n >>> INPUT-file assignments:\n"
+       fi
+       printf "\n     ${localin[$i]} :  ${absnamein[$i]}"
+    done
+    (( i = 0 ))
+    while (( i < iout ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n >>> OUTPUT-file assignments:\n"
+       fi
+       printf "\n     ${localout[$i]} :  ${pathout[$i]}"
+    done
+    (( i = 0 ))
+    while (( i < iic ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n >>> INPUT-commands:\n"
+       fi
+       printf "\n     ${in_command[$i]}" 
+    done
+    (( i = 0 ))
+    while (( i < ioc ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n >>> OUTPUT-commands:\n"
+       fi
+       printf "\n     ${out_command[$i]}" 
+    done
+ fi
+
+    # QUERY FOR CONTINUE (ON LOCAL MACHINES ONLY)
+ if [[ $remotecall = false  &&  $silent = false  &&  $jobmo != BATCH ]]
+ then
+    antwort=dummy
+    printf "\n\n"
+    printf " >>> everything o.k. (y/n) ?  "
+    while  read antwort
+    do
+       if [[ "$antwort" != y  &&  "$antwort" != Y  &&  "$antwort" != n  &&  "$antwort" != N ]]
+       then
+          printf " >>> everything o.k. (y/n) ?  "
+       else
+          break
+       fi
+    done
+    if [[ $antwort = n  ||  $antwort = N ]]
+    then
+       locat=user_abort; (( iec = 0 )); exit
+    fi
+    if [[ $do_batch = true ]]
+    then
+       printf " >>> batch-job will be created and submitted"
+    else
+       printf " >>> MRUN will now continue to execute on this machine"
+    fi
+ fi
+
+ 
+    # DETERMINE PATH FOR MAKE DEPOSITORY
+ if [[ $do_batch = false  ||  $create_executable_for_batch = true ]]
+ then
+
+    line=""
+    grep "%depository_path" $config_file  >  tmp_mrun
+    while read line
+    do
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          if [[ "$(echo $line | cut -d" " -s -f3)" = "" ]]
+          then
+             global_depository_path=`echo $line | cut -d" " -s -f2`
+          fi
+       fi
+    done < tmp_mrun
+
+    line=""
+    grep  " $localhost" $config_file | grep "%depository_path"  >  tmp_mrun
+    while read line
+    do
+       if [[ "$line" != ""  &&  $(echo $line | cut -c1) != "#" ]]
+       then
+          if [[ "$(echo $line | cut -d" " -s -f4)" = "$cond1"  &&  "$(echo $line | cut -d" " -s -f5)" = "$cond2" ]]
+          then
+             local_depository_path=`echo $line | cut -d" " -s -f2`
+          fi
+       fi
+    done < tmp_mrun
+
+    if [[ "$local_depository_path" = "" ]]
+    then
+       if [[ "$global_depository_path" != "" ]]
+       then
+          local_depository_path=$global_depository_path
+       else
+          printf "\n\n  +++ no depository path found in configuration file"
+          printf "\n      for local host \"$localhost\" "
+          printf "\n      please set \"\%depository_path\" in configuration file\n"
+          locat=config_file; exit
+       fi
+    fi
+    eval local_depository_path=$local_depository_path
+    [[ "$cond1" != "" ]]  &&  local_depository_path=${local_depository_path}_$cond1
+    [[ "$cond2" != "" ]]  &&  local_depository_path=${local_depository_path}_$cond2
+
+
+    basename=`echo $mainprog | cut -f1 -d"."`
+    eval make_depository=${local_depository_path}/${basename}_current_version.tar
+    if [[ ! -f $make_depository ]]
+    then
+       printf "\n"
+       printf "\n  *** WARNING: make depository \"$make_depository\" not found"
+       printf "\n               \"make\" will fail, if the Makefile or other source files are missing\n"
+    fi
+
+ fi
+
+
+    # NOW PERFORM THOSE ACTIONS REQUIRED TO EXECUTE THE PROGRAM (PALM) ON THIS MACHINE
+    # (COMPILING/LINKING, EXECUTING, COPYING I/O FILES)
+ if [[ $do_batch = false ]]
+ then
+
+
+       # CREATE THE TEMPORARY WORKING DIRECTORY
+    mkdir -p  $TEMPDIR
+    chmod  go+rx  $TEMPDIR
+    tmpcreate=true
+
+
+       # COPY EITHER THE COMPLETE SOURCE CODE FILES TO BE COMPILED OR THE EXECUTABLE 
+       # INTO THE TEMPORARY WORKING DIRECTORY
+    if [[ $do_compile = true ]]
+    then
+
+          # ON NEC, COMPILATION IS DONE ON HOST CROSS VIA CROSS COMPILING
+          # CREATE A TEMPORARY DIRECTORY ON THAT MACHINE (HOME MOUNTED VIA NFS)
+       if [[ $localhost = nech ]]
+       then
+          TEMPDIR_COMPILE=$HOME/work/${usern}.$kennung
+          if  mkdir -p  $TEMPDIR_COMPILE
+          then
+             printf "\n  *** \"$TEMPDIR_COMPILE\" "
+             printf "\n      is generated as temporary directory for cross compiling\n"
+          else
+             printf "\n  +++ creating directory \"$TEMPDIR_COMPILE\" "
+             printf "\n      needed for cross compilation failed"
+             locat=compile
+             exit
+          fi
+       else
+          TEMPDIR_COMPILE=$TEMPDIR
+       fi
+
+       cp  $make_depository  $TEMPDIR_COMPILE
+       cd  $TEMPDIR_COMPILE
+       tar -xf  $make_depository  >  /dev/null  2>&1
+       cd -  > /dev/null
+
+          # DUE TO UNKNOWN REASONS, COPY WITH cp COMMAND CREATES CORRUPT
+          # FILES ON CRAY XC30 SYSTEMS (HLRN III), rsync IS USED INSTEAD
+       if [[ $(echo $host | cut -c1-6) = lccray ]]
+       then
+          rsync -av -t  SOURCES_FOR_RUN_$fname/*  $TEMPDIR_COMPILE  >  /dev/null
+       else
+          cp  SOURCES_FOR_RUN_$fname/*  $TEMPDIR_COMPILE  >  /dev/null
+       fi
+
+    else
+
+       cp  $executable   ${TEMPDIR}/a.out
+
+    fi
+
+
+       # CHANGE TO THE TEMPORARY WORKING DIRECTORY
+    cd  $TEMPDIR
+    printf "\n  *** changed to temporary directory: $TEMPDIR"
+
+
+       # THE FOLLOWING IS REQUIRED FPR AVS-OUTPUT WITH PALM  ??? REMOVE ???
+       # WRITE INFORMATIONS ABOUT THE OUTPUT-FILE CONNECTIONS TO A TEMPORARY FILE
+       # THIS FILE CAN LATER BE READ FROM USER-DEFINED CODE TO DETERMINE THE
+       # RELATION BETWEEN THE LOCAL TEMPORARY AND PERMANENT FILE NAMES
+    (( i = 0 ))
+    while (( i < iout ))
+    do
+       (( i = i + 1 ))
+       if [[ "${actionout[$i]}" = tr  ||  "${actionout[$i]}" = tra  ||  "${actionout[$i]}" = trpe ]]
+       then
+          printf "${localout[$i]} ${actionout[$i]}\n${pathout[$i]}\n${localhost}_${fname}${endout[$i]}\n" >> OUTPUT_FILE_CONNECTIONS
+       else
+          printf "${localout[$i]} ${actionout[$i]}\n${pathout[$i]}\n${frelout[$i]}\n" >> OUTPUT_FILE_CONNECTIONS
+       fi
+    done
+
+
+       # IF REQUIRED, START WITH COMPILING
+    if [[ $do_compile = true ]]
+    then
+
+
+       if [[ -f a.out ]]
+       then
+
+             # EXECUTABLE WAS CREATED DURING INTERACTIVE CALL OF MRUN
+          printf "\n\n\n  *** executable a.out found"
+          printf "\n      no compilation required \n"
+
+       else
+
+             # COMPILING WITH MAKE (ON NEC COMPILER IS CALLED ON HOST CROSS)
+          printf "\n\n\n  *** compilation starts \n$dashes\n"
+          printf "  *** compilation with make using following options:\n"
+          printf "      make depository:          $make_depository"
+          if [[ "$mopts" != "" ]]
+          then
+             printf "      make options:             $mopts\n"
+          fi
+          printf "      compilername:             $compiler_name\n"
+          printf "      compiler options:         $fopts\n"
+          printf "      preprocessor directives:  $cpp_options \n"
+          printf "      linker options:           $lopts \n"
+          if [[ "$modules" != "" ]]
+          then
+             printf "      modules to be load:       $modules \n"
+          fi
+          printf "      source code files:        $source_list \n"
+
+          if [[ $localhost = nech ]]
+          then
+             ssh  $SSH_PORTOPT  136.172.44.192 -l $usern "$init_cmds $module_calls cd \$HOME/work/${usern}.$kennung; sxmake $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT=\"$cpp_options\"  F90FLAGS=\"$fopts\"  LDFLAGS=\"$lopts\" "
+             cp  $TEMPDIR_COMPILE/a.out  .
+             [[ $? != 0 ]]  &&  compile_error=true
+             rm -rf  $TEMPDIR_COMPILE
+          elif [[ $localhost = ibmh ]]
+          then
+             printf "      compiler is called via ssh on \"plogin1\" \n"
+             ssh  $SSH_PORTOPT  plogin1  -l $usern  "$init_cmds export PATH=/sw/ibm/xlf/13.1.0.8/usr/bin:$PATH; $module_calls cd $TEMPDIR; make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT=\"$cpp_options\"  F90FLAGS=\"$fopts\"  LDFLAGS=\"$lopts\" "
+             [[ ! -f a.out ]]  &&  compile_error=true
+             continue   # STATUS=1, IF a.out EXISTS
+          elif [[ $localhost = lcocean ]]
+          then 
+             printf "      compiler is called via ssh on \"ocean\" \n"
+             echo $PWD
+             ssh  $SSH_PORTOPT  ocean  -l $usern  "$init_cmds $module_calls cd $TEMPDIR; make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT=\"$cpp_options\"  F90FLAGS=\"$fopts\"  LDFLAGS=\"$lopts\" "
+             [[ ! -f a.out ]]  &&  compile_error=true
+            continue   # STATUS=1, IF a.out EXISTS
+          elif [[ $localhost = lcflow ]]
+          then 
+             printf "      compiler is called via ssh on \"flow\" \n"
+             /usr/bin/ssh  $SSH_PORTOPT  flow02.hpc.uni-oldenburg.de -l $usern "$init_cmds $module_calls cd $TEMPDIR; make $mopts -f Makefile PROG=a.out F90=$compiler_name COPT=\"$cpp_options\" F90FLAGS=\"$fopts\" LDFLAGS=\"$lopts\" "
+             check_for_file=`/usr/bin/ssh $SSH_PORTOPT flow02.hpc.uni-oldenburg.de -l $usern "ls $TEMPDIR/a.out 2> /dev/null"`
+             [[ "$check_for_file" = "" ]]  &&  compile_error=true
+             continue   # STATUS=1, IF a.out EXISTS
+          elif [[ $localhost = lcbullhh  ||  $localhost = lccrayb  ||  $localhost = lccrayf ||  $localhost = lccrayh ]]
+          then
+             make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$fopts"  LDFLAGS="$lopts"
+          elif [[ $localhost = lclrz ]]
+          then
+             make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$fopts"  LDFLAGS="$lopts"
+          else
+             [[ "$init_cmds" != "" ]]  &&  eval $init_cmds
+             [[ "$module_calls" != "" ]]  &&  eval $module_calls
+             make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$fopts"  LDFLAGS="$lopts"
+          fi
+
+          if [[ $? != 0  ||  "$compile_error" = true  ||  "$module_compile_error" = true ]]
+          then
+             printf "\n  +++ error occured while compiling or linking"
+             locat=compile
+
+             exit
+          else
+             printf "$dashes\n  *** compilation finished \n"
+          fi
+
+       fi
+
+    fi
+
+
+       # PROVIDE THE INPUT FILES
+       # LOOP OVER ALL ACTIVATED FILES (LISTED IN THE CONFIGURATION FILE)
+    (( i = 0 ))
+    while (( i < iin ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n  *** providing INPUT-files:\n$dashes"
+       fi
+
+
+          # SKIP OPTIONAL FILES, IF THEY DO NOT EXIST
+       if [[ "${transin[$i]}" = unavailable ]]
+       then
+          if [[ "${extin[$i]}" = ""  ||  "${extin[$i]}" = " " ]]
+          then
+             printf "\n  *** INFORMATIVE: input file \"${pathin[$i]}/${afname}${endin[$i]}\" "
+             printf "\n                   is not available!"
+          else
+             printf "\n  *** INFORMATIVE: input file \"${pathin[$i]}/${afname}${endin[$i]}.${extin[$i]}\" "
+             printf "\n                   is not available!"
+          fi
+          continue
+       fi
+
+          # CHECK FOR SINGLE FILE (SERIAL RUN) OR DIRECTORY (ONE FILE PER CORE FOR PARELLEL EXECUTION)
+       files_for_pes=false; datentyp=file
+       if [[ "${actionin[$i]}" = pe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; datentyp=directory
+          actionin[$i]=""
+       elif [[ "${actionin[$i]}" = pe  &&  ! -n $numprocs ]]
+       then
+          actionin[$i]=""
+       elif [[ "${actionin[$i]}" = arpe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; datentyp=directory
+          actionin[$i]="ar"
+       elif [[ "${actionin[$i]}" = arpe  &&  ! -n $numprocs ]]
+       then
+          actionin[$i]="ar"
+       elif [[ "${actionin[$i]}" = flpe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; datentyp=directory
+          actionin[$i]="fl"
+       elif [[ "${actionin[$i]}" = flpe  &&  ! -n $numprocs ]]
+       then
+          actionin[$i]="fl"
+       fi
+
+       if [[ $files_for_pes = true ]]
+       then
+          printf "\n  >>> INPUT: ${absnamein[$i]}/....  to  ${localin[$i]}"
+       else
+          printf "\n  >>> INPUT: ${absnamein[$i]}  to  ${localin[$i]}"
+       fi
+
+          # INPUT-FILE FOR A RESTART RUN.
+          # CHECK, IF THIS FILE STILL EXISTS ON THE TEMPORARY DATA DIRECTORY.
+          # IF NOT, TRY TO GET IT FROM THE ARCHIVE SYSTEM
+       if [[ "${actionin[$i]}" = fl ]]
+       then
+          printf "\n      $datentyp will be fetched from temporary directory \"${tmp_data_catalog}\" !"
+          if [[ $files_for_pes = false ]]
+          then
+             if [[ -f "$tmp_data_catalog/${frelin[$i]}" ]]
+             then
+                ln  $tmp_data_catalog/${frelin[$i]}  ${localin[$i]}
+                got_tmp[$i]=true
+             elif [[ -f "$WORK/${frelin[$i]}"  &&  $ignore_archive_error = true ]]
+             then
+                printf "\n  +++ $datentyp not found in \"$tmp_data_catalog\" !"
+                printf "\n  *** trying to use backup copy in \"$WORK\" "
+                cp  $WORK/${frelin[$i]}  ${localin[$i]}
+             else
+                printf "\n  +++ $datentyp not found in \"$tmp_data_catalog\" "
+                printf "\n      or \"$tmp_data_catalog\" does not exist!"
+                printf "\n  *** trying to get copy from archive"
+                actionin[$i]=ar
+             fi
+          else
+             if [[ -d "$tmp_data_catalog/${frelin[$i]}" ]]
+             then
+                mkdir  ${localin[$i]}
+                cd $tmp_data_catalog/${frelin[$i]}
+                for file in $(ls *)
+                do
+                   ln $file $TEMPDIR/${localin[$i]}
+                done
+                cd $TEMPDIR
+                got_tmp[$i]=true
+             elif [[ -d "$WORK/${frelin[$i]}"  &&  $ignore_archive_error = true ]]
+             then
+                printf "\n  +++ $datentyp not found in \"$tmp_data_catalog\" !"
+                printf "\n  *** trying to use backup copy in \"$WORK\" "
+                cp -r  $WORK/${frelin[$i]}  ${localin[$i]}
+             else
+                printf "\n  +++ $datentyp not found in \"$tmp_data_catalog\" "
+                printf "\n      or \"$tmp_data_catalog\" does not exist!"
+                printf "\n  *** trying to get copy from archive"
+                actionin[$i]=ar
+             fi
+          fi
+       fi
+
+
+          # FILE IS STORED ON THE ARCHIVE SYSTEM
+       if [[ "${actionin[$i]}" = ar ]]
+       then
+
+          if [[ $files_for_pes = false ]]
+          then
+             printf "\n      file will be restored from archive-system ($archive_system)!"
+          else
+             printf "\n      directory will be restored from archive-system ($archive_system)!"
+          fi
+
+          file_restored=false
+
+          if [[ $archive_system = asterix ]]
+          then
+             do_stagein=true
+             (( stagein_anz = 0 ))
+             while [[ $do_stagein = true ]]
+             do
+                if [[ $files_for_pes = false ]]
+                then
+                   stagein  -O  ${frelin[$i]}  >  STAGEIN_OUTPUT
+                else
+                   stagein  -t  -O  ${frelin[$i]}  >  STAGEIN_OUTPUT
+                fi
+                cat  STAGEIN_OUTPUT
+                if [[ $(grep -c "st.msg:i24"  STAGEIN_OUTPUT) != 0 ]]
+                then
+                   file_restored=true
+                   do_stagein=false
+                else
+                   (( stagein_anz = stagein_anz + 1 ))
+                   if (( stagein_anz == 10 ))
+                   then
+                      printf "\n  +++ stagein stoped after 10 tries"
+                      locat=stage
+                      exit
+                   fi
+                   printf "\n  +++ restoring from archive failed, trying again:"
+                   sleep 900
+                fi
+             done
+          elif [[ $archive_system = DMF ]]
+          then
+             if [[ $files_for_pes = false ]]
+             then
+                printf "\n  +++ restoring of single files impossible with $archive_system !\n"
+                locat=DMF
+                exit
+             else
+                find  $ARCHIVE/${frelin[$i]}  -type m  -print  |  dmget
+                cp  -r $ARCHIVE/${frelin[$i]}  $PWD
+                file_restored=true
+             fi
+          elif [[ $archive_system = tivoli ]]
+          then
+             if [[ $files_for_pes = false ]]
+             then
+                ssh  $SSH_PORTOPT  $usern@bicedata.hlrn.de  "cp  $PERM/${frelin[$i]}  $PWD"
+             else
+                (( inode = 0 ))
+                while (( inode < nodes ))
+                do
+                   ssh  $SSH_PORTOPT  $usern@bicedata.hlrn.de  "cd $PWD; tar  xf  $PERM/${frelin[$i]}/${frelin[$i]}.node_$inode.tar"
+                   (( inode = inode + 1 ))
+                done
+             fi
+             file_restored=true
+          elif [[ $archive_system = ut ]]
+          then
+             if [[ $files_for_pes = false ]]
+             then
+                cp  $UT/${frelin[$i]}  .
+             else
+                (( inode = 0 ))
+                while (( inode < nodes ))
+                do
+                   tar  xf  $UT/${frelin[$i]}/${frelin[$i]}.node_$inode.tar
+                   (( inode = inode + 1 ))
+                done
+             fi
+             file_restored=true
+          else
+             printf "\n  +++ archive_system=\"$archive_system\"   restore impossible!"
+             locat=rearchive
+             exit
+          fi
+
+          if [[ $file_restored = true ]]
+          then
+
+                # PUT FILE ON THE TEMPORARY DATA DIRECTORY TOO.
+                # THIS WILL MAKE FILE ACCESS EASIER FOR LATER RUNS 
+             [[ ! -d $tmp_data_catalog ]]  &&  mkdir -p  $tmp_data_catalog; chmod  g+rx  $tmp_data_catalog
+             if [[ $files_for_pes = false ]]
+             then
+                ln  -f  ${frelin[$i]}  $tmp_data_catalog/${frelin[$i]}
+             else
+                mkdir  $tmp_data_catalog/${frelin[$i]}
+                ln  -f  ${frelin[$i]}/*  $tmp_data_catalog/${frelin[$i]}
+             fi
+             got_tmp[$i]=true
+
+                # PROVIDE THE FILE UNDER ITS LOCAL NAME
+             mv  ${frelin[$i]}  ${localin[$i]}
+
+          fi
+       fi
+
+
+          # FILE IS STORED IN THE RESPECTIVE DIRECTORY GIVEN IN THE CONFIGURATION FILE
+       if [[ "${actionin[$i]}" = ""  ||  "${actionin[$i]}" = "di"  ||  "${actionin[$i]}" = "npe" ]]
+       then
+
+          if [[ "${actionin[$i]}" = "npe"  &&  -n $numprocs ]]
+          then
+
+                # FILE COPIES ARE PROVIDED FOR ALL CORES
+                # EACH FILE GETS A UNIQUE FILENAME WITH A FOUR DIGIT NUMBER
+             printf "\n      file will be provided for $numprocs processors"
+             mkdir  ${localin[$i]}
+             ival=$numprocs
+             (( ii = 0 ))
+             while (( ii <= ival-1 ))
+             do
+                if (( ii < 10 ))
+                then
+                   cp  ${absnamein[$i]}  ${localin[$i]}/_000$ii
+                elif (( ii < 100 ))
+                then
+                   cp  ${absnamein[$i]}  ${localin[$i]}/_00$ii
+                elif (( ii < 1000 ))
+                then
+                   cp  ${absnamein[$i]}  ${localin[$i]}/_0$ii
+                else
+                   cp  ${absnamein[$i]}  ${localin[$i]}/_$ii
+                fi
+                (( ii = ii + 1 ))
+             done
+
+          else
+
+             if [[ $files_for_pes = true ]]
+             then
+
+                   # PROVIDE FILES FOR EACH CORE
+                   # FIRST CREATE THE LOCAL DIRECTORY, THEN COPY FILES
+                   # FROM THE PERMANENT DIRECTORY BY LINKING THEM TO THE LOCAL ONE
+                printf "\n      providing $numprocs files for the respective processors"
+                mkdir  ${localin[$i]}
+		if [[ $link_local_input = true ]]
+		    then
+		    printf "      using ln -f\n"
+		    cd ${absnamein[$i]}
+		    for file in $(ls *)
+		      do
+		      ln -f $file  ${localin[$i]}
+		    done
+		    cd $TEMPDIR
+		fi
+
+                   # IF "ln -f" FAILED OR IF "$link_local_input = false" DO A NORMAL "cp -r"
+		if [[ ! -f "${localin[$i]}/_0000" ]]
+		    then
+		    if [[ $link_local_input = true ]]
+			then
+			printf "      ln failed for .../_0000, using cp...\n"
+		    fi
+		    cp -r  ${absnamein[$i]}/*  ${localin[$i]}
+		fi
+
+             else
+
+                   # PROVIDE FILE FOR RUNS ON A SINGLE CORE
+		if [[ $link_local_input = true ]]
+		then
+		    printf "      using ln -f\n"
+		    ln -f  ${absnamein[$i]}  ${localin[$i]}
+		fi
+		# If "ln -f" fails of if "$link_local_input = false" do a normal "cp"
+		if [[ ! -f "${localin[$i]}" ]]
+                then
+		    if [[ $link_local_input = true ]]
+	            then
+			printf "      ln failed, using cp...\n"
+		    fi
+		    cp  ${absnamein[$i]}  ${localin[$i]}
+                fi
+             fi
+          fi
+       fi
+
+    done
+    if (( i != 0 ))
+    then
+       printf "\n$dashes\n  *** all INPUT-files provided \n"
+    fi
+
+
+       # EXECUTE INPUT-COMMANDS GIVEN IN THE CONFIGURATION FILE
+    (( i = 0 ))
+    while (( i < iic ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n  *** execution of INPUT-commands:\n$dashes"
+       fi
+       printf "\n  >>> ${in_command[$i]}"
+       eval  ${in_command[$i]}
+       if (( i == iic ))
+       then
+          printf "\n$dashes\n"
+       fi
+    done
+
+
+       # SET THE REMAINING CPU-TIME
+    cpurest=${cpumax}.
+
+
+       # START DVR STREAMING SERVER
+    if [[ $(echo $package_list | grep -c dvrp_graphics) != 0 ]]
+    then
+       if [[ "$dvr_server" != "" ]]
+       then
+
+          printf "\n\n  *** preparing the dvr streaming server configuration file"
+
+             # CHECK, IF A DVR SERVER IS ALREADY RUNNING
+          running_dvrserver_id=`echo $(ps -edaf | grep .dvrserver.config | grep -v grep) | cut -d" " -f2`
+          if [[ "$running_dvrserver_id" != "" ]]
+          then
+
+             printf "\n\n  +++ WARNING: A dvr server with id=$running_dvrserver_id is already running!"
+             printf "\n      This server is used instead starting a new one!"
+             printf "\n      If required, script \"process_dvr_output\" has to be run manually."
+
+          else
+
+                # COPY CONFIGURATION FILE FOR STREAMING SERVER FROM REPOSITORY TO HERE
+             if [[ -f ${PALM_BIN}/.dvrserver.config ]]
+             then
+                cp  ${PALM_BIN}/.dvrserver.config  .
+
+                   # ENTERING THE BASEDIR, UID AND GID INTO THIS FILE
+                user_id=`id -u`
+                group_id=`id -g`
+
+                   # "&" IS REQUIRED AS A SEPERATOR, BECAUSE TEMPDIR CONTAINS "/"
+                sed "s&<replace by dvr data directory>&${TEMPDIR}&g" .dvrserver.config > .dvrserver.1
+                sed "s/<replace by user id>/$user_id/g"    .dvrserver.1 > .dvrserver.2
+                sed "s/<replace by group id>/$group_id/g"  .dvrserver.2 > .dvrserver.3
+                mv  .dvrserver.3  .dvrserver.config
+                rm  .dvrserver.1  .dvrserver.2
+
+                   # START DVR SERVER IN BACKGROUND, GET HIS ID AND PRINT ON TERMINAL
+                $dvr_server  .dvrserver.config  >>  DVR_LOGFILE  2>&1  &
+                dvrserver_id=`echo $(ps -edaf | grep .dvrserver.config) | cut -d" " -f2`
+                printf "\n  *** streaming server with id=$dvrserver_id is started in background"
+                local_dvrserver_running=.TRUE.
+             else
+                printf "\n  +++ missing file \".dvrserver.config\" in directory:"
+                printf "\n      \"$PALM_BIN\" "
+                locat=dvr
+                exit
+             fi
+
+          fi
+
+       else
+          printf "\n\n  --- INFORMATIVE: no dvr streaming server will be started"
+       fi
+    fi
+
+
+       # CREATE THE NAMELIST-FILE WITH VALUES OF ENVIRONMENT-VARIABLES REQUIRED BY PALM
+       # (FILE ENVPAR WILL BE READ BY PALM)
+    cat  >  ENVPAR  <<  %%END%%
+ &envpar  run_identifier = '$fname', host = '$localhost',
+          write_binary = '$write_binary', tasks_per_node = $tasks_per_node,
+          maximum_parallel_io_streams = $maximum_parallel_io_streams,
+          maximum_cpu_time_allowed = ${cpumax}.,
+          revision = '$global_revision',
+          local_dvrserver_running = $local_dvrserver_running,
+          batch_job = $batch_job /
+
+%%END%%
+
+
+       # STARTING THE EXECUTABLE
+    printf "\n\n  *** execution starts in directory\n      \"`pwd`\"\n$dashes\n"
+    PATH=$PATH:$TEMPDIR
+
+
+    if [[ $execute_command != "none" ]]
+    then
+
+        printf "\n  +++ branch still not realized"
+        locat=execution
+        exit
+
+    else
+
+          # MPI DEBUG OPTION (ARGUMENT CHECKING, SLOWS DOWN EXECUTION DUE TO INCREASED LATENCY)
+       if [[ "$mpi_debug" = true ]]
+       then
+          export MPI_CHECK_ARGS=1
+          printf "\n  +++ MPI_CHECK_ARGS=$MPI_CHECK_ARGS"
+       fi
+
+       if [[ "$totalview" = true ]]
+       then
+          printf "\n *** totalview debugger will be used"
+          tv_opt="-tv"
+       else
+          tv_opt=""
+       fi
+
+       if [[ "$cond1" = debug  ||  "$cond2" = debug ]]
+       then
+
+             #Interactive ALLINEA DEBUG seesion
+          if [[ "$ENVIRONMENT" != BATCH ]]
+          then
+             if [[ $host = lccrayb || $host = lccrayh ]]
+             then
+                if [[ "$allinea" = true ]]
+                then
+                   echo "--- aprun  -n $ii  -N $tasks_per_node  a.out  < runfile_atmos"
+
+                   ddt  aprun  -n $ii  -N $tasks_per_node  a.out
+                   wait
+                fi         
+             fi
+          fi
+
+          if [[ $localhost = ibmh ]]
+          then
+
+                # SETUP THE IBM MPI ENVIRONMENT
+             export MP_SHARED_MEMORY=yes 
+             export AIXTHREADS_SCOPE=S
+             export OMP_NUM_THREADS=$threads_per_task
+             export AUTHSTATE=files
+             export XLFRTEOPTS="nlwidth=132:err_recovery=no"    # RECORD-LENGTH OF NAMELIST-OUTPUT
+
+                # FOLLOWING OPTIONS ARE MANDATORY FOR TOTALVIEW
+             export MP_ADAPTER_USE=shared
+             export MP_CPU_USE=multiple
+             export MP_TIMEOUT=1200
+
+             unset  MP_TASK_AFFINITY
+
+             if [[ "$LOADLBATCH" = yes ]]
+             then
+                totalview   poe  a.out
+             else
+                echo totalview   poe  -a a.out  -procs $numprocs  -rmpool 0  -nodes 1
+                export TVDSVRLAUNCHCMD=ssh
+                totalview   poe  -a a.out  -procs $numprocs  -rmpool 0  -nodes 1
+             fi
+
+          fi  # END DEBUG MODE
+
+       else
+
+             # NORMAL EXECUTION
+          if [[ -n $numprocs ]]
+          then
+
+                # RUNNING THE PROGRAM ON PARALLEL MACHINES
+             if [[ $(echo $host | cut -c1-3) = ibm ]]
+             then
+
+                   # SETUP THE IBM MPI ENVIRONMENT
+                if [[ $host != ibmh  &&  $host != ibmkisti ]]
+                then
+                   export MP_SHARED_MEMORY=yes
+                   export AIXTHREAD_SCOPE=S
+                   export OMP_NUM_THREADS=$threads_per_task
+                   export XLSMPOPTS="spins=0:yields=0:stack=20000000"
+                   export AUTHSTATE=files
+                   export XLFRTEOPTS="nlwidth=132:err_recovery=no"    # RECORD-LENGTH OF NAMELIST-OUTPUT
+                   #  export MP_PRINTENV=yes
+
+                      # TUNING-VARIABLES TO IMPROVE COMMUNICATION SPEED
+                      # DO NOT SHOW SIGNIFICANT EFFECTS (SEP 04, FEDERATION-SWITCH)
+                   export MP_WAIT_MODE=poll
+                   [[ $node_usage = not_shared ]]  &&  export MP_SINGLE_THREAD=yes
+                fi
+
+                if [[ $host = ibmkisti ]]
+                then
+                   export LANG=en_US
+                   export MP_SHARED_MEMORY=yes
+                   if [[ $threads_per_task = 1 ]]
+                   then
+                      export MP_SINGLE_THREAD=yes
+                      export MEMORY_AFFINITY=MCM
+                   else
+                      export OMP_NUM_THREADS=$threads_per_task
+                   fi
+                fi
+
+                if [[ "$LOADLBATCH" = yes ]]
+                then
+                   printf "\n--- Control: OMP_NUM_THREADS = \"$OMP_NUM_THREADS\" \n"
+                   if [[ "$cond1" = hpmcount  ||  "$cond2" = hpmcount ]]
+                   then
+                      /opt/optibm/HPM_2_4_1/bin/hpmcount  a.out
+                   else
+                      if [[ $run_coupled_model = false ]]
+                      then
+                         if [[ "$ocean_file_appendix" = true ]]
+                         then
+                            echo "precursor_ocean"  >  runfile_atmos
+                         else
+                            echo "precursor_atmos"  >  runfile_atmos
+                         fi
+                      else
+                         (( iia = $numprocs_atmos / $threads_per_task ))
+                         (( iio = $numprocs_ocean / $threads_per_task ))
+                         printf "\n      coupled run ($iia atmosphere, $iio ocean)"
+                         printf "\n      using $coupled_mode coupling"
+                         printf "\n\n"
+                         echo "coupled_run $iia $iio"  >  runfile_atmos
+                      fi
+                      poe ./a.out  <  runfile_atmos
+                   fi
+                else
+                   if [[ $localhost = ibmh  ||  $localhost = ibms ]]
+                   then
+                      poe  a.out  -procs $numprocs  -nodes 1  -rmpool 0
+                   elif [[ $localhost = ibmkisti  ||  $localhost = ibmku ]]
+                   then
+                      if [[ -f $hostfile ]]
+                      then
+                         cp  $hostfile  hostfile
+                      else
+                         (( ii = 1 ))
+                         while (( ii <= $numprocs ))
+                         do
+                            echo  $localhost_realname  >>  hostfile
+                            (( ii = ii + 1 ))
+                         done
+                      fi
+                      export MP_HOSTFILE=hostfile
+                      if [[ $run_coupled_model = false ]]
+                      then
+                         if [[ "$ocean_file_appendix" = true ]]
+                         then
+                            echo "precursor_ocean"  >  runfile_atmos
+                         else
+                            echo "precursor_atmos"  >  runfile_atmos
+                         fi
+                      else
+                         (( iia = $numprocs_atmos / $threads_per_task ))
+                         (( iio = $numprocs_ocean / $threads_per_task ))
+                         printf "\n      coupled run ($iia atmosphere, $iio ocean)"
+                         printf "\n      using $coupled_mode coupling"
+                         printf "\n\n"
+                         echo "coupled_run $iia $iio"  >  runfile_atmos
+                      fi
+
+                      poe  ./a.out  -procs $numprocs  <  runfile_atmos 
+
+                   else
+                      if [[ "$host_file" = "" ]]
+                      then
+                         printf "\n  +++ no hostfile given in configuration file"
+                         locat=config_file
+                         exit
+                      else
+                         eval host_file=$host_file
+                      fi
+                      export MP_HOSTFILE=$host_file
+                      poe  a.out  -procs $numprocs  -tasks_per_node $numprocs
+                   fi
+                fi
+
+             elif [[ $host = nech ]]  # running on NEC machines
+             then
+
+                (( ii = nodes ))
+                if [[ $ii = 1 ]]
+                then
+                   export F_ERRCNT=0        # acceptable number of errors before program is stopped
+                   export MPIPROGINF=YES
+                   #  export F_TRACE=YES|FMT1|FMT2  # output of ftrace informations to job protocol
+                   echo "*** execution on single node with mpirun"
+                   mpirun  -np $numprocs -e gdb ./a.out
+                else
+                   (( i = 0 ))
+                   while (( i < ii ))
+                   do
+                      echo "-h $i  -p $tasks_per_node  -e ./mpi_exec_shell"  >>  multinode_config
+                      (( i = i + 1 ))
+                   done
+
+                   echo "#!/bin/sh"                         >   mpi_exec_shell
+                   echo " "                                 >>  mpi_exec_shell
+                   echo "set -u"                            >>  mpi_exec_shell
+                   echo "F_ERRCNT=0"                        >>  mpi_exec_shell
+                   echo "MPIPROGINV=YES"                    >>  mpi_exec_shell
+                   echo "OMP_NUM_THREADS=$threads_per_task" >>  mpi_exec_shell 
+                   echo "cpurest=$cpurest"                  >>  mpi_exec_shell
+                   echo "fname=$fname"                      >>  mpi_exec_shell
+                   echo "localhost=$localhost"              >>  mpi_exec_shell
+                   echo "return_address=$return_address"    >>  mpi_exec_shell
+                   echo "return_username=$return_username"  >>  mpi_exec_shell
+                   echo "tasks_per_node=$tasks_per_node"    >>  mpi_exec_shell
+                   echo "write_binary=$write_binary"        >>  mpi_exec_shell
+                   echo "use_seperate_pe_for_dvrp_output=$use_seperate_pe_for_dvrp_output"  >>  mpi_exec_shell
+                   echo "  "                                >>  mpi_exec_shell
+                   echo "export F_ERRCNT"                   >>  mpi_exec_shell
+                   echo "export MPIPROGINV"                 >>  mpi_exec_shell
+                   echo "export OMP_NUM_THREADS"            >>  mpi_exec_shell
+                   echo "export cpurest"                    >>  mpi_exec_shell
+                   echo "export fname"                      >>  mpi_exec_shell
+                   echo "export localhost"                  >>  mpi_exec_shell
+                   echo "export return_address"             >>  mpi_exec_shell
+                   echo "export return_username"            >>  mpi_exec_shell
+                   echo "export tasks_per_node"             >>  mpi_exec_shell
+                   echo "export write_binary"               >>  mpi_exec_shell
+                   echo "export use_seperate_pe_for_dvrp_output"  >>  mpi_exec_shell
+                   echo " "                                 >>  mpi_exec_shell
+                   echo "exec  ./a.out"                     >>  mpi_exec_shell
+
+                   chmod u+x  mpi_exec_shell
+                   export MPIPROGINF=YES
+                   mpirun  -f multinode_config  &
+                   wait
+
+                fi
+
+             elif [[ $(echo $host | cut -c1-2) = lc  &&  $host != lckyoto &&  $host != lctit ]]
+             then
+
+                   # COPY HOSTFILE FROM SOURCE DIRECTORY OR CREATE IT, IF IT
+                   # DOES NOT EXIST
+                if [[  $host != lcbullhh  && $host != lccrayb  &&  $host != lccrayf  && $host != lccrayh  &&  $host != lckyuh  &&  $host != lckyut  &&  $host != lcocean ]]
+                then
+                   if [[ -f $hostfile ]]
+                   then
+                      cp  $hostfile  hostfile
+                      (( ii = $numprocs / $threads_per_task ))
+                      [[ $ii = 0 ]]  &&  (( ii = 1 ))
+                   else
+                      (( ii = 1 ))
+                      while (( ii <= $numprocs / $threads_per_task ))
+                      do
+                         echo  $localhost_realname  >>  hostfile
+                         (( ii = ii + 1 ))
+                      done
+                      if (( $numprocs / $threads_per_task == 0 ))
+                      then
+                         echo  $localhost_realname  >>  hostfile
+                      fi
+                   fi
+                   eval zeile=\"`head -n $ii  hostfile`\"
+                   printf "\n  *** running on: $zeile"
+                fi
+
+                (( ii = $numprocs / $threads_per_task ))
+                [[ $ii = 0 ]]  &&  (( ii = 1 ))
+                export OMP_NUM_THREADS=$threads_per_task
+
+                if [[ $threads_per_task != 1 ]]
+                then
+                      # INCREASE STACK SIZE TO UNLIMITED, BECAUSE OTHERWISE LARGE RUNS
+                      # MAY ABORT
+                   ulimit -s unlimited
+                   printf "\n      threads per task: $threads_per_task  stacksize: unlimited"
+                fi
+
+                if [[ $run_coupled_model = false && $run_vnested_model = false ]]
+                then
+                   if [[ "$ocean_file_appendix" = true ]]
+                   then
+                      echo "precursor_ocean"  >  runfile_atmos
+                   else
+                      echo "precursor_atmos"  >  runfile_atmos
+                   fi
+                   printf "\n\n"
+
+                   if [[ $host = lccrayb || $host = lccrayh ]]
+                   then
+                       echo "--- aprun  -n $ii  -N $tasks_per_node  a.out  <  runfile_atmos"
+                       aprun  -n $ii  -N $tasks_per_node  a.out  <  runfile_atmos
+                   elif [[ $host = lcbullhh ]]
+                   then
+                      export OMPI_MCA_pml=cm
+                      export OMPI_MCA_mtl=mxm
+                      export OMPI_MCA_coll=^ghc
+                      export OMPI_MCA_mtl_mxm_np=0
+                      export MXM_RDMA_PORTS=mlx5_0:1
+                      export MXM_LOG_LEVEL=ERROR 
+                      export OMP_NUM_THREADS=$threads_per_task
+                      export KMP_AFFINITY=verbose,granularity=core,compact,1
+                      export KMP_STACKSIZE=64m
+
+                      srun  --nodes=$nodes --ntasks-per-node=$tasks_per_node ./a.out  <  runfile_atmos
+
+                   elif [[ $host = lccrayf ]]
+                   then
+                       aprun  -j1  -n $ii  -N $tasks_per_node  -m ${memory}M  a.out  <  runfile_atmos
+                   elif [[ $host = lcxe6  ||  $host = lcxt5m ]]
+                   then
+                       aprun  -n $ii  -N $tasks_per_node  a.out  <  runfile_atmos
+                   elif [[ $host = lcflow ]]
+                   then
+                      mpirun -np $ii a.out  < runfile_atmos
+                   elif [[ $host = lcocean ]]
+                   then
+                      mpirun a.out  $ROPTS  < runfile_atmos
+                   elif [[ $host = lcsb ]]
+                   then
+                      mpirun_rsh -hostfile $PBS_NODEFILE -np `cat $PBS_NODEFILE | wc -l` a.out  < runfile_atmos
+                   elif [[ $host = lclrz ]]
+                   then
+                      mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+                   elif [[ $host = lcbwuni ]]
+                   then
+        	          pwd >>  ~/job_queue/debug.$kennung
+                      mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1  # Works Single
+                   elif [[ $host = lckeal ]]
+                   then
+#                     srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+                      srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS
+                   elif [[ $host = lckiaps ]]
+                   then
+                      mpirun -np $ii  -machinefile $PBS_NODEFILE  ./a.out  <  runfile_atmos
+                   elif [[ $host = lckyu* ]]
+                   then
+                      mpiexec -n $ii --stdin runfile_atmos  ./a.out
+                   else
+                      mpiexec  -machinefile hostfile  -n $ii  a.out  <  runfile_atmos
+                   fi
+
+                else
+                   # vnested or coupled model
+
+                   if [[ $run_coupled_model = true ]]
+                   then
+                       # CURRENTLY THERE IS NO FULL MPI-2 SUPPORT ON ICE AND XT4
+                       (( iia = $numprocs_atmos / $threads_per_task ))
+                       (( iio = $numprocs_ocean / $threads_per_task ))
+                       printf "\n      coupled run ($iia atmosphere, $iio ocean)"
+                       printf "\n      using $coupled_mode coupling"
+                       printf "\n\n"
+
+                       if [[ $coupled_mode = "mpi2" ]]
+                       then
+                          echo "atmosphere_to_ocean $iia $iio"  >  runfile_atmos
+                          echo "ocean_to_atmosphere $iia $iio"  >  runfile_ocean
+
+                          if [[ $host = lccrayf  ||  $host = lcxe6  ||  $host = lcxt5m ]]
+                          then
+
+                             aprun  -n $iia  -N $tasks_per_node  a.out < runfile_atmos  &
+                             aprun  -n $iio  -N $tasks_per_node  a.out < runfile_ocean  &
+
+                          else
+                                 # WORKAROUND BECAUSE mpiexec WITH -env option IS NOT AVAILABLE ON SOME SYSTEMS
+                              mpiexec  -machinefile hostfile  -n $iia  a.out  <  runfile_atmos &
+                              mpiexec  -machinefile hostfile  -n $iio  a.out  <  runfile_ocean &
+#                              mpiexec  -machinefile hostfile  -n $iia  -env coupling_mode atmosphere_to_ocean  a.out  &
+#                              mpiexec  -machinefile hostfile  -n $iio  -env coupling_mode ocean_to_atmosphere  a.out  &
+                          fi
+                          wait
+
+                       else
+
+                          echo "coupled_run $iia $iio"  >  runfile_atmos
+
+                          if [[ $host = lccrayf  ||  $host = lcxe6  ||  $host = lcxt5m ]]
+                          then
+
+                             aprun  -n $ii  -N $tasks_per_node  a.out < runfile_atmos
+
+                          elif [[ $host = lck || $host = lckordi ]]
+                          then
+
+                             mpiexec -n $ii  ./a.out  <  runfile_atmos  &
+
+                          elif [[ $host = lckyu* ]]
+                          then
+
+                             mpiexec -n $ii --stdin runfile_atmos  ./a.out
+
+                          elif [[ $host = lcmuk ]] 
+                          then
+
+                             mpiexec  -machinefile hostfile  -n $ii  a.out  <  runfile_atmos
+
+                          fi
+                          wait
+                       fi
+                   else
+                       # vnested model
+                       printf "\n      Vertical Nested run ($numprocs_crse Coarse, $numprocs_fine Fine)"
+                       printf "\n      using $vnested_mode vnesting"
+                       printf "\n\n"
+
+                        echo "$vnested_mode $numprocs_crse $numprocs_fine"  >  runfile_atmos
+
+                        if [[ $host = lcbwuni ]]
+                        then
+
+                            mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1  # Works Single
+
+                        elif [[ $host = lckeal ]]
+                        then
+
+#                           srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+                            srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS 
+
+                        elif [[ $host = lclrz* ]]
+                        then
+
+                            mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+
+                        else
+
+                           mpirun   -np $numprocs  ./a.out  $ROPTS  < runfile_atmos
+
+                        fi
+                        wait
+                   fi
+                fi
+
+             elif [[ $host = lckyoto ]]
+             then
+                set -xv
+                export P4_RSHCOMMAND=plesh
+                echo "     P4_RSHCOMMAND = $P4_RSHCOMMAND"
+                if [[ "$ENVIRONMENT" = BATCH ]]
+                then
+                   if [[ "$cond2" = fujitsu ]]
+                   then
+                      mpiexec  -n $numprocs  ./a.out  # for fujitsu-compiler
+                   elif [[ "cond2" = pgi ]]
+                   then
+                      mpirun  -np $numprocs  -machinefile ${QSUB_NODEINF}  ./a.out
+                   else
+                      mpirun_rsh -np $numprocs -hostfile ${QSUB_NODEINF} MV2_USE_SRQ=0 ./a.out  ||  /bin/true
+                   fi
+                else
+                   if [[ "$cond2" = "" ]]
+                   then
+                      mpiruni_rsh -np $numprocs ./a.out  # for intel
+                   else
+                      mpirun  -np $numprocs  ./a.out
+                   fi
+                fi
+                set +xv
+
+             elif [[ $host = lctit ]]
+             then
+                export OMP_NUM_THREADS=$threads_per_task
+                echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
+                if [[ "$threads_per_task" != 1 ]]
+                then
+                   export MV2_ENABLE_AFFINITY=0
+                fi
+                echo "----- PBS_NODEFILE content:"
+                cat $PBS_NODEFILE
+                echo "-----"
+                (( ii = $numprocs / $threads_per_task ))
+                echo "mpirun  -np $ii  -hostfile $PBS_NODEFILE ./a.out"
+                mpirun  -np $ii  -hostfile $PBS_NODEFILE  ./a.out
+
+             else
+                mpprun  -n $numprocs  a.out
+             fi
+          else
+             a.out
+          fi
+
+       fi  # end normal (non-debug) execution
+
+    fi  # end explicit execute_command or host-specific execute actions
+
+    if [[ $? != 0 ]]
+    then
+
+          # ABORT IN CASE OF RUNTIME ERRORS
+       printf "\n  +++ runtime error occured"
+       locat=execution
+       exit
+
+    else
+
+       printf "\n$dashes\n  *** execution finished \n"
+
+          # STOP THE DVR STREAMING SERVER AND PROCESS THE DVR OUTPUT IN ORDER
+          # TO CREAT DVRS- AND HTML-FILES CONTAINING ALL STREAMS
+       if [[ "$dvrserver_id" != "" ]]
+       then
+          kill $dvrserver_id
+          printf "\n  *** dvr server with id=$dvrserver_id has been stopped"
+
+             # IF THERE IS A DIRECTORY, DATA HAVE BEEN OUTPUT BY THE
+             # STREAMING SERVER. OTHERWISE, USER HAS CHOSEN dvrp_output=local
+          if [[ -d DATA_DVR ]]
+          then
+
+                # ADD THE CURRENT DVR CONFIGURATION FILE TO THE DVR OUTPUT
+                # DIRECTORY
+             cp  .dvrserver.config  DATA_DVR
+
+                # PROCESS THE DVR OUTPUT (OPTION -s FOR GENERATING
+                # SEQUENCE MODE DATA TOO)
+             process_dvr_output  -d DATA_DVR  -f $fname  -s
+
+          else
+
+                # PROCESS THE LOCAL OUTPUT
+             process_dvr_output  -l  -d DATA_DVR  -f $fname
+
+          fi
+
+       elif [[ $(echo $package_list | grep -c dvrp_graphics) != 0 ]]
+       then
+
+             # PROCESS DVR OUTPUT GENERATD IN LOCAL MODE (dvrp_output=local)
+          process_dvr_output  -l  -d DATA_DVR  -f $fname
+
+       fi
+    fi
+
+
+
+       # CALL OF combine_plot_fields IN ORDER TO MERGE SINGLE FILES WRITTEN
+       # BY EACH CORE INTO ONE FILE
+   if [[ ! -f ${PALM_BIN}/combine_plot_fields${block}.x ]]
+   then
+      printf "\n\n\n  +++ WARNING: no combine_plot_fields found for given block \"$cond1 $cond2\""
+      printf "\n      2d- and/or 3d-data may be incomplete!"
+      printf "\n      Run \"mbuild -u -h $localhost\" to generate utilities for this block.\n"
+   elif [[ "$combine_plot_fields" == true ]]
+   then
+      if [[ $localhost = lccrayh  ||  $localhost = lccrayb ]]
+      then
+         printf "\n\n\n *** post-processing: now executing \"aprun  -n 1  -N 1 combine_plot_fields${block}.x\" ..."
+         aprun  -n 1  -N 1 combine_plot_fields${block}.x
+      else
+         printf "\n\n\n *** post-processing: now executing \"combine_plot_fields${block}.x\" ..."
+         combine_plot_fields${block}.x
+      fi
+   else
+
+         # TEMPORARY SOLUTION TO SKIP combine_plot_fields. THIS IS REQUIRED IN CASE OF HUGE AMOUNT OF
+         # DATA OUTPUT. TO DO: EXTEND THIS BRANCH BY CREATING A BATCH JOB for combine_plot_fields.
+         # ??? koennen wir das streichen ???
+      printf "\n\n\n *** post-processing: skipping combine_plot_fields (-Z option set) ..."
+   fi
+
+
+
+       # EXECUTE OUTPUT-COMMANDS GIVEN IN THE CONFIGURATION FILE
+    (( i = 0 ))
+    while (( i < ioc ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n  *** execution of OUTPUT-commands:\n$dashes"
+       fi
+       printf "\n  >>> ${out_command[$i]}"
+       eval  ${out_command[$i]}
+       if (( i == ioc ))
+       then
+          printf "\n$dashes\n"
+       fi
+    done
+
+
+       # IN TRACE-MODE PRINT CONTENTS OF THE CURRENT (TEMPORARY) WORKING DIRECTORY
+    if [[ $do_trace = true ]]
+    then
+       printf "\n\n"
+       ls -al
+    fi
+
+
+
+       # COPY LOCAL OUTPUT-FILES TO THEIR PERMANENT DESTINATIONS
+    (( i = 0 ))
+    while (( i < iout ))
+    do
+       (( i = i + 1 ))
+       if (( i == 1 ))
+       then
+          printf "\n\n  *** saving OUTPUT-files:\n$dashes"
+       fi
+
+          # CHECK FOR SINGLE FILE (SERIAL RUN) OR DIRECTORY (ONE FILE PER CORE FOR PARELLEL EXECUTION)
+       files_for_pes=false; filetyp=file
+       if [[ "${actionout[$i]}" = pe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; filetyp=directory
+          actionout[$i]=""
+       elif [[ "${actionout[$i]}" = pe  &&  ! -n $numprocs ]]
+       then
+          actionout[$i]=""
+       elif [[ "${actionout[$i]}" = arpe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; filetyp=directory
+          actionout[$i]="ar"
+       elif [[ "${actionout[$i]}" = arpe  &&  ! -n $numprocs ]]
+       then
+          actionout[$i]="ar"
+       elif [[ "${actionout[$i]}" = flpe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; filetyp=directory
+          actionout[$i]="fl"
+       elif [[ "${actionout[$i]}" = flpe  &&  ! -n $numprocs ]]
+       then
+          actionout[$i]="fl"
+       elif [[ "${actionout[$i]}" = trpe  &&  -n $numprocs ]]
+       then
+          files_for_pes=true; filetyp=directory
+          actionout[$i]="tr"
+       elif [[ "${actionout[$i]}" = trpe  &&  ! -n $numprocs ]]
+       then
+          actionout[$i]="tr"
+       fi
+
+       if [[ ! -f ${localout[$i]}  &&  $files_for_pes = false ]]
+       then
+          printf "\n  +++ temporary OUTPUT-file  ${localout[$i]}  does not exist\n"
+       elif [[ ! -d ${localout[$i]}  &&  $files_for_pes = true ]]
+       then
+          printf "\n  +++ temporary OUTPUT-file  ${localout[$i]}/....  does not exist\n"
+       else
+
+
+             # COPY VIA SCP TO LOCAL HOST (ALWAYS IN BINARY MODE USING batch_scp option -m)
+             # IF TARGET DIRECTORY DOES NOT EXISTS, TRY TO CREATE IT
+          if [[ "${actionout[$i]}" = tr ]]
+          then
+             if [[ $localhost != $fromhost ]]
+             then
+                if [[ $files_for_pes = false ]]
+                then
+                   cps=""
+                   cst=""
+                else
+                   cps=-c
+                   cst="/"
+                fi
+                if [[ $localhost = nech ]]
+                then
+
+                      # TRANSFER IN SEPERATE JOB
+                      # FIRST COPY FILE TO TEMPORY DATA DIRECTORY
+                   [[ ! -d $tmp_data_catalog/TRANSFER ]]  &&  mkdir -p  $tmp_data_catalog/TRANSFER
+                   file_to_transfer=${fname}_${localout[$i]}_to_transfer_$kennung
+                   if [[ $files_for_pes = false ]]
+                   then
+                      ln -f  ${localout[$i]}  $tmp_data_catalog/TRANSFER/$file_to_transfer
+                   else
+                      mkdir  $tmp_data_catalog/TRANSFER/$file_to_transfer
+                      ln  ${localout[$i]}/*  $tmp_data_catalog/TRANSFER/$file_to_transfer
+                   fi
+
+                   echo "set -x"                                    >    transfer_${localout[$i]}
+                   echo "cd  $tmp_data_catalog/TRANSFER"            >>   transfer_${localout[$i]}
+
+                   printf "\n  >>> OUTPUT: ${localout[$i]}$cst  by SCP in seperate job to"
+                   printf "\n              ${pathout[$i]}/${localhost}_${fname}${endout[$i]}$cst"
+                   printf "\n              or higher cycle\n"
+                   echo "batch_scp $PORTOPT $cps -b -m -u $return_username $return_address  $file_to_transfer \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"  >>  transfer_${localout[$i]}
+
+                   echo "[[ \$? = 0 ]]  &&  rm  $file_to_transfer"  >>  transfer_${localout[$i]}
+
+                   if [[ $localhost = nech ]]
+                   then
+                      subjob  -d  -c /pf/b/$usern/job_queue  -v  -q pp  -X 0  -m 1000  -t 900  $PORTOPT  transfer_${localout[$i]}
+                   else
+                      if [[ "$LOGNAME" = b323013 ]]
+                      then
+                         subjob  -v  -q c1  -X 0  -m 1000  -t 900  -c $job_catalog  $PORTOPT  transfer_${localout[$i]}
+                      else
+                         subjob  -d  -v  -q c1  -X 0  -m 1000  -t 900  -c $job_catalog  $PORTOPT  transfer_${localout[$i]}
+                      fi
+                   fi
+
+                else
+
+                      # TRANSFER WITHIN THIS JOB
+                   transfer_failed=false
+                   printf "\n  >>> OUTPUT: ${localout[$i]}$cst  by SCP to"
+                   printf "\n              ${pathout[$i]}/${localhost}_${fname}${endout[$i]}$cst\n"
+                   if [[ $localhost = lccrayb ]]
+                   then
+                      ssh $usern@blogin1 ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT $cps -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   elif [[ $localhost = lccrayh ]]
+                   then
+                      ssh $usern@hlogin1 ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT $cps -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   elif [[ $localhost = lcbullhh ]]
+                   then
+                      ssh $usern@mlogin101 ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT $cps -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   elif [[ $localhost = lcxe6 ]]
+                   then
+                      ssh $usern@hexagon ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT $cps -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   else
+                      batch_scp $PORTOPT $cps -b -m -u $return_username $return_address  ${localout[$i]} "${pathout[$i]}" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}
+                   fi
+                   [[ $? != 0 ]]  &&  transfer_failed=true
+
+                      # IF TRANSFER FAILED, CREATE BACKUP COPY ON THIS MACHINE
+                   if [[ $transfer_failed = true ]]
+                   then
+                      printf "  +++ transfer failed. Trying to save a copy on this host under:\n"
+                      printf "      ${pathout[$i]}/${localhost}_${fname}${endout[$i]}_$kennung\n"
+
+                         # FIRST CHECK, IF DIRECTORY EXISTS, AND CREATE IT, IF NECESSARY
+                      eval  local_catalog=${pathout[$i]}
+                      if [[ ! -d $local_catalog ]]
+                      then
+                         printf "  *** local directory does not exist. Trying to create:\n"
+                         printf "      $local_catalog \n"
+                         mkdir -p  $local_catalog
+                      fi
+                      eval  cp  ${localout[$i]}  ${pathout[$i]}/${localhost}_${fname}${endout[$i]}_$kennung
+                      transfer_problems=true
+                   fi
+                fi
+             else
+
+                   # UNSET actionout. DUE TO THIS SETTING, FILE WILL LATER JUST BE COPIED ON THIS MACHINE
+                actionout[$i]=""
+             fi
+          fi
+
+
+             # APPEND VIA SCP TO LOCAL HOST (ALWAYS IN BINARY MODE USING batch_scp option -m)
+             # IF TARGET DIRECTORY DOES NOT EXISTS, TRY TO CREATE IT
+          if [[ "${actionout[$i]}" = tra ]]
+          then
+             if [[ $localhost != $fromhost ]]
+             then
+                if [[ $localhost = ibmh  ||  $localhost = nech ]]
+                then
+
+                      # TRANSFER IN SEPERATE JOB
+                      # FIRST COPY FILE TO TEMPORY DATA DIRECTORY
+                   [[ ! -d $tmp_data_catalog/TRANSFER ]]  &&  mkdir -p  $tmp_data_catalog/TRANSFER
+                   file_to_transfer=${fname}_${localout[$i]}_to_transfer_$kennung
+                   ln -f  ${localout[$i]}  $tmp_data_catalog/TRANSFER/$file_to_transfer
+
+                   echo "set -x"                                    >    transfer_${localout[$i]}
+                   echo "cd  $tmp_data_catalog/TRANSFER"            >>   transfer_${localout[$i]}
+
+                   printf "\n  >>> OUTPUT: ${localout[$i]}  append by SCP in seperate job to"
+                   printf "\n              ${pathout[$i]}/${localhost}_${fname}${endout[$i]}"
+                   printf "\n              or higher cycle\n"
+                   echo "batch_scp $PORTOPT -A -b -m -u $return_username $return_address  $file_to_transfer \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"  >>  transfer_${localout[$i]}
+
+                   echo "[[ \$? = 0 ]]  &&  rm  $file_to_transfer"  >>  transfer_${localout[$i]}
+
+                   if [[ $localhost = nech ]]
+                   then
+                      subjob  -d  -c /pf/b/$usern/job_queue  -v  -q pp  -X 0  -m 1000  -t 900  $PORTOPT  transfer_${localout[$i]}
+                   else
+                      if [[ $LOGNAME = b323013 ]]
+                      then
+                         subjob  -v  -q c1  -X 0  -m 1000  -t 900  -c $job_catalog  $PORTOPT  transfer_${localout[$i]}
+                      else
+                         subjob  -d  -v  -q c1  -X 0  -m 1000  -t 900  -c $job_catalog  $PORTOPT  transfer_${localout[$i]}
+                      fi
+                   fi
+
+                else
+
+                      # TRANSFER WITHIN THIS JOB
+                   transfer_failed=false
+                   printf "\n  >>> OUTPUT: ${localout[$i]}  append by SCP to"
+                   printf "\n              ${pathout[$i]}/${localhost}_${fname}${endout[$i]}\n"
+                   if [[ $localhost = lccrayb ]]
+                   then
+                      ssh $usern@blogin1 ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT -A -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   elif [[ $localhost = lccrayh ]]
+                   then
+                      ssh $usern@hlogin1 ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT -A -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   elif [[ $localhost = lcxe6 ]]
+                   then
+                      ssh $usern@hexagon ". \\$HOME/.profile; cd $TEMPDIR; batch_scp $PORTOPT -A -b -m -u $return_username $return_address  ${localout[$i]} \"${pathout[$i]}\" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}"
+                   else
+                      batch_scp $PORTOPT -A -b -m -u $return_username  $return_address ${localout[$i]} "${pathout[$i]}" ${localhost}_${fname}${endout[$i]}  ${extout[$i]}
+                   fi
+                   [[ $? != 0 ]]  &&  transfer_failed=true
+
+                      # IF TRANSFER FAILED, CREATE BACKUP COPY ON THIS MACHINE
+                   if [[ $transfer_failed = true ]]
+                   then
+                      printf "  +++ transfer failed. Trying to save a copy on this host under:\n"
+                      printf "      ${pathout[$i]}/${localhost}_${fname}${endout[$i]}_$kennung\n"
+
+                         # FIRST CHECK, IF DIRECTORY EXISTS, AND CREATE IT, IF NECESSARY
+                      eval  local_catalog=${pathout[$i]}
+                      if [[ ! -d $local_catalog ]]
+                      then
+                         printf "  *** local directory does not exist. Trying to create:\n"
+                         printf "      $local_catalog \n"
+                         mkdir -p  $local_catalog
+                      fi
+
+                      eval  cp  ${localout[$i]}  ${pathout[$i]}/${localhost}_${fname}${endout[$i]}_$kennung
+                      transfer_problems=true
+                   fi
+                fi
+             else
+
+                   # RESET actionout. DUE TO THIS SETTING, FILE WILL LATER JUST BE APPENDED ON THIS MACHINE
+                actionout[$i]=a
+             fi
+          fi
+
+
+             # OUTPUT-FILE FOR A RESTART-RUN.
+             # FILE IS MOVED TO THE TEMPORARY DATA DIRECTORY USING link COMMAND.
+             # OPTION -f IS USED TO OVERWRITE EXISTING FILES.
+             # AS LAST ACTION, ARCHIVING IS INITIATED.
+          if [[ "${actionout[$i]}" = fl ]]
+          then
+             [[ ! -d $tmp_data_catalog ]]  &&  mkdir -p  $tmp_data_catalog
+             chmod  g+rx  $tmp_data_catalog
+             if [[ $files_for_pes = false ]]
+             then
+                printf "\n  >>> OUTPUT: ${localout[$i]}  to"
+                printf "\n              $tmp_data_catalog/${frelout[$i]} (temporary data catalog)\n"
+                ln -f  ${localout[$i]}  $tmp_data_catalog/${frelout[$i]}
+             else
+                printf "\n  >>> OUTPUT: ${localout[$i]}/....  to"
+                printf "\n              $tmp_data_catalog/${frelout[$i]} (temporary data catalog)\n"
+                mkdir  $tmp_data_catalog/${frelout[$i]}
+                cd ${localout[$i]}
+                for file in $(ls *)
+                do
+                   ln -f $file $tmp_data_catalog/${frelout[$i]}
+                done
+                cd $TEMPDIR
+             fi
+
+
+                # CREATE AND SUBMIT ARCHIVING-JOB
+             if [[ $store_on_archive_system = true ]]
+             then
+
+                if [[ $archive_system = asterix ]]
+                then
+                   echo "cd  $tmp_data_catalog"                      >> archive_${frelout[$i]}
+                   if [[ $files_for_pes = false ]]
+                   then
+                      echo "stageout  ${frelout[$i]}  > STAGE_OUTPUT${i}_$kennung" >> archive_${frelout[$i]}
+                   else
+                      echo "stageout -t  ${frelout[$i]}  > STAGE_OUTPUT${i}_$kennung" >> archive_${frelout[$i]}
+                   fi
+                   echo "cat  STAGE_OUTPUT${i}_$kennung"               >> archive_${frelout[$i]}
+                   echo "if [[ \$(grep -c \"st.msg:150\"  STAGE_OUTPUT${i}_$kennung) != 0 ]]" >> archive_${frelout[$i]}
+                   echo "then"                                       >> archive_${frelout[$i]}
+                   echo "   do_stageout=false"                       >> archive_${frelout[$i]}
+                   echo "else"                                       >> archive_${frelout[$i]}
+                   echo "   echo \"  +++ $filetyp ${frelout[$i]}  could not be stored on archive-system\" " >> archive_${frelout[$i]}
+                   echo "   cat  /dev/null  >  ~/job_queue/ARCHIVE_ERROR_$fname" >> archive_${frelout[$i]}
+                   echo "   cat  STAGE_OUTPUT${i}_$kennung  >  ~/job_queue/archive_${frelout[$i]}_error" >> archive_${frelout[$i]}
+                   echo "   echo \"  *** $filetyp ${frelout[$i]} will be copied to \$WORK as backup\" " >> archive_${frelout[$i]}
+                   if [[ $files_for_pes = false ]]
+                   then
+                      echo "   cp   ${frelout[$i]}  \$WORK"                    >> archive_${frelout[$i]}
+                   else
+                      echo "   cp -r  ${frelout[$i]}  \$WORK/${frelout[$i]}"   >> archive_${frelout[$i]}
+                   fi
+                   echo "   echo \"  *** $filetyp ${frelout[$i]} saved\" " >> archive_${frelout[$i]}
+                   echo "fi"                                         >> archive_${frelout[$i]}
+                   echo "rm  STAGE_OUTPUT${i}_$kennung"              >> archive_${frelout[$i]}
+                elif [[ $archive_system = DMF ]]
+                then
+                   echo "cd  $tmp_data_catalog"                      >> archive_${frelout[$i]}
+                   if [[ $files_for_pes = false ]]
+                   then
+                      printf "\n  +++ archiving of single files impossible with $archive_system !\n"
+                      locat=DMF
+                      exit
+                   else
+                         # ??? nicht benötigte Archiv-Systeme entfernen ???
+                         # FUER RECHNER IN JUELICH. DORT KOENNTEN AUCH
+                         # EINZELNE DATEIEN GESICHERT WERDEN (SPAETER KORR.)
+                      echo "rm -rf  \$ARCHIVE/${frelout[$i]}"     >> archive_${frelout[$i]}
+                      echo "cp -r  ${frelout[$i]}  \$ARCHIVE"     >> archive_${frelout[$i]}
+                   fi
+                elif [[ $archive_system = tivoli ]]
+                then
+                   echo "cd  $tmp_data_catalog"                       >> archive_${frelout[$i]}
+                   if [[ $files_for_pes = false ]]
+                   then
+                         # REMOVE EXISTING OLD FILES FROM THE ARCHIVE
+                      echo "set -x"                                   >> archive_${frelout[$i]}
+                      echo "rm  -rf  \$PERM/${frelout[$i]}"           >> archive_${frelout[$i]}
+                      echo "cp  ${frelout[$i]} \$PERM/${frelout[$i]}" >> archive_${frelout[$i]}
+                   else
+
+                      echo "set -x"                                   >> archive_${frelout[$i]}
+                      echo "rm  -rf  \$PERM/${frelout[$i]}/*"         >> archive_${frelout[$i]}
+                      echo "[[ ! -d \$PERM/${frelout[$i]} ]] && mkdir $PERM/${frelout[$i]}" >> archive_${frelout[$i]}
+                      cd  $tmp_data_catalog
+                      all_files=`ls -1 ${frelout[$i]}/*`
+                      cd -  > /dev/null
+                      (( inode = 0 ))
+                      (( tp1   = tasks_per_node + 1 ))
+                      while (( inode < nodes ))
+                      do
+                         files=`echo $all_files | cut -d" " -f1-$tasks_per_node`
+                         all_files=`echo $all_files | cut -d" " -f$tp1-`
+                         echo "tar  cvf \$PERM/${frelout[$i]}/${frelout[$i]}.node_$inode.tar $files"   >> archive_${frelout[$i]}
+                         (( inode = inode + 1 ))
+                      done
+                   fi
+                elif [[ $archive_system = ut ]]
+                then
+                   echo "cd  $tmp_data_catalog"                       >> archive_${frelout[$i]}
+                   if [[ $files_for_pes = false ]]
+                   then
+                         # REMOVE EXISTING OLD FILES FROM THE ARCHIVE
+                      echo "set -x"                                 >> archive_${frelout[$i]}
+                      echo "rm  -rf  \$UT/${frelout[$i]}"           >> archive_${frelout[$i]}
+                      echo "cp  ${frelout[$i]} \$UT/${frelout[$i]}" >> archive_${frelout[$i]}
+                   else
+
+                      echo "set -x"                                 >> archive_${frelout[$i]}
+                      echo "rm  -rf  \$UT/${frelout[$i]}/*"         >> archive_${frelout[$i]}
+                      echo "[[ ! -d \$UT/${frelout[$i]} ]] && mkdir $UT/${frelout[$i]}" >> archive_${frelout[$i]}
+                      cd  $tmp_data_catalog
+                      all_files=`ls -1 ${frelout[$i]}/*`
+                      cd -  > /dev/null
+                      (( inode = 0 ))
+                      (( tp1   = tasks_per_node + 1 ))
+                      while (( inode < nodes ))
+                      do
+                         files=`echo $all_files | cut -d" " -f1-$tasks_per_node`
+                         all_files=`echo $all_files | cut -d" " -f$tp1-`
+                         echo "tar  cvf \$UT/${frelout[$i]}/${frelout[$i]}.node_$inode.tar $files"   >> archive_${frelout[$i]}
+                         (( inode = inode + 1 ))
+                      done
+                   fi
+                elif [[ $archive_system = none ]]
+                then
+                   printf "              +++ archiving on $localhost not available!\n"
+                fi
+
+                if [[ $archive_system != none ]]
+                then
+                   if [[ $localhost = nech ]]
+                   then
+                      subjob  -d  -c /pf/b/$usern/job_queue  -v  -q pp  -X 0  -m 1000  -t 7200  $PORTOPT  archive_${frelout[$i]}
+                   fi
+                   printf "              Archiving of $tmp_data_catalog/${frelout[$i]} initiated (batch job submitted)\n"
+                fi
+             else
+                printf "              +++ caution: option -A is switched off. No archiving on $archive_system!\n"
+             fi
+
+
+                # CREATE AN EMPTY DIRECTORY IN THE USERS PERMANENT DIRECTORY,
+                # IN ORDER TO NOTE THE RESPECTIVE CYCLE NUMBER ON THE ARCHIVE SYSTEM
+                # RESTART-JOBS ARE USING THESE EMPTY-DIRECTORIES TO GET THE CURRENT HIGHEST
+                # CYCLE NUMBER ON THE ARCHIVE SYSTEM (IN CASE THAT INFORMATIONS ARE DIFFICULT TO
+                # TO ACCESS FROM THE ARCHIVE-SYSTEM DIRECTLY))
+             if [[ $files_for_pes = false ]]
+             then
+                cat  /dev/null  >  ${pathout[$i]}
+             else
+                mkdir -p  ${pathout[$i]}
+             fi
+
+          fi
+
+
+             # COPY FROM THIS HOST TO THE ARCHIVE-SYSTEM
+             # IF ANY ARCHIVING FAILS, AN ERROR-FLAG-FILE IS SET
+             # THIS FILE REMAINS TO BE SET, EVEN IF ARCHIVING OF FURTHER FILES IS SUCCESSFULL
+          if [[ "${actionout[$i]}" = ar ]]
+          then
+             if [[ $files_for_pes = false ]]
+             then
+                printf "\n  >>> OUTPUT: ${localout[$i]}  to"
+                printf "\n              ${pathout[$i]}"
+                printf "\n              File will be copied to archive-system ($archive_system) !\n"
+             else
+                printf "\n  >>> OUTPUT: ${localout[$i]}/_....  to"
+                printf "\n              ${pathout[$i]}"
+                printf "\n              Directory will be copied to archive-system ($archive_system) !\n"
+             fi
+             mv  ${localout[$i]}  ${frelout[$i]}
+
+             file_saved=false
+
+             if [[ $archive_system = asterix ]]
+             then
+                do_stageout=true
+                (( stageout_anz = 0 ))
+                while [[ $do_stageout = true ]]
+                do
+                   if [[ $files_for_pes = false ]]
+                   then
+                      stageout  ${frelout[$i]}  > STAGE_OUTPUT
+                   else
+                      stageout  -t  ${frelout[$i]}  > STAGE_OUTPUT
+                   fi
+                   cat  STAGE_OUTPUT
+                   if [[ $(grep -c "st.msg:150"  STAGE_OUTPUT) != 0 ]]
+                   then
+                      file_saved=true
+                      do_stageout=false
+                   else
+                      if [[ $files_for_pes = false ]]
+                      then
+                         printf "\n  +++ file ${frelout[$i]}  could not be saved on archive-system"
+                      else
+                         printf "\n  +++ directory ${frelout[$i]} could not be saved on archive-system"
+                      fi
+                      (( stageout_anz = stageout_anz + 1 ))
+                      if (( stageout_anz == 10 ))
+                      then
+                         printf "\n  +++ stoped after 10 unsuccessful tries!"
+                         archive_save=false
+                         do_stageout=false
+                      else
+                         printf "\n  *** new try to store on archive after 15 min:"
+                         sleep 900
+                      fi
+                   fi
+                done
+             elif [[ $archive_system = DMF ]]
+             then
+                if [[ $files_for_pes = false ]]
+                then
+                   printf "\n  +++ archiving of single files impossible on $archive_system!\n"
+                   locat=DMF
+                   exit
+                else
+                   rm -rf  $ARCHIVE/${frelout[$i]}
+                   cp -r  ${frelout[$i]}  $ARCHIVE
+                fi
+                file_saved=true
+             elif [[ $archive_system = tivoli ]]
+             then
+                   # ARCHIVING ONLY POSSIBLE VIA BATCH-JOB
+                   # IN THE MEANTIME, FILE IS STORED IN THE TEMPORARY DATA DIRECTORY,
+                   # BECAUSE MRUN'S CURRENT TEMPORARY WORKING DIRECTORY MAY ALREADY BE DELETED
+                   # WHEN THE ARCHIVE-JOB IS EXECUTED
+                [[ ! -d $tmp_data_catalog ]]  &&  mkdir -p  $tmp_data_catalog
+                chmod  g+rx  $tmp_data_catalog
+                if [[ $files_for_pes = false ]]
+                then
+                   ln -f  ${frelout[$i]}  $tmp_data_catalog/${frelout[$i]}
+                else
+                   mkdir  $tmp_data_catalog/${frelout[$i]}
+                   ln -f  ${frelout[$i]}/*  $tmp_data_catalog/${frelout[$i]}
+                fi
+
+                   # GENERATE AND SUBMIT BATCH-JOB
+                   # FILE HAS TO BE DELETED FROM THE TEMPORARY DATA DIRECTORY
+                   # DELETE OLD EXISTING FILES FROM THE ARCHIVE
+                echo "cd  $tmp_data_catalog"                       >  archive_${frelout[$i]}
+                if [[ $files_for_pes = false ]]
+                then
+                   echo "rm  -rf  \$PERM/${frelout[$i]}"           >> archive_${frelout[$i]}
+                   echo "cp  ${frelout[$i]} \$PERM/${frelout[$i]}" >> archive_${frelout[$i]}
+                   echo "rm  -rf  ${frelout[$i]}"                  >> archive_${frelout[$i]}
+                else
+                   echo "rm  -rf  \$PERM/${frelout[$i]}.tar"       >> archive_${frelout[$i]}
+                   echo "tar  cvf \$PERM/${frelout[$i]}.tar ${frelout[$i]}" >> archive_${frelout[$i]}
+                   echo "rm  -rf  ${frelout[$i]}"                  >> archive_${frelout[$i]}
+                fi
+
+                subjob  -v  -d  -q cdata  -X 0  -m 1000  -t 43200  -c $job_catalog  $PORTOPT  archive_${frelout[$i]}
+                printf "              Archiving of $tmp_data_catalog/${frelout[$i]} initiated (batch job submitted)\n"
+                file_saved=true
+
+             elif [[ $archive_system = ut ]]
+             then
+                   # ARCHIVING ONLY POSSIBLE VIA BATCH-JOB
+                   # IN THE MEANTIME, FILE IS STORED IN THE TEMPORARY DATA DIRECTORY,
+                   # BECAUSE MRUN'S CURRENT TEMPORARY WORKING DIRECTORY MAY ALREADY BE DELETED
+                   # WHEN THE ARCHIVE-JOB IS EXECUTED
+                [[ ! -d $tmp_data_catalog ]]  &&  mkdir -p  $tmp_data_catalog
+                chmod  g+rx  $tmp_data_catalog
+                if [[ $files_for_pes = false ]]
+                then
+                   ln -f  ${frelout[$i]}  $tmp_data_catalog/${frelout[$i]}
+                else
+                   mkdir  $tmp_data_catalog/${frelout[$i]}
+                   ln -f  ${frelout[$i]}/*  $tmp_data_catalog/${frelout[$i]}
+                fi
+
+                   # GENERATE AND SUBMIT BATCH-JOB
+                   # FILE HAS TO BE DELETED FROM THE TEMPORARY DATA DIRECTORY
+                   # DELETE OLD EXISTING FILES FROM THE ARCHIVE
+                echo "cd  $tmp_data_catalog"                       >  archive_${frelout[$i]}
+                if [[ $files_for_pes = false ]]
+                then
+                   echo "rm  -rf  \$UT/${frelout[$i]}"           >> archive_${frelout[$i]}
+                   echo "cp  ${frelout[$i]} \$UT/${frelout[$i]}" >> archive_${frelout[$i]}
+                   echo "rm  -rf  ${frelout[$i]}"                >> archive_${frelout[$i]}
+                else
+                   echo "rm  -rf  \$UT/${frelout[$i]}.tar"       >> archive_${frelout[$i]}
+                   echo "tar  cvf \$UT/${frelout[$i]}.tar ${frelout[$i]}" >> archive_${frelout[$i]}
+                   echo "rm  -rf  ${frelout[$i]}"                >> archive_${frelout[$i]}
+                fi
+
+                subjob  -v  -c /pf/b/$usern/job_queue  -d  -q pp  -X 0  -m 1000  -t 7200  $PORTOPT  archive_${frelout[$i]}
+                printf "              Archiving of $tmp_data_catalog/${frelout[$i]} initiated (batch job submitted)\n"
+                file_saved=true
+
+             else
+                printf "\n  +++ archive_system=\"$archive_system\"  archiving impossible!"
+                archive_save=false
+             fi
+
+                # CREATE EMPTY FLAG-FILE OR -DIRECTORY
+                # IN ORDER TO NOTE THE RESPECTIVE CYCLE NUMBER ON THE ARCHIVE SYSTEM
+                # RESTART-JOBS ARE USING THESE EMPTY-DIRECTORIES TO GET THE CURRENT HIGHEST
+                # CYCLE NUMBER ON THE ARCHIVE SYSTEM (IN CASE THAT INFORMATIONS ARE DIFFICULT TO
+                # TO ACCESS FROM THE ARCHIVE-SYSTEM DIRECTLY))
+             if [[ $file_saved = true ]]
+             then
+                if [[ $files_for_pes = false ]]
+                then
+                   cat  /dev/null  >  ${pathout[$i]}
+                else
+                   mkdir -p  ${pathout[$i]}
+                fi
+             fi
+
+          fi
+
+             # APPEND ON THIS MACHINE
+          if [[ "${actionout[$i]}" = "a" ]]
+          then
+             if [[ "${extout[$i]}" != " "  &&  "${extout[$i]}" != "" ]]
+             then
+                printf "\n  >>> OUTPUT: ${localout[$i]}  append to  ${pathout[$i]}.${extout[$i]}\n"
+                cat  ${localout[$i]}  >>  ${pathout[$i]}.${extout[$i]}
+             else
+                printf "\n  >>> OUTPUT: ${localout[$i]}  append to  ${pathout[$i]}\n"
+                cat  ${localout[$i]}  >>  ${pathout[$i]}
+             fi
+          fi
+
+             # COPY ON THIS MACHINE
+             # COPY HAS TO BE USED, BECAUSE MOVE DOES NOT WORK IF FILE-ORIGIN AND TARGET ARE
+             # ON DIFFERENT FILE-SYSTEMS
+          if [[ "${actionout[$i]}" = ""  &&  $files_for_pes = false ]]
+          then
+
+                # COPY IN CASE OF RUNS ON SINGLE CORES
+             if [[ "${extout[$i]}" != " "  &&  "${extout[$i]}" != "" ]]
+             then
+                printf "\n  >>> OUTPUT: ${localout[$i]}  to  ${pathout[$i]}.${extout[$i]}\n"
+		if [[ $link_local_output = true ]]
+		then
+		    printf "      using ln -f\n"
+		    ln -f  ${localout[$i]}  ${pathout[$i]}.${extout[$i]}
+		fi
+		# If "ln -f" fails of if "$link_local_output = false" do a normal "cp"
+		if [[ ! -f "${pathout[$i]}.${extout[$i]}" ]]
+                then
+		    if [[ $link_local_output = true ]]
+	            then
+			printf "      ln failed, using cp...\n"
+		    fi
+		    cp  ${localout[$i]}  ${pathout[$i]}.${extout[$i]}
+                fi
+             else
+                printf "\n  >>> OUTPUT: ${localout[$i]}  to  ${pathout[$i]}\n"
+		if [[ $link_local_output = true ]]
+		then
+		    printf "      using ln -f\n"
+		    ln -f  ${localout[$i]}  ${pathout[$i]}
+		fi
+		# If "ln -f" fails of if "$link_local_output = false" do a normal "cp"
+		if [[ ! -f "${pathout[$i]}" ]]
+                then
+		    if [[ $link_local_output = true ]]
+	            then
+			printf "      ln failed, using cp...\n"
+		    fi
+		    cp  ${localout[$i]}  ${pathout[$i]}
+                fi
+             fi
+
+          elif [[ "${actionout[$i]}" = ""  &&  $files_for_pes = true ]]
+          then
+
+                # FILES FROM THE DIFFERENT CORES ARE MOVED WITH ln-COMMAND TO THE PERMANENT DIRECTORY
+                # AS A FIRST STEP, THE PERMANENT DIRECTORY IS CREATED
+             printf "\n  >>> OUTPUT: ${localout[$i]}/_....  to  ${pathout[$i]}\n"
+	     if [[ $link_local_output = true ]]
+	     then
+		 printf "      using ln -f\n"
+		 mkdir  ${pathout[$i]}
+		 cd ${localout[$i]}
+		 for file in $(ls *)
+		 do
+		   ln -f $file  ${pathout[$i]}
+		 done
+		 cd $TEMPDIR
+	     fi
+
+                # IF "ln -f" HAS FAILED OR IF "$link_local_output = false" DO A NORMAL COPY "cp -r"
+	     if [[ ! -f "${pathout[$i]}/_0000" ]]
+             then
+		 if [[ $link_local_output = true ]]
+		 then
+		     printf "      ln failed for .../_0000, using cp...\n"
+		 fi
+		 cp -r  ${localout[$i]}  ${pathout[$i]}
+	     fi
+
+          fi
+       fi
+    done
+    if (( i != 0 ))
+    then
+       if [[ $transfer_problems = true ]]
+       then
+          printf "\n$dashes\n  *** OUTPUT-files saved"
+          printf "\n  +++ WARNING: some data transfers failed! \n"
+       else
+          printf "\n$dashes\n  *** all OUTPUT-files saved \n"
+       fi
+    fi
+
+
+       # IF REQUIRED, START A RESTART-JOB
+       # FILE CONTINUE_RUN MUST HAVE BEEN CREATED BY THE EXECUTABLE (PALM)
+    if [[ -f CONTINUE_RUN ]]
+    then
+
+       if [[ $archive_save = true ]]
+       then
+
+             # ADD RESTART-OPTIONS TO THE MRUN-CALL (IF THEY ARE NOT USED ALREADY):
+             # -C TELLS MRUN THAT IT IS A RESTART-RUN
+             # -v SILENT MODE WITHOUT INTERACTIVE QUERIES
+             # -n BATCH-MODE (IMPORTANT ONLY IN CASE OF BATCH JOBS ON THE LOCAL MACHINE)
+          [[ $(echo $mc | grep -c "\-C") = 0 ]]  &&  mc="$mc -C"
+          [[ $(echo $mc | grep -c "\-v") = 0 ]]  &&  mc="$mc -v"
+          [[ $(echo $mc | grep -c "\-b") = 0 ]]  &&  mc="$mc -b"
+          if [[ $(echo $mc | grep -c "#") != 0 ]]
+          then
+             mc=`echo $mc | sed 's/#/f/g'`
+          fi
+
+
+             # START THE RESTART-JOB
+          printf "\n\n  *** initiating restart-run on \"$return_address\" using command:\n"
+          echo "      $mc"
+          printf "\n$dashes\n"
+          if [[ $localhost != $fromhost ]]
+          then
+
+             if [[ $localhost = lcbullhh  ||  $localhost = lccrayb  ||  $localhost = lccrayh  ||  $localhost = nech  ||  $localhost = ibmh  ||  $localhost = ibmkisti  ||  $localhost = ibmku  ||  $localhost = ibms  ||  $localhost = lcflow  ||  $localhost = lckyu*  ||  $localhost = lcxe6 ]]
+             then
+                echo "*** ssh will be used to initiate restart-runs!"
+                echo "    return_address=\"$return_address\" "
+                echo "    return_username=\"$return_username\" "
+                if [[ $(echo $return_address | grep -c "130.75.105") = 1 ]]
+                then
+                   if [[ $localhost = ibmh ]]
+                   then
+                      ssh $SSH_PORTOPT $usern@136.172.40.15 "ssh $SSH_PORTOPT $return_address -l $return_username \". \\\$HOME/.profile; module load intel-compiler hdf5 netcdf; PATH=\\\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   elif [[ $localhost = lcbullhh ]]
+                   then
+                      ssh $SSH_PORTOPT $usern@mlogin101 "ssh $SSH_PORTOPT $return_address -l $return_username \". \\\$HOME/.profile; module load intel-compiler hdf5 netcdf; PATH=\\\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   elif [[ $localhost = lccrayb ]]
+                   then
+                      ssh $usern@blogin1 "ssh $SSH_PORTOPT $return_address -l $return_username \". \\\$HOME/.profile; module load intel-compiler hdf5 netcdf; PATH=\\\$PATH:$LOCAL_MRUN_PATH; export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   elif [[ $localhost = lccrayh ]]
+                   then
+                      ssh $usern@hlogin1 "ssh $SSH_PORTOPT $return_address -l $return_username \". \\\$HOME/.profile; module load intel-compiler hdf5 netcdf; PATH=\\\$PATH:$LOCAL_MRUN_PATH; export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   elif [[ $localhost = lcxe6 ]]
+                   then
+                      ssh $usern@hexagon "ssh $SSH_PORTOPT $return_address -l $return_username \". \\\$HOME/.profile; module load intel-compiler hdf5 netcdf; PATH=\\\$PATH:$LOCAL_MRUN_PATH; export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   else
+                      ssh $SSH_PORTOPT $return_address -l $return_username ". \\\$HOME/.profile; module load intel-compiler hdf5 netcdf; PATH=\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc "
+                   fi
+                else
+                   if [[ $localhost = ibmkisti ]]
+                   then
+                      ssh $SSH_PORTOPT $usern@gaiad "ssh $SSH_PORTOPT $return_address -l $return_username \"PATH=\\\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   elif [[ $localhost = lcflow ]]
+                   then
+                      /usr/bin/ssh $SSH_PORTOPT $return_address -l $return_username "PATH=\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc "
+                   elif [[ $localhost = lcocean ]]
+                   then
+                      /usr/bin/ssh $SSH_PORTOPT $return_address -l $return_username "PATH=\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc "
+                   elif [[ $localhost = lccrayb ]]
+                   then
+                      ssh $usern@blogin1 "ssh $SSH_PORTOPT $return_address -l $return_username \"PATH=\\\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   elif [[ $localhost = lccrayh ]]
+                   then
+                      ssh $usern@hlogin1 "ssh $SSH_PORTOPT $return_address -l $return_username \"PATH=\\\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc\" "
+                   else
+                      ssh $SSH_PORTOPT $return_address -l $return_username "PATH=\$PATH:$LOCAL_MRUN_PATH;export PALM_BIN=$LOCAL_MRUN_PATH;cd $LOCAL_PWD; $mc "
+                   fi
+                fi
+             else
+                printf "\n  +++ no restart mechanism available for host \"$localhost\" "
+                locat=restart; exit
+             fi
+
+                # WAIT TO ALLOW THE RESTART-JOB TO BE QUEUED, BEFORE THE CURRENT JOB IS FINISHED
+	     if [[ $queue = special1q ]]
+	     then
+                sleep 120
+	     else
+	        sleep 30
+	     fi
+
+          else
+
+                # JOBS RUNNING (AND STARTED) ON THE LOCAL MACHINE CAN DIRECTLY CALL MRUN (WITHOUT
+                # USING SSH)
+             cd $LOCAL_PWD
+             if [[ $localhost = lckyuh ]]
+             then
+                printf "\n  +++ WARNING: no restart mechanism available for host \"$localhost\" "
+                printf "\n               please restart job manually using command:\n"
+                printf "\n               \"$mc\" "
+             else
+                eval  $mc                # THE ' MUST BE EVALUATED
+             fi
+             cd -  > /dev/null
+          fi
+          if [[ $localhost = lckyuh ]]
+          then
+             printf "\n$dashes\n  *** restart-run to be initiated manually\n"
+          else
+             printf "\n$dashes\n  *** restart-run initiated \n"
+          fi
+
+
+             # DELETE INPUT-(RESTART)FILES, WHICH HAVE BEEN FETCHED FROM THE TEMPORARY DATA
+             # DIRECTORY, BACAUSE THEY ARE NOT REQUIRED BY THE RESTART-JOB.
+             # THIS IS DONE IN ORDER TO AVOID EXCEEDING DISC QUOTAS OR DISC SPACE (RESTART-FILES
+             # MAY BE VERY HUGE)
+          (( i = 0 ))
+          while (( i < iin ))
+          do
+             (( i = i + 1 ))
+             if [[ "${got_tmp[$i]}" = true   &&  $keep_data_from_previous_run = false ]]
+             then
+                rm -r  $tmp_data_catalog/${frelin[$i]}
+             fi
+          done
+
+       else
+
+          printf "\n  +++ no restart-run possible, since errors occured"
+          printf "\n      during the archive process"
+       fi
+
+    fi
+
+
+    
+       # SEND EMAIL NOTIFICATION ABOUT THE FINISHED RUN
+    if [[ "$email_notification" != "none" ]]
+    then
+
+       if [[ $localhost != $fromhost ]]
+       then
+          if [[ -f CONTINUE_RUN ]]
+          then
+             echo "PALM restart run necessary"        >   email_text
+             echo "description header of actual run:" >>  email_text
+             cat  CONTINUE_RUN                        >>  email_text
+             echo "mrun-command to restart:"          >>  email_text
+             echo "$mc"                               >>  email_text
+          else
+             echo "PALM run with base filename \"$fname\" on host \"$localhost\" finished"  >  email_text
+          fi
+          mail  $email_notification  <  email_text
+          printf "\n  *** email notification sent to \"$email_notification\" "
+       fi
+    fi
+
+
+
+       # ALL ACTIONS FINISHED, TEMPORARY WORKING-DIRECTORY CAN BE DELETED
+    cd  $HOME
+    [[ $delete_temporary_catalog = true ]]  &&  rm -rf $TEMPDIR
+
+ else
+
+       # PREPARING ACTIONS,
+       # IF A BATCH-JOB IS TO BE GENERATED AND STARTED ON A REMOTE-MACHINE GERECHNET
+
+       # BUILD THE MRUN-COMMAND TO BE CALLED IN THE BATCH-JOB ON THE REMOTE-MACHINE
+    mrun_com="$mrun_script_name -a $afname -c $config_file -d $fname -h $host -H $fromhost -m $memory -t $cpumax -q $queue -R $return_address -U $return_username -u $remote_username"
+    [[ "$cpp_opts" != "" ]]       &&  mrun_com=${mrun_com}" -D \"$cpp_opts\""
+    [[ "$global_revision" != "" ]]  &&  mrun_com=${mrun_com}" -G \"$global_revision\""
+    [[ $group_number != none ]]   &&  mrun_com=${mrun_com}" -g $group_number"
+    [[ $do_compile = true ]]      &&  mrun_com=${mrun_com}" -s \"$source_list\""
+    [[ "$input_list" != "" ]]     &&  mrun_com=${mrun_com}" -i \"$input_list\""
+    [[ $ignore_archive_error = true ]]  &&  mrun_com=${mrun_com}" -I"
+    [[ $keep_data_from_previous_run = true ]]  &&  mrun_com=${mrun_com}" -k"
+    [[ "$additional_conditions" != "" ]]  &&  mrun_com=${mrun_com}" -K \"$additional_conditions\""
+    [[ "$output_list" != "" ]]    &&  mrun_com=${mrun_com}" -o \"$output_list\""
+    [[ "$read_from_config" = false ]]  &&  mrun_com=${mrun_com}" -S"
+    [[ $do_trace = true ]]        &&  mrun_com=${mrun_com}" -x"
+    [[ "$numprocs" != "" ]]       &&  mrun_com=${mrun_com}" -X $numprocs"
+    if [[ $use_openmp = true ]]
+    then
+       mrun_com=${mrun_com}" -O $threads_per_task"
+    fi
+    [[ "$tasks_per_node" != "" ]]  &&  mrun_com=${mrun_com}" -T $tasks_per_node"
+    [[ $store_on_archive_system = true ]]  &&  mrun_com=${mrun_com}" -A"
+    [[ $package_list != "" ]]     &&  mrun_com=${mrun_com}" -p \"$package_list\""
+    [[ $return_password != "" ]]  &&  mrun_com=${mrun_com}" -P $return_password"
+    [[ $delete_temporary_catalog = false ]]  &&  mrun_com=${mrun_com}" -B"
+    [[ $node_usage != default  &&  "$(echo $node_usage | cut -c1-3)" != "sla"  &&  $node_usage != novice ]]  &&  mrun_com=${mrun_com}" -n $node_usage"
+    [[ "$ocean_file_appendix" = true ]]  &&  mrun_com=${mrun_com}" -y"
+    [[ $run_coupled_model = true ]]  &&  mrun_com=${mrun_com}" -Y \"$coupled_dist\""
+    [[ $run_vnested_model  = true ]]  &&  mrun_com=${mrun_com}" -N \"$vnested_dist\""
+    [[ "$check_namelist_files" = false ]]  &&  mrun_com=${mrun_com}" -z"
+    [[ "$combine_plot_fields" = false ]]  &&  mrun_com=${mrun_com}" -Z"
+    [[ "$max_par_io_str" != "" ]]  &&  mrun_com=${mrun_com}" -w $max_par_io_str"
+    if [[ $do_remote = true ]]
+    then
+       printf "\n>>>> MRUN-command on execution host:\n>>>> $mrun_com \n"
+    fi
+
+
+       # CREATE EXECUTABLE FOR BATCH JOB
+    if [[ $create_executable_for_batch = true  &&  $restart_run != true ]]
+    then
+
+       printf "\n  *** creating the executable for batch job\n"
+
+          # METHOD ONLY WORKS FOR BATCH JOBS ON LOCAL HOSTS
+       if [[ $host != $localhost ]]
+       then
+          printf "\n  +++ creation of executables is only allowed for batch jobs on local hosts."
+          printf "\n      Please set create_executable_for_batch = false in the config-file.\n"
+          locat=create_executable; exit
+       fi
+
+       mkdir  $working_directory/SOURCES_FOR_RUN_${fname}/TMPDIR_FOR_CREATING_EXECUTABLE
+       cd  $working_directory/SOURCES_FOR_RUN_${fname}/TMPDIR_FOR_CREATING_EXECUTABLE
+
+       cp  $make_depository  .
+       tar -xf  $make_depository  >  /dev/null  2>&1
+       cp  ../*  .   >  /dev/null  2>&1
+
+       make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$fopts"  LDFLAGS="$lopts"
+
+       if [[ $? != 0  ||  "$compile_error" = true  ||  "$module_compile_error" = true ]]
+       then
+          printf "\n  +++ error occured while compiling or linking"
+          locat=compile
+          exit
+       fi
+
+       mv  a.out  ..
+       cd -  >  /dev/null  2>&1
+       rm -rf  $working_directory/SOURCES_FOR_RUN_${fname}/TMPDIR_FOR_CREATING_EXECUTABLE
+
+       printf "  *** executable created in \"$working_directory/SOURCES_FOR_RUN_${fname}\"\n "
+
+    fi
+
+
+       # BUILD THE JOB-SCRIPTS ON FILE jobfile
+    jobfile=jobfile.$RANDOM
+
+
+       # CREATE TEMPORARY DIRECTORY AND SWITCH TO IT
+    echo  "mkdir  $TEMPDIR"      >>  $jobfile
+    echo  "cd  $TEMPDIR"         >>  $jobfile
+
+
+       # ACTIVATE ERROR-TRACEBACK
+    if [[ $do_trace = true ]]
+    then
+       echo  "set -x"                                    >>  $jobfile
+    else
+       echo  "set +vx"                                   >>  $jobfile
+    fi
+
+
+       # INITIALIZE THE ENVIRONMENT AND LOAD MODULES
+    if [[ "$init_cmds" != "" ]]
+    then
+       echo  "$init_cmds"        >>  $jobfile
+    fi
+    if [[ "$module_calls" != "" ]]
+    then
+       echo  "$module_calls"     >>  $jobfile
+    fi
+
+
+       # PROVIDE SOURCE-CODE FILES, MRUN-SCRIPT AND CONFIGURATION-FILE FOR THE JOB
+       # then-CLAUSE: FILES ARE COLLECTED IN THE SOURCES_FOR_RUN_... DIRECTORY ON THE LOCAL HOST,
+       #              WHICH IS THEN FETCHED FROM THE BATCH-JOB BY USING cp/scp
+       #              THE SOURCE-CODE FILES ALREADY EXIST IN THIS DIRECTORY
+       # else-CLAUSE: FILE-CONTENTS ARE PUT INTO THE JOB-FILE AS HERE-DOCUMENTS
+       #              THIS MAY CREATE A QUITE LARGE JOB-FILE, WHICH CAN CAUSE PROBLEMS WITH SOME
+       #              QUEUEING-SYSTEMS
+    if [[ $host = ibmkisti || $host = lcbwuni ||  $host = lcbullhh || $host = lccrayb  ||  $host = lccrayf  ||  $host = lccrayh || $host = lckeal || $host = lclrz  ||  $host = lcocean  || $host = ibmmuc ]]
+    then
+
+          # COPY CONFIGURATION-FILE AND MRUN-SCRIPT INTO THE SOURCES_FOR_RUN... DIRECTORY
+       if [[ $restart_run != true ]]
+       then
+          cp  $config_file  $working_directory/SOURCES_FOR_RUN_$fname
+          cp  ${PALM_BIN}/$mrun_script_name  $working_directory/SOURCES_FOR_RUN_$fname
+       fi
+
+          # COPY THE SOURCES_FOR_RUN... DIRECTORY FROM THE LOCAL HOST TO THE JOB VIA scp
+          # (then-CLAUSE: JOBS ON THE LOCAL HOST CAN JUST USE cp)
+       echo  "set -x"  >>  $jobfile
+       if [[ $host = $localhost ]]
+       then
+             # DUE TO UNKNOWN REASONS, COPY WITH cp COMMAND CREATES CORRUPT
+             # FILES ON CRAY XC30 SYSTEMS (CSC HELSINKI), rsync IS USED INSTEAD
+          if [[ $(echo $host | cut -c1-6) = lccray ]]
+          then
+             echo  "rsync -av -t  $working_directory/SOURCES_FOR_RUN_$fname  ."  >>  $jobfile
+          else
+             echo  "cp -r  $working_directory/SOURCES_FOR_RUN_$fname  ."  >>  $jobfile
+          fi
+
+       else
+          if [[ $host = ibmkisti ]]
+          then
+                # ON KISTI'S IBM FIREWALL IS ONLY OPENED ON INTERACTIVE NODE
+             echo  "localdir=\`pwd\`"                            >>  $jobfile
+             echo  "ssh $SSH_PORTOPT $remote_username@gaiad \"cd \$localdir; scp $PORTOPT -r  $return_username@$return_address:$working_directory/SOURCES_FOR_RUN_$fname .\" "  >>  $jobfile
+         elif [[ $host = lcbullhh ]]
+          then
+             echo  "localdir=\`pwd\`"                            >>  $jobfile
+             echo  "ssh $SSH_PORTOPT $remote_username@mlogin101 \"cd \$localdir; scp $PORTOPT -r  $return_username@$return_address:$working_directory/SOURCES_FOR_RUN_$fname .\" "  >>  $jobfile
+
+          elif [[ $host = lccrayb ]]
+          then
+             echo  "localdir=\`pwd\`"                            >>  $jobfile
+             echo  "ssh $SSH_PORTOPT $remote_username@blogin1 \"cd \$localdir; scp $PORTOPT -r  $return_username@$return_address:$working_directory/SOURCES_FOR_RUN_$fname .\" "  >>  $jobfile
+          elif [[ $host = lccrayh ]]
+          then
+             echo  "localdir=\`pwd\`"                            >>  $jobfile
+             echo  "ssh $SSH_PORTOPT $remote_username@hlogin1 \"cd \$localdir; scp $PORTOPT -r  $return_username@$return_address:$working_directory/SOURCES_FOR_RUN_$fname .\" "  >>  $jobfile
+
+          else
+             echo  "scp $PORTOPT -r $return_username@$return_address:$working_directory/SOURCES_FOR_RUN_$fname ."  >>  $jobfile
+          fi
+       fi
+       echo  "export SOURCES_COMPLETE=true"                      >>  $jobfile
+
+          # MOVE MRUN-SCRIPT AND CONFIGURATION-FILE FROM THE SOURCES_FOR_RUN... DIRECTORY TO THE
+          # WORKING DIRECTORY OF THE JOB
+       echo  "mv  SOURCES_FOR_RUN_$fname/$config_file  . "       >>  $jobfile
+       echo  "mv  SOURCES_FOR_RUN_$fname/$mrun_script_name  . "  >>  $jobfile
+       echo  "chmod u+rwx  $mrun_script_name"                    >>  $jobfile
+       echo  "execute_mrun=true"                                 >>  $jobfile
+       echo  " "                                                 >>  $jobfile
+
+    else
+
+          # PROVIDE SOURCE-CODE FILES AND MAKEFILE AS HERE DOCUMENT
+       if [[ $do_compile = true ]]
+       then
+
+          source_catalog=SOURCES_FOR_RUN_$fname
+
+              # CREATE SOURCES_FOR_RUN... DIRECTORY TO STORE THE SOURCE CODE FILES AND THE MAKEFILE
+          echo  "mkdir  SOURCES_FOR_RUN_$fname"                >>  $jobfile
+          echo  "export SOURCES_COMPLETE=true"                 >>  $jobfile
+          echo  "cd     SOURCES_FOR_RUN_$fname"                >>  $jobfile
+
+          for  filename  in  $source_list
+          do
+                # BACKSLASH IS USED FOR MASKING
+             echo  "cat > $filename << \"%END%\""              >>  $jobfile
+             cat   $source_catalog/$filename                   >>  $jobfile
+             echo  " "                                         >>  $jobfile
+             echo  "%END%"                                     >>  $jobfile
+             echo  " "                                         >>  $jobfile
+          done
+
+             # BACKSLASH IS USED FOR MASKING
+          echo  "cat > Makefile << \"%END%\""               >>  $jobfile
+          cat   $source_catalog/Makefile                    >>  $jobfile
+          echo  " "                                         >>  $jobfile
+          echo  "%END%"                                     >>  $jobfile
+          echo  " "                                         >>  $jobfile
+
+          echo  "cd -  > /dev/null"                         >>  $jobfile
+
+       fi
+
+
+          # PROVIDE THE CONFIGURATION-FILE AS HERE-DOCUMENT
+          # BACKSLASH IS USED FOR MASKING
+          # LINES WITH #$ IN THE CONFIGURATION-FILE, COMING FROM THE SVN KEYWORD SUBSTITUTION,
+          # ARE REMOVED FROM THE FILE IN ORDER TO AVOID PROBLEMS WITH THE SGE BATCH SYSTEM
+       echo  "cat > $config_file << \"%END%\""      >>  $jobfile
+       if [[ $host = lckyuh ]]
+       then
+             # NO CROSS-COMPILER ON COMPUTE NODE
+          sed  's/frtpx/frt/g'  $config_file        >>  $jobfile
+       else
+          sed 's/#$.*//g'   $config_file            >>  $jobfile
+       fi
+       echo  "%END%"                                >>  $jobfile
+       echo  " "                                    >>  $jobfile
+
+
+          # PROVIDE THE MRUN-SCRIPTS AS HERE-DOCUMENT
+          # BACKSLASH IS USED FOR MASKING
+       echo  "cat > $mrun_script_name <<\"%END%\""  >>  $jobfile
+       if [[ $host = lckyuh ]]
+       then
+          sed 's/\/bin\/ksh/\/bin\/bash/g' ${PALM_BIN}/$mrun_script_name  >>  $jobfile
+       else
+          cat  ${PALM_BIN}/$mrun_script_name        >>  $jobfile
+       fi
+       echo  "%END%"                                >>  $jobfile
+       echo  "chmod u+x $mrun_script_name"          >>  $jobfile
+       echo  "execute_mrun=true"                    >>  $jobfile
+       echo  " "                                    >>  $jobfile
+
+    fi
+
+
+       # GET REQUIRED INPUT-FILES BY SCP OR BY SENDING THEM WITH THE JOB AS HERE-DOCUMENT
+       # PUT THESE FILES INTO THE USER'S RESPECTIVE PERMANENT DIRECTORIES ON THE REMOTE-HOST
+       # IF THE DIRECTORIES DO NOT EXIST, TRY TO CREATE THEM
+    if [[ $do_remote = true ]]
+    then
+       (( i = 0 ))
+       while (( i < iin ))
+       do
+          (( i = i + 1 ))
+          echo  "[[ ! -d ${pathin[$i]} ]]  &&  mkdir -p  ${pathin[$i]}"  >>  $jobfile
+          if [[ "${transin[$i]}" = job ]]
+          then
+             echo  "cat > ${remotepathin[$i]} <<\"%END%\""    >>  $jobfile
+             eval cat   ${pathin[$i]}/${frelin[$i]}           >>  $jobfile
+             echo  " "                                        >>  $jobfile
+             echo  "%END%"                                    >>  $jobfile
+          else
+             echo  "batch_scp $PORTOPT -b -o -g -s -u $return_username $return_address ${remotepathin[$i]} \"${pathin[$i]}\" ${frelin[$i]}" >>  $jobfile
+          fi
+
+             # CHECK, IF FILE COULD BE CREATED
+          echo  "if [[ \$? = 1 ]]"                    >>  $jobfile
+          echo  "then"                                >>  $jobfile
+          echo  "   echo \" \" "                      >>  $jobfile
+          echo  "   echo \"+++ file ${remotepathin[$i]} could not be created\" "   >>  $jobfile
+          echo  "   echo \"    please check, if directory exists on $host!\" "  >>  $jobfile
+          echo  "   echo \"+++ MRUN will not be continued\" "  >>  $jobfile
+          echo  "   execute_mrun=false"               >>  $jobfile
+          echo  "fi"                                  >>  $jobfile
+       done
+    fi
+
+       # PROVIDE NAME OF THE CURRENT WORKING-DIRECTORY ON THE LOCAL MACHINE (FROM WHERE THE JOB IS
+       # STARTED) BY SETTING AN ENVIRONMENT-VARIABLE. THIS INFORMATION IS USED IN THE JOB BY MRUN
+       # IN CASE THAT RESTART-RUNS HAVE TO BE GENERATED
+    echo  "LOCAL_PWD=$working_directory"                >>  $jobfile
+    echo  "export LOCAL_PWD"                            >>  $jobfile
+
+       # PROVIDE THE PATH OF THE LOCAL MRUN-SCRIPT FOR THE SAME REASON 
+    echo  "LOCAL_MRUN_PATH=$PALM_BIN"                   >>  $jobfile
+    echo  "export LOCAL_MRUN_PATH"                      >>  $jobfile
+
+       # lcflow ALSO REQUIRES TO PROVIDE PATH FOR THE PALM-SCRIPTS
+#    if [[ $host = lcflow  ||  $localhost = lcflow ]]
+#    then
+       echo  "export PALM_BIN=$PALM_BIN" | sed -e 's:'$HOME':$HOME:'   >>  $jobfile
+       echo  "export PATH=\$PATH:\$PALM_BIN"              >>  $jobfile
+#    fi
+
+       # CALL MRUN WITHIN THE JOB (SETTING QUEUE IS A WORKAROUND FOR ibmkisti)
+       # AS FINAL ACTION, REMOVE THE TEMPORARY DIRECTORY CREATED AT THE BEGINNING OF THE JOB
+    echo  "set -x"                                        >>  $jobfile
+    echo  "queue=$queue"                                  >>  $jobfile
+    echo  "[[ \$execute_mrun = true ]]  &&  ./$mrun_com"  >>  $jobfile
+    echo  'ls -al; echo `pwd`'                            >>  $jobfile
+    echo  "cd \$HOME"                                     >>  $jobfile
+    echo  "rm -rf  $TEMPDIR"                              >>  $jobfile
+
+
+
+
+       # START THE JOB USING SUBJOB-COMMAND
+    if [[ $silent = false ]]
+    then
+       printf "\n     "
+    else
+       printf "\n\n"
+    fi
+
+    subjob  $job_on_file  -h $host  -u $remote_username -g $group_number -q $queue  -m $memory  -N $node_usage -t $cpumax  $XOPT  $TOPT  $OOPT  -n $fname  -v  -c $job_catalog  -e $email_notification  $PORTOPT  $jobfile
+    rm -rf  $jobfile
+
+
+ fi  # END OF REMOTE-PART

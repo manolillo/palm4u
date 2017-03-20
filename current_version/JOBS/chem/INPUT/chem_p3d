@@ -18,7 +18,7 @@
 
          dt_run_control = 0.0,
 
-         data_output = 'pt','u','v','w','kc_O3','kc_NO2','kc_NO','kc_RCHO','kc_H2O','kc_O2',  !chem bk
+         data_output = 'pt','kc_O3','kc_NO2','kc_NO','kc_RCHO','kc_H2O','kc_O2',  !chem bk
 
          dt_data_output = 60.0,
          do3d_at_begin = .T.,
@@ -43,5 +43,5 @@ icntrl(3) = 2 ! ros3: L-stable method, 3 stages, order 3 (recommended)
 !icntrl(3) = 4 ! rodas3: stiffly-stable method, 4 stages, order 3
 !icntrl(3) = 5 ! rodas4: stiffly-stable method, 6 stages, order 4
 !
-icntrl(4) = 1000, ! max. number of kpp-substeps
+icntrl(4) = 500, ! max. number of kpp-substeps
  /

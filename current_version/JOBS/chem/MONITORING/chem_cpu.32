@@ -1,0 +1,57 @@
+PALM 4.0  Rev: 2161M  run: chem.00  host: lckeal  13-03-17 20:06:18
+-----------
+
+CPU measures for     4 PEs (    2(x) *     2(y) tasks *    1 threads):
+
+gridpoints (x/y/z):                        24 *    24 *    10
+nr of timesteps:                          449
+cpu time per grid point and timestep:      ******** * 10**-6 s
+----------------------------------------------------------------------
+
+place:                              mean        counts      min       max       rms
+                                sec.      %                sec.      sec.      sec.
+-----------------------------------------------------------------------------------
+total                       1264.909   100.00       1  1264.854  1264.864     0.084
+all progn.equations           24.119     1.91    1347    24.093    24.125     0.022
+exchange-horiz-progn           5.723     0.45    1347     3.182     6.412     1.998
+pres                           2.822     0.22    1348     2.815     2.825     0.004
+surface_layer_fluxes           2.653     0.21    1347     2.653     2.653     0.000
+flow_statistics                1.146     0.09     450     1.144     1.147     0.001
+diffusivities                  1.057     0.08    1347     1.046     1.071     0.011
+calculate_timestep             0.269     0.02     450     0.213     0.288     0.032
+last actions                   0.088     0.01       1     0.034     0.044     0.082
+data_output_3d                 0.055     0.00      11     0.044     0.059     0.006
+initialisation                 0.049     0.00       1     0.047     0.047     0.003
+data_output_tseries            0.020     0.00     449     0.000     0.000     0.034
+run_control                    0.014     0.00     450     0.000     0.000     0.024
+swap_timelevel                 0.013     0.00    1347     0.012     0.013     0.000
+data_output_profiles           0.002     0.00      10     0.001     0.001     0.003
+disturb_field                  0.002     0.00       2     0.001     0.002     0.000
+user_actions                   0.001     0.00    1347     0.001     0.001     0.000
+sum_up_3d_data                 0.000     0.00     449     0.000     0.000     0.000
+average_3d_data                0.000     0.00      10     0.000     0.000     0.000
+
+special measures:
+-----------------------------------------------------------------------------------
+timesteps                   1264.749    99.99     449  1264.749  1264.749     0.000
+chemistry reactions         1139.033    90.05    1347  1139.033  1139.033     0.000
+kpp_integrate               1073.217    84.85  193968  1033.093  1079.001    25.472
+chemistry advec+diff+prog     64.946     5.13  193968    62.074    67.500     2.011
+exchange_horiz                60.510     4.78   55238    32.411   101.567    25.294
+chemistry exch-horiz          54.569     4.31    1347    23.632    94.938    25.657
+exchange_horiz_2d             17.344     1.37    8082     0.595    23.104     9.670
+poisfft                        1.643     0.13    1348     1.636     1.646     0.004
+transpo forward                0.501     0.04    1348     0.493     0.506     0.005
+transpo invers                 0.472     0.04    1348     0.470     0.473     0.001
+divergence                     0.372     0.03    1798     0.372     0.373     0.001
+tridia                         0.254     0.02    1348     0.254     0.254     0.000
+fft_y                          0.203     0.02    1348     0.203     0.203     0.001
+fft_x                          0.203     0.02    1348     0.201     0.206     0.002
+mpi_alltoall                   0.132     0.01    8088     0.121     0.138     0.006
+
+No barriers are set in front of collective operations
+
+Exchange of ghostpoints via MPI_ISEND/MPI_IRECV
+
+
+

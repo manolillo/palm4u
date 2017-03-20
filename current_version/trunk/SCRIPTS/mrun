@@ -21,7 +21,8 @@
 #
 # Current revisions:
 # ------------------
-#  
+# Added lckea & lckeam. KIT/IMK-IFU Garmisch cluster. LRZ
+# Vertical grid vnesting: set vnested_mode. -N Procs for fine and coarse grid.
 # 
 # Former revisions:
 # -----------------
@@ -296,6 +297,8 @@
  done
  module_calls=""
  mrun_script_name=$mc
+ vnested_dist=""
+ vnested_mode="vnested_twi"
  netcdf_inc=""
  netcdf_lib=""
  netcdf_support=false
@@ -303,6 +306,8 @@
  numprocs=""
  numprocs_atmos=0
  numprocs_ocean=0
+ numprocs_crse=0
+ numprocs_fine=0
  OOPT=""
  openmp=false
  output_list=""
@@ -335,6 +340,7 @@
  remote_username=""
  run_coupled_model=false
  run_mode=""
+ run_vnested_model=false
  store_on_archive_system=false
  dashes="  ----------------------------------------------------------------------------"
  silent=false
@@ -347,7 +353,7 @@
  transfer_problems=false
  usern=$LOGNAME
  use_openmp=false
- version="MRUN  2.1 Rev$Rev: 1945 $"
+ version="MRUN  2.1 Rev$Rev: 2009 $"
  working_directory=`pwd`
  TOPT=""
  XOPT=""
@@ -437,7 +443,7 @@
 
     # READ SHELLSCRIPT-OPTIONS AND REBUILD THE MRUN-COMMAND STRING (MC),
     # WHICH WILL BE USED TO START RESTART-JOBS
- while  getopts  :a:AbBc:Cd:D:Fg:G:h:H:i:IkK:m:M:n:o:O:p:P:q:r:R:s:St:T:u:U:vw:xX:yY:zZ option
+ while  getopts  :a:AbBc:Cd:D:Fg:G:h:H:i:IkK:m:M:n:N:o:O:p:P:q:r:R:s:St:T:u:U:vw:xX:yY:zZ option
  do
    case  $option  in
        (a)   afname=$OPTARG;;
@@ -457,9 +463,11 @@
        (I)   ignore_archive_error=true; mc="$mc -I";;
        (k)   keep_data_from_previous_run=true; mc="$mc -k";;
        (K)   additional_conditions="$OPTARG"; mc="$mc -K'$OPTARG'";;
+#CSH   (j)   hyper_thread="$OPTARG"; mc="$mc -j'$OPTARG'";;
        (m)   memory=$OPTARG; mc="$mc -m$OPTARG";;
        (M)   makefile=$OPTARG; mc="$mc -M$OPTARG";;
        (n)   node_usage=$OPTARG; mc="$mc -n$OPTARG";; 
+       (N)   run_vnested_model=true; vnested_dist=$OPTARG; mc="$mc -N'$OPTARG'";;
        (o)   output_list=$OPTARG; mc="$mc -o'$OPTARG'";;
        (O)   use_openmp=true; threads_per_task=$OPTARG; mc="$mc -O$OPTARG";;
        (p)   package_list=$OPTARG; mc="$mc -p'$OPTARG'";;
@@ -642,7 +650,7 @@
     do_batch=true
     do_remote=true
     case  $host  in
-        (ibm|ibmh|ibmkisti|ibmku|ibms|nech|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|unics|lcxe6|lcxt5m|lck|lckiaps|lckordi|lckyuh|lckyut|lcsb)  true;;
+        (ibm|ibmh|ibmkisti|ibmku|ibms|nech|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|unics|lcbwuni|lcxe6|lcxt5m|lck|lckeal|lckiaps|lckordi|lckyuh|lckyut|lclrz|lcsb)  true;;
         (*)  printf "\n"
              printf "\n  +++ sorry: execution of batch jobs on remote host \"$host\""
              printf "\n      is not available"
@@ -700,6 +708,37 @@
        fi
     done < tmp_mrun
 
+ fi
+
+      # NESTING (-N) selected and vnesting_mode specified
+ if [[ $run_vnested_model = true ]] 
+ then
+
+    if  [[ -n $vnested_dist ]]
+    then
+
+       numprocs_crse=`echo $vnested_dist | cut -d" " -s -f1`
+       numprocs_fine=`echo $vnested_dist | cut -d" " -s -f2`
+
+       if (( $numprocs_crse + $numprocs_fine != $numprocs ))
+       then
+
+          printf "\n  +++ number of processors does not fit to specification by \"-Y\"."
+          printf "\n      PEs (total)     : $numprocs"
+          printf "\n      PEs (Coarse)    : $numprocs_crse"
+          printf "\n      PEs (Fine)      : $numprocs_fine"
+          locat=vnesting; exit
+
+       fi
+
+    else
+
+       (( numprocs_crse = $numprocs / 2 ))
+       (( numprocs_fine = $numprocs / 2 ))
+
+    fi
+    vnested_dist=`echo "$numprocs_crse $numprocs_fine"`
+    #vnested_mode="vnested_twi"
  fi
 
     # CHECK, IF FILE-ARCHIVING HAS FAILED IN PREVIOUS JOB (OF A JOB-CHAIN)
@@ -800,7 +839,7 @@
                    do_batch=true
                    do_remote=true
                    case  $host  in
-                       (ibm|ibmh|ibmkisti|ibmku|ibms|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|nech|unics|lcxe6|lcxt5m|lck|lckiaps|lckordi|lckyuh|lckyut|lcsb)  true;;
+                       (ibm|ibmh|ibmkisti|ibmku|ibms|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|nech|unics|lcbwuni|lcxe6|lcxt5m|lck|lckeal|lckiaps|lckordi|lckyuh|lckyut|lclrz|lcsb)  true;;
                        (*)  printf "\n  +++ sorry: execution of batch jobs on remote host \"$host\""
                             printf "\n      is not available"
                             locat=nqs; exit;;
@@ -1064,7 +1103,7 @@
     do_batch=true
     do_remote=true
     case  $host  in
-        (ibm|ibmh|ibmkisti|ibmku|ibms|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|nech|unics|lcxe6|lcxt5m|lck|lckiaps|lckordi|lckyuh|lckyut|lcsb)  true;;
+        (ibm|ibmh|ibmkisti|ibmku|ibms|lcbullhh|lccrayb|lccrayh|lccrayf|lcflow|lckyoto|lcocean|nech|unics|lcbwuni|lcxe6|lcxt5m|lck|lckeal|lckiaps|lckordi|lckyuh|lckyut|lclrz|lcsb)  true;;
         (*)  printf "\n"
              printf "\n  +++ sorry: execution of batch jobs on remote host \"$host\""
              printf "\n      is not available"
@@ -1199,13 +1238,16 @@
     case  $host  in
         (ibmh)       queue=cluster;;
         (ibmkisti)   queue=class.32plus;;
+        (lcbwuni)    queue=develop;;
         (lcbullhh)   queue=compute;;
         (lccrayb)    queue=mpp1q;;
         (lccrayh)    queue=mpp1q;;
+        (lckeal)     queue=ivy2;;
         (lckiaps)    queue=normal;;
         (lckyoto)    queue=ph;;
         (lckyuh)     queue=fx-single;;
         (lckyut)     queue=cx-single;;
+        (lclrz)      queue=mpp2;;
         (lctit)      queue=S;;
         (nech)       queue=none;;
         (unics)      queue=unics;;
@@ -2427,6 +2469,9 @@
           elif [[ $localhost = lcbullhh  ||  $localhost = lccrayb  ||  $localhost = lccrayf ||  $localhost = lccrayh ]]
           then
              make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$fopts"  LDFLAGS="$lopts"
+          elif [[ $localhost = lclrz ]]
+          then
+             make $mopts -f Makefile PROG=a.out  F90=$compiler_name  COPT="$cpp_options"  F90FLAGS="$fopts"  LDFLAGS="$lopts"
           else
              [[ "$init_cmds" != "" ]]  &&  eval $init_cmds
              [[ "$module_calls" != "" ]]  &&  eval $module_calls
@@ -2896,7 +2941,7 @@
           then
 
                 # SETUP THE IBM MPI ENVIRONMENT
-             export MP_SHARED_MEMORY=yes
+             export MP_SHARED_MEMORY=yes 
              export AIXTHREADS_SCOPE=S
              export OMP_NUM_THREADS=$threads_per_task
              export AUTHSTATE=files
@@ -3046,7 +3091,7 @@
                    export MPIPROGINF=YES
                    #  export F_TRACE=YES|FMT1|FMT2  # output of ftrace informations to job protocol
                    echo "*** execution on single node with mpirun"
-                   mpirun  -np $numprocs  ./a.out
+                   mpirun  -np $numprocs -e gdb ./a.out
                 else
                    (( i = 0 ))
                    while (( i < ii ))
@@ -3130,7 +3175,8 @@
                    ulimit -s unlimited
                    printf "\n      threads per task: $threads_per_task  stacksize: unlimited"
                 fi
-                if [[ $run_coupled_model = false ]]
+
+                if [[ $run_coupled_model = false && $run_vnested_model = false ]]
                 then
                    if [[ "$ocean_file_appendix" = true ]]
                    then
@@ -3173,6 +3219,17 @@
                    elif [[ $host = lcsb ]]
                    then
                       mpirun_rsh -hostfile $PBS_NODEFILE -np `cat $PBS_NODEFILE | wc -l` a.out  < runfile_atmos
+                   elif [[ $host = lclrz ]]
+                   then
+                      mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+                   elif [[ $host = lcbwuni ]]
+                   then
+        	          pwd >>  ~/job_queue/debug.$kennung
+                      mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1  # Works Single
+                   elif [[ $host = lckeal ]]
+                   then
+#                     srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+                      srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS
                    elif [[ $host = lckiaps ]]
                    then
                       mpirun -np $ii  -machinefile $PBS_NODEFILE  ./a.out  <  runfile_atmos
@@ -3184,62 +3241,95 @@
                    fi
 
                 else
+                   # vnested or coupled model
 
-                       # CURRENTLY THERE IS NO FULL MPI-2 SUPPORT ON ICE AND XT4
-                   (( iia = $numprocs_atmos / $threads_per_task ))
-                   (( iio = $numprocs_ocean / $threads_per_task ))
-                   printf "\n      coupled run ($iia atmosphere, $iio ocean)"
-                   printf "\n      using $coupled_mode coupling"
-                   printf "\n\n"
-
-                   if [[ $coupled_mode = "mpi2" ]]
+                   if [[ $run_coupled_model = true ]]
                    then
-                      echo "atmosphere_to_ocean $iia $iio"  >  runfile_atmos
-                      echo "ocean_to_atmosphere $iia $iio"  >  runfile_ocean
+                       # CURRENTLY THERE IS NO FULL MPI-2 SUPPORT ON ICE AND XT4
+                       (( iia = $numprocs_atmos / $threads_per_task ))
+                       (( iio = $numprocs_ocean / $threads_per_task ))
+                       printf "\n      coupled run ($iia atmosphere, $iio ocean)"
+                       printf "\n      using $coupled_mode coupling"
+                       printf "\n\n"
 
-                      if [[ $host = lccrayf  ||  $host = lcxe6  ||  $host = lcxt5m ]]
-                      then
+                       if [[ $coupled_mode = "mpi2" ]]
+                       then
+                          echo "atmosphere_to_ocean $iia $iio"  >  runfile_atmos
+                          echo "ocean_to_atmosphere $iia $iio"  >  runfile_ocean
 
-                         aprun  -n $iia  -N $tasks_per_node  a.out < runfile_atmos  &
-                         aprun  -n $iio  -N $tasks_per_node  a.out < runfile_ocean  &
+                          if [[ $host = lccrayf  ||  $host = lcxe6  ||  $host = lcxt5m ]]
+                          then
 
-                      else
-                             # WORKAROUND BECAUSE mpiexec WITH -env option IS NOT AVAILABLE ON SOME SYSTEMS
-                          mpiexec  -machinefile hostfile  -n $iia  a.out  <  runfile_atmos &
-                          mpiexec  -machinefile hostfile  -n $iio  a.out  <  runfile_ocean &
-#                          mpiexec  -machinefile hostfile  -n $iia  -env coupling_mode atmosphere_to_ocean  a.out  &
-#                          mpiexec  -machinefile hostfile  -n $iio  -env coupling_mode ocean_to_atmosphere  a.out  &
-                      fi
-                      wait
+                             aprun  -n $iia  -N $tasks_per_node  a.out < runfile_atmos  &
+                             aprun  -n $iio  -N $tasks_per_node  a.out < runfile_ocean  &
 
+                          else
+                                 # WORKAROUND BECAUSE mpiexec WITH -env option IS NOT AVAILABLE ON SOME SYSTEMS
+                              mpiexec  -machinefile hostfile  -n $iia  a.out  <  runfile_atmos &
+                              mpiexec  -machinefile hostfile  -n $iio  a.out  <  runfile_ocean &
+#                              mpiexec  -machinefile hostfile  -n $iia  -env coupling_mode atmosphere_to_ocean  a.out  &
+#                              mpiexec  -machinefile hostfile  -n $iio  -env coupling_mode ocean_to_atmosphere  a.out  &
+                          fi
+                          wait
+
+                       else
+
+                          echo "coupled_run $iia $iio"  >  runfile_atmos
+
+                          if [[ $host = lccrayf  ||  $host = lcxe6  ||  $host = lcxt5m ]]
+                          then
+
+                             aprun  -n $ii  -N $tasks_per_node  a.out < runfile_atmos
+
+                          elif [[ $host = lck || $host = lckordi ]]
+                          then
+
+                             mpiexec -n $ii  ./a.out  <  runfile_atmos  &
+
+                          elif [[ $host = lckyu* ]]
+                          then
+
+                             mpiexec -n $ii --stdin runfile_atmos  ./a.out
+
+                          elif [[ $host = lcmuk ]] 
+                          then
+
+                             mpiexec  -machinefile hostfile  -n $ii  a.out  <  runfile_atmos
+
+                          fi
+                          wait
+                       fi
                    else
+                       # vnested model
+                       printf "\n      Vertical Nested run ($numprocs_crse Coarse, $numprocs_fine Fine)"
+                       printf "\n      using $vnested_mode vnesting"
+                       printf "\n\n"
 
-                      echo "coupled_run $iia $iio"  >  runfile_atmos
+                        echo "$vnested_mode $numprocs_crse $numprocs_fine"  >  runfile_atmos
 
-                      if [[ $host = lccrayf  ||  $host = lcxe6  ||  $host = lcxt5m ]]
-                      then
+                        if [[ $host = lcbwuni ]]
+                        then
 
-                         aprun  -n $ii  -N $tasks_per_node  a.out < runfile_atmos
+                            mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1  # Works Single
 
-                      elif [[ $host = lck || $host = lckordi ]]
-                      then
+                        elif [[ $host = lckeal ]]
+                        then
 
-                         mpiexec -n $ii  ./a.out  <  runfile_atmos  &
+#                           srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
+                            srun  -n $ii  a.out  <  runfile_atmos  $ROPTeS 
 
-                      elif [[ $host = lckyu* ]]
-                      then
+                        elif [[ $host = lclrz* ]]
+                        then
 
-                         mpiexec -n $ii --stdin runfile_atmos  ./a.out
+                            mpiexec  -n $ii  a.out  <  runfile_atmos  $ROPTeS > ~/job_queue/shellout.$kennung 2>&1 
 
-                      elif [[ $host = lcmuk ]] 
-                      then
+                        else
 
-                         mpiexec  -machinefile hostfile  -n $ii  a.out  <  runfile_atmos
+                           mpirun   -np $numprocs  ./a.out  $ROPTS  < runfile_atmos
 
-                      fi
-                      wait
+                        fi
+                        wait
                    fi
-
                 fi
 
              elif [[ $host = lckyoto ]]
@@ -4240,6 +4330,7 @@
     [[ $node_usage != default  &&  "$(echo $node_usage | cut -c1-3)" != "sla"  &&  $node_usage != novice ]]  &&  mrun_com=${mrun_com}" -n $node_usage"
     [[ "$ocean_file_appendix" = true ]]  &&  mrun_com=${mrun_com}" -y"
     [[ $run_coupled_model = true ]]  &&  mrun_com=${mrun_com}" -Y \"$coupled_dist\""
+    [[ $run_vnested_model  = true ]]  &&  mrun_com=${mrun_com}" -N \"$vnested_dist\""
     [[ "$check_namelist_files" = false ]]  &&  mrun_com=${mrun_com}" -z"
     [[ "$combine_plot_fields" = false ]]  &&  mrun_com=${mrun_com}" -Z"
     [[ "$max_par_io_str" != "" ]]  &&  mrun_com=${mrun_com}" -w $max_par_io_str"
@@ -4324,7 +4415,7 @@
        # else-CLAUSE: FILE-CONTENTS ARE PUT INTO THE JOB-FILE AS HERE-DOCUMENTS
        #              THIS MAY CREATE A QUITE LARGE JOB-FILE, WHICH CAN CAUSE PROBLEMS WITH SOME
        #              QUEUEING-SYSTEMS
-    if [[ $host = ibmkisti  ||  $host = lcbullhh  ||  $host = lccrayb  ||  $host = lccrayf  ||  $host = lccrayh  ||  $host = lcocean ]]
+    if [[ $host = ibmkisti || $host = lcbwuni ||  $host = lcbullhh || $host = lccrayb  ||  $host = lccrayf  ||  $host = lccrayh || $host = lckeal || $host = lclrz  ||  $host = lcocean  || $host = ibmmuc ]]
     then
 
           # COPY CONFIGURATION-FILE AND MRUN-SCRIPT INTO THE SOURCES_FOR_RUN... DIRECTORY

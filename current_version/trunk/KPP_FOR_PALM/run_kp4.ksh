@@ -34,4 +34,4 @@ cd ..
 # run kp4 with default Setup
  
 echo $PATH
-kp4.ksh -d `pwd`/kp4/def_small_strato
+kp4.ksh -d `pwd`/kp4/def_smog

@@ -70,7 +70,7 @@ MODULE kchem_driver
    USE control_parameters, ONLY: dt_3d, ws_scheme_sca  !ws_sch... added by bK
    USE arrays_3d,          ONLY: pt
    USE kchem_kpp,          ONLY: NSPEC, SPC_NAMES, NKPPCTRL, NMAXFIXSTEPS, t_steps, FILL_TEMP, kpp_integrate,     &
-                                 ATOL,RTOL
+                                 NVAR, ATOL, RTOL
    USE cpulog,             ONLY: cpu_log, log_point_s
 
    IMPLICIT   none
@@ -102,7 +102,8 @@ MODULE kchem_driver
    REAL(kind=wp),DIMENSION(NKPPCTRL)                     :: rcntrl                            ! Fine tuning kpp
 
    PUBLIC NSPEC
-
+   PUBLIC NVAR       ! added NVAR for pe  bK, kd3
+   PUBLIC SPC_NAMES  ! added for pe bk, kd4
 !- Interface section
 
    INTERFACE kchem_initialize
@@ -205,7 +206,7 @@ MODULE kchem_driver
             write(6,'(/,a,/)')  'kpp chemics >>>> Set constant Initial Values: '
          end if
 
-!        Default values are taken from small_strato.def from supplied kpp example
+!        Default values are taken from smog.def from supplied kpp example
          do i=1,NSPEC
             if(trim(chem_species(i)%name) == 'NO')   then
 !              chem_species(i)%conc = 8.725*1.0E+08
@@ -311,7 +312,7 @@ MODULE kchem_driver
 !--   local variables
       INTEGER                  :: k,m,istat
       INTEGER,dimension(20)    :: istatus
-      REAL(kind=wp),dimension(nzb_s_inner(j,i)+1:nzt,NSPEC)                :: tmp_conc
+      REAL(kind=wp),dimension(nzb_s_inner(j,i)+1:nzt,NSPEC)                :: tmp_conc           !bK NSPEC repl with NVAR kd6
       REAL(kind=wp),dimension(nzb_s_inner(j,i)+1:nzt)                      :: tmp_temp
       REAL(kind=wp),dimension(nzb_s_inner(j,i)+1:nzt)                      :: tmp_fact   !! RFo
 
@@ -357,12 +358,12 @@ MODULE kchem_driver
       INTEGER               :: i
 
       if(level == 0)  then
-         do i=1,NSPEC
+         do i=1,NVAR                                        ! NSPEC replaced with NVAR bK kd1  
             chem_species(i)%conc(nzb:nzt+1,nysg:nyng,nxlg:nxrg)    => spec_conc_1(:,:,:,i)
             chem_species(i)%conc_p(nzb:nzt+1,nysg:nyng,nxlg:nxrg)  => spec_conc_2(:,:,:,i)
          end do
       else
-         do i=1,NSPEC
+         do i=1,NVAR                                        ! NSPEC replaced with NVAR bk  kd2
             chem_species(i)%conc(nzb:nzt+1,nysg:nyng,nxlg:nxrg)    => spec_conc_2(:,:,:,i)
             chem_species(i)%conc_p(nzb:nzt+1,nysg:nyng,nxlg:nxrg)  => spec_conc_1(:,:,:,i)
          end do

@@ -308,7 +308,7 @@
 
 #ifdef KPP_CHEM
     USE kchem_driver,                                                          &
-        ONLY:  chem_species, NSPEC, use_kpp_chemistry
+        ONLY:  chem_species, NSPEC, NVAR,  use_kpp_chemistry   ! NVAR added, bK, ti1
 #endif    
     
     USE kinds
@@ -757,7 +757,7 @@
 !--          Ghost point exchange for chemical species
 #ifdef KPP_CHEM
              IF ( use_kpp_chemistry )  THEN
-                DO  n = 1, NSPEC
+                DO  n = 1, NSPEC     ! NSPEC replaced by NVAR, bk, ti2
                    CALL exchange_horiz( chem_species(n)%conc_p, nbgp ) 
                 ENDDO
              ENDIF

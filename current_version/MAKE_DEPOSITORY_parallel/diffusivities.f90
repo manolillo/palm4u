@@ -1,0 +1,254 @@
+!> @file diffusivities.f90
+!------------------------------------------------------------------------------!
+! This file is part of PALM.
+!
+! PALM is free software: you can redistribute it and/or modify it under the
+! terms of the GNU General Public License as published by the Free Software
+! Foundation, either version 3 of the License, or (at your option) any later
+! version.
+!
+! PALM is distributed in the hope that it will be useful, but WITHOUT ANY
+! WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+! A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License along with
+! PALM. If not, see <http://www.gnu.org/licenses/>.
+!
+! Copyright 1997-2016 Leibniz Universitaet Hannover
+!------------------------------------------------------------------------------!
+!
+! Current revisions:
+! -----------------
+! 
+! 
+! Former revisions:
+! -----------------
+! $Id: diffusivities.f90 2032 2016-10-21 15:13:51Z knoop $
+!
+! 2031 2016-10-21 15:11:58Z knoop
+! renamed variable rho to rho_ocean
+! 
+! 2000 2016-08-20 18:09:15Z knoop
+! Forced header and separation lines into 80 columns
+!
+! 1711 2015-11-05 07:38:04Z raasch
+! bugfix: loop moved into IF block to avoid usage of l without being defined
+!
+! 1682 2015-10-07 23:56:08Z knoop
+! Code annotations made doxygen readable 
+! 
+! 1374 2014-04-25 12:55:07Z raasch
+! rif removed from acc-present-list
+! 
+! 1353 2014-04-08 15:21:23Z heinze
+! REAL constants provided with KIND-attribute 
+! 
+! 1340 2014-03-25 19:45:13Z kanani
+! REAL constants defined as wp-kind
+!
+! 1322 2014-03-20 16:38:49Z raasch
+! REAL constants defined as wp-kind
+!
+! 1320 2014-03-20 08:40:49Z raasch
+! ONLY-attribute added to USE-statements,
+! kind-parameters added to all INTEGER and REAL declaration statements, 
+! kinds are defined in new module kinds, 
+! revision history before 2012 removed,
+! comment fields (!:) to be used for variable explanations added to
+! all variable declaration statements 
+!
+! 1179 2013-06-14 05:57:58Z raasch
+! use_reference renamed use_single_reference_value
+!
+! 1036 2012-10-22 13:43:42Z raasch
+! code put under GPL (PALM 3.9)
+!
+! 1015 2012-09-27 09:23:24Z raasch
+! OpenACC statements added + code changes required for GPU optimization,
+! adjustment of mixing length to the Prandtl mixing length at first grid point
+! above ground removed
+!
+! Revision 1.1  1997/09/19 07:41:10  raasch
+! Initial revision
+!
+!
+! Description:
+! ------------
+!> Computation of the turbulent diffusion coefficients for momentum and heat 
+!> according to Prandtl-Kolmogorov
+!------------------------------------------------------------------------------!
+ SUBROUTINE diffusivities( var, var_reference )
+ 
+
+    USE arrays_3d,                                                             &
+        ONLY:  dd2zu, e, kh, km, l_grid, l_wall
+        
+    USE control_parameters,                                                    &
+        ONLY:  atmos_ocean_sign, e_min, g, outflow_l, outflow_n, outflow_r,    &
+                outflow_s, use_single_reference_value, wall_adjustment
+                
+    USE indices,                                                               &
+        ONLY:  nxl, nxlg, nxr, nxrg, nyn, nyng, nys, nysg, nzb_s_inner, nzb, nzt
+    USE kinds
+    
+    USE pegrid
+    
+    USE statistics,                                                            &
+        ONLY :  rmask, statistic_regions, sums_l_l
+
+    IMPLICIT NONE
+
+    INTEGER(iwp) ::  i                   !<
+    INTEGER(iwp) ::  j                   !<
+    INTEGER(iwp) ::  k                   !<
+    INTEGER(iwp) ::  omp_get_thread_num  !<
+    INTEGER(iwp) ::  sr                  !<
+    INTEGER(iwp) ::  tn                  !<
+
+    REAL(wp)     ::  dvar_dz             !<
+    REAL(wp)     ::  l                   !<
+    REAL(wp)     ::  ll                  !<
+    REAL(wp)     ::  l_stable            !<
+    REAL(wp)     ::  sqrt_e              !<
+    REAL(wp)     ::  var_reference       !<
+
+    REAL(wp)     ::  var(nzb:nzt+1,nysg:nyng,nxlg:nxrg)  !<
+
+
+!
+!-- Default thread number in case of one thread
+    tn = 0
+
+!
+!-- Initialization for calculation of the mixing length profile
+    sums_l_l = 0.0_wp
+
+!
+!-- Compute the turbulent diffusion coefficient for momentum
+    !$OMP PARALLEL PRIVATE (dvar_dz,i,j,k,l,ll,l_stable,sqrt_e,sr,tn)
+!$  tn = omp_get_thread_num()
+
+!
+!-- Data declerations for accelerators
+    !$acc data present( dd2zu, e, km, kh, l_grid, l_wall, nzb_s_inner, var )
+    !$acc kernels
+
+!
+!-- Introduce an optional minimum tke
+    IF ( e_min > 0.0_wp )  THEN
+       !$OMP DO
+       !$acc loop
+       DO  i = nxlg, nxrg
+          DO  j = nysg, nyng
+             !$acc loop vector( 32 )
+             DO  k = 1, nzt
+                IF ( k > nzb_s_inner(j,i) )  THEN
+                   e(k,j,i) = MAX( e(k,j,i), e_min )
+                ENDIF
+             ENDDO
+          ENDDO
+       ENDDO
+    ENDIF
+
+    !$OMP DO
+    !$acc loop
+    DO  i = nxlg, nxrg
+       DO  j = nysg, nyng
+          !$acc loop vector( 32 )
+          DO  k = 1, nzt
+
+             IF ( k > nzb_s_inner(j,i) )  THEN
+
+                sqrt_e = SQRT( e(k,j,i) )
+!
+!--             Determine the mixing length
+                dvar_dz = atmos_ocean_sign * &  ! inverse effect of pt/rho_ocean gradient
+                          ( var(k+1,j,i) - var(k-1,j,i) ) * dd2zu(k)
+                IF ( dvar_dz > 0.0_wp ) THEN
+                   IF ( use_single_reference_value )  THEN
+                      l_stable = 0.76_wp * sqrt_e /                            &
+                                    SQRT( g / var_reference * dvar_dz ) + 1E-5_wp
+                   ELSE
+                      l_stable = 0.76_wp * sqrt_e /                            &
+                                    SQRT( g / var(k,j,i) * dvar_dz ) + 1E-5_wp
+                   ENDIF
+                ELSE
+                   l_stable = l_grid(k)
+                ENDIF
+!
+!--             Adjustment of the mixing length
+                IF ( wall_adjustment )  THEN
+                   l  = MIN( l_wall(k,j,i), l_grid(k), l_stable )
+                   ll = MIN( l_wall(k,j,i), l_grid(k) )
+                ELSE
+                   l  = MIN( l_grid(k), l_stable )
+                   ll = l_grid(k)
+                ENDIF
+
+      !
+      !--       Compute diffusion coefficients for momentum and heat
+                km(k,j,i) = 0.1_wp * l * sqrt_e
+                kh(k,j,i) = ( 1.0_wp + 2.0_wp * l / ll ) * km(k,j,i)
+
+#if ! defined( __openacc )
+!
+!++             Statistics still have to be realized for accelerators
+!--             Summation for averaged profile (cf. flow_statistics)
+                DO  sr = 0, statistic_regions
+                   sums_l_l(k,sr,tn) = sums_l_l(k,sr,tn) + l * rmask(j,i,sr)
+                ENDDO
+#endif
+             ENDIF
+
+          ENDDO
+       ENDDO
+    ENDDO
+
+#if ! defined( __openacc )
+!
+!++ Statistics still have to be realized for accelerators
+    sums_l_l(nzt+1,:,tn) = sums_l_l(nzt,:,tn)   ! quasi boundary-condition for
+                                                  ! data output
+#endif
+    !$OMP END PARALLEL
+
+!
+!-- Set vertical boundary values (Neumann conditions both at bottom and top).
+!-- Horizontal boundary conditions at vertical walls are not set because
+!-- so far vertical walls require usage of a Prandtl-layer where the boundary
+!-- values of the diffusivities are not needed
+    !$OMP PARALLEL DO
+    !$acc loop
+    DO  i = nxlg, nxrg
+       DO  j = nysg, nyng
+          km(nzb_s_inner(j,i),j,i) = km(nzb_s_inner(j,i)+1,j,i)
+          km(nzt+1,j,i)            = km(nzt,j,i)
+          kh(nzb_s_inner(j,i),j,i) = kh(nzb_s_inner(j,i)+1,j,i)
+          kh(nzt+1,j,i)            = kh(nzt,j,i)
+       ENDDO
+    ENDDO
+
+!
+!-- Set Neumann boundary conditions at the outflow boundaries in case of
+!-- non-cyclic lateral boundaries
+    IF ( outflow_l )  THEN
+       km(:,:,nxl-1) = km(:,:,nxl)
+       kh(:,:,nxl-1) = kh(:,:,nxl)
+    ENDIF
+    IF ( outflow_r )  THEN
+       km(:,:,nxr+1) = km(:,:,nxr)
+       kh(:,:,nxr+1) = kh(:,:,nxr)
+    ENDIF
+    IF ( outflow_s )  THEN
+       km(:,nys-1,:) = km(:,nys,:)
+       kh(:,nys-1,:) = kh(:,nys,:)
+    ENDIF
+    IF ( outflow_n )  THEN
+       km(:,nyn+1,:) = km(:,nyn,:)
+       kh(:,nyn+1,:) = kh(:,nyn,:)
+    ENDIF
+
+    !$acc end kernels
+    !$acc end data
+
+ END SUBROUTINE diffusivities
